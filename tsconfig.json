@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "outDir": "./built/",
+        "module": "esnext",
+        "target": "es5",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "es5",
+            "es2015",
+            "es2016"
+          ],
+        "sourceMap": true,
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "jsx": "react",
+        "moduleResolution": "node",
+        "rootDir": "src",
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "noUnusedLocals": true,
+    },
+    "include": [
+        "./src/**/*"
+    ],
+    "files": [
+        "./src/components/eboard/tsmodules/index.d.ts",
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
