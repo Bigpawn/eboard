@@ -15,6 +15,8 @@ Road map:
 2. redo、undo
 
 3. pdf view plugin
+https://github.com/mozilla/pdf.js/ https://github.com/erikras/react-pdfjs
+https://github.com/wojtekmaj/react-pdf
 
 4. integrate message event
 
