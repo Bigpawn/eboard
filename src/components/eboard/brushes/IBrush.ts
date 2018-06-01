@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:03:52
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-05-29 19:18:10
+ * @Last Modified time: 2018-06-01 11:29:19
  */
 import { fabric } from 'fabric';
 import { BrushType } from './BrushType';
@@ -17,15 +17,40 @@ export interface IBrushOptions {
   callback?: Function;
   cursorOptions?: any;
   cursor?: ICursor;
-  color?: fabric.Color | string;
+  
   width?: number | string;
+  height?: number | string;
+  left?: number | string;
+  top?: number | string;
+  
+  fill?: fabric.Color | string;
+  color?: fabric.Color | string;
+  opacity?: number;
   shadow?: string;
+  
+  // Line settings.
+  // Border color
+  stroke?: fabric.Color | string;
+  // Border width
+  strokeWidth?: number | string;
   strokeLineCap?: number | string;
   strokeLineJoin?: number | string;
-  strokeDashArray?: number | string;
-  strokeStyle?: number | string;
   strokeMiterLimit?: number | string;
+  strokeDashArray?: any[];
 
+  scaleX?: number | string;
+  scaleY?: number | string;
+  angle?: number;
+  radius?: number | string;
+
+  flipX?: boolean;
+  flipY?: boolean;
+
+  skewX?: number;
+  skewY?: number;
+
+  // For Circle
+  redius?: number | string;
 }
 
 /**
@@ -63,4 +88,10 @@ export interface IBrush {
    * @param point 
    */
   onMouseMove(point: { x: number; y: number; } | fabric.Point): void;
+
+  /**
+   * 设置options
+   * @param options  
+   */
+  updateOptions(options: any): void;
 }

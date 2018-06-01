@@ -21,40 +21,6 @@ export default class EBoardEngine {
         fabric.Object.prototype.transparentCorners = false;
 
         this.eBoardCanvas.clearFreeDrawingBrush();
-
-        // this.eBoardCanvas.on('mouse:over', (e: fabric.IEvent) => {
-        //     if (e.target) {
-        //         e.target.set('fill', 'red');
-        //         this.eBoardCanvas.renderAll();
-        //     }
-        // });
-
-        // this.eBoardCanvas.on('mouse:out', (e: fabric.IEvent) => {
-        //     if (e.target) {
-        //         e.target.set('fill', 'green');
-        //         this.eBoardCanvas.renderAll();
-        //     }
-        // });
-
-        // // add random objects
-        // for (let i = 15; i--;) {
-        //     const dim = fabric.util.getRandomInt(30, 60);
-        //     const klass = ['Rect', 'Triangle', 'Circle'][fabric.util.getRandomInt(0, 2)];
-        //     const options: any = {
-        //         top: fabric.util.getRandomInt(0, 600),
-        //         left: fabric.util.getRandomInt(0, 600),
-        //         fill: 'green',
-        //     };
-        //     if (klass === 'Circle') {
-        //         options.radius = dim;
-        //     } else {
-        //         options.width = dim;
-        //         options.height = dim;
-        //     }
-
-        //     let f: any = fabric;
-        //     this.eBoardCanvas.add(new f[klass](options));
-        // }
     }
 
     public getEBoardCanvas(): EBoardCanvas {

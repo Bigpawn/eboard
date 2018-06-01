@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-28 20:01:31
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-05-29 19:35:05
+ * @Last Modified time: 2018-05-31 16:49:47
  */
 import * as _ from 'lodash';
 import * as React from "react";
@@ -12,12 +12,13 @@ import * as classNames from 'classnames';
 // import { Icon } from "antd";
 import { SketchPicker as ColorPicker } from 'react-color';
 
+import { fabric } from "fabric";
 import { IStates } from "../reducers/rootReducer";
 import { actionCreators } from "../actions/actions";
 import { BrushType } from "../eboard/brushes/BrushType";
 import { IBrushOptions } from "../eboard/brushes/IBrush";
 import BrushManager from "../eboard/brushes/BrushManager";
-import { AbstractBrush } from "../eboard/brushes/AbstractBrush";
+import AbstractBrush from "../eboard/brushes/AbstractBrush";
 import CircleCursor from "../eboard/cursor/CircleCursor";
 import EBoardWidget from "../eboard/EBoardWidget";
 import EBoardEngine from '../eboard/EBoardEngine';
@@ -27,7 +28,8 @@ import "./PaintPage.scss";
 
 interface IPaintPageStates {
     currentBrush: BrushType;
-    colorPickerStyle: any;
+    strokeColorPickerStyle: any;
+    fillColorPickerStyle: any;
     brushSettings: any;
 }
 
@@ -37,10 +39,17 @@ interface IPaintPageProps extends React.Props<PaintPage> {
     actions: any;
 }
 
-const defaultCursorOptions: any = { color: 'rgb(255, 0, 0, 1)', fill: 'rgb(0, 255, 255, 1)', radius: 10, lineWidth: 2 };
+const defaultCursorOptions: any = {
+    fill: "rgb(255, 0, 0, 1)",
+    stroke: "rgb(0, 255, 0, 1)",
+    strokeWidth: 5,
+    radius: 2
+};
+
 const defaultBrushOptions: IBrushOptions = {
-    color: "rgb(255, 0, 0, 1)",
-    width: 5
+    fill: "rgb(255, 0, 0, 1)",
+    stroke: "rgb(0, 255, 0, 1)",
+    strokeWidth: 5,
 };
 
 class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
@@ -53,14 +62,24 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
         super(props);
         this.state = {
             currentBrush: BrushType.POINTER_BRUSH,
-            colorPickerStyle: {
+            strokeColorPickerStyle: {
                 "display": 'none',
                 "zIndex": 99999,
                 "position": 'absolute',
                 "left": 0,
                 "top": 0,
             },
-            brushSettings: {}
+            fillColorPickerStyle: {
+                "display": 'none',
+                "zIndex": 99999,
+                "position": 'absolute',
+                "left": 0,
+                "top": 0,
+            },
+            brushSettings: {
+                stroke: 'rgba(255, 0, 0, 1)',
+                fill: 'rgba(0, 255, 0, 1)',
+            }
         };
     }
 
@@ -68,9 +87,12 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
         this.brushManager = new BrushManager();
     }
 
+    private setEBoardEngine(eBoardEngine: EBoardEngine) {
+        this.eBoardEngine = eBoardEngine;
+    }
+
     private selectBrush(evt: any, brushType: BrushType): void {
         let eBoardCanvas = this.eBoardEngine.getEBoardCanvas();
-        this.setState({currentBrush: brushType});
         if (this.brushManager.isPointerBrush(brushType)) {
             eBoardCanvas.clearFreeDrawingBrush();
         } else {
@@ -81,29 +103,60 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
             let brush: AbstractBrush = this.brushManager.selectBrush(brushType, brushOptions, true);
             eBoardCanvas.setFreeDrawingBrush(brush);
         }
+        
+        this.setState({currentBrush: brushType});
     }
 
-    private openColorPickerDialog(evt: MouseEvent) {
+    private openStrokeColorPickerDialog(evt: MouseEvent) {
         let options: any = {};
-        _.defaultsDeep(options, this.state.colorPickerStyle);
+        _.defaultsDeep(options, this.state.strokeColorPickerStyle);
         options.display = options.display === 'none' ? 'block' : 'none';
         options.left = evt.clientX;
         options.top = evt.clientY + 10;
-        this.setState({colorPickerStyle: options});
+        this.setState({strokeColorPickerStyle: options});
     }
 
-    private setEBoardEngine(eBoardEngine: EBoardEngine) {
-        this.eBoardEngine = eBoardEngine;
+    private openFillColorPickerDialog(evt: MouseEvent) {
+        let options: any = {};
+        _.defaultsDeep(options, this.state.fillColorPickerStyle);
+        options.display = options.display === 'none' ? 'block' : 'none';
+        options.left = evt.clientX + 10;
+        options.top = evt.clientY + 10;
+        this.setState({fillColorPickerStyle: options});
     }
 
-    private handleColorChanged(color: any) {
+    private handleStrokeColorChanged(color: any) {
         let options: any = {};
         _.defaultsDeep(options, this.state.brushSettings);
-        options.color = color.hex;
-        this.setState({brushSettings: options});
+        options.stroke = new fabric.Color(color.hex).toRgba();
         if (this.brushManager.getCurrentBrush()) {
-            this.brushManager.getCurrentBrush().color = color.hex;
+            this.brushManager.getCurrentBrush().updateOptions({stroke: options.stroke});
+        }        
+        this.setState({brushSettings: options});
+    }
+
+    private handleFillColorChanged(color: any) {
+        let options: any = {};
+        _.defaultsDeep(options, this.state.brushSettings);
+        options.fill = new fabric.Color(color.hex).toRgba();
+        if (this.brushManager.getCurrentBrush()) {
+            this.brushManager.getCurrentBrush().updateOptions({fill: options.fill});
         }
+        this.setState({brushSettings: options});
+    }
+
+    private handleStrokeColorMouseOut(evt: MouseEvent) {
+        // let options: any = {};
+        // _.defaultsDeep(options, this.state.strokeColorPickerStyle);
+        // options.display = 'none';
+        // this.setState({strokeColorPickerStyle: options});
+    }
+
+    private handleFillColorMouseOut(evt: MouseEvent) {
+        // let options: any = {};
+        // _.defaultsDeep(options, this.state.fillColorPickerStyle);
+        // options.display = 'none';
+        // this.setState({fillColorPickerStyle: options});
     }
 
     public render(): JSX.Element {
@@ -119,9 +172,13 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
                     <CircleIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.CIRCLE_BRUSH})} type="star" onClick={(evt: any) => {this.selectBrush(evt, BrushType.CIRCLE_BRUSH); }} />
                     <PolygonIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.POLYGON_BRUSH})} type="heart" onClick={(evt: any) => {this.selectBrush(evt, BrushType.POLYGON_BRUSH); }} />
                     <EraserIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.ERASER_BRUSH})} type="heart" onClick={(evt: any) => {this.selectBrush(evt, BrushType.ERASER_BRUSH); }} />
-                    <ColorPaletteIcon className={classNames("icon")} type="heart" onClick={ (evt: MouseEvent) => { this.openColorPickerDialog(evt); }} />
-                    <div className="color_palette" style={this.state.colorPickerStyle}>
-                        <ColorPicker color={ this.state.brushSettings.color } onChangeComplete={ (color: any) => { this.handleColorChanged(color); }} />
+                    <ColorPaletteIcon className={classNames("icon")} style={{'backgroundColor': this.state.brushSettings.stroke}} type="heart" onClick={ (evt: MouseEvent) => { this.openStrokeColorPickerDialog(evt); }} />
+                    <div className="color_palette" style={this.state.strokeColorPickerStyle} onMouseOut={ (event: any) => {this.handleStrokeColorMouseOut(event); }} >
+                        <ColorPicker color={ this.state.brushSettings.stroke } onChangeComplete={ (color: any) => { this.handleStrokeColorChanged(color); }} />
+                    </div>
+                    <ColorPaletteIcon className={classNames("icon")} style={{'backgroundColor': this.state.brushSettings.fill}} type="heart" onClick={ (evt: MouseEvent) => { this.openFillColorPickerDialog(evt); }} />
+                    <div className="color_palette" style={this.state.fillColorPickerStyle} onMouseOut={ (event: any) => {this.handleFillColorMouseOut(event); }} >
+                        <ColorPicker color={ this.state.brushSettings.fill } onChangeComplete={ (color: any) => { this.handleFillColorChanged(color); }} />
                     </div>
                 </div>
                 <div style={{height: "100%"}}>

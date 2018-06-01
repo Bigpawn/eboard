@@ -2,10 +2,10 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:56:54
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-05-29 19:14:02
+ * @Last Modified time: 2018-06-01 15:07:48
  */
 import { fabric } from 'fabric';
-import { AbstractBrush } from './brushes/AbstractBrush';
+import AbstractBrush from './brushes/AbstractBrush';
 import { BrushType } from './brushes/BrushType';
 import { CssCursor } from './cursor/CssCursor';
 
@@ -54,6 +54,13 @@ class FabricCanvas extends fabric.Canvas {
    */
   public getSelectionCanvasContext(): CanvasRenderingContext2D {
     return this.getSelectionContext();
+  }
+
+  /**
+   * Return current viewport transform.
+   */
+  public getViewportTransform(): number[] {
+    return this.viewportTransform;
   }
 }
 
@@ -172,7 +179,7 @@ export default class EBoardCanvas extends FabricCanvas {
   public setFreeDrawingBrush(brush: AbstractBrush, options?: any): void {
     this.freeDrawingBrush = brush;
     if (this.freeDrawingBrush) {
-      this.freeDrawingBrush.setPadCanvas(this);
+      this.freeDrawingBrush.setEBoardCanvas(this);
     }
 
     if (brush.getType() !== BrushType.POINTER_BRUSH) {
@@ -301,7 +308,7 @@ export default class EBoardCanvas extends FabricCanvas {
       // pointer = fabric.util.transformPoint(new fabric.Point(p.x, p.y), ivt);
       let pointer = this.getPointer(e);
       if (this._isCurrentlyDrawing) {
-        this.freeDrawingBrush.onMouseMove(pointer);
+        this.freeDrawingBrush.onMouseMove(pointer as fabric.Point);
       }
 
       // Draw cursor.
@@ -331,11 +338,16 @@ export default class EBoardCanvas extends FabricCanvas {
    * @param {Event} e Event object fired on mouseup
    */
   _onMouseUpInDrawingMode(e: Event): void {
-    this._isCurrentlyDrawing = false;
     if (this.clipTo) {
       this.getSelectionCanvasContext().restore();
     }
-    this.freeDrawingBrush.onMouseUp(this.getPointer(e));
+       
+    if (this.freeDrawingBrush) {
+      this.freeDrawingBrush.onMouseUp(this.getPointer(e) as fabric.Point);
+    } else {
+      this.disableDrawingTrack();
+    }
+
     this._handleEvent(e, 'up');
   }
 } 

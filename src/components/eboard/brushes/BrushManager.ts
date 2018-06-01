@@ -2,13 +2,17 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-28 20:01:42
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-05-29 19:19:01
+ * @Last Modified time: 2018-06-01 13:39:41
  */
 import { BrushType } from "./BrushType";
-import { AbstractBrush } from "./AbstractBrush";
+import AbstractBrush from "./AbstractBrush";
 import { IBrushOptions } from "./IBrush";
-import PencilBrush from "./PencilBrush";
+import PencilBrush from "./shape/twodims/PencilBrush";
+import LineBrush from "./shape/twodims/LineBrush";
 import PointerBrush from "./PointerBrush";
+import RectangleBrush from "./shape/twodims/RectangleBrush";
+import CircleBrush from "./shape/twodims/CircleBrush";
+import PolygonBrush from "./shape/twodims/PolygonBrush";
 
 /*
  * @Author: Liheng (liheeng@gmail.com)
@@ -64,17 +68,32 @@ export default class BrushManager {
      * @param options 
      */
     createBrush(brushType: BrushType, options?: IBrushOptions): AbstractBrush {
+        
         let brush: AbstractBrush;
         switch (brushType) {
             case BrushType.PENCEIL_BRUSH:
                 brush = new PencilBrush(options);
                 break;
+
             case BrushType.LINE_BRUSH:
-            case BrushType.TEXT_BRUSH:
-            case BrushType.CIRCLE_BRUSH:
+                brush = new LineBrush(options);
+                break;
+            
             case BrushType.RECTANGLE_BRUSH:
-            case BrushType.TRIANGLE_BRUSH:
+                brush = new RectangleBrush(options);
+                break;
+                
+            case BrushType.CIRCLE_BRUSH:
+                brush = new CircleBrush(options);
+                break;
+
             case BrushType.POLYGON_BRUSH:
+                brush = new PolygonBrush(options);
+                break;
+                
+            case BrushType.TEXT_BRUSH:      
+            case BrushType.TRIANGLE_BRUSH:
+            
                 brush = new PointerBrush(options);
                 break;
             default:

@@ -17,9 +17,9 @@
         "moduleResolution": "node",
         "rootDir": "src",
         "noImplicitReturns": true,
-        "noImplicitThis": true,
+        "noImplicitThis": false,
         "noImplicitAny": true,
-        "strictNullChecks": true,
+        "strictNullChecks": false,
         "noUnusedLocals": true,
     },
     "include": [

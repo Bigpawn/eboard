@@ -2,11 +2,11 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:09:34
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-05-29 19:23:09
+ * @Last Modified time: 2018-06-01 10:55:40
  */
 import {fabric} from "fabric";
 import {BrushType} from "./BrushType";
-import { AbstractBrush } from "./AbstractBrush";
+import AbstractBrush from "./AbstractBrush";
 import { IBrushOptions } from "./IBrush";
 
 /**
@@ -14,6 +14,9 @@ import { IBrushOptions } from "./IBrush";
  */
 export default class PointerBrush extends AbstractBrush {
 
+    protected _createShape(): fabric.Object {
+        throw new Error("Method not implemented.");
+    }
     // point: fabric.Point;
 
     constructor(options?: IBrushOptions) {
