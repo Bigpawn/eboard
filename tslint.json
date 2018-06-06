@@ -119,7 +119,7 @@
             // "check-module",
             "check-operator",
             "check-separator",
-            // "check-type",
+            "check-type",
             "check-typecast"
         ]
     }

@@ -40,6 +40,7 @@
     "react-color": "^2.14.1",
     "react-compose": "^2.0.0",
     "react-dom": "^16.2.0",
+    "react-pdf": "^3.0.5",
     "react-redux": "^5.0.7",
     "react-router": "^4.2.0",
     "react-router-config": "^1.0.0-beta.4",

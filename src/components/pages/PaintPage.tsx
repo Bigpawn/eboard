@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-28 20:01:31
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-05-31 16:49:47
+ * @Last Modified time: 2018-06-06 09:32:39
  */
 import * as _ from 'lodash';
 import * as React from "react";
@@ -10,7 +10,7 @@ import * as Redux from "redux";
 import { connect } from "react-redux";
 import * as classNames from 'classnames';
 // import { Icon } from "antd";
-import { SketchPicker as ColorPicker } from 'react-color';
+import { SketchPicker as ColorPicker} from 'react-color';
 
 import { fabric } from "fabric";
 import { IStates } from "../reducers/rootReducer";
@@ -47,9 +47,9 @@ const defaultCursorOptions: any = {
 };
 
 const defaultBrushOptions: IBrushOptions = {
-    fill: "rgb(255, 0, 0, 1)",
-    stroke: "rgb(0, 255, 0, 1)",
-    strokeWidth: 5,
+    fill: "rgb(255, 0, 0, .1)",
+    stroke: "rgb(0, 255, 0, .1)",
+    strokeWidth: 3,
 };
 
 class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
@@ -128,7 +128,7 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
     private handleStrokeColorChanged(color: any) {
         let options: any = {};
         _.defaultsDeep(options, this.state.brushSettings);
-        options.stroke = new fabric.Color(color.hex).toRgba();
+        options.stroke = new fabric.Color(color.rgb).toRgba();
         if (this.brushManager.getCurrentBrush()) {
             this.brushManager.getCurrentBrush().updateOptions({stroke: options.stroke});
         }        
@@ -138,7 +138,7 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
     private handleFillColorChanged(color: any) {
         let options: any = {};
         _.defaultsDeep(options, this.state.brushSettings);
-        options.fill = new fabric.Color(color.hex).toRgba();
+        options.fill = new fabric.Color(color.rgb).toRgba();
         if (this.brushManager.getCurrentBrush()) {
             this.brushManager.getCurrentBrush().updateOptions({fill: options.fill});
         }
@@ -159,6 +159,14 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
         // this.setState({fillColorPickerStyle: options});
     }
 
+    // private convertRgba(color: any) {
+    //     let c: string = "rgba(";
+    //     c = c + color.rgb.r + ",";
+    //     c = c + color.rgb.g + ",";
+    //     c = c + color.rgb.b + ",";
+    //     c = c + color.rgb.a + ")";
+    //     return c;
+    // }
     public render(): JSX.Element {
         return (
             <div style={{height: "600px"}}>

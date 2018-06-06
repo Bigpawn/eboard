@@ -49,7 +49,7 @@ export default class CircleBrush extends RectangleBrush {
         }
 
         let renderOpts = {};
-        _.defaultsDeep(renderOpts, {'radius': radius, 'left': start.x, 'top': start.y}, this.options)
+        _.defaultsDeep(renderOpts, {'radius': radius, 'left': start.x, 'top': start.y}, this.options);
         return new fabric
             .Circle(renderOpts);
     }
