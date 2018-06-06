@@ -2,11 +2,12 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 23:34:18
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-05 17:13:17
+ * @Last Modified time: 2018-06-06 11:45:04
  */
 import { fabric } from 'fabric';
 import { EBoardCanvas } from './EBoardCanvas';
-import { UndoRedoAction, AbstractUndoRedoAction, UndoRedoEngine } from './mixins/UndoRedo';
+import { UndoRedoEngine } from './mixins/UndoRedo';
+import PathCreatedUndoAction from './undo/PathCreatedUndoAction';
 
 export default class EBoardEngine {
     /**
@@ -20,13 +21,14 @@ export default class EBoardEngine {
     private undoRedoEngine: UndoRedoEngine;
     
     constructor(wrapper: any, canvasEl: any) {
-        this.__init();
         this.__initCanvas(wrapper, canvasEl);
         this.__initUndoListener();
+        this.__init();
     }
 
     private __init() {
         this.undoRedoEngine = new UndoRedoEngine(this);
+        this.eBoardCanvas.enableZooming();
     }
 
     private __initCanvas(wrapper: any, canvasEl: any) {
@@ -41,7 +43,7 @@ export default class EBoardEngine {
     private __initUndoListener() {
         // TODO ...
         // REGISTER LISTENER FOR UNDO/REDO
-        this.eBoardCanvas.addListener("path:created", (event: any) => this.__handlePathCreated(event));
+        this.eBoardCanvas.addEventListener("path:created", (event: any) => this.__handlePathCreated(event));
     }
 
     /**
@@ -68,48 +70,14 @@ export default class EBoardEngine {
     private __handlePathCreated(event: any) {
         this.undoRedoEngine.pushAction(new PathCreatedUndoAction(event));
     }
-
-}
-
-/**
- * The operation type indicates path 
- */
-export enum OperationType {
-    PATH_CREATED = "path:created" 
-}
-
-/**
- * "path:created" undo/redo action.
- */
-export class PathCreatedUndoAction extends AbstractUndoRedoAction {
-    constructor(event: any) {
-        super(event);
-    }
-    
+ 
     /**
-     * @override
+     * Register event listener
+     * 
+     * @param eventType 
+     * @param listener 
      */
-    public getType(): any {
-        return OperationType.PATH_CREATED;
-    }
-
-    /**
-     * @override
-     * @param eBoardEngine 
-     */
-    undo(eBoardEngine: EBoardEngine): void {
-        if (this.event.path) {
-            eBoardEngine.getEBoardCanvas().remove(this.event.path);
-        }
-    }
-
-    /**
-     * @override
-     * @param eBoardEngine 
-     */
-    redo(eBoardEngine: EBoardEngine): void {
-        if (this.event.path) {
-            eBoardEngine.getEBoardCanvas().add(this.event.path);
-        }
+    public addEventListener(eventType: string, listener: (event: any) => void) {
+        this.eBoardCanvas.addEventListener(eventType, listener);
     }
 }

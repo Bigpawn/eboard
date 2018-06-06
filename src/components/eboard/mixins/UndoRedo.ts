@@ -2,14 +2,14 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-05 15:51:37
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-05 16:30:23
+ * @Last Modified time: 2018-06-06 11:09:43
  */
 import EBoardEngine from "../EBoardEngine";
 
 /**
  * Interface to define undo redo action.
  */
-export interface UndoRedoAction {
+export interface IUndoRedoAction {
     /**
      * Return type of action.
      */
@@ -36,7 +36,7 @@ export interface UndoRedoAction {
 /**
  * Abstract class to implement common functions for undo/redo action.
  */
-export abstract class AbstractUndoRedoAction implements UndoRedoAction {
+export abstract class AbstractUndoRedoAction implements IUndoRedoAction {
     /**
      * Event
      */
@@ -104,7 +104,7 @@ export class UndoRedoEngine {
       * @param eventType 
       * @param event 
       */
-     public pushAction(action: UndoRedoAction) {
+     public pushAction(action: IUndoRedoAction) {
          this.undoStack.push(action);
          // Clear all redo events once push new event to undo stack.
          this.redoStack = [];
@@ -114,7 +114,7 @@ export class UndoRedoEngine {
       * Popup an operation from undo stack and undo the operation.
       */
      public undo(): boolean {
-         let action: UndoRedoAction = this.undoStack.pop();
+         let action: IUndoRedoAction = this.undoStack.pop();
          if (action) {
              action.undo(this.eBoardEngine);
              this.redoStack.push(action);
@@ -128,7 +128,7 @@ export class UndoRedoEngine {
       * Popup an operation from redo stack and redo the operation.
       */
      public redo(): boolean {
-         let action: UndoRedoAction = this.redoStack.pop();
+         let action: IUndoRedoAction = this.redoStack.pop();
          if (action) {
              action.redo(this.eBoardEngine);
              this.undoStack.push(action);

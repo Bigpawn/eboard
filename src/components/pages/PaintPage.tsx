@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-28 20:01:31
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-06 09:32:39
+ * @Last Modified time: 2018-06-06 10:09:29
  */
 import * as _ from 'lodash';
 import * as React from "react";
@@ -159,17 +159,9 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
         // this.setState({fillColorPickerStyle: options});
     }
 
-    // private convertRgba(color: any) {
-    //     let c: string = "rgba(";
-    //     c = c + color.rgb.r + ",";
-    //     c = c + color.rgb.g + ",";
-    //     c = c + color.rgb.b + ",";
-    //     c = c + color.rgb.a + ")";
-    //     return c;
-    // }
     public render(): JSX.Element {
         return (
-            <div style={{height: "600px"}}>
+            <div style={{height: "900px"}}>
                 <div style={{backgroundColor: "white"}}>
                     <PointerIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.POINTER_BRUSH})} type="cloud"  onClick={(evt: any) => {this.selectBrush(evt, BrushType.POINTER_BRUSH); }} />
                     <PenIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.PENCEIL_BRUSH})} type="tag-o" onClick={(evt: any) => {this.selectBrush(evt, BrushType.PENCEIL_BRUSH); }} />

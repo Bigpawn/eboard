@@ -2,13 +2,14 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:56:54
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-06 09:37:36
+ * @Last Modified time: 2018-06-06 11:48:26
  */
 import { fabric } from 'fabric';
 import './mixins/ExFabric';
 import AbstractBrush from './brushes/AbstractBrush';
 import { BrushType } from './brushes/BrushType';
 import { CssCursor } from './cursor/CssCursor';
+import { FabricEventType } from './mixins/FabricEventType';
 
 /**
  * The class extends <code>fabric.Canvas</code> to expose necessary properties and functions.
@@ -20,7 +21,7 @@ class FabricCanvas extends fabric.Canvas {
    * @override
    */
   freeDrawingBrush: AbstractBrush;
-
+  
   public getWrapperElement(): HTMLElement {
     return this.wrapperEl;
   }
@@ -79,6 +80,11 @@ export class EBoardCanvas extends FabricCanvas {
    * The canvas context of cursor canvas.
    */
   contextCursor: CanvasRenderingContext2D;
+
+  /**
+   * Indicates if zoomIn/zoomOut is enabled.
+   */
+  isZoom: boolean = false;
 
   /**
    * Constructor
@@ -325,10 +331,6 @@ export class EBoardCanvas extends FabricCanvas {
    */
   _onMouseMoveInDrawingMode(e: Event): void {
     if (this._isCurrentlyDrawing || this.freeDrawingBrush.getCursor()) {
-      // let ivt = fabric.util.invertTransform(this.viewportTransform),
-      // // this.getPointer(e, true);
-      // p = this.getPointer(e, true),
-      // pointer = fabric.util.transformPoint(new fabric.Point(p.x, p.y), ivt);
       let pointer = this.getPointer(e);
       if (this._isCurrentlyDrawing) {
         this.freeDrawingBrush.onMouseMove(pointer as fabric.Point);
@@ -377,21 +379,50 @@ export class EBoardCanvas extends FabricCanvas {
   /**
    * Add listener
    * 
-   * @param event 
+   * @param eventType 
    * @param listener 
    */
-  public addListener(event: string, listener: (event: fabric.IEvent) => void): EBoardCanvas {
-    this.on(event, listener);
+  public addEventListener(eventType: string, listener: (event: any) => void): EBoardCanvas {
+    this.on(eventType, listener);
     return this;
   }
 
   /**
    * Remove listener.
-   * @param event 
+   * @param eventType 
    * @param listener 
    */
-  public removeListener(event: string, listener?: (event: fabric.IEvent) => void): EBoardCanvas  {
-    this.off(event, listener);
+  public removeEventListener(eventType: string, listener?: (event: any) => void): EBoardCanvas  {
+    this.off(eventType, listener);
     return this;
   } 
+
+  public isZoomingMode(): boolean {
+    return this.isZoom;
+  }
+
+  public enableZooming() {
+    this.addEventListener(FabricEventType.MOUSE_WHEEL, this.__handleZooming);
+    this.isZoom = true;
+  }
+
+  private __handleZooming(opt: any)  {
+    let delta = opt.e.deltaY;
+    let zoom = this.getZoom();
+    zoom = zoom + delta / 200;
+    if (zoom > 20) {
+        zoom = 20;
+    }
+    if (zoom < 0.01) {
+        zoom = 0.01;
+    }
+    this.setZoom(zoom);
+    opt.e.preventDefault();
+    opt.e.stopPropagation();
+  }
+  
+  public disableZooming() {
+    this.removeEventListener(FabricEventType.MOUSE_WHEEL, this.__handleZooming);
+    this.isZoom = false;
+  }
 } 
