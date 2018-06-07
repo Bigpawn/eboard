@@ -22,7 +22,7 @@ import AbstractBrush from "../eboard/brushes/AbstractBrush";
 import CircleCursor from "../eboard/cursor/CircleCursor";
 import EBoardWidget from "../eboard/EBoardWidget";
 import EBoardEngine from '../eboard/EBoardEngine';
-import {PointerIcon, LineIcon, PenIcon, CircleIcon, RectangleIcon, PolygonIcon, TriangleIcon, TextIcon, EraserIcon, ColorPaletteIcon, RestoreIcon } from "../icons/SvgIcons";
+import {PointerIcon, LineIcon, PenIcon, CircleIcon, RectangleIcon, PolygonIcon, TriangleIcon, TextIcon, EraserIcon, ColorPaletteIcon, UndoIcon, RedoIcon, RestoreIcon } from "../icons/SvgIcons";
 
 import "./PaintPage.scss";
 import { FabricEventType, ZoomEvent } from '../eboard/mixins/FabricEvents';
@@ -33,6 +33,8 @@ interface IPaintPageStates {
     fillColorPickerStyle: any;
     brushSettings: any;
     zoomValue: number;
+    undoSize: number;
+    redoSize: number;
 }
 
 interface IPaintPageProps extends React.Props<PaintPage> {
@@ -82,7 +84,9 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
                 stroke: 'rgba(255, 0, 0, 1)',
                 fill: 'rgba(0, 255, 0, 1)',
             },
-            zoomValue: 1
+            zoomValue: 1,
+            undoSize: 0,
+            redoSize: 0
         };
     }
 
@@ -176,19 +180,29 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
         this.setState({zoomValue: Math.floor(event.value * 100) / 100});
     }
 
+    private __undo(event: any) {
+        let size = this.eBoardEngine.undo();
+        this.setState(size);
+    }
+
+    private __redo(event: any) {
+        let size = this.eBoardEngine.redo();
+        this.setState(size);
+    }
+
     public render(): JSX.Element {
         return (
             <div style={{height: "900px"}}>
                 <div style={{backgroundColor: "white"}}>
-                    <PointerIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.POINTER_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.POINTER_BRUSH); }} />
-                    <PenIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.PENCEIL_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.PENCEIL_BRUSH); }} />
-                    <LineIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.LINE_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.LINE_BRUSH); }} />
-                    <TextIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.TEXT_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.TEXT_BRUSH); }} />
-                    <RectangleIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.RECTANGLE_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.RECTANGLE_BRUSH); }} />
-                    <TriangleIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.TRIANGLE_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.TRIANGLE_BRUSH); }} />
-                    <CircleIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.CIRCLE_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.CIRCLE_BRUSH); }} />
-                    <PolygonIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.POLYGON_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.POLYGON_BRUSH); }} />
-                    <EraserIcon className={classNames("icon", {selected : this.state.currentBrush === BrushType.ERASER_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.ERASER_BRUSH); }} />
+                    <PointerIcon color="primary" className={classNames("icon", {selected : this.state.currentBrush === BrushType.POINTER_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.POINTER_BRUSH); }} />
+                    <PenIcon color="primary" className={classNames("icon", {selected : this.state.currentBrush === BrushType.PENCEIL_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.PENCEIL_BRUSH); }} />
+                    <LineIcon color="primary" className={classNames("icon", {selected : this.state.currentBrush === BrushType.LINE_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.LINE_BRUSH); }} />
+                    <TextIcon color="primary" className={classNames("icon", {selected : this.state.currentBrush === BrushType.TEXT_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.TEXT_BRUSH); }} />
+                    <RectangleIcon color="primary" className={classNames("icon", {selected : this.state.currentBrush === BrushType.RECTANGLE_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.RECTANGLE_BRUSH); }} />
+                    <TriangleIcon color="primary" className={classNames("icon", {selected : this.state.currentBrush === BrushType.TRIANGLE_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.TRIANGLE_BRUSH); }} />
+                    <CircleIcon color="primary" className={classNames("icon", {selected : this.state.currentBrush === BrushType.CIRCLE_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.CIRCLE_BRUSH); }} />
+                    <PolygonIcon color="primary" className={classNames("icon", {selected : this.state.currentBrush === BrushType.POLYGON_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.POLYGON_BRUSH); }} />
+                    <EraserIcon color="primary" className={classNames("icon", {selected : this.state.currentBrush === BrushType.ERASER_BRUSH})} onClick={(evt: any) => {this.__selectBrush(evt, BrushType.ERASER_BRUSH); }} />
                     <ColorPaletteIcon className={classNames("icon")} style={{'backgroundColor': this.state.brushSettings.stroke}} onClick={ (evt: MouseEvent) => { this.__openStrokeColorPickerDialog(evt); }} />
                     <div className="color_palette" style={this.state.strokeColorPickerStyle} onMouseOut={ (event: any) => {this.__handleStrokeColorMouseOut(event); }} >
                         <ColorPicker color={ this.state.brushSettings.stroke } onChangeComplete={ (color: any) => { this.__handleStrokeColorChanged(color); }} />
@@ -197,18 +211,20 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
                     <div className="color_palette" style={this.state.fillColorPickerStyle} onMouseOut={ (event: any) => {this.__handleFillColorMouseOut(event); }} >
                         <ColorPicker color={ this.state.brushSettings.fill } onChangeComplete={ (color: any) => { this.__handleFillColorChanged(color); }} />
                     </div>
-                    <RestoreIcon className={classNames("icon")} onClick={ (evt: MouseEvent) => { this.__restoreOriginalVpt(evt); }} />
-                    <div>Zoom: </div>
+                    <RestoreIcon color="primary" className={classNames("icon")} onClick={ (evt: MouseEvent) => { this.__restoreOriginalVpt(evt); }} />
+                    <div>Zoom:</div>
                     <InputNumber
                         defaultValue={1}
                         min={0.01}
-                        max={2}
+                        max={20}
                         value = {this.state.zoomValue}
                         step={0.01}
                         formatter={(value: number) => `${value * 100}%`}
                         parser={(value: string) => parseInt(value.replace('%', ''), 10) / 100}
                         onChange={(value: number) => { this.__handlerZoomChanged(value); }}
                     />
+                    <UndoIcon color={this.state.undoSize > 0 ? "secondary" : "disabled"} className={classNames("icon")} onClick={(evt: any) => {this.__undo(evt); }} />
+                    <RedoIcon color={this.state.redoSize > 0 ? "secondary" : "disabled"} className={classNames("icon")} onClick={(evt: any) => {this.__redo(evt); }} />
                 </div>
                 <div style={{height: "100%"}}>
                     <EBoardWidget  onInitEBoardEngine={ (eBoardEngine: EBoardEngine) => { this.__setEBoardEngine(eBoardEngine); }} />

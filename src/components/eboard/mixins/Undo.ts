@@ -112,29 +112,29 @@ export class UndoEngine {
  
      /**
       * Popup an operation from undo stack and undo the operation.
+      * 
+      * @return {number, number} size of undo and redo stack
       */
-     public undo(): boolean {
+     public undo(): {undoSize: number, redoSize: number} {
          let action: IUndoRedoAction = this.undoStack.pop();
          if (action) {
              action.undo(this.eBoardEngine);
              this.redoStack.push(action);
-             return true;
-         } else {
-             return false;
-         }
+         } 
+         return {undoSize: this.undoStack.length, redoSize: this.redoStack.length};
      }
  
      /**
       * Popup an operation from redo stack and redo the operation.
+      * 
+      * @return {number, number} size of undo and redo stack
       */
-     public redo(): boolean {
+     public redo(): {undoSize: number, redoSize: number} {
          let action: IUndoRedoAction = this.redoStack.pop();
          if (action) {
              action.redo(this.eBoardEngine);
              this.undoStack.push(action);
-             return true;
-         } else {
-             return false;
          }
+         return {undoSize: this.undoStack.length, redoSize: this.redoStack.length};
      }
 }

@@ -9,6 +9,7 @@ import { EBoardCanvas } from './EBoardCanvas';
 import { UndoEngine } from './mixins/Undo';
 import PathCreatedUndoAction from './undo/PathCreatedUndoAction';
 import { FabricEventType, ZoomEvent } from './mixins/FabricEvents';
+import ZoomUndoAction from './undo/ZoomUndoAction';
 
 export default class EBoardEngine {
     /**
@@ -63,15 +64,19 @@ export default class EBoardEngine {
     
     /**
      * Undo operation.
+     * 
+     * @return {number, number} size of undo and redo stack.
      */
-    public undo(): boolean {
+    public undo(): {undoSize: number, redoSize: number} {
         return this.undoEngine.undo();
     }
 
     /**
      * Redo operation.
+     * 
+     * @return {number, number} size of undo and redo stack.
      */
-    public redo(): boolean {
+    public redo(): {undoSize: number, redoSize: number} {
         return this.undoEngine.redo();
     }
 
@@ -80,7 +85,7 @@ export default class EBoardEngine {
     }
 
     private __handleZoomAfter(event: any) {
-        this.undoEngine.pushAction(new PathCreatedUndoAction(event));
+        this.undoEngine.pushAction(new ZoomUndoAction(event));
     }
  
     /**
