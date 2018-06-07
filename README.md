@@ -1,5 +1,5 @@
 # eboard
-an blackboard implementation based on html canvas.
+An blackboard implementation based on html canvas.
 
 
 For developer:
@@ -9,22 +9,28 @@ For developer:
 4. copy fabric ts declration files from  https://github.com/codyysh/DefinitelyTyped/tree/master/types/fabric into node_modules/@type/fabric directory of this project, it will overwrite standard fabric ts declaration.
 
 
-Road map:
-1. support more shapes
+Plan:
+1. support custom shapes（done, liheeng, 20180607)
 
-2. redo、undo
+2. redo、undo (done, liheeng, 20180607)
 
-3. pdf view plugin
+3. Zoom in/out (done, liheeng, 20180607)
+
+4. document as image view plugin
+
+5. integrate message event
+
+6. pdf view plugin
 https://github.com/mozilla/pdf.js/ https://github.com/erikras/react-pdfjs
 https://github.com/wojtekmaj/react-pdf
 
-4. integrate message event
-
-5. document as image view plugin
-
-6. equation editing plugin
+7. equation editing plugin
   https://codepen.io/tswone/pen/ozYxzw
   html2canvas
   
-7. chart plugin
+8. chart plugin
+
+9. Support more shapes.
+
+10. More undo/redo actions.
 
