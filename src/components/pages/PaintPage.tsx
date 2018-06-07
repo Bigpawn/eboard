@@ -173,7 +173,7 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
     }
 
     private __onZoom(event: ZoomEvent) {
-        this.setState({zoomValue: event.value});
+        this.setState({zoomValue: Math.floor(event.value * 100) / 100});
     }
 
     public render(): JSX.Element {
@@ -204,6 +204,7 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
                         min={0.01}
                         max={2}
                         value = {this.state.zoomValue}
+                        step={0.01}
                         formatter={(value: number) => `${value * 100}%`}
                         parser={(value: string) => parseInt(value.replace('%', ''), 10) / 100}
                         onChange={(value: number) => { this.__handlerZoomChanged(value); }}
