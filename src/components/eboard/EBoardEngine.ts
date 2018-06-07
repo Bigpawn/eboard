@@ -6,8 +6,9 @@
  */
 import { fabric } from 'fabric';
 import { EBoardCanvas } from './EBoardCanvas';
-import { UndoRedoEngine } from './mixins/UndoRedo';
+import { UndoEngine } from './mixins/Undo';
 import PathCreatedUndoAction from './undo/PathCreatedUndoAction';
+import { FabricEventType, ZoomEvent } from './mixins/FabricEvents';
 
 export default class EBoardEngine {
     /**
@@ -18,21 +19,27 @@ export default class EBoardEngine {
     /**
      * Instanceof undo/redo engine.
      */
-    private undoRedoEngine: UndoRedoEngine;
+    private undoEngine: UndoEngine;
     
-    constructor(wrapper: any, canvasEl: any) {
-        this.__initCanvas(wrapper, canvasEl);
+    /**
+     * Constructor.
+     * 
+     * @param wrapper 
+     * @param canvasEl 
+     * @param options 
+     */
+    constructor(wrapper: any, canvasEl: any, options?: any) {
+        this.__initCanvas(wrapper, canvasEl, options);
         this.__initUndoListener();
         this.__init();
     }
 
     private __init() {
-        this.undoRedoEngine = new UndoRedoEngine(this);
-        this.eBoardCanvas.enableZooming();
+        this.undoEngine = new UndoEngine(this);
     }
 
-    private __initCanvas(wrapper: any, canvasEl: any) {
-        this.eBoardCanvas = new EBoardCanvas(canvasEl);
+    private __initCanvas(wrapper: any, canvasEl: any, options?: any) {
+        this.eBoardCanvas = new EBoardCanvas(canvasEl, options);
         this.eBoardCanvas.setWidth(wrapper.clientWidth);
         this.eBoardCanvas.setHeight(wrapper.clientHeight);
         fabric.Object.prototype.transparentCorners = false;
@@ -43,7 +50,8 @@ export default class EBoardEngine {
     private __initUndoListener() {
         // TODO ...
         // REGISTER LISTENER FOR UNDO/REDO
-        this.eBoardCanvas.addEventListener("path:created", (event: any) => this.__handlePathCreated(event));
+        this.eBoardCanvas.addEventListener(FabricEventType.PATH_CREATED, (event: any) => this.__handlePathCreated(event));
+        this.eBoardCanvas.addEventListener(FabricEventType.ZOOM_AFTER, (event: ZoomEvent) => this.__handleZoomAfter(event));
     }
 
     /**
@@ -57,18 +65,22 @@ export default class EBoardEngine {
      * Undo operation.
      */
     public undo(): boolean {
-        return this.undoRedoEngine.undo();
+        return this.undoEngine.undo();
     }
 
     /**
      * Redo operation.
      */
     public redo(): boolean {
-        return this.undoRedoEngine.redo();
+        return this.undoEngine.redo();
     }
 
     private __handlePathCreated(event: any) {
-        this.undoRedoEngine.pushAction(new PathCreatedUndoAction(event));
+        this.undoEngine.pushAction(new PathCreatedUndoAction(event));
+    }
+
+    private __handleZoomAfter(event: any) {
+        this.undoEngine.pushAction(new PathCreatedUndoAction(event));
     }
  
     /**
@@ -77,7 +89,7 @@ export default class EBoardEngine {
      * @param eventType 
      * @param listener 
      */
-    public addEventListener(eventType: string, listener: (event: any) => void) {
+    public addEventListener(eventType: FabricEventType, listener: (event: any) => void) {
         this.eBoardCanvas.addEventListener(eventType, listener);
     }
 }

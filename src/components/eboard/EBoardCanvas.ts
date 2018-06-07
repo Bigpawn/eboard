@@ -2,14 +2,15 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:56:54
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-06 11:48:26
+ * @Last Modified time: 2018-06-07 09:24:41
  */
+import * as _ from 'lodash';
 import { fabric } from 'fabric';
 import './mixins/ExFabric';
 import AbstractBrush from './brushes/AbstractBrush';
 import { BrushType } from './brushes/BrushType';
 import { CssCursor } from './cursor/CssCursor';
-import { FabricEventType } from './mixins/FabricEventType';
+import { FabricEventType, ZoomEvent } from './mixins/FabricEvents';
 
 /**
  * The class extends <code>fabric.Canvas</code> to expose necessary properties and functions.
@@ -67,6 +68,26 @@ class FabricCanvas extends fabric.Canvas {
 }
 
 /**
+ * Options of EBoardCanvas.
+ */
+export interface IEBoardCanvasOptions extends fabric.ICanvasOptions {
+  /**
+   * Indicates if zoom is enabled or not.
+   */
+  isZoom: boolean;
+
+  /**
+   * Indicates if zoom is using panning mode.
+   */
+  isPanning: boolean;
+
+  /**
+   * Backup original viewport transform.
+   */
+  originalVpt: number[];
+}
+
+/**
  * The class supports white pad functions.
  */
 export class EBoardCanvas extends FabricCanvas {
@@ -81,17 +102,14 @@ export class EBoardCanvas extends FabricCanvas {
    */
   contextCursor: CanvasRenderingContext2D;
 
-  /**
-   * Indicates if zoomIn/zoomOut is enabled.
-   */
-  isZoom: boolean = false;
+  options: IEBoardCanvasOptions;
 
   /**
    * Constructor
    * @param element <canvas> element to initialize instance on
    * @param [options] Options object
    */
-  constructor(element: HTMLCanvasElement | string, options?: fabric.ICanvasOptions) {
+  constructor(element: HTMLCanvasElement | string, options?: IEBoardCanvasOptions) {
     super(element, options);
     this._initialize(element, options);
   }
@@ -103,8 +121,23 @@ export class EBoardCanvas extends FabricCanvas {
    * @param element <canvas> element to initialize instance on
    * @param [options] Options object
    */
-  protected _initialize(element: HTMLCanvasElement | string, options?: fabric.ICanvasOptions) {
+  protected _initialize(element: HTMLCanvasElement | string, options?: IEBoardCanvasOptions) {
+    this.options = options ? options : {} as IEBoardCanvasOptions;
     this._createCursorCanvas();
+
+    if (this.options.isZoom === true) {
+      this.enableZooming();      
+    }
+    
+    this.options.originalVpt = _.map(this.getViewportTransform(), _.clone);
+  }
+
+  /**
+   * Update options
+   * @param opts 
+   */
+  public setOptions(opts: any) {
+    _.assign(this.options, opts);
   }
 
   /**
@@ -382,7 +415,7 @@ export class EBoardCanvas extends FabricCanvas {
    * @param eventType 
    * @param listener 
    */
-  public addEventListener(eventType: string, listener: (event: any) => void): EBoardCanvas {
+  public addEventListener(eventType: FabricEventType, listener: (event: any) => void): EBoardCanvas {
     this.on(eventType, listener);
     return this;
   }
@@ -392,22 +425,48 @@ export class EBoardCanvas extends FabricCanvas {
    * @param eventType 
    * @param listener 
    */
-  public removeEventListener(eventType: string, listener?: (event: any) => void): EBoardCanvas  {
+  public removeEventListener(eventType: FabricEventType, listener?: (event: any) => void): EBoardCanvas  {
     this.off(eventType, listener);
     return this;
   } 
 
-  public isZoomingMode(): boolean {
-    return this.isZoom;
+  /**
+   * Remove all registered listeners.
+   */
+  public removeAllListeners(): EBoardCanvas  {
+    this.off();
+    return this;
+  }
+
+  public isEnabledZooming(): boolean {
+    return this.options.isZoom || false;
   }
 
   public enableZooming() {
+    this.setOptions({'isZoom': true}); 
     this.addEventListener(FabricEventType.MOUSE_WHEEL, this.__handleZooming);
-    this.isZoom = true;
+  }
+  
+  public disableZooming() {
+    this.removeEventListener(FabricEventType.MOUSE_WHEEL, this.__handleZooming);
+    this.setOptions({'isZoom': false});
+  }
+
+  public isEnabledPanning(): boolean {
+    return this.options.isPanning || false;
+  }
+
+  public setPanning(isPanning: boolean) {
+    this.setOptions({'isPanning': isPanning});
   }
 
   private __handleZooming(opt: any)  {
     let delta = opt.e.deltaY;
+    let pointer;
+    if (this.isEnabledPanning()) {
+       pointer = this.getPointer(opt.e);
+    }
+
     let zoom = this.getZoom();
     zoom = zoom + delta / 200;
     if (zoom > 20) {
@@ -416,13 +475,48 @@ export class EBoardCanvas extends FabricCanvas {
     if (zoom < 0.01) {
         zoom = 0.01;
     }
-    this.setZoom(zoom);
+
+    if (this.isEnabledPanning()) {
+      this.zoomToPoint({ x: pointer.x, y: pointer.y } as fabric.Point, zoom)
+    } else {
+      this.setZoom(zoom);
+    }
     opt.e.preventDefault();
     opt.e.stopPropagation();
   }
-  
-  public disableZooming() {
-    this.removeEventListener(FabricEventType.MOUSE_WHEEL, this.__handleZooming);
-    this.isZoom = false;
+
+  /**
+   * @override
+   */
+  public zoomToPoint(point: fabric.Point, value: number): this {
+    let before = point, vpt = this.viewportTransform.slice(0);
+    let oldVpt = _.map(vpt, _.clone);
+
+    point = fabric.util.transformPoint(point, fabric.util.invertTransform(this.viewportTransform));
+    vpt[0] = value;
+    vpt[3] = value;
+    var after = fabric.util.transformPoint(point, vpt);
+    vpt[4] += before.x - after.x;
+    vpt[5] += before.y - after.y;
+    let ret = this.setViewportTransform(vpt);
+    
+    // Fire a zoom event for undo/redo
+    this.trigger(FabricEventType.ZOOM_AFTER, {'oldVpt': oldVpt, 'value': value, 'point': point, 'lastVpt': _.map(vpt, _.clone)} as ZoomEvent)
+
+    return ret;
+  }
+
+  /**
+   *  Restore original viewport transform.
+   */
+  public restoreOriginalViewportTransform(): void {
+    this.setViewportTransform(this.options.originalVpt);
+  }
+
+  /**
+   * Return original viewport transform.
+   */
+  public getOriginalViewportTransform(): number[] {
+    return this.options.originalVpt;
   }
 } 

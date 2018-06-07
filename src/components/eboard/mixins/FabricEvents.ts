@@ -2,7 +2,11 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-06 11:11:21
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-06 11:28:58
+ * @Last Modified time: 2018-06-07 09:17:27
+ */
+
+/**
+ * The module defines high level events in fabric.
  */
 
 /**
@@ -75,6 +79,17 @@ export enum FabricEventType {
 
   OBJECT_ADD = 'object:added',
 
-  OBJECT_REMOVED = 'object:removed'
+  OBJECT_REMOVED = 'object:removed',
 
+  ZOOM_AFTER = 'zoom:after',
+}
+
+/**
+ * Zoom event structure.
+ */
+export interface ZoomEvent {
+  oldVpt: number[];
+  value: number;
+  point: fabric.Point;
+  lastVpt: number[]
 }

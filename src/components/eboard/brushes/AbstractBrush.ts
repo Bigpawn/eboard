@@ -6,10 +6,10 @@
  */
 import * as _ from 'lodash';
 import { applyMixins } from '../utils/utils';
-import {fabric} from 'fabric';
+import { fabric } from 'fabric';
 import { CssCursor } from '../cursor/CssCursor';
 import ICursor from '../cursor/ICursor';
-import EBoardCanvas from '../EBoardCanvas';
+import { EBoardCanvas } from '../EBoardCanvas';
 import { BrushType } from './BrushType';
 import { IBrush } from './IBrush';
 

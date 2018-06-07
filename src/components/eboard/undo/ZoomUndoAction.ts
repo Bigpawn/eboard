@@ -1,17 +1,17 @@
 /*
  * @Author: Liheng (liheeng@gmail.com)
- * @Date: 2018-06-06 11:10:47
+ * @Date: 2018-06-07 09:11:03
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-07 09:26:42
+ * @Last Modified time: 2018-06-07 09:27:12
  */
-import { FabricEventType } from '../mixins/FabricEvents';
+import { FabricEventType, ZoomEvent } from '../mixins/FabricEvents';
 import { AbstractUndoAction} from '../mixins/Undo';
 import EBoardEngine from '../EBoardEngine';
 /**
  * "path:created" undo/redo action.
  */
-export default class PathCreatedUndoAction extends AbstractUndoAction {
-    constructor(event: any) {
+export default class ZoomUndoAction extends AbstractUndoAction {
+    constructor(event: ZoomEvent) {
         super(event);
     }
     
@@ -19,7 +19,7 @@ export default class PathCreatedUndoAction extends AbstractUndoAction {
      * @override
      */
     public getType(): any {
-        return FabricEventType.PATH_CREATED;
+        return FabricEventType.ZOOM_AFTER;
     }
 
     /**
@@ -27,9 +27,8 @@ export default class PathCreatedUndoAction extends AbstractUndoAction {
      * @param eBoardEngine 
      */
     undo(eBoardEngine: EBoardEngine): void {
-        if (this.event.path) {
-            eBoardEngine.getEBoardCanvas().remove(this.event.path);
-        }
+        let event = this.event as ZoomEvent;
+        eBoardEngine.getEBoardCanvas().setViewportTransform(event.oldVpt);
     }
 
     /**
@@ -37,8 +36,7 @@ export default class PathCreatedUndoAction extends AbstractUndoAction {
      * @param eBoardEngine 
      */
     redo(eBoardEngine: EBoardEngine): void {
-        if (this.event.path) {
-            eBoardEngine.getEBoardCanvas().add(this.event.path);
-        }
+        let event = this.event as ZoomEvent;
+        eBoardEngine.getEBoardCanvas().setViewportTransform(event.lastVpt);
     }
 }

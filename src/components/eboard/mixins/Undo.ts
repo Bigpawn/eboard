@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-05 15:51:37
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-06 11:09:43
+ * @Last Modified time: 2018-06-07 09:26:35
  */
 import EBoardEngine from "../EBoardEngine";
 
@@ -36,7 +36,7 @@ export interface IUndoRedoAction {
 /**
  * Abstract class to implement common functions for undo/redo action.
  */
-export abstract class AbstractUndoRedoAction implements IUndoRedoAction {
+export abstract class AbstractUndoAction implements IUndoRedoAction {
     /**
      * Event
      */
@@ -77,7 +77,7 @@ export abstract class AbstractUndoRedoAction implements IUndoRedoAction {
 /**
  * The class executes undo/redo operation according to operation records.
  */
-export class UndoRedoEngine {
+export class UndoEngine {
      private eBoardEngine: EBoardEngine;
  
      /**

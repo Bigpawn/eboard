@@ -2,7 +2,10 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-06 09:13:13
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-06 09:49:19
+ * @Last Modified time: 2018-06-07 09:16:00
+ */
+/**
+ * The module extends standard fabricjs implementation.
  */
 const fabric = (window as any).fabric;
 const Color = fabric.Color;

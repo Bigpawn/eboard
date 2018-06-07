@@ -2,13 +2,13 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:07:19
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-06 11:46:48
+ * @Last Modified time: 2018-06-07 09:25:21
  */
 import * as React from "react";
 import "./EBoardWidget.scss";
 import EBoardEngine from "./EBoardEngine";
 import { Document, Page } from 'react-pdf';
-import { FabricEventType } from "./mixins/FabricEventType";
+import { FabricEventType } from "./mixins/FabricEvents";
 /**
  * Define eBoard props
  */
@@ -58,7 +58,11 @@ export default class EBoardWidget extends React.Component < EBoardProps, EBoardS
     }
 
     public componentDidMount() {
-        this.eBoardEngine =  new EBoardEngine(this.getCanvasWrapper(), this.getCanvasElement());
+        let options: any = {
+            isZoom: true,
+            isPanning: true
+        };
+        this.eBoardEngine =  new EBoardEngine(this.getCanvasWrapper(), this.getCanvasElement(), options);
         this.props.onInitEBoardEngine(this.eBoardEngine);
     }
 
