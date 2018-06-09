@@ -6,15 +6,13 @@
  */
 import * as _ from 'lodash';
 import * as React from "react";
-import * as Redux from "redux";
+// import * as Redux from "redux";
 import { connect } from "react-redux";
 import * as classNames from 'classnames';
 import { InputNumber } from "antd";
 import { SketchPicker as ColorPicker} from 'react-color';
 
 import { fabric } from "fabric";
-import { IStates } from "../reducers/rootReducer";
-import { actionCreators } from "../actions/actions";
 import { BrushType } from "../eboard/brushes/BrushType";
 import { IBrushOptions } from "../eboard/brushes/IBrush";
 import BrushManager from "../eboard/brushes/BrushManager";
@@ -211,7 +209,7 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
                     <div className="color_palette" style={this.state.fillColorPickerStyle} onMouseOut={ (event: any) => {this.__handleFillColorMouseOut(event); }} >
                         <ColorPicker color={ this.state.brushSettings.fill } onChangeComplete={ (color: any) => { this.__handleFillColorChanged(color); }} />
                     </div>
-                    <RestoreIcon color="primary" className={classNames("icon")} onClick={ (evt: MouseEvent) => { this.__restoreOriginalVpt(evt); }} />
+
                     <div>Zoom:</div>
                     <InputNumber
                         defaultValue={1}
@@ -225,6 +223,7 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
                     />
                     <UndoIcon color={this.state.undoSize > 0 ? "secondary" : "disabled"} className={classNames("icon")} onClick={(evt: any) => {this.__undo(evt); }} />
                     <RedoIcon color={this.state.redoSize > 0 ? "secondary" : "disabled"} className={classNames("icon")} onClick={(evt: any) => {this.__redo(evt); }} />
+                    <RestoreIcon color="primary" className={classNames("icon")} onClick={ (evt: MouseEvent) => { this.__restoreOriginalVpt(evt); }} />
                 </div>
                 <div style={{height: "100%"}}>
                     <EBoardWidget  onInitEBoardEngine={ (eBoardEngine: EBoardEngine) => { this.__setEBoardEngine(eBoardEngine); }} />
@@ -234,19 +233,4 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
     }
 }
 
-const mapStateToProps = (states: IStates) => {
-    return {
-        selectedBrush: states.paintToolbarStates.currentBrush,
-    };
-};
-
-const mapDispatchToProps = (dispatch: any, ownProps: any) => {
-    return {
-        actions: Redux.bindActionCreators(actionCreators, dispatch),
-        onSetBrush: (evt: any, brushType: BrushType) => {
-            dispatch(actionCreators.selectBrushAction(brushType));
-        },
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(PaintPage);
+export default connect()(PaintPage);
