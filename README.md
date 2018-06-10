@@ -27,6 +27,7 @@ https://github.com/wojtekmaj/react-pdf
 7. equation editing plugin
   https://codepen.io/tswone/pen/ozYxzw
   Style reference: http://www.wiris.com/editor/demo/en/index
+  https://www.mathcha.io/editor
   html2canvas
   
 8. chart plugin
