@@ -2,9 +2,9 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-07 09:11:03
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-07 09:27:12
+ * @Last Modified time: 2018-06-11 19:35:06
  */
-import { FabricEventType, ZoomEvent } from '../mixins/FabricEvents';
+import { FabricObservingEventType, ZoomEvent } from '../mixins/FabricEvents';
 import { AbstractUndoAction} from '../mixins/Undo';
 import EBoardEngine from '../EBoardEngine';
 /**
@@ -19,7 +19,7 @@ export default class ZoomUndoAction extends AbstractUndoAction {
      * @override
      */
     public getType(): any {
-        return FabricEventType.ZOOM_AFTER;
+        return FabricObservingEventType.ZOOM_AFTER;
     }
 
     /**

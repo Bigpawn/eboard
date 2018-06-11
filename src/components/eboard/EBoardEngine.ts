@@ -2,13 +2,13 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 23:34:18
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-06 11:45:04
+ * @Last Modified time: 2018-06-11 19:34:12
  */
 import { fabric } from 'fabric';
 import { EBoardCanvas } from './EBoardCanvas';
 import { UndoEngine } from './mixins/Undo';
 import PathCreatedUndoAction from './undo/PathCreatedUndoAction';
-import { FabricEventType, ZoomEvent } from './mixins/FabricEvents';
+import { FabricObservingEventType, FabricOtherEventType, ZoomEvent } from './mixins/FabricEvents';
 import ZoomUndoAction from './undo/ZoomUndoAction';
 
 export default class EBoardEngine {
@@ -51,8 +51,8 @@ export default class EBoardEngine {
     private __initUndoListener() {
         // TODO ...
         // REGISTER LISTENER FOR UNDO/REDO
-        this.eBoardCanvas.addEventListener(FabricEventType.PATH_CREATED, (event: any) => this.__handlePathCreated(event));
-        this.eBoardCanvas.addEventListener(FabricEventType.ZOOM_AFTER, (event: ZoomEvent) => this.__handleZoomAfter(event));
+        this.eBoardCanvas.addEventListener(FabricOtherEventType.PATH_CREATED, (event: any) => this.__handlePathCreated(event));
+        this.eBoardCanvas.addEventListener(FabricObservingEventType.ZOOM_AFTER, (event: ZoomEvent) => this.__handleZoomAfter(event));
     }
 
     /**
@@ -94,7 +94,7 @@ export default class EBoardEngine {
      * @param eventType 
      * @param listener 
      */
-    public addEventListener(eventType: FabricEventType, listener: (event: any) => void) {
+    public addEventListener(eventType: FabricObservingEventType, listener: (event: any) => void) {
         this.eBoardCanvas.addEventListener(eventType, listener);
     }
 }

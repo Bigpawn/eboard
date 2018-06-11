@@ -68,7 +68,7 @@ class FabricCanvas extends fabric.Canvas {
 }
 
 /**
- * Options of EBoardCanvas.
+ * EBoardCanvas option defintions.
  */
 export interface IEBoardCanvasOptions extends fabric.ICanvasOptions {
   /**
@@ -90,7 +90,21 @@ export interface IEBoardCanvasOptions extends fabric.ICanvasOptions {
 /**
  * The class supports white pad functions.
  */
-export class EBoardCanvas extends FabricCanvas {
+export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions {
+  /**
+   * Indicates if zoom is enabled or not.
+   */
+  isZoom: boolean;
+
+  /**
+   * Indicates if zoom is using panning mode.
+   */
+  isPanning: boolean;
+
+  /**
+   * Backup original viewport transform.
+   */
+  originalVpt: number[];
 
   /**
    * The canvas is used to drawing cursor.
@@ -111,6 +125,7 @@ export class EBoardCanvas extends FabricCanvas {
    */
   constructor(element: HTMLCanvasElement | string, options?: IEBoardCanvasOptions) {
     super(element, options);
+    this.options = options ? options : {} as IEBoardCanvasOptions;
     this._initialize(element, options);
   }
 
@@ -122,22 +137,13 @@ export class EBoardCanvas extends FabricCanvas {
    * @param [options] Options object
    */
   protected _initialize(element: HTMLCanvasElement | string, options?: IEBoardCanvasOptions) {
-    this.options = options ? options : {} as IEBoardCanvasOptions;
     this._createCursorCanvas();
 
-    if (this.options.isZoom === true) {
+    if (this.isZoom === true) {
       this.enableZooming();      
     }
     
-    this.options.originalVpt = _.map(this.getViewportTransform(), _.clone);
-  }
-
-  /**
-   * Update options
-   * @param opts 
-   */
-  public setOptions(opts: any) {
-    _.assign(this.options, opts);
+    this.originalVpt = _.map(this.getViewportTransform(), _.clone);
   }
 
   /**
@@ -439,25 +445,25 @@ export class EBoardCanvas extends FabricCanvas {
   }
 
   public isEnabledZooming(): boolean {
-    return this.options.isZoom || false;
+    return this.isZoom || false;
   }
 
   public enableZooming() {
-    this.setOptions({'isZoom': true}); 
+    this.set({'isZoom': true}); 
     this.addEventListener(FabricEventType.MOUSE_WHEEL, this.__handleZooming);
   }
   
   public disableZooming() {
     this.removeEventListener(FabricEventType.MOUSE_WHEEL, this.__handleZooming);
-    this.setOptions({'isZoom': false});
+    this.set({'isZoom': false});
   }
 
   public isEnabledPanning(): boolean {
-    return this.options.isPanning || false;
+    return this.isPanning || false;
   }
 
   public setPanning(isPanning: boolean) {
-    this.setOptions({'isPanning': isPanning});
+    this.set({'isPanning': isPanning});
   }
 
   private __handleZooming(opt: any)  {
@@ -510,13 +516,13 @@ export class EBoardCanvas extends FabricCanvas {
    *  Restore original viewport transform.
    */
   public restoreOriginalViewportTransform(): void {
-    this.setViewportTransform(this.options.originalVpt);
+    this.setViewportTransform(this.originalVpt);
   }
 
   /**
    * Return original viewport transform.
    */
   public getOriginalViewportTransform(): number[] {
-    return this.options.originalVpt;
+    return this.originalVpt;
   }
 } 

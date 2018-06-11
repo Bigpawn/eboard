@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-06 11:11:21
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-07 09:17:27
+ * @Last Modified time: 2018-06-11 19:27:58
  */
 
 /**
@@ -13,7 +13,7 @@
  * The operation type indicates path
  * {@link http://fabricjs.com/events }
  */
-export enum FabricEventType {
+export enum FabricObservingEventType {
 
   // Observing these events
   OBJECT_MODIFIED = 'object:modified',
@@ -74,16 +74,64 @@ export enum FabricEventType {
 
   AFTER_RENDER = 'after:render',
 
+  ZOOM_AFTER = 'zoom:after',
+}
+
+export enum FabricOtherEventType {
   // Other available events
   PATH_CREATED = 'path:created',
 
   OBJECT_ADD = 'object:added',
 
   OBJECT_REMOVED = 'object:removed',
-
-  ZOOM_AFTER = 'zoom:after',
 }
 
+export enum FabricObjectEventType {
+  MOVING = 'moving',
+
+  SCALING = 'sacling',
+
+  ROTATING = 'rotating',
+
+  SKEWING = 'skewing',
+
+  MOVED = 'moved',
+
+  SCALED = 'scaled',
+
+  ROTATED = 'rotated',
+
+  SKEWED = 'skewed',
+
+  MOUSEUP = 'mouseup',
+
+  MOUSEDOWN = 'mousedown',
+
+  MOUSEMOVE = 'mousemove',
+
+  MOUSEUP_BEFORE = 'mouseup:before',
+
+  MOUSEDOWN_BEFORE = 'mousedown:before',
+
+  MOUSEMOVE_BEFORE = 'mousemove:before',
+
+  MOUSEDBLCLICK = 'mousedblclick',
+
+  MOUSEWHEEL = 'mousewheel',
+
+  MOUSEOVER = 'mouseover',
+  
+  MOUSEOUT = 'mouseout',
+  
+  DROP = 'drop',
+
+  DRAGOVER = 'dragover',
+
+  DRAGENTER = 'dragenter',
+
+  DRAGLEAVE = 'dragleave',
+
+}
 /**
  * Zoom event structure.
  */
