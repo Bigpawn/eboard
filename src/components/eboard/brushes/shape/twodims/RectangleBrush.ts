@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-30 14:40:36
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 18:34:09
+ * @Last Modified time: 2018-06-12 22:06:11
  */
 import * as _ from "lodash";
 import { fabric } from "fabric";
@@ -27,6 +27,10 @@ export default class RectangleBrush extends AbstractBrush {
      * @override
      */
     protected _createObject(): fabric.Object {
+        if (!this._points || this._points.length < 2) {
+            return null;
+        }
+        
         let p1 = this._points[0],
             p2 = this._points[1];
 

@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-31 22:56:05
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 18:34:00
+ * @Last Modified time: 2018-06-12 22:02:52
  */
 /*
  * @Author: Liheng (liheeng@gmail.com)
@@ -32,6 +32,10 @@ export default class CircleBrush extends RectangleBrush {
      * @override
      */
     protected _createObject(): fabric.Object {
+        if (!this._points || this._points.length === 0) {
+            return undefined;
+        }
+
         let start = this._points[0],
             end = this._points[1];
 

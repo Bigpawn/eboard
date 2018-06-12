@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-06 11:11:21
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-11 19:27:58
+ * @Last Modified time: 2018-06-12 21:41:03
  */
 
 /**
@@ -75,9 +75,7 @@ export enum FabricObservingEventType {
   AFTER_RENDER = 'after:render',
 
   ZOOM_AFTER = 'zoom:after',
-}
 
-export enum FabricOtherEventType {
   // Other available events
   PATH_CREATED = 'path:created',
 

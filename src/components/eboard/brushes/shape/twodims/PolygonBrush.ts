@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-01 11:43:59
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-01 14:59:36
+ * @Last Modified time: 2018-06-12 22:04:54
  */
 import * as _ from "lodash";
 import { fabric } from "fabric";
@@ -100,6 +100,10 @@ export default class PolygonBrush extends LineBrush {
         points.push(
             { x: this._polygonPoints[0].x, y: this._polygonPoints[0].y });
 
+        if (points.length === 0) {
+            return null;
+        }
+        
         let renderOpts = {};
         _.defaultsDeep(renderOpts, this.options);
         return new fabric.Polygon(points, renderOpts);

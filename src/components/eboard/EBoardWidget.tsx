@@ -2,13 +2,12 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:07:19
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 11:21:59
+ * @Last Modified time: 2018-06-12 21:41:29
  */
 import * as React from "react";
 import "./EBoardWidget.scss";
 import EBoardEngine from "./EBoardEngine";
 import { Document, Page } from 'react-pdf';
-import { FabricOtherEventType } from "./mixins/FabricEvents";
 /**
  * Define eBoard props
  */

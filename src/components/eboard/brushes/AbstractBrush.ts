@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:03:04
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 21:10:55
+ * @Last Modified time: 2018-06-12 22:09:53
  */
 import * as _ from 'lodash';
 import { applyMixins } from '../utils/utils';
@@ -96,6 +96,7 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
     if (this.cursor) {
       this.cursor.setCanvas(this.canvas);
     }
+    this._updateFreeDrawingCursor();
   }
 
   /**
@@ -112,6 +113,10 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
   public setCursor(cursor: ICursor) {
     this.cursor = cursor;
     this.cursor.setCanvas(this.canvas);
+    this._updateFreeDrawingCursor();
+  }
+
+  protected _updateFreeDrawingCursor() {
     if (this.cursor) {
       if (this.cursor.getType() === CursorType.CUSTOM_CURSOR && this.canvas) {
         // Disable system cursor, use custom cursor instead.
@@ -207,7 +212,7 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
   protected abstract _createObject(): fabric.Object;
 
   /**
-   * Draw shape track.
+   * Draw object track.
    *
    * @override
    */
@@ -216,15 +221,15 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
     let ctx: CanvasRenderingContext2D = canvas.getSelectionCanvasContext(),
              v = canvas.getViewportTransform();
 
-    let shape: fabric.Object = this._createObject();
-    if (shape == null) {
+    let object: fabric.Object = this._createObject();
+    if (object == null) {
       return;
     }
 
     ctx.save();
     ctx.transform(v[0], v[1], v[2], v[3], v[4], v[5]);
 
-    shape.render(ctx);
+    object.render(ctx);
 
     ctx.restore();
   }
@@ -237,20 +242,23 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
   protected _finalizeAndAddPath() {
     let canvas = this.canvas as EBoardCanvas;
 
-    // Create shape
-    let shape: fabric.Object = this._createObject();
-
+    // Create render object
+    let object: fabric.Object = this._createObject();
+    if (object == null) {
+      return;
+    }
+    
     // Clear points.
     this._points = [];
 
     canvas.clearContext(canvas.getSelectionCanvasContext());
-    canvas.add(shape);
+    canvas.add(object);
     canvas.renderAll();
-    shape.setCoords();
+    object.setCoords();
     this._resetShadow();
 
     // fire event 'path' created
-    canvas.trigger('path:created', {path: shape});
+    canvas.trigger('path:created', {path: object});
   }
 
   // Method from fabric.BashBrush

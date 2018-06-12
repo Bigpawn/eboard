@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-28 20:01:31
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 18:47:30
+ * @Last Modified time: 2018-06-12 21:53:18
  */
 import * as _ from 'lodash';
 import * as React from "react";
@@ -23,7 +23,7 @@ import EBoardEngine from '../eboard/EBoardEngine';
 import {PointerIcon, LineIcon, PenIcon, CircleIcon, RectangleIcon, PolygonIcon, TriangleIcon, TextIcon, EraserIcon, ColorPaletteIcon, UndoIcon, RedoIcon, RestoreIcon } from "../icons/SvgIcons";
 
 import "./PaintPage.scss";
-import { FabricObservingEventType, FabricOtherEventType, ZoomEvent } from '../eboard/mixins/FabricEvents';
+import { FabricObservingEventType, ZoomEvent } from '../eboard/mixins/FabricEvents';
 
 interface IPaintPageStates {
     currentBrush: BrushType;
@@ -44,8 +44,8 @@ interface IPaintPageProps extends React.Props<PaintPage> {
 const defaultCursorOptions: any = {
     fill: "rgb(255, 0, 0, 1)",
     stroke: "rgb(0, 255, 0, 1)",
-    strokeWidth: 5,
-    radius: 2
+    strokeWidth: 3,
+    radius: 5
 };
 
 const defaultBrushOptions: IBrushOptions = {

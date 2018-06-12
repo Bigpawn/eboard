@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 11:49:55
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 18:06:41
+ * @Last Modified time: 2018-06-12 21:56:24
  */
 import { fabric } from "fabric";
 import ICursor from "./ICursor";
@@ -18,8 +18,8 @@ export default class CircleCursor extends AbstractCustomCursor {
     stroke: fabric.Color;
     strokeWidth: number|string;
 
-    constructor(name: string, options?: any, canvas?: EBoardCanvas) {
-        super(name, options, canvas || options.canvas);
+    constructor(options?: any, canvas?: EBoardCanvas) {
+        super('circle', options, canvas || options.canvas);
         this._init(options || {});
     }
 

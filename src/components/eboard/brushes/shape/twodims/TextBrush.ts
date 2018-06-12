@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-12 17:35:17
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 21:15:03
+ * @Last Modified time: 2018-06-12 22:07:49
  */
 import * as _ from 'lodash';
 import AbstractBrush from '../../AbstractBrush';
@@ -54,6 +54,7 @@ export default class TextBrush extends AbstractBrush {
    * Invoked on mouse up
    */
   public onMouseUp(pointer: fabric.Point): void {
+    this.canvas.disableDrawingTrack();
     this._finalizeAndAddPath();
   }
 
@@ -76,6 +77,10 @@ export default class TextBrush extends AbstractBrush {
    * @override
    */
   protected _createObject(): fabric.Object {
+    if (!this._points || this._points.length === 0) {
+        return null;
+    }
+    
     let textFunc = fabric[this.options.textType];
     let renderOpts = {};
     _.defaultsDeep(renderOpts, {'left': this._points[0].x, 'top': this._points[0].y}, this.options);
