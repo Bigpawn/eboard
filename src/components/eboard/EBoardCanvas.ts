@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:56:54
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-07 09:24:41
+ * @Last Modified time: 2018-06-12 11:21:20
  */
 import * as _ from 'lodash';
 import { fabric } from 'fabric';
@@ -10,7 +10,7 @@ import './mixins/ExFabric';
 import AbstractBrush from './brushes/AbstractBrush';
 import { BrushType } from './brushes/BrushType';
 import { CssCursor } from './cursor/CssCursor';
-import { FabricEventType, ZoomEvent } from './mixins/FabricEvents';
+import { FabricObservingEventType, ZoomEvent } from './mixins/FabricEvents';
 
 /**
  * The class extends <code>fabric.Canvas</code> to expose necessary properties and functions.
@@ -421,7 +421,7 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
    * @param eventType 
    * @param listener 
    */
-  public addEventListener(eventType: FabricEventType, listener: (event: any) => void): EBoardCanvas {
+  public addEventListener(eventType: FabricObservingEventType, listener: (event: any) => void): EBoardCanvas {
     this.on(eventType, listener);
     return this;
   }
@@ -431,7 +431,7 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
    * @param eventType 
    * @param listener 
    */
-  public removeEventListener(eventType: FabricEventType, listener?: (event: any) => void): EBoardCanvas  {
+  public removeEventListener(eventType: FabricObservingEventType, listener?: (event: any) => void): EBoardCanvas  {
     this.off(eventType, listener);
     return this;
   } 
@@ -450,11 +450,11 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
 
   public enableZooming() {
     this.set({'isZoom': true}); 
-    this.addEventListener(FabricEventType.MOUSE_WHEEL, this.__handleZooming);
+    this.addEventListener(FabricObservingEventType.MOUSE_WHEEL, this.__handleZooming);
   }
   
   public disableZooming() {
-    this.removeEventListener(FabricEventType.MOUSE_WHEEL, this.__handleZooming);
+    this.removeEventListener(FabricObservingEventType.MOUSE_WHEEL, this.__handleZooming);
     this.set({'isZoom': false});
   }
 
@@ -507,7 +507,7 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
     let ret = this.setViewportTransform(vpt);
     
     // Fire a zoom event for undo/redo
-    this.trigger(FabricEventType.ZOOM_AFTER, {'oldVpt': oldVpt, 'value': value, 'point': point, 'lastVpt': _.map(vpt, _.clone)} as ZoomEvent)
+    this.trigger(FabricObservingEventType.ZOOM_AFTER, {'oldVpt': oldVpt, 'value': value, 'point': point, 'lastVpt': _.map(vpt, _.clone)} as ZoomEvent)
 
     return ret;
   }
