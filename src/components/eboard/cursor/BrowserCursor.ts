@@ -2,9 +2,16 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-27 22:52:05
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-05-27 23:00:38
+ * @Last Modified time: 2018-06-12 18:40:03
  */
-export enum CssCursor {
+import ICursor from "./ICursor";
+import { CursorType } from "./CursorType";
+import { EBoardCanvas } from "../EBoardCanvas";
+
+/**
+ * Define browser cursor types.
+ */
+export enum BrowserCursorName {
   AUTO = 'auto',
   DEFAULT = 'default',
   NONE = 'none',
@@ -15,7 +22,7 @@ export enum CssCursor {
   WAIT = 'wait',
   CELL = 'cell',
   CROSSHAIR = 'crosshair',
-  TEST = 'text',
+  TEXT = 'text',
   VERTICAL_TEXT = 'vertical-text',
   ALIAS = 'alias',
   COPY = 'copy',
@@ -41,4 +48,47 @@ export enum CssCursor {
   ZOOM_OUT = 'zoom-out',
   GRAB = 'grab',
   GRABBING = 'grabbing',
+}
+
+/**
+ * Abstract class of default cursor.
+ */
+export class DefaultCursor implements ICursor {
+  name: string;
+  canvas: EBoardCanvas;
+
+  constructor(name: string, canvas?: EBoardCanvas) {
+    this.name = name;
+    this.canvas = canvas;
+  }
+
+  /**
+   * @override
+   */
+  getType(): CursorType {
+    return CursorType.BROWSER_CURSOR;
+  }
+
+  /**
+   * @override
+   */
+  getName(): string {
+    return this.name;
+  }
+
+  /**
+   * @override
+   * @param point 
+   */
+  render(point: { x: number; y: number; } | fabric.Point): void {
+    return;
+  }
+
+  setCanvas(canvas: EBoardCanvas): void {
+    this.canvas = canvas;
+  }
+
+  _canvas(): EBoardCanvas {
+    return this.canvas;
+  }
 }

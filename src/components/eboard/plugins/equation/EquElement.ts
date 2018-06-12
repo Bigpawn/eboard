@@ -2,21 +2,18 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-09 15:18:23
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-11 09:20:14
+ * @Last Modified time: 2018-06-12 11:29:00
  */
 import { fabric } from 'fabric';
 
 /**
  * 公式排列方式
  */
-enum Arrange {
+enum ExprArrange {
     HORIZONTAL = "horizontal",
     VERTICAL = "vertical",
 }
 
-class ExpressionLayout {
-    
-}
 /**
  * 算式
  * Expression = { Expression... } || { Operand... } || { Operator... } || { Symbol... }
@@ -24,7 +21,7 @@ class ExpressionLayout {
 class Expression extends fabric.Group {
     private options: any;
 
-    private arrange: Arrange;
+    private arrange: ExprArrange;
 
     constructor(options: any) {
         super(options);

@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-28 20:01:42
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-01 13:39:41
+ * @Last Modified time: 2018-06-12 18:47:56
  */
 import { BrushType } from "./BrushType";
 import AbstractBrush from "./AbstractBrush";
@@ -13,6 +13,7 @@ import PointerBrush from "./PointerBrush";
 import RectangleBrush from "./shape/twodims/RectangleBrush";
 import CircleBrush from "./shape/twodims/CircleBrush";
 import PolygonBrush from "./shape/twodims/PolygonBrush";
+import TextBrush from "./shape/twodims/TextBrush";
 
 /*
  * @Author: Liheng (liheeng@gmail.com)
@@ -91,7 +92,10 @@ export default class BrushManager {
                 brush = new PolygonBrush(options);
                 break;
                 
-            case BrushType.TEXT_BRUSH:      
+            case BrushType.TEXT_BRUSH:  
+                brush = new TextBrush(options);
+                break;
+                    
             case BrushType.TRIANGLE_BRUSH:
             
                 brush = new PointerBrush(options);

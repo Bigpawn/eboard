@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-27 22:13:21
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-01 11:43:36
+ * @Last Modified time: 2018-06-12 20:42:39
  */
 import {fabric} from 'fabric';
 import AbstractBrush from '../../AbstractBrush';
@@ -166,7 +166,10 @@ export default class PencilBrush extends AbstractBrush {
     this.canvas.trigger('path:created', {path: path});
   }
 
-  protected _createShape(): fabric.Object {
+  /**
+   * @override
+   */
+  protected _createObject(): fabric.Object {
     throw new Error("Method not implemented.");
   }
 }

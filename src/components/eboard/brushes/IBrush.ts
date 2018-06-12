@@ -2,12 +2,29 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:03:52
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-01 11:29:19
+ * @Last Modified time: 2018-06-12 20:58:42
  */
 import { fabric } from 'fabric';
 import { BrushType } from './BrushType';
 import ICursor from '../cursor/ICursor';
-import EBoardCanvas from '../EBoardCanvas';
+import { EBoardCanvas } from '../EBoardCanvas';
+
+export enum TextType {
+  TEXT = 'Text',
+  I_TEXT= 'IText',
+  TEXT_BOX = 'TextBox',
+}
+
+export enum FontWeight {
+  NORMAL = 'normal',
+  BOLD = 'bold',
+}
+
+export enum TextAlign {
+  LEFT = 'left',
+  CENTER = 'center',
+  RIGHT = 'right',
+}
 
 /**
  * Default brush options.
@@ -51,6 +68,24 @@ export interface IBrushOptions {
 
   // For Circle
   redius?: number | string;
+
+  // For text
+  // 'text' or 'itext' or 'textbox'
+  textType?: TextType;
+  fontStyle?: string;
+  fontFamily?: string;
+  fontSize?: number | string;
+  // css font weight
+  // "normal", "bold"
+  fontWeight?: FontWeight;
+  underline?: boolean;
+  linethrough?: boolean;
+  overline?: boolean;
+  // "left", "center", and "right".
+  textAlign?: TextAlign;
+  lineHeight?: number;
+  textBackgroundColor?: fabric.Color | string;
+
 }
 
 /**

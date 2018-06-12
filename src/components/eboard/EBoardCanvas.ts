@@ -2,14 +2,14 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:56:54
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 11:21:20
+ * @Last Modified time: 2018-06-12 20:36:04
  */
 import * as _ from 'lodash';
 import { fabric } from 'fabric';
 import './mixins/ExFabric';
 import AbstractBrush from './brushes/AbstractBrush';
 import { BrushType } from './brushes/BrushType';
-import { CssCursor } from './cursor/CssCursor';
+import { BrowserCursorName } from './cursor/BrowserCursor';
 import { FabricObservingEventType, ZoomEvent } from './mixins/FabricEvents';
 
 /**
@@ -251,13 +251,12 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
     }
 
     if (brush.getType() !== BrushType.POINTER_BRUSH) {
-      this.setPointerCursor(CssCursor.NONE);
       // this.deactivateAll();
       this.renderAll();
       this.enableDrawingModel();
 
     } else {
-      this.setPointerCursor(CssCursor.DEFAULT);
+      this.setPointerCursor(BrowserCursorName.DEFAULT);
       this.clearFreeDrawingBrush();
     }
   }
@@ -270,7 +269,7 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
     delete this.freeDrawingBrush;
   }
 
-  public setPointerCursor(cursor: CssCursor) {
+  public setPointerCursor(cursor: BrowserCursorName) {
     this.freeDrawingCursor = cursor;
   }
 

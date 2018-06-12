@@ -2,22 +2,24 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:03:04
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-01 15:07:32
+ * @Last Modified time: 2018-06-12 21:10:55
  */
 import * as _ from 'lodash';
 import { applyMixins } from '../utils/utils';
 import { fabric } from 'fabric';
-import { CssCursor } from '../cursor/CssCursor';
+import { BrowserCursorName } from '../cursor/BrowserCursor';
 import ICursor from '../cursor/ICursor';
 import { EBoardCanvas } from '../EBoardCanvas';
 import { BrushType } from './BrushType';
 import { IBrush } from './IBrush';
+import { CursorType } from '../cursor/CursorType';
 
 /**
  * Define abstract brush class.
  */
 export default abstract class AbstractBrush extends fabric.BaseBrush implements
     IBrush {
+  
   options: any;
 
   canvas: EBoardCanvas;
@@ -91,6 +93,9 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
    */
   public setEBoardCanvas(canvas: EBoardCanvas) {
     this.canvas = canvas;
+    if (this.cursor) {
+      this.cursor.setCanvas(this.canvas);
+    }
   }
 
   /**
@@ -107,10 +112,16 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
   public setCursor(cursor: ICursor) {
     this.cursor = cursor;
     this.cursor.setCanvas(this.canvas);
-    if (this.cursor && this.canvas) {
-      // Disable system cursor, use custom cursor instead.
-      this.canvas.freeDrawingCursor = CssCursor.NONE;
-    }
+    if (this.cursor) {
+      if (this.cursor.getType() === CursorType.CUSTOM_CURSOR && this.canvas) {
+        // Disable system cursor, use custom cursor instead.
+        this.canvas.freeDrawingCursor = BrowserCursorName.NONE;
+      } else {
+        this.canvas.freeDrawingCursor = this.cursor.getName();
+      }
+    } else {
+      this.canvas.freeDrawingCursor = BrowserCursorName.DEFAULT;
+    } 
   }
 
   /**
@@ -190,10 +201,10 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
   }
 
   /**
-   * Create concete shape of this brush for rendering, subclass must implement
+   * Create concete object of this brush for rendering, subclass must implement
    * this method.
    */
-  protected abstract _createShape(): fabric.Object;
+  protected abstract _createObject(): fabric.Object;
 
   /**
    * Draw shape track.
@@ -205,7 +216,7 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
     let ctx: CanvasRenderingContext2D = canvas.getSelectionCanvasContext(),
              v = canvas.getViewportTransform();
 
-    let shape: fabric.Object = this._createShape();
+    let shape: fabric.Object = this._createObject();
     if (shape == null) {
       return;
     }
@@ -227,7 +238,7 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
     let canvas = this.canvas as EBoardCanvas;
 
     // Create shape
-    let shape: fabric.Object = this._createShape();
+    let shape: fabric.Object = this._createObject();
 
     // Clear points.
     this._points = [];

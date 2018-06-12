@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-30 11:47:19
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-01 11:12:04
+ * @Last Modified time: 2018-06-12 18:34:03
  */
 import { fabric } from "fabric";
 import { BrushType } from '../../BrushType';
@@ -25,7 +25,7 @@ export default class LineBrush extends AbstractBrush {
   /**
    * @override
    */
-  protected _createShape(): fabric.Object {
+  protected _createObject(): fabric.Object {
     if (!this._points || this._points.length < 2) {
         return null;
     }

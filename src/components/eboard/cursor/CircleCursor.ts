@@ -2,27 +2,28 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 11:49:55
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-05-30 22:59:42
+ * @Last Modified time: 2018-06-12 18:06:41
  */
 import { fabric } from "fabric";
 import ICursor from "./ICursor";
-import EBoardCanvas from "../EBoardCanvas";
+import { EBoardCanvas } from "../EBoardCanvas";
+import { AbstractCustomCursor } from "./CustomCursor";
 
 /**
  * Circle cursor.
  */
-export default class CircleCursor implements ICursor {
-
-    options?: any;
-    canvas: EBoardCanvas;
+export default class CircleCursor extends AbstractCustomCursor {
     fill: fabric.Color;
     radius: number|string;
     stroke: fabric.Color;
     strokeWidth: number|string;
 
-    constructor(options: any, canvas?: EBoardCanvas) {
-        this.options = options || {};
-        this.canvas = canvas || this.options.canvas;
+    constructor(name: string, options?: any, canvas?: EBoardCanvas) {
+        super(name, options, canvas || options.canvas);
+        this._init(options || {});
+    }
+
+    protected _init(options: any) {                
         this.fill = new fabric.Color(this.options.fill || "rgba(255, 255, 255, 0)");
         this.radius = this.options.radius || (this.canvas && this.canvas.getFreeDrawingBrush().width / 2);
         this.stroke = new fabric.Color(this.options.stroke || 'black');
