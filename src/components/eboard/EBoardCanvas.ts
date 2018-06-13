@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:56:54
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 20:36:04
+ * @Last Modified time: 2018-06-13 09:39:32
  */
 import * as _ from 'lodash';
 import { fabric } from 'fabric';
@@ -161,28 +161,6 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
   }
 
   /**
-   * Create pdf layer.
-   */
-  protected _createPdfViewerLayer() {
-    let lowerCanvasClass = this.getElement().className.replace(/\s*lower-canvas\s*/, '');
-    if (this.cursorCanvasEl) {
-      this.cursorCanvasEl.className = '';
-    } else {
-      this.cursorCanvasEl = this._createCanvasElement();
-    }
-    fabric.util.addClass(this.cursorCanvasEl, 'cursor-canvas ' + lowerCanvasClass);
-
-    this.getWrapperElement().appendChild(this.cursorCanvasEl);
-
-    this._copyCanvasStyle(this.lowerCanvasEl, this.cursorCanvasEl);
-    this._applyCanvasStyle(this.cursorCanvasEl);
-    this.contextCursor = this.cursorCanvasEl.getContext('2d');
-
-    // Disable defualt cursor.
-    this.cursorCanvasEl.style.pointerEvents = 'none';
-  }
-
-  /**
    * Create cursor canvas.
    * @protected
    */
@@ -201,7 +179,8 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
     this._applyCanvasStyle(this.cursorCanvasEl);
     this.contextCursor = this.cursorCanvasEl.getContext('2d');
 
-    // Disable defualt cursor.
+    // Disable pointer events on cursor canvas.
+    // The pointer events enables on upper canvas as default.
     this.cursorCanvasEl.style.pointerEvents = 'none';
   }
 
@@ -254,7 +233,7 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
       // this.deactivateAll();
       this.renderAll();
       this.enableDrawingModel();
-
+      
     } else {
       this.setPointerCursor(BrowserCursorName.DEFAULT);
       this.clearFreeDrawingBrush();
