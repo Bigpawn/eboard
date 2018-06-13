@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-12 17:35:17
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 22:07:49
+ * @Last Modified time: 2018-06-13 14:28:40
  */
 import * as _ from 'lodash';
 import AbstractBrush from '../../AbstractBrush';
@@ -11,7 +11,7 @@ import { BrushType } from '../../BrushType';
 import { BrowserCursorName, DefaultCursor } from '../../../cursor/BrowserCursor';
 
 const defaultOpts = {
-    textType: TextType.I_TEXT,
+    textType: TextType.TEXT,
     fontSize: 40,
 }
 
