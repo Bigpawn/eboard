@@ -39,3 +39,6 @@ https://github.com/wojtekmaj/react-pdf
 11. Data Grid
   https://github.com/fin-hypergrid/core#demos
   https://github.com/TonyGermaneri/canvas-datagrid
+  
+12. Workflow
+https://gojs.net/latest/samples/flowchart.html
