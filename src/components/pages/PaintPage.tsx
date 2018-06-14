@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-28 20:01:31
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 21:53:18
+ * @Last Modified time: 2018-06-13 14:17:27
  */
 import * as _ from 'lodash';
 import * as React from "react";
@@ -103,11 +103,13 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
             eBoardCanvas.clearFreeDrawingBrush();
         } else {
             let brushOptions: any = {};
-            _.defaultsDeep(brushOptions, {canvas: eBoardCanvas}, this.state.brushSettings, defaultBrushOptions);
+            
             switch (brushType) {
                 case BrushType.TEXT_BRUSH:
+                    _.defaultsDeep(brushOptions, {canvas: eBoardCanvas}, this.state.brushSettings);
                     break;
                 default:
+                    _.defaultsDeep(brushOptions, {canvas: eBoardCanvas}, this.state.brushSettings, defaultBrushOptions);
                     let circleCursor = new CircleCursor(defaultCursorOptions, eBoardCanvas);
                     brushOptions.cursor = circleCursor;
             }

@@ -33,7 +33,7 @@ export default class CircleBrush extends RectangleBrush {
      */
     protected _createObject(): fabric.Object {
         if (!this._points || this._points.length === 0) {
-            return undefined;
+            return null;
         }
 
         let start = this._points[0],
