@@ -1,0 +1,160 @@
+/*
+ * @Author: Liheng (liheeng@gmail.com)
+ * @Date: 2018-06-13 23:31:58
+ * @Last Modified by: Liheng (liheeng@gmail.com)
+ * @Last Modified time: 2018-06-14 15:06:36
+ */
+import { Composite, AbstractLayout, ILayoutOptions } from './LayoutCommon';
+
+export interface IGridLayoutOptions extends ILayoutOptions {
+    /**
+     * horizontalSpacing specifies the number of pixels between the right edge of one cell and the left edge of its neighbouring cell to the right.
+     */
+    horizontalSpacing: number | string;
+
+    /**
+     * verticalSpacing specifies the number of pixels between the bottom edge of one cell and the top edge of its neighbouring cell underneath.
+     */
+    verticalSpacing: number | string;
+
+    /**
+     * makeColumnsEqualWidth specifies whether all columns in the layout will be forced to have the same width.
+     */
+    makeColumnsEqualWidth: boolean;
+
+    /**
+     * numRows specifies the number of cell rows in the layout.
+     */
+    numRows: number;
+
+    /**
+     * numColumns specifies the number of cell columns in the layout.
+     */
+    numColumns: number;
+
+    /**
+     * All elements which are managed by flow layout.
+     */
+    elements?: fabric.Object[][]; 
+}
+
+class GridLayout extends AbstractLayout<IGridLayoutOptions> {
+
+    constructor(container: Composite, options?: IGridLayoutOptions) {
+        super(container, options);
+      }
+  
+    /**
+     * @override
+     * @param container 
+     * @param options 
+     */
+    protected _init(container: Composite, options?: IGridLayoutOptions) {
+        super._init(container, options);
+        if (!this.options.elements) {
+            this.options.elements = new Array(this.options.numRows);
+            this.options.elements.map((value: any, index: number) => {
+                this.options.elements[index] = new Array(this.options.numColumns);
+            });
+        }
+    }
+  
+    setCell(row: number, col: number, component: fabric.Object) {
+      this.options.elements[row][col] = component;
+    }
+  
+    getCell(row: number, col: number): fabric.Object {
+      return this.options.elements[row][col];
+    }
+
+    count(): number {
+        let count: number = 0;
+        this.options.elements.map((value: any, index: number) => {
+            this.options.elements[index].map((v: any, i: number) => {
+                if (this.options.elements[index][i]) {
+                    count++;
+                }
+            });
+        });
+        return count;
+    }
+
+    first(): fabric.Object {
+        for (let rowIndex = 0; rowIndex < this.options.numRows; rowIndex++ ) {
+            for (let colIndex = 0; colIndex < this.options.numColumns; colIndex++ ) {
+                if (this.options.elements[rowIndex][colIndex]) {
+                    return this.options.elements[rowIndex][colIndex];
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    last(): fabric.Object {
+        for (let rowIndex = this.options.numRows - 1; rowIndex >= 0; rowIndex-- ) {
+            for (let colIndex = this.options.numColumns - 1; colIndex >= 0; colIndex-- ) {
+                if (this.options.elements[rowIndex][colIndex]) {
+                    return this.options.elements[rowIndex][colIndex];
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    next(component: fabric.Object): fabric.Object {
+        let find: boolean = false;
+        for (let rowIndex = 0; rowIndex < this.options.numRows; rowIndex++ ) {
+            for (let colIndex = 0; colIndex < this.options.numColumns; colIndex++ ) {
+                if (find && this.options.elements[rowIndex][colIndex]) {
+                    return this.options.elements[rowIndex][colIndex];
+                }
+
+                if (component === this.options.elements[rowIndex][colIndex]) {
+                    find = true;
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    previous(component: fabric.Object): fabric.Object {
+        let find: boolean = false;
+        for (let rowIndex = this.options.numRows - 1; rowIndex >= 0; rowIndex-- ) {
+            for (let colIndex = this.options.numColumns - 1; colIndex >= 0; colIndex-- ) {
+                if (find && this.options.elements[rowIndex][colIndex]) {
+                    return this.options.elements[rowIndex][colIndex];
+                }
+
+                if (component === this.options.elements[rowIndex][colIndex]) {
+                    find = true;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    valueOf(rowIndex: number, colIndex?: number): fabric.Object[] {
+        if (!colIndex) {
+            return this.options.elements[rowIndex];
+        } else {
+            return [this.options.elements[rowIndex][colIndex]];
+        }
+    }
+    
+    indexOf(component: fabric.Object): {rowIndex: number, colIndex: number} {
+
+        for (let rowIndex = 0; rowIndex < this.options.numRows; rowIndex++ ) {
+            for (let colIndex = 0; colIndex < this.options.numColumns; colIndex++ ) {
+                if (component === this.options.elements[rowIndex][colIndex]) {
+                    return {'rowIndex': rowIndex, 'colIndex': colIndex};
+                }
+            }
+        }
+        
+        return {'rowIndex': -1, 'colIndex': -1};
+    }
+  }
