@@ -2,13 +2,12 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-09 15:18:23
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-14 10:45:42
+ * @Last Modified time: 2018-06-14 15:11:12
  */
 import { fabric } from 'fabric';
+import { Composite } from '../../widget/layout/LayoutCommon';
 
-
-
-export class Expression extends fabric.Group {
+export class Expression extends Composite {
   layout: ILayout;
 
   /**

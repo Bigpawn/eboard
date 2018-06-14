@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:56:54
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-13 09:39:32
+ * @Last Modified time: 2018-06-14 16:06:28
  */
 import * as _ from 'lodash';
 import { fabric } from 'fabric';

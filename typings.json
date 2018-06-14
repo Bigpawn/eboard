@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "fabric": "github:codyysh/DefinitelyTyped/types/fabric/index.d.ts"
-  }
-}

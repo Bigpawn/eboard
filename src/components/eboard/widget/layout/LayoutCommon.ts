@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 22:26:30
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-14 15:02:27
+ * @Last Modified time: 2018-06-14 15:15:26
  */
 import * as _ from 'lodash';
 
@@ -34,6 +34,9 @@ export interface IComposite extends IControl {
     getLayout(): ILayout;
 }
 
+/**
+ * 
+ */
 export class Composite extends fabric.Group implements IComposite {
     layout: ILayout;
 
