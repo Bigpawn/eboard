@@ -2,9 +2,80 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 23:31:58
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-14 15:06:36
+ * @Last Modified time: 2018-06-14 16:26:51
  */
 import { Composite, AbstractLayout, ILayoutOptions } from './LayoutCommon';
+
+export enum Align {
+    BEGINNING,
+    CENTER,
+    END,
+    FILL,
+}
+
+export class GridData {
+    /**
+     * exclude informs the layout to ignore this control when sizing and positioning controls.
+     */
+    exclude: boolean;
+
+    /**
+     * 	grabExcessHorizontalSpace
+     *  grabExcessHorizontalSpace specifies whether the width of the cell changes depending on the size of the parent Composite.
+     */
+    grabExcessHorizontalSpace: boolean;
+
+    /**
+     * heightHint specifies the preferred height in pixels.
+     */
+    heightHint: number;
+
+    /**
+     * widthHint specifies the preferred width in pixels.
+     */
+    widthHint: number;
+
+    /**
+     * minimumHeight specifies the minimum height in pixels.
+     */
+    minimumHeight: number;
+
+    /**
+     * minimumWidth specifies the minimum width in pixels.
+     */
+    minimumWidth: number;
+
+    /**
+     * horizontalAlignment specifies how controls will be positioned horizontally within a cell.
+     */
+    horizontalAlignment: Align;
+
+    /**
+     * horizontalIndent specifies the number of pixels of indentation that will be placed along the left side of the cell.
+     */
+    horizontalIndent: number;
+
+    /**
+     * horizontalSpan specifies the number of column cells that the control will take up.
+     */
+    horizontalSpan: number;
+    
+    /**
+     * verticalAlignment specifies how controls will be positioned vertically within a cell.
+     */
+    verticalAlignment: Align;
+
+    /**
+     * verticalIndent specifies the number of pixels of indentation that will be placed along the top side of the cell.
+     */
+    verticalIndent: number;
+
+    /**
+     * verticalSpan specifies the number of row cells that the control will take up.
+     */
+    verticalSpan: number;
+
+}
 
 export interface IGridLayoutOptions extends ILayoutOptions {
     /**
@@ -38,7 +109,7 @@ export interface IGridLayoutOptions extends ILayoutOptions {
     elements?: fabric.Object[][]; 
 }
 
-class GridLayout extends AbstractLayout<IGridLayoutOptions> {
+export class GridLayout extends AbstractLayout<IGridLayoutOptions> {
 
     constructor(container: Composite, options?: IGridLayoutOptions) {
         super(container, options);
