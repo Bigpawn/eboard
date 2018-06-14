@@ -21,12 +21,13 @@
         "noImplicitAny": true,
         "strictNullChecks": false,
         "noUnusedLocals": true,
+        "typeRoots":["./typings/modules","node_modules/@types","./src/components/eboard/tsmodules"]
     },
     "include": [
         "./src/**/*"
     ],
     "files": [
-        "./src/components/eboard/tsmodules/index.d.ts",
+        "./src/components/eboard/tsmodules/index.d.ts"
     ],
     "exclude": [
         "node_modules"
