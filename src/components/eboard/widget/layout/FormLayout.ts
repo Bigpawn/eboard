@@ -4,7 +4,8 @@
  * @Last Modified by: Liheng (liheeng@gmail.com)
  * @Last Modified time: 2018-06-14 15:04:28
  */
-import { Composite, ILayoutData } from './LayoutCommon';
+import { fabric } from 'fabric';
+import { Composite, ILayoutData, IComponent } from './LayoutCommon';
 import { FlowLayout, IFlowLayoutOptions } from './FlowLayout';
 
 /**
@@ -45,26 +46,26 @@ export enum FormAlignment {
 /**
  * 
  */
-export class FormData implements ILayoutData {
+export class FormData<T extends fabric.Object> implements ILayoutData {
     /**
      * bottom specifies the attachment of the bottom of the control.
      */
-    bottom?: FormAttachment;
+    bottom?: FormAttachment<T>;
 
     /**
      * left specifies the attachment of the left side of the control.
      */
-    left?: FormAttachment;
+    left?: FormAttachment<T>;
 
     /**
      * right specifies the attachment of the right side of the control.
      */
-    right?: FormAttachment;
+    right?: FormAttachment<T>;
 
     /**
      * top specifies the attachment of the top of the control.
      */
-    top?: FormAttachment;
+    top?: FormAttachment<T>;
 
     /**
      * height specifies the preferred height in pixels.
@@ -77,16 +78,16 @@ export class FormData implements ILayoutData {
     width?: number | string;
 }
 
-export class FormAttachment {
+export class FormAttachment<T extends fabric.Object> {
     /**
      * alignment specifies the alignment of the control side that is attached to a control.
      */
     alignment?: FormAlignment;
     
     /**
-     * control specifies the control to which the control side is attached.
+     * component specifies the component to which the component side is attached.
      */
-    control?: fabric.Object;
+    component?: IComponent<T>;
 
     /**
      * denominator specifies the denominator of the "a" term in the equation, y = ax + b, which defines the attachment.
@@ -114,9 +115,9 @@ export class FormAttachment {
      * @param offset 
      * @param alignment 
      */
-    static newWithControl(component: fabric.Object, offset?: number, alignment?: FormAlignment): FormAttachment {
-        let form = new FormAttachment();
-        form.control = component;
+    static newWithControl<E extends fabric.Object>(component: IComponent<E>, offset?: number, alignment?: FormAlignment): FormAttachment<E> {
+        let form = new FormAttachment<E>();
+        form.component = component;
         form.offset = offset;
         form.alignment = alignment;
         return form;
@@ -129,8 +130,8 @@ export class FormAttachment {
      * @param offset 
      * @param demoninator 
      */
-    static newWithNumerator(numerator: number, offset?: number, demoninator?: number): FormAttachment {
-        let form = new FormAttachment();
+    static newWithNumerator<E extends fabric.Object>(numerator: number, offset?: number, demoninator?: number): FormAttachment<E> {
+        let form = new FormAttachment<E>();
         form.numerator = numerator;
         form.offset = offset;
         form.denominator = demoninator;
@@ -142,16 +143,16 @@ export class FormAttachment {
 /**
  * Border layout options.
  */
-export interface IFormLayoutOptions extends IFlowLayoutOptions {
+export interface IFormLayoutOptions<T extends fabric.Object> extends IFlowLayoutOptions<T> {
 
 }
 
 /**
  * 
  */
-export class FormLayout extends FlowLayout<IFormLayoutOptions> {
+export class FormLayout<S extends fabric.Group, T extends fabric.Object, E extends IFormLayoutOptions<T>> extends FlowLayout<S, T, E> {
 
-    constructor(container: Composite, options?: IFormLayoutOptions) {
+    constructor(container: Composite<S>, options?: E) {
         super(container, options);
       }
   
@@ -160,8 +161,8 @@ export class FormLayout extends FlowLayout<IFormLayoutOptions> {
      * @param container 
      * @param options 
      */
-    protected _init(container: Composite, options?: IFormLayoutOptions) {
-        this.options = options || {} as IFormLayoutOptions;
+    protected _init(container: Composite<S>, options?: E) {
+        this.options = options || {} as E;
         if (!this.options.elements) {
             this.options.elements = [];
         }

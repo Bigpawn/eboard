@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-12 17:35:17
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-13 14:28:40
+ * @Last Modified time: 2018-06-19 13:42:48
  */
 import * as _ from 'lodash';
 import AbstractBrush from '../../AbstractBrush';
@@ -11,7 +11,7 @@ import { BrushType } from '../../BrushType';
 import { BrowserCursorName, DefaultCursor } from '../../../cursor/BrowserCursor';
 
 const defaultOpts = {
-    textType: TextType.TEXT,
+    textType: TextType.I_TEXT,
     fontSize: 40,
 }
 
@@ -84,7 +84,7 @@ export default class TextBrush extends AbstractBrush {
     let textFunc = fabric[this.options.textType];
     let renderOpts = {};
     _.defaultsDeep(renderOpts, {'left': this._points[0].x, 'top': this._points[0].y}, this.options);
-    return new textFunc("This is Text.", renderOpts);
+    return new textFunc("This is i-text.", renderOpts);
   }
 
 }

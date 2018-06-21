@@ -4,7 +4,7 @@
  * @Last Modified by: Liheng (liheeng@gmail.com)
  * @Last Modified time: 2018-06-14 15:05:33
  */
-import { Composite, AbstractLayout, ILayoutOptions } from './LayoutCommon';
+import { Composite, AbstractLayout, ILayoutOptions, IComponent } from './LayoutCommon';
 
 /**
  * Define order of border element.
@@ -20,21 +20,21 @@ export enum BorderElementPosition {
 /**
  * Border layout options.
  */
-export interface IBorderLayoutOptions extends ILayoutOptions {
+export interface IBorderLayoutOptions<T extends fabric.Object> extends ILayoutOptions {
     /**
      * All elements which are managed by flow layout.
      */
-    elements?: fabric.Object[]; 
+    elements?: IComponent<T>[]; 
 }
 
 /**
  * The element order of border layout is top, left, center, right and bottom.
  */
-export class BorderLayout extends AbstractLayout<IBorderLayoutOptions> {
+export class BorderLayout<S extends fabric.Group, T extends fabric.Object, E extends IBorderLayoutOptions<T>> extends AbstractLayout<S, T, E> {
 
-    elements: fabric.Object[];
+    elements: IComponent<T>[];
 
-    constructor(container: Composite, options?: IBorderLayoutOptions) {
+    constructor(container: Composite<S>, options?: E) {
         super(container, options);
     }
   
@@ -43,50 +43,50 @@ export class BorderLayout extends AbstractLayout<IBorderLayoutOptions> {
      * @param container 
      * @param options 
      */
-    protected _init(container: Composite, options?: IBorderLayoutOptions) {
+    protected _init(container: Composite<S>, options?: E) {
         super._init(container, options);
         if (!this.options.elements) {
             this.options.elements = new Array(5);
         }
     }
 
-    getTop(): fabric.Object {
+    getTop(): IComponent<T> {
         return this.options.elements[BorderElementPosition.TOP];
     }
 
-    setTop(top: fabric.Object) {
+    setTop(top: IComponent<T>) {
         this.options.elements[BorderElementPosition.TOP] = top;
     }
 
-    getBottom(): fabric.Object {
+    getBottom(): IComponent<T> {
         return this.options.elements[BorderElementPosition.BOTTOM];
     }
 
-    setBottom(bottom: fabric.Object) {
+    setBottom(bottom: IComponent<T>) {
         this.options.elements[BorderElementPosition.BOTTOM] = bottom;
     }
 
-    getLeft(): fabric.Object {
+    getLeft(): IComponent<T> {
         return this.options.elements[BorderElementPosition.LEFT];
     }
 
-    setLeft(left: fabric.Object) {
+    setLeft(left: IComponent<T>) {
         this.options.elements[BorderElementPosition.LEFT] = left;
     }
 
-    getRight(): fabric.Object {
+    getRight(): IComponent<T> {
         return this.options.elements[BorderElementPosition.RIGHT];
     }
 
-    setRight(right: fabric.Object) {
+    setRight(right: IComponent<T>) {
         this.options.elements[BorderElementPosition.RIGHT] = right;
     }
 
-    getCenter(): fabric.Object {
+    getCenter(): IComponent<T> {
         return this.options.elements[BorderElementPosition.CENTER];
     }
 
-    setCenter(center: fabric.Object) {
+    setCenter(center: IComponent<T>) {
         this.options.elements[BorderElementPosition.CENTER] = center;
     }
 
@@ -96,7 +96,7 @@ export class BorderLayout extends AbstractLayout<IBorderLayoutOptions> {
     count(): number {
         let num: number = 0;
         this.options.elements.map(
-            (value: fabric.Object, index: number) => {
+            (value: IComponent<T>, index: number) => {
                 if (value) {
                     num++;
                 }
@@ -108,10 +108,10 @@ export class BorderLayout extends AbstractLayout<IBorderLayoutOptions> {
     /**
      * @override
      */
-    first(): fabric.Object {
-        let ele: fabric.Object;
+    first(): IComponent<T> {
+        let ele: IComponent<T>;
         this.options.elements.map(
-            (value: fabric.Object, index: number) => {
+            (value: IComponent<T>, index: number) => {
                 if (!ele && value) {
                     ele = value;
                 }
@@ -123,10 +123,10 @@ export class BorderLayout extends AbstractLayout<IBorderLayoutOptions> {
     /**
      * @override
      */
-    last(): fabric.Object {
-        let ele: fabric.Object;
+    last(): IComponent<T> {
+        let ele: IComponent<T>;
         this.options.elements.slice(0).reverse().map(
-            (value: fabric.Object, index: number) => {
+            (value: IComponent<T>, index: number) => {
                 if (!ele && value) {
                     ele = value;
                 }
@@ -139,10 +139,10 @@ export class BorderLayout extends AbstractLayout<IBorderLayoutOptions> {
      * @override
      * @param component 
      */
-    next(component: fabric.Object): fabric.Object {
-        let skip: boolean = true, ele: fabric.Object;
+    next(component: IComponent<T>): IComponent<T> {
+        let skip: boolean = true, ele: IComponent<T>;
         this.options.elements.map(
-            (value: fabric.Object, index: number) => {
+            (value: IComponent<T>, index: number) => {
                 if (!skip && !ele && value) {
                     ele = value;
                 }
@@ -159,10 +159,10 @@ export class BorderLayout extends AbstractLayout<IBorderLayoutOptions> {
      * @override
      * @param component 
      */
-    previous(component: fabric.Object): fabric.Object {
-        let skip: boolean = true, ele: fabric.Object;
+    previous(component: IComponent<T>): IComponent<T> {
+        let skip: boolean = true, ele: IComponent<T>;
         this.options.elements.slice(0).reverse().map(
-            (value: fabric.Object, index: number) => {
+            (value: IComponent<T>, index: number) => {
                 if (!skip && !ele && value) {
                     ele = value;
                 }
@@ -179,7 +179,7 @@ export class BorderLayout extends AbstractLayout<IBorderLayoutOptions> {
      * @override
      * @param prop 
      */
-    valueOf(prop: BorderElementPosition): fabric.Object {
+    valueOf(prop: BorderElementPosition): IComponent<T> {
         return this._get(prop);
     }
 
@@ -187,11 +187,11 @@ export class BorderLayout extends AbstractLayout<IBorderLayoutOptions> {
      * @override
      * @param component 
      */
-    indexOf(component: fabric.Object): number {
+    indexOf(component: IComponent<T>): number {
         return this.options.elements.indexOf(component);
     }
 
-    protected _get(index: BorderElementPosition): fabric.Object {
+    protected _get(index: BorderElementPosition): IComponent<T> {
         let _index: number = index;
         if (_index > -1 && _index < this.options.elements.length) {
             return this.options.elements[_index];

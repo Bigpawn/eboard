@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 11:49:55
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 21:56:24
+ * @Last Modified time: 2018-06-15 21:57:23
  */
 import { fabric } from "fabric";
 import ICursor from "./ICursor";

@@ -4,7 +4,8 @@
  * @Last Modified by: Liheng (liheeng@gmail.com)
  * @Last Modified time: 2018-06-14 16:26:51
  */
-import { Composite, AbstractLayout, ILayoutOptions } from './LayoutCommon';
+import { fabric } from 'fabric';
+import { Composite, AbstractLayout, ILayoutOptions, IComponent } from './LayoutCommon';
 
 export enum Align {
     BEGINNING,
@@ -77,7 +78,7 @@ export class GridData {
 
 }
 
-export interface IGridLayoutOptions extends ILayoutOptions {
+export interface IGridLayoutOptions<T extends fabric.Object> extends ILayoutOptions {
     /**
      * horizontalSpacing specifies the number of pixels between the right edge of one cell and the left edge of its neighbouring cell to the right.
      */
@@ -106,12 +107,12 @@ export interface IGridLayoutOptions extends ILayoutOptions {
     /**
      * All elements which are managed by flow layout.
      */
-    elements?: fabric.Object[][]; 
+    elements?: IComponent<T>[][]; 
 }
 
-export class GridLayout extends AbstractLayout<IGridLayoutOptions> {
+export class GridLayout<S extends fabric.Group, T extends fabric.Object, E extends IGridLayoutOptions<T>>  extends AbstractLayout<S, T, E> {
 
-    constructor(container: Composite, options?: IGridLayoutOptions) {
+    constructor(container: Composite<S>, options?: E) {
         super(container, options);
       }
   
@@ -120,7 +121,7 @@ export class GridLayout extends AbstractLayout<IGridLayoutOptions> {
      * @param container 
      * @param options 
      */
-    protected _init(container: Composite, options?: IGridLayoutOptions) {
+    protected _init(container: Composite<S>, options?: E) {
         super._init(container, options);
         if (!this.options.elements) {
             this.options.elements = new Array(this.options.numRows);
@@ -130,11 +131,11 @@ export class GridLayout extends AbstractLayout<IGridLayoutOptions> {
         }
     }
   
-    setCell(row: number, col: number, component: fabric.Object) {
+    setCell(row: number, col: number, component: IComponent<T>) {
       this.options.elements[row][col] = component;
     }
   
-    getCell(row: number, col: number): fabric.Object {
+    getCell(row: number, col: number): IComponent<T> {
       return this.options.elements[row][col];
     }
 
@@ -150,7 +151,7 @@ export class GridLayout extends AbstractLayout<IGridLayoutOptions> {
         return count;
     }
 
-    first(): fabric.Object {
+    first(): IComponent<T> {
         for (let rowIndex = 0; rowIndex < this.options.numRows; rowIndex++ ) {
             for (let colIndex = 0; colIndex < this.options.numColumns; colIndex++ ) {
                 if (this.options.elements[rowIndex][colIndex]) {
@@ -162,7 +163,7 @@ export class GridLayout extends AbstractLayout<IGridLayoutOptions> {
         return null;
     }
 
-    last(): fabric.Object {
+    last(): IComponent<T> {
         for (let rowIndex = this.options.numRows - 1; rowIndex >= 0; rowIndex-- ) {
             for (let colIndex = this.options.numColumns - 1; colIndex >= 0; colIndex-- ) {
                 if (this.options.elements[rowIndex][colIndex]) {
@@ -174,7 +175,7 @@ export class GridLayout extends AbstractLayout<IGridLayoutOptions> {
         return null;
     }
 
-    next(component: fabric.Object): fabric.Object {
+    next(component: IComponent<T>): IComponent<T> {
         let find: boolean = false;
         for (let rowIndex = 0; rowIndex < this.options.numRows; rowIndex++ ) {
             for (let colIndex = 0; colIndex < this.options.numColumns; colIndex++ ) {
@@ -191,7 +192,7 @@ export class GridLayout extends AbstractLayout<IGridLayoutOptions> {
         return null;
     }
 
-    previous(component: fabric.Object): fabric.Object {
+    previous(component: IComponent<T>): IComponent<T> {
         let find: boolean = false;
         for (let rowIndex = this.options.numRows - 1; rowIndex >= 0; rowIndex-- ) {
             for (let colIndex = this.options.numColumns - 1; colIndex >= 0; colIndex-- ) {
@@ -208,7 +209,7 @@ export class GridLayout extends AbstractLayout<IGridLayoutOptions> {
         return null;
     }
     
-    valueOf(rowIndex: number, colIndex?: number): fabric.Object[] {
+    valueOf(rowIndex: number, colIndex?: number): IComponent<T>[] {
         if (!colIndex) {
             return this.options.elements[rowIndex];
         } else {
@@ -216,7 +217,7 @@ export class GridLayout extends AbstractLayout<IGridLayoutOptions> {
         }
     }
     
-    indexOf(component: fabric.Object): {rowIndex: number, colIndex: number} {
+    indexOf(component: IComponent<T>): {rowIndex: number, colIndex: number} {
 
         for (let rowIndex = 0; rowIndex < this.options.numRows; rowIndex++ ) {
             for (let colIndex = 0; colIndex < this.options.numColumns; colIndex++ ) {

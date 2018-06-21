@@ -2,10 +2,25 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 22:26:30
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-14 15:15:26
+ * @Last Modified time: 2018-06-20 18:06:27
  */
 import * as _ from 'lodash';
+import { fabric } from 'fabric';
 
+export enum Alignment {
+    LEFT = 'left',
+    RIGHT = 'right',
+    top = 'top',
+    bottom = 'bottom',
+    center = 'center',
+}
+
+export interface Boundary {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+}
 /**
  * Define expression align
  */
@@ -15,38 +30,59 @@ export enum Orientation {
 }
 
 /**
- * 
+ * IComponent interface defines basic class of all other UI objects.
  */
-export interface IControl {
+export interface IComponent<T extends fabric.Object> {
+    /**
+     * Return this as type of fabric.Object.
+     */
+    selfFabricObject(): T;
+
     /**
      * Return layout setting of this expression.
      */
     getLayoutData(): ILayoutData;
+
 }
 
 /**
- * Interface of expression.
+ * IComposite interface defines UI container class.
  */
-export interface IComposite extends IControl {
+export interface IComposite<T extends fabric.Group> extends IComponent<T> {
     /**
      * Return children layout of this expression.
      */
-    getLayout(): ILayout;
+    getLayout(): ILayout<T>;
 }
 
 /**
- * 
+ * Composite class defines common functions of UI container.
  */
-export class Composite extends fabric.Group implements IComposite {
-    layout: ILayout;
+export class Composite<T extends fabric.Group> extends fabric.Group implements IComposite<T> {
 
+    /**
+     * layout specifies layout of the composite.
+     */
+    layout: ILayout<T>;
+
+    /**
+     * layoutData specifies layout values of the component in container.
+     */
     layoutData: ILayoutData;
-    
+
     /**
      * Return children layout of this expression.
      */
-    getLayout(): ILayout {
+    getLayout(): ILayout<T> {
         return this.layout;
+    }
+
+    /**
+     * Return this as type of Composite.
+     */
+    selfFabricObject(): T {
+        let thiz: any = this;
+        return thiz as T;
     }
 
     /**
@@ -54,7 +90,7 @@ export class Composite extends fabric.Group implements IComposite {
      *
      * @param layou
      */
-    setLayout(layout: ILayout): void {
+    setLayout(layout: ILayout<T>): void {
         this.layout = layout;
     }
 
@@ -73,6 +109,10 @@ export class Composite extends fabric.Group implements IComposite {
     setLayoutData(layouData: ILayoutData): void {
         this.layoutData = layouData;
     }
+
+    public doLayout(): void {
+        this.layout.layout();
+    }
 }
 
 /**
@@ -88,7 +128,7 @@ export enum LayoutType {
 /**
  * Interface of layout.
  */
-export interface ILayout {
+export interface ILayout<T extends fabric.Object> {
 
     /**
      * Computes and returns the size of the specified composite's client area according to this layout.
@@ -102,7 +142,7 @@ export interface ILayout {
     /**
      * Instruct the layout to flush any cached values associated with the control specified in the argument control.
      */
-    flushCache(): boolean;
+    flushCache(): void;
 
     /**
      * Lays out the children of the specified composite according to this layout.
@@ -118,26 +158,26 @@ export interface ILayout {
     /**
      * Return first available element according to layout element order rule.
      */
-    first(): fabric.Object;
+    first(): IComponent<T>;
 
     /**
      * Return last available element according to layout element order rule.
      */
-    last(): fabric.Object;
+    last(): IComponent<T>;
 
     /**
      * Return element next to specified element according to layout element order rule.
      * 
      * @param component 
      */
-    next(component: fabric.Object): fabric.Object;
+    next(component: IComponent<T>): IComponent<T>;
 
     /**
      * Return element previous to specified element according to layout element order rule.
      * 
      * @param component 
      */
-    previous(component: fabric.Object): fabric.Object;
+    previous(component: IComponent<T>): IComponent<T>;
 
     /**
      * Return element/elements according to specfied props.
@@ -152,7 +192,7 @@ export interface ILayout {
      * 
      * @param component
      */
-    indexOf(component: fabric.Object): any;
+    indexOf(component: IComponent<T>): any;
 }
 
 /**
@@ -169,58 +209,68 @@ export interface ILayoutOptions {
     /**
      * marginLeft specifies the number of pixels of horizontal margin that will be placed along the left edge of the layout.
      */
-    marginLeft?: number | string;
+    marginLeft?: number;
 
     /**
      * marginRight specifies the number of pixels of horizontal margin that will be placed along the right edge of the layout.
      */
-    marginRight?: number | string;
+    marginRight?: number;
 
     /**
      * marginTop specifies the number of pixels of vertical margin that will be placed along the top edge of the layout.
      */
-    marginTop?: number | string;
+    marginTop?: number;
 
     /**
      * marginBottom specifies the number of pixels of vertical margin that will be placed along the bottom edge of the layout.
      */
-    marginBottom?: number | string;
+    marginBottom?: number;
 
     /**
      * marginHeight specifies the number of pixels of vertical margin that will be placed along the top and bottom edges of the layout.
      */
-    marginHeight?: number | string;
+    marginHeight?: number;
 
     /**
      * marginWidth specifies the number of pixels of horizontal margin that will be placed along the left and right edges of the layout.
      */
-    marginWidth?: number | string;
+    marginWidth?: number;
 
     /**
      * spacing specifies the number of pixels between the edge of one control and the edge of its neighbouring control.
      */
-    space?: number | string;
+    space?: number;
+
+    /**
+     * vSpace specifies the number of pixels of vertical space between the edge of one control and the edge of its neighbouring control.
+     */
+    vSpace?: number;
+
+    /**
+     * hSpace specifies the number of pixels of horizontal space between the edge of one control and the edge of its neighbouring control.
+     */
+    hSpace?: number;
 }
 
 /**
  * Abstract layout.
  */
-export abstract class AbstractLayout<T extends ILayoutOptions> implements ILayout {
+export abstract class AbstractLayout<S extends fabric.Group, T extends fabric.Object, E extends ILayoutOptions> implements ILayout<T> {
 
     /**
      * Container which the layout belongs to.
      */
-    container: Composite;
+    container: Composite<S>;
 
-    options: T;
+    options: E;
     
-    constructor(container: Composite, options?: T) {
+    constructor(container: Composite<S>, options?: E) {
         this.container = container;
         this._init(container, options);
     }
 
-    protected _init(container: Composite, options?: T) {
-        this.options = options || {} as T;
+    protected _init(container: Composite<S>, options?: E) {
+        this.options = options || {} as E;
     }
 
     public getOption(optName: string): any {
@@ -250,8 +300,8 @@ export abstract class AbstractLayout<T extends ILayoutOptions> implements ILayou
     /**
      * Instruct the layout to flush any cached values associated with the control specified in the argument control.
      */
-    flushCache(): boolean {
-        throw new Error("Method not implemented.");
+    flushCache(): void {
+        // TODO ...
     }
     
     /**
@@ -259,14 +309,28 @@ export abstract class AbstractLayout<T extends ILayoutOptions> implements ILayou
      * @param flushCache
      */
     layout(flushCache?: boolean): void {
+        // getBoundingRect
+        // setCoords
+        // calcCoords
+        // _getTransformedDimensions
+        // _getNonTransformedDimensions
+        // makeBoundingBoxFromPoints
+        // text.calcTextWidth
+        // text.getLineWidth
+        // text.measureLine
+        // text._measureLine
+        // text._getGraphemeBox
+        // text._measureChar
+        // text.initDimensions
+        // text.getMeasuringContext
         throw new Error("Method not implemented.");
     }
 
     abstract count(): number;
-    abstract first(): fabric.Object;
-    abstract last(): fabric.Object;
-    abstract next(component: fabric.Object): fabric.Object;
-    abstract previous(component: fabric.Object): fabric.Object;
+    abstract first(): IComponent<T>;
+    abstract last(): IComponent<T>;
+    abstract next(component: IComponent<T>): IComponent<T>;
+    abstract previous(component: IComponent<T>): IComponent<T>;
     abstract valueOf(a: any, b: any): any;
-    abstract indexOf(component: fabric.Object): any;
+    abstract indexOf(component: IComponent<T>): any;
 }
