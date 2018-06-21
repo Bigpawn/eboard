@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 23:25:09
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-21 18:07:22
+ * @Last Modified time: 2018-06-21 18:29:53
  */
 import { fabric } from 'fabric';
 import { Composite, ILayoutData, IComponent } from '../UICommon';
@@ -115,8 +115,8 @@ export class FormAttachment<T extends fabric.Object> {
      * @param offset 
      * @param alignment 
      */
-    static newWithControl<E extends fabric.Object>(component: IComponent<E>, offset?: number, alignment?: FormAlignment): FormAttachment<E> {
-        let form = new FormAttachment<E>();
+    static newWithControl<TT extends fabric.Object>(component: IComponent<TT>, offset?: number, alignment?: FormAlignment): FormAttachment<TT> {
+        let form = new FormAttachment<TT>();
         form.component = component;
         form.offset = offset;
         form.alignment = alignment;
@@ -130,8 +130,8 @@ export class FormAttachment<T extends fabric.Object> {
      * @param offset 
      * @param demoninator 
      */
-    static newWithNumerator<E extends fabric.Object>(numerator: number, offset?: number, demoninator?: number): FormAttachment<E> {
-        let form = new FormAttachment<E>();
+    static newWithNumerator<TT extends fabric.Object>(numerator: number, offset?: number, demoninator?: number): FormAttachment<TT> {
+        let form = new FormAttachment<TT>();
         form.numerator = numerator;
         form.offset = offset;
         form.denominator = demoninator;
@@ -150,9 +150,9 @@ export interface IFormLayoutOptions<T extends fabric.Object> extends IFlowLayout
 /**
  * 
  */
-export class FormLayout<S extends fabric.Group, T extends fabric.Object, E extends IFormLayoutOptions<T>> extends FlowLayout<S, T, E> {
+export class FormLayout<G extends fabric.Group, T extends fabric.Object, O extends IFormLayoutOptions<T>> extends FlowLayout<G, T, O> {
 
-    constructor(container: Composite<S>, options?: E) {
+    constructor(container: Composite<G>, options?: O) {
         super(container, options);
       }
   
@@ -161,8 +161,8 @@ export class FormLayout<S extends fabric.Group, T extends fabric.Object, E exten
      * @param container 
      * @param options 
      */
-    protected _init(container: Composite<S>, options?: E) {
-        this.options = options || {} as E;
+    protected _init(container: Composite<G>, options?: O) {
+        this.options = options || {} as O;
         if (!this.options.elements) {
             this.options.elements = [];
         }

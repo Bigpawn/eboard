@@ -2,28 +2,31 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 22:29:18
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-21 18:11:07
+ * @Last Modified time: 2018-06-21 18:32:39
  */
 import { fabric } from 'fabric';
 import * as util from '../../utils/utils';
 import { Composite, Orientation, AbstractLayout, ILayoutOptions, Boundary, ILayoutData, Alignment, IComponent } from '../UICommon';
 
-export class FlowData<T extends fabric.Group> implements ILayoutData {
+export class FlowData<G extends fabric.Group, T extends fabric.Object> implements ILayoutData {
 
+  // constructor(container: IComponent<E>) {
+
+  // }
   /**
    * alignElement specifies which element in current Composite is used to align, null means use composite itself.
    */
-  alignElement: fabric.Object;
+  alignElement: IComponent<T>;
 
   /**
    * alignment specifies alignment value of alignElement.
    */
   alignment: Alignment;
   
-  private flowElement: Composite<T>;
+  private flowContainer: Composite<G>;
 
-  public setFlowElement(element: Composite<T>) {
-    this.flowElement = element;
+  public setFlowContainer(container: Composite<G>) {
+    this.flowContainer = container;
   }
 
   public calcAlignmentOffset(orientation: Orientation): number {
@@ -59,9 +62,9 @@ export interface IFlowLayoutOptions<T extends fabric.Object>  extends ILayoutOpt
 /**
  * Most of expressions use FlowLayout, e.g. expression 'X = 2 + 3'
  */
-export class FlowLayout<S extends fabric.Group, T extends fabric.Object, E extends IFlowLayoutOptions<T>> extends AbstractLayout<S, T, E> {
+export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O extends IFlowLayoutOptions<T>> extends AbstractLayout<G, T, O> {
   
-  constructor(container: Composite<S>, options?: E) {
+  constructor(container: Composite<G>, options?: O) {
     super(container, options);
   }
 
@@ -70,7 +73,7 @@ export class FlowLayout<S extends fabric.Group, T extends fabric.Object, E exten
    * @param container 
    * @param options 
    */
-  protected _init(container: Composite<S>, options?: E) {
+  protected _init(container: Composite<G>, options?: O) {
       super._init(container, options);
       if (!this.options.orientation) {
           this.options.orientation =  Orientation.HORIZONTAL;
@@ -219,61 +222,62 @@ export class FlowLayout<S extends fabric.Group, T extends fabric.Object, E exten
       // text._measureChar
       // text.initDimensions
       // text.getMeasuringContext
-      let left: number = this.container.left, 
-          top: number = this.container.top,
-          leftEdgeMargin: number = util.max([this.options.marginWidth || 0, this.options.marginLeft || 0], null),
-          rightEdgeMargin: number = util.max([this.options.marginWidth || 0, this.options.marginRight || 0], null),
-          topEdgeMargin: number = util.max([this.options.marginHeight || 0, this.options.marginTop || 0], null),
-          bottomEdgeMargin: number = util.max([this.options.marginHeight || 0, this.options.marginBottom || 0], null),
-          width: number = 0,
-          height: number = 0;
-          
-      let xOffset = left;
-      let yOffset = top;
+    let left: number = this.container.left, 
+        top: number = this.container.top,
+        leftEdgeMargin: number = util.max([this.options.marginWidth || 0, this.options.marginLeft || 0], null),
+        rightEdgeMargin: number = util.max([this.options.marginWidth || 0, this.options.marginRight || 0], null),
+        topEdgeMargin: number = util.max([this.options.marginHeight || 0, this.options.marginTop || 0], null),
+        bottomEdgeMargin: number = util.max([this.options.marginHeight || 0, this.options.marginBottom || 0], null),
+        width: number = 0,
+        height: number = 0;
+        
+    let xOffset = left;
+    let yOffset = top;
 
-      if (this.options.orientation === Orientation.HORIZONTAL) {
+    if (this.options.orientation === Orientation.HORIZONTAL) {
 
-          xOffset += leftEdgeMargin;
-          width += leftEdgeMargin;
-          let alignUpOffset: number = 0,
-              alignDownOffset: number = 0;
+      xOffset += leftEdgeMargin;
+      width += leftEdgeMargin;
+      let alignUpOffset: number = 0,
+        alignDownOffset: number = 0;
 
-          // Compute boundary of each element and set left of each element.
-          for (let i = 0; i < this.options.elements.length; i++) {
-             if (i > 0) {
-               width += (this.options.vSpace ? this.options.vSpace : this.options.space) || 0;
-               xOffset += (this.options.vSpace ? this.options.vSpace : this.options.space) || 0;
-             }
+      // Compute boundary of each element and set left of each element.
+      for (let i = 0; i < this.options.elements.length; i++) {
+        if (i > 0) {
+          width += (this.options.vSpace ? this.options.vSpace : this.options.space) || 0;
+          xOffset += (this.options.vSpace ? this.options.vSpace : this.options.space) || 0;
+        }
 
-             let component: IComponent<T> = this.options.elements[i];
-             // Temporarily set left and top to calculate element's width and height.
-             component.selfFabricObject().set({'left': xOffset, 'top': yOffset} as object);
+        let component: IComponent<T> = this.options.elements[i];
+        // Temporarily set left and top to calculate element's width and height.
+        component.selfFabricObject().set({ 'left': xOffset, 'top': yOffset } as object);
 
-             // If component is a container then do layout first.
-             if (component instanceof Composite) {
-               (component as Composite<S>).doLayout();
-             }
+        // If component is a container then do layout first.
+        if (component instanceof Composite) {
+          (component as Composite<G>).doLayout();
+        }
 
-             // Get component boundary
-             let boundary: Boundary = component.selfFabricObject().getBoundingRect() as Boundary;
-             width += boundary.width;
-             xOffset += boundary.width;
+        // Calculate component boundary
+        let boundary: Boundary = component.selfFabricObject().getBoundingRect() as Boundary;
+        width += boundary.width;
+        xOffset += boundary.width;
 
-            if (component instanceof Composite) {
-              (component as Composite<S>).getLayoutData();
-            }
-            
-             // Calculate max height.
-             height = util.max([height, boundary.height], null);
-          }
+        if (component instanceof Composite) {
+          let layoutData: FlowData<G> = (component as Composite<G>).getLayoutData() as FlowData<G>;
+          layoutData.calcAlignmentOffset()
+        }
 
-          xOffset += rightEdgeMargin;
-          width += rightEdgeMargin;
-          height += topEdgeMargin + bottomEdgeMargin;
-
-          // Set top of each element according to total height and element original setting.
-
+        // Calculate max height.
+        height = util.max([height, boundary.height], null);
       }
+
+      xOffset += rightEdgeMargin;
+      width += rightEdgeMargin;
+      height += topEdgeMargin + bottomEdgeMargin;
+
+      // Set top of each element according to total height and element original setting.
+
+    }
   }
 }
   

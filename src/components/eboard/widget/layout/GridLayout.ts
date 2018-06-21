@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 23:31:58
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-21 18:07:28
+ * @Last Modified time: 2018-06-21 18:30:19
  */
 import { fabric } from 'fabric';
 import { Composite, AbstractLayout, ILayoutOptions, IComponent } from '../UICommon';
@@ -110,9 +110,9 @@ export interface IGridLayoutOptions<T extends fabric.Object> extends ILayoutOpti
     elements?: IComponent<T>[][]; 
 }
 
-export class GridLayout<S extends fabric.Group, T extends fabric.Object, E extends IGridLayoutOptions<T>>  extends AbstractLayout<S, T, E> {
+export class GridLayout<G extends fabric.Group, T extends fabric.Object, O extends IGridLayoutOptions<T>>  extends AbstractLayout<G, T, O> {
 
-    constructor(container: Composite<S>, options?: E) {
+    constructor(container: Composite<G>, options?: O) {
         super(container, options);
       }
   
@@ -121,7 +121,7 @@ export class GridLayout<S extends fabric.Group, T extends fabric.Object, E exten
      * @param container 
      * @param options 
      */
-    protected _init(container: Composite<S>, options?: E) {
+    protected _init(container: Composite<G>, options?: O) {
         super._init(container, options);
         if (!this.options.elements) {
             this.options.elements = new Array(this.options.numRows);

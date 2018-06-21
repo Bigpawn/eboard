@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-21 18:01:23
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-21 18:07:37
+ * @Last Modified time: 2018-06-21 18:27:57
  */
 import * as _ from 'lodash';
 import { fabric } from 'fabric';
@@ -133,22 +133,22 @@ export interface ILayoutData {
 /**
  * IComposite interface defines UI container class.
  */
-export interface IComposite<T extends fabric.Group> extends IComponent<T> {
+export interface IComposite<G extends fabric.Group> extends IComponent<G> {
     /**
      * Return children layout of this expression.
      */
-    getLayout(): ILayout<T>;
+    getLayout(): ILayout<G>;
 }
 
 /**
  * Composite class defines common functions of UI container.
  */
-export class Composite<T extends fabric.Group> extends fabric.Group implements IComposite<T> {
+export class Composite<G extends fabric.Group> extends fabric.Group implements IComposite<G> {
 
     /**
      * layout specifies layout of the composite.
      */
-    layout: ILayout<T>;
+    layout: ILayout<G>;
 
     /**
      * layoutData specifies layout values of the component in container.
@@ -158,16 +158,16 @@ export class Composite<T extends fabric.Group> extends fabric.Group implements I
     /**
      * Return children layout of this expression.
      */
-    getLayout(): ILayout<T> {
+    getLayout(): ILayout<G> {
         return this.layout;
     }
 
     /**
      * Return this as type of Composite.
      */
-    selfFabricObject(): T {
+    selfFabricObject(): G {
         let thiz: any = this;
-        return thiz as T;
+        return thiz as G;
     }
 
     /**
@@ -175,7 +175,7 @@ export class Composite<T extends fabric.Group> extends fabric.Group implements I
      *
      * @param layou
      */
-    setLayout(layout: ILayout<T>): void {
+    setLayout(layout: ILayout<G>): void {
         this.layout = layout;
     }
 
@@ -254,22 +254,22 @@ export interface ILayoutOptions {
 /**
  * Abstract layout.
  */
-export abstract class AbstractLayout<S extends fabric.Group, T extends fabric.Object, E extends ILayoutOptions> implements ILayout<T> {
+export abstract class AbstractLayout<G extends fabric.Group, T extends fabric.Object, O extends ILayoutOptions> implements ILayout<T> {
 
     /**
      * Container which the layout belongs to.
      */
-    container: Composite<S>;
+    container: Composite<G>;
 
-    options: E;
+    options: O;
     
-    constructor(container: Composite<S>, options?: E) {
+    constructor(container: Composite<G>, options?: O) {
         this.container = container;
         this._init(container, options);
     }
 
-    protected _init(container: Composite<S>, options?: E) {
-        this.options = options || {} as E;
+    protected _init(container: Composite<G>, options?: O) {
+        this.options = options || {} as O;
     }
 
     public getOption(optName: string): any {
