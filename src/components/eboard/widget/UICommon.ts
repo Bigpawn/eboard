@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-21 18:01:23
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-21 18:27:57
+ * @Last Modified time: 2018-06-21 20:42:45
  */
 import * as _ from 'lodash';
 import { fabric } from 'fabric';
@@ -10,9 +10,9 @@ import { fabric } from 'fabric';
 export enum Alignment {
     LEFT = 'left',
     RIGHT = 'right',
-    top = 'top',
-    bottom = 'bottom',
-    center = 'center',
+    TOP = 'top',
+    BOTTOM = 'bottom',
+    CENTER = 'center',
 }
 
 export interface Boundary {
@@ -39,10 +39,23 @@ export interface IComponent<T extends fabric.Object> {
     selfFabricObject(): T;
 
     /**
+     * Set layout data.
+     * 
+     * @param layouData
+     */
+    setLayoutData(layouData: ILayoutData): void;
+
+    /**
      * Return layout setting of this expression.
      */
     getLayoutData(): ILayoutData;
 
+    /**
+     * Calculate bounds of component.
+     * 
+     * @param recalculate
+     */
+    calcBounds(recalculate: boolean): Boundary;
 }
 
 /**
@@ -115,7 +128,7 @@ export interface ILayout<T extends fabric.Object> {
      * @param first parameter
      * @param second paramter
      */
-    valueOf(a: any, b: any): any;
+    valueOf(a: any, b?: any): any;
 
     /**
      * Return element according to specified index.
@@ -158,14 +171,14 @@ export class Composite<G extends fabric.Group> extends fabric.Group implements I
     /**
      * Return children layout of this expression.
      */
-    getLayout(): ILayout<G> {
+    public getLayout(): ILayout<G> {
         return this.layout;
     }
 
     /**
      * Return this as type of Composite.
      */
-    selfFabricObject(): G {
+    public selfFabricObject(): G {
         let thiz: any = this;
         return thiz as G;
     }
@@ -175,28 +188,33 @@ export class Composite<G extends fabric.Group> extends fabric.Group implements I
      *
      * @param layou
      */
-    setLayout(layout: ILayout<G>): void {
+    public setLayout(layout: ILayout<G>): void {
         this.layout = layout;
     }
 
     /**
      * Return layout setting of this expression.
      */
-    getLayoutData(): ILayoutData {
+    public getLayoutData(): ILayoutData {
         return this.layoutData;
     }
 
     /**
      * Set layout data.
-     *
+     * 
+     * @override
      * @param layouData
      */
-    setLayoutData(layouData: ILayoutData): void {
+    public setLayoutData(layouData: ILayoutData): void {
         this.layoutData = layouData;
     }
 
     public doLayout(): void {
         this.layout.layout();
+    }
+
+    public calcBounds(recalculate: boolean): Boundary {
+        return this.getBoundingRect(false, recalculate) as Boundary;
     }
 }
 
@@ -290,7 +308,7 @@ export abstract class AbstractLayout<G extends fabric.Group, T extends fabric.Ob
      * @param hHInt
      * @param flushCache
      */
-    computeSize(wHint: number, hHInt: number, flushCache: boolean): fabric.Point {
+    public computeSize(wHint: number, hHInt: number, flushCache: boolean): fabric.Point {
         let composite: any = this.container;
         let rect: any = composite.getBoundingRect();
         return new fabric.Point(rect.width, rect.height);
@@ -299,7 +317,7 @@ export abstract class AbstractLayout<G extends fabric.Group, T extends fabric.Ob
     /**
      * Instruct the layout to flush any cached values associated with the control specified in the argument control.
      */
-    flushCache(): void {
+    public flushCache(): void {
         // TODO ...
     }
     
@@ -307,7 +325,7 @@ export abstract class AbstractLayout<G extends fabric.Group, T extends fabric.Ob
      * Lays out the children of the specified composite according to this layout.
      * @param flushCache
      */
-    layout(flushCache?: boolean): void {
+    public layout(flushCache?: boolean): void {
         // getBoundingRect
         // setCoords
         // calcCoords

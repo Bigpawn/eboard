@@ -2,17 +2,38 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 22:29:18
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-21 18:32:39
+ * @Last Modified time: 2018-06-21 21:44:40
  */
 import { fabric } from 'fabric';
 import * as util from '../../utils/utils';
 import { Composite, Orientation, AbstractLayout, ILayoutOptions, Boundary, ILayoutData, Alignment, IComponent } from '../UICommon';
 
-export class FlowData<G extends fabric.Group, T extends fabric.Object> implements ILayoutData {
+/**
+ * AlignmentPartSize saves up size and down size which are calcualted by alignment setting in FlowData of Component,
+ * That up size plus down size equal height of component when flow layout is Horizontal orientation, 
+ * and that left size plus right size equal width of component when flow layout is Vertical orientation. 
+ * As default up size/down size are 1/2 of height and left size/right size are 1/2 of width.
+ */
+export interface AlignmentPartSize {
+  up?: number;
+  down?: number;
+  left?: number;
+  right?: number;
+}
 
-  // constructor(container: IComponent<E>) {
+/**
+ * 
+ */
+export class FlowData<T extends fabric.Object> implements ILayoutData {
+  private ownerComponent: IComponent<T>;
 
-  // }
+  constructor(ownerComponent: IComponent<T>) {
+    this.ownerComponent = ownerComponent;
+    this.ownerComponent = this.ownerComponent;
+    this.alignment = Alignment.CENTER;
+    this.ownerComponent.setLayoutData(this);
+  }
+  
   /**
    * alignElement specifies which element in current Composite is used to align, null means use composite itself.
    */
@@ -23,20 +44,65 @@ export class FlowData<G extends fabric.Group, T extends fabric.Object> implement
    */
   alignment: Alignment;
   
-  private flowContainer: Composite<G>;
-
-  public setFlowContainer(container: Composite<G>) {
-    this.flowContainer = container;
+  public setAlignElement(component: IComponent<T>) {
+    this.alignElement = component;
   }
 
-  public calcAlignmentOffset(orientation: Orientation): number {
+  public setAlignment(alignment: Alignment) {
+    this.alignment = alignment;
+  }
 
-    if (!orientation || orientation === Orientation.HORIZONTAL) {
-      // Horizontal case, calculate offset y to top
+  public calcAlignmentPartSize(orientation: Orientation, recalculate: boolean): AlignmentPartSize {
+
+    let bounds: Boundary = this.alignElement.calcBounds(recalculate);
+    let partSize: AlignmentPartSize;
+
+    if (orientation === Orientation.VERTICAL) {
+      // Orientation is vertical case, calculate up size and down size.
+      partSize = this.__calcVerticalPartSize(this.alignment, {'up': 0, 'down': 0}, bounds);
 
     } else {
-      // Vertical case, calculate offset x to left
+      // Orientation is horizontal case, calculate left size and right size.
+      partSize = this.__calcHorizontalPartSize(this.alignment, {'left': 0, 'right': 0}, bounds);
     }
+    
+    return partSize;
+  }
+
+  private __calcVerticalPartSize(alignment: Alignment, partSize: AlignmentPartSize, bounds: Boundary): AlignmentPartSize {
+    switch (this.alignment) {
+      case Alignment.TOP:
+        partSize.up += 0;
+        partSize.down += bounds.height;
+        break;
+      case Alignment.BOTTOM:
+        partSize.up += bounds.height;
+        partSize.down += 0;
+        break;
+      default:
+        let middle: number = bounds.height / 2;
+        partSize.up += middle;
+        partSize.down += middle;
+    }
+    return partSize;
+  }
+
+  private __calcHorizontalPartSize(alignment: Alignment, partSize: AlignmentPartSize, bounds: Boundary): AlignmentPartSize {
+    switch (this.alignment) {
+      case Alignment.LEFT:
+        partSize.left += 0;
+        partSize.right += bounds.width;
+        break;
+      case Alignment.RIGHT:
+        partSize.left += bounds.width;
+        partSize.right += 0;
+        break;
+      default:
+        let middle: number = bounds.height / 2;
+        partSize.left += middle;
+        partSize.right += middle;
+    }
+    return partSize;
   }
 }
 
@@ -222,8 +288,8 @@ export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O exten
       // text._measureChar
       // text.initDimensions
       // text.getMeasuringContext
-    let left: number = this.container.left, 
-        top: number = this.container.top,
+    let left: number = 0, 
+        top: number = 0,
         leftEdgeMargin: number = util.max([this.options.marginWidth || 0, this.options.marginLeft || 0], null),
         rightEdgeMargin: number = util.max([this.options.marginWidth || 0, this.options.marginRight || 0], null),
         topEdgeMargin: number = util.max([this.options.marginHeight || 0, this.options.marginTop || 0], null),
@@ -238,8 +304,10 @@ export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O exten
 
       xOffset += leftEdgeMargin;
       width += leftEdgeMargin;
-      let alignUpOffset: number = 0,
-        alignDownOffset: number = 0;
+      yOffset += topEdgeMargin;
+      
+      let alignPartSize: AlignmentPartSize = {'up': 0, 'down': 0};
+      let subPartSize: AlignmentPartSize[];
 
       // Compute boundary of each element and set left of each element.
       for (let i = 0; i < this.options.elements.length; i++) {
@@ -258,25 +326,34 @@ export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O exten
         }
 
         // Calculate component boundary
-        let boundary: Boundary = component.selfFabricObject().getBoundingRect() as Boundary;
-        width += boundary.width;
-        xOffset += boundary.width;
+        let bounds: Boundary = component.selfFabricObject().getBoundingRect() as Boundary;
+        width += bounds.width;
+        xOffset += bounds.width;
 
         if (component instanceof Composite) {
-          let layoutData: FlowData<G> = (component as Composite<G>).getLayoutData() as FlowData<G>;
-          layoutData.calcAlignmentOffset()
+          let layoutData: FlowData<T> = (component as Composite<G>).getLayoutData() as FlowData<T>;
+          subPartSize[i] = layoutData.calcAlignmentPartSize(Orientation.HORIZONTAL, false);
+          alignPartSize.up = util.max([alignPartSize.up, subPartSize[i].up], null);
+          alignPartSize.down = util.max([alignPartSize.down, subPartSize[i].down], null);
         }
 
         // Calculate max height.
-        height = util.max([height, boundary.height], null);
+        height = util.max([height, alignPartSize.up + alignPartSize.down], null);
       }
 
       xOffset += rightEdgeMargin;
       width += rightEdgeMargin;
       height += topEdgeMargin + bottomEdgeMargin;
 
-      // Set top of each element according to total height and element original setting.
+      // Set top position of each element according to total height and element original setting.
+      for (let i = 0; i < this.options.elements.length; i++) {
+        let component: IComponent<T> = this.options.elements[i];
+        // Temporarily set left and top to calculate element's width and height.
+        component.selfFabricObject().set({ 'top':  yOffset + (alignPartSize.up - subPartSize[i].up)} as object);
+        component.calcBounds(true);
+      }
 
+      this.container.calcBounds(true);
     }
   }
 }
