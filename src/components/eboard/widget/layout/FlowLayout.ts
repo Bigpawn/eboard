@@ -2,12 +2,11 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 22:29:18
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-20 11:23:03
+ * @Last Modified time: 2018-06-21 18:11:07
  */
 import { fabric } from 'fabric';
 import * as util from '../../utils/utils';
-import { Composite, Orientation, AbstractLayout, ILayoutOptions, Boundary, ILayoutData, Alignment, IComponent } from './LayoutCommon';
-
+import { Composite, Orientation, AbstractLayout, ILayoutOptions, Boundary, ILayoutData, Alignment, IComponent } from '../UICommon';
 
 export class FlowData<T extends fabric.Group> implements ILayoutData {
 
@@ -260,9 +259,9 @@ export class FlowLayout<S extends fabric.Group, T extends fabric.Object, E exten
              width += boundary.width;
              xOffset += boundary.width;
 
-            // if (component instanceof Composite) {
-            //   (component as Composite<S>).getLayoutData();
-            // }
+            if (component instanceof Composite) {
+              (component as Composite<S>).getLayoutData();
+            }
             
              // Calculate max height.
              height = util.max([height, boundary.height], null);

@@ -1,8 +1,8 @@
 /*
  * @Author: Liheng (liheeng@gmail.com)
- * @Date: 2018-06-13 22:26:30
+ * @Date: 2018-06-21 18:01:23
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-20 18:06:27
+ * @Last Modified time: 2018-06-21 18:07:37
  */
 import * as _ from 'lodash';
 import { fabric } from 'fabric';
@@ -43,76 +43,6 @@ export interface IComponent<T extends fabric.Object> {
      */
     getLayoutData(): ILayoutData;
 
-}
-
-/**
- * IComposite interface defines UI container class.
- */
-export interface IComposite<T extends fabric.Group> extends IComponent<T> {
-    /**
-     * Return children layout of this expression.
-     */
-    getLayout(): ILayout<T>;
-}
-
-/**
- * Composite class defines common functions of UI container.
- */
-export class Composite<T extends fabric.Group> extends fabric.Group implements IComposite<T> {
-
-    /**
-     * layout specifies layout of the composite.
-     */
-    layout: ILayout<T>;
-
-    /**
-     * layoutData specifies layout values of the component in container.
-     */
-    layoutData: ILayoutData;
-
-    /**
-     * Return children layout of this expression.
-     */
-    getLayout(): ILayout<T> {
-        return this.layout;
-    }
-
-    /**
-     * Return this as type of Composite.
-     */
-    selfFabricObject(): T {
-        let thiz: any = this;
-        return thiz as T;
-    }
-
-    /**
-     * Set layout data.
-     *
-     * @param layou
-     */
-    setLayout(layout: ILayout<T>): void {
-        this.layout = layout;
-    }
-
-    /**
-     * Return layout setting of this expression.
-     */
-    getLayoutData(): ILayoutData {
-        return this.layoutData;
-    }
-
-    /**
-     * Set layout data.
-     *
-     * @param layouData
-     */
-    setLayoutData(layouData: ILayoutData): void {
-        this.layoutData = layouData;
-    }
-
-    public doLayout(): void {
-        this.layout.layout();
-    }
 }
 
 /**
@@ -199,6 +129,75 @@ export interface ILayout<T extends fabric.Object> {
  * Interface of layout data.
  */
 export interface ILayoutData {
+}
+/**
+ * IComposite interface defines UI container class.
+ */
+export interface IComposite<T extends fabric.Group> extends IComponent<T> {
+    /**
+     * Return children layout of this expression.
+     */
+    getLayout(): ILayout<T>;
+}
+
+/**
+ * Composite class defines common functions of UI container.
+ */
+export class Composite<T extends fabric.Group> extends fabric.Group implements IComposite<T> {
+
+    /**
+     * layout specifies layout of the composite.
+     */
+    layout: ILayout<T>;
+
+    /**
+     * layoutData specifies layout values of the component in container.
+     */
+    layoutData: ILayoutData;
+
+    /**
+     * Return children layout of this expression.
+     */
+    getLayout(): ILayout<T> {
+        return this.layout;
+    }
+
+    /**
+     * Return this as type of Composite.
+     */
+    selfFabricObject(): T {
+        let thiz: any = this;
+        return thiz as T;
+    }
+
+    /**
+     * Set layout data.
+     *
+     * @param layou
+     */
+    setLayout(layout: ILayout<T>): void {
+        this.layout = layout;
+    }
+
+    /**
+     * Return layout setting of this expression.
+     */
+    getLayoutData(): ILayoutData {
+        return this.layoutData;
+    }
+
+    /**
+     * Set layout data.
+     *
+     * @param layouData
+     */
+    setLayoutData(layouData: ILayoutData): void {
+        this.layoutData = layouData;
+    }
+
+    public doLayout(): void {
+        this.layout.layout();
+    }
 }
 
 /**

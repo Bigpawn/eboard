@@ -2,10 +2,10 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 23:31:58
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-14 16:26:51
+ * @Last Modified time: 2018-06-21 18:07:28
  */
 import { fabric } from 'fabric';
-import { Composite, AbstractLayout, ILayoutOptions, IComponent } from './LayoutCommon';
+import { Composite, AbstractLayout, ILayoutOptions, IComponent } from '../UICommon';
 
 export enum Align {
     BEGINNING,

@@ -2,10 +2,10 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 23:25:09
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-14 15:04:28
+ * @Last Modified time: 2018-06-21 18:07:22
  */
 import { fabric } from 'fabric';
-import { Composite, ILayoutData, IComponent } from './LayoutCommon';
+import { Composite, ILayoutData, IComponent } from '../UICommon';
 import { FlowLayout, IFlowLayoutOptions } from './FlowLayout';
 
 /**
