@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 22:29:18
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-21 21:44:40
+ * @Last Modified time: 2018-06-22 19:27:15
  */
 import { fabric } from 'fabric';
 import * as util from '../../utils/utils';
@@ -54,7 +54,7 @@ export class FlowData<T extends fabric.Object> implements ILayoutData {
 
   public calcAlignmentPartSize(orientation: Orientation, recalculate: boolean): AlignmentPartSize {
 
-    let bounds: Boundary = this.alignElement.calcBounds(recalculate);
+    let bounds: Boundary = this.alignElement.calcBounds(false, recalculate);
     let partSize: AlignmentPartSize;
 
     if (orientation === Orientation.VERTICAL) {
@@ -288,47 +288,47 @@ export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O exten
       // text._measureChar
       // text.initDimensions
       // text.getMeasuringContext
-    let left: number = 0, 
-        top: number = 0,
-        leftEdgeMargin: number = util.max([this.options.marginWidth || 0, this.options.marginLeft || 0], null),
+    let leftEdgeMargin: number = util.max([this.options.marginWidth || 0, this.options.marginLeft || 0], null),
         rightEdgeMargin: number = util.max([this.options.marginWidth || 0, this.options.marginRight || 0], null),
         topEdgeMargin: number = util.max([this.options.marginHeight || 0, this.options.marginTop || 0], null),
         bottomEdgeMargin: number = util.max([this.options.marginHeight || 0, this.options.marginBottom || 0], null),
         width: number = 0,
         height: number = 0;
         
-    let xOffset = left;
-    let yOffset = top;
+    let xOffset: number = 0;
+    let yOffset: number = 0;
 
     if (this.options.orientation === Orientation.HORIZONTAL) {
 
       xOffset += leftEdgeMargin;
-      width += leftEdgeMargin;
       yOffset += topEdgeMargin;
+      width += leftEdgeMargin;
       
       let alignPartSize: AlignmentPartSize = {'up': 0, 'down': 0};
-      let subPartSize: AlignmentPartSize[];
+      let subPartSize: AlignmentPartSize[] = new Array<AlignmentPartSize>(this.options.elements.length);
 
       // Compute boundary of each element and set left of each element.
       for (let i = 0; i < this.options.elements.length; i++) {
         if (i > 0) {
-          width += (this.options.vSpace ? this.options.vSpace : this.options.space) || 0;
-          xOffset += (this.options.vSpace ? this.options.vSpace : this.options.space) || 0;
+          width += (this.options.hSpace ? this.options.hSpace : this.options.space) || 0;
+          xOffset += (this.options.hSpace ? this.options.hSpace : this.options.space) || 0;
         }
 
         let component: IComponent<T> = this.options.elements[i];
-        // Temporarily set left and top to calculate element's width and height.
-        component.selfFabricObject().set({ 'left': xOffset, 'top': yOffset } as object);
-
-        // If component is a container then do layout first.
+        let compBounds: Boundary;
+         // If sub component is a container then do layout first.
         if (component instanceof Composite) {
-          (component as Composite<G>).doLayout();
-        }
-
-        // Calculate component boundary
-        let bounds: Boundary = component.selfFabricObject().getBoundingRect() as Boundary;
-        width += bounds.width;
-        xOffset += bounds.width;
+          if (!(component as Composite<G>).isValid()) {
+            (component as Composite<G>).doLayout();
+          }
+          compBounds = component.calcBounds(false, false);
+        } else {
+          compBounds = component.calcBounds(false, !component.isValid());
+        }        
+        // Temporarily set left and top to calculate element's width and height.
+        component.selfFabricObject().set({ 'left': compBounds.left + xOffset, 'top': compBounds.top + yOffset } as object);
+        width += compBounds.width;
+        xOffset += compBounds.width;
 
         if (component instanceof Composite) {
           let layoutData: FlowData<T> = (component as Composite<G>).getLayoutData() as FlowData<T>;
@@ -342,6 +342,8 @@ export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O exten
       }
 
       xOffset += rightEdgeMargin;
+      // Since the default originX/originY is center of container, so the top value of sub components is negative value.
+      yOffset = -height / 2;
       width += rightEdgeMargin;
       height += topEdgeMargin + bottomEdgeMargin;
 
@@ -350,11 +352,68 @@ export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O exten
         let component: IComponent<T> = this.options.elements[i];
         // Temporarily set left and top to calculate element's width and height.
         component.selfFabricObject().set({ 'top':  yOffset + (alignPartSize.up - subPartSize[i].up)} as object);
-        component.calcBounds(true);
       }
 
-      this.container.calcBounds(true);
+    } else {
+      // Orientation is Vertical
+      xOffset += leftEdgeMargin;
+      yOffset += topEdgeMargin;
+      height += topEdgeMargin;
+
+      let alignPartSize: AlignmentPartSize = {'left': 0, 'right': 0};
+      let subPartSize: AlignmentPartSize[] = new Array<AlignmentPartSize>(this.options.elements.length);
+
+      // Compute boundary of each element and set left of each element.
+      for (let i = 0; i < this.options.elements.length; i++) {
+        if (i > 0) {
+          height += (this.options.vSpace ? this.options.vSpace : this.options.space) || 0;
+          yOffset += (this.options.vSpace ? this.options.vSpace : this.options.space) || 0;
+        }
+
+        let component: IComponent<T> = this.options.elements[i];
+        let compBounds: Boundary;
+         // If sub component is a container then do layout first.
+        if (component instanceof Composite) {
+          if (!(component as Composite<G>).isValid()) {
+            (component as Composite<G>).doLayout();
+          }
+          compBounds = component.calcBounds(false, false);
+        } else {
+          compBounds = component.calcBounds(false, !component.isValid());
+        }
+        // Temporarily set left and top to calculate element's width and height.
+        component.selfFabricObject().set({ 'top': compBounds.top + yOffset, 'left': compBounds.left + xOffset } as object);
+        height += compBounds.height;
+        yOffset += compBounds.height;
+
+        if (component instanceof Composite) {
+          let layoutData: FlowData<T> = (component as Composite<G>).getLayoutData() as FlowData<T>;
+          subPartSize[i] = layoutData.calcAlignmentPartSize(Orientation.VERTICAL, false);
+          alignPartSize.left = util.max([alignPartSize.left, subPartSize[i].left], null);
+          alignPartSize.right = util.max([alignPartSize.right, subPartSize[i].right], null);
+        }
+
+        // Calculate max height.
+        width = util.max([width, alignPartSize.left + alignPartSize.left], null);
+      }
+
+      yOffset += bottomEdgeMargin;
+      // Since the default originX/originY is center of container, so the top value of sub components is negative value.
+      xOffset = -width / 2;
+      height += bottomEdgeMargin;
+      width += leftEdgeMargin + rightEdgeMargin;
+
+      // Set top position of each element according to total height and element original setting.
+      for (let i = 0; i < this.options.elements.length; i++) {
+        let component: IComponent<T> = this.options.elements[i];
+        // Temporarily set left and top to calculate element's width and height.
+        component.selfFabricObject().set({ 'left':  xOffset + (alignPartSize.left - subPartSize[i].left)} as object);
+      }
     }
+
+    // Set container's width and height.
+    this.container.set({'width': width, 'height': height});
   }
+
 }
   

@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-21 18:01:23
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-22 11:46:12
+ * @Last Modified time: 2018-06-22 15:32:00
  */
 import * as _ from 'lodash';
 import { fabric } from 'fabric';
@@ -53,15 +53,18 @@ export interface IComponent<T extends fabric.Object> {
     /**
      * Calculate bounds of component.
      * 
+     * @param absolute
      * @param recalculate
      */
-    calcBounds(recalculate: boolean): Boundary;
+    calcBounds(absolute?: boolean, recalculate?: boolean): Boundary;
 
     invalidate(): void;
 
     validate(): void;
 
     revalidate(): void;
+
+    isValid(): boolean;
 }
 
 /**
@@ -182,7 +185,7 @@ export class Composite<G extends fabric.Group> extends fabric.Group implements I
      */
     layoutData: ILayoutData;
 
-    valid: boolean = true;
+    valid: boolean = false;
 
     constructor(parent: Composite<G>, items?: any[], options?: ICompositeOptions) {
         super(items, options);
@@ -233,10 +236,12 @@ export class Composite<G extends fabric.Group> extends fabric.Group implements I
 
     public doLayout(): void {
         this.layout.layout();
+        this.addWithUpdate(undefined);
+        this.valid = true;
     }
 
-    public calcBounds(recalculate: boolean): Boundary {
-        return this.getBoundingRect(false, recalculate) as Boundary;
+    public calcBounds(absolute?: boolean, recalculate?: boolean): Boundary {
+        return this.getBoundingRect(absolute, recalculate) as Boundary;
     }
 
     public isValid(): boolean {
@@ -325,12 +330,12 @@ export interface ILayoutOptions {
     /**
      * vSpace specifies the number of pixels of vertical space between the edge of one control and the edge of its neighbouring control.
      */
-    vSpace?: number;
+    hSpace?: number;
 
     /**
      * hSpace specifies the number of pixels of horizontal space between the edge of one control and the edge of its neighbouring control.
      */
-    hSpace?: number;
+    vSpace?: number;
 }
 
 /**

@@ -4,7 +4,7 @@
  * @Last Modified by: Liheng (liheeng@gmail.com)
  * @Last Modified time: 2018-06-14 15:05:33
  */
-import { Composite, AbstractLayout, ILayoutOptions, IComponent } from './LayoutCommon';
+import { Composite, AbstractLayout, ILayoutOptions, IComponent } from '../UICommon';
 
 /**
  * Define order of border element.
@@ -30,11 +30,11 @@ export interface IBorderLayoutOptions<T extends fabric.Object> extends ILayoutOp
 /**
  * The element order of border layout is top, left, center, right and bottom.
  */
-export class BorderLayout<S extends fabric.Group, T extends fabric.Object, E extends IBorderLayoutOptions<T>> extends AbstractLayout<S, T, E> {
+export class BorderLayout<G extends fabric.Group, T extends fabric.Object, O extends IBorderLayoutOptions<T>> extends AbstractLayout<G, T, O> {
 
     elements: IComponent<T>[];
 
-    constructor(container: Composite<S>, options?: E) {
+    constructor(container: Composite<G>, options?: O) {
         super(container, options);
     }
   
@@ -43,7 +43,7 @@ export class BorderLayout<S extends fabric.Group, T extends fabric.Object, E ext
      * @param container 
      * @param options 
      */
-    protected _init(container: Composite<S>, options?: E) {
+    protected _init(container: Composite<G>, options?: O) {
         super._init(container, options);
         if (!this.options.elements) {
             this.options.elements = new Array(5);
