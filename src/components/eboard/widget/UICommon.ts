@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-21 18:01:23
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-21 20:42:45
+ * @Last Modified time: 2018-06-22 11:46:12
  */
 import * as _ from 'lodash';
 import { fabric } from 'fabric';
@@ -56,6 +56,12 @@ export interface IComponent<T extends fabric.Object> {
      * @param recalculate
      */
     calcBounds(recalculate: boolean): Boundary;
+
+    invalidate(): void;
+
+    validate(): void;
+
+    revalidate(): void;
 }
 
 /**
@@ -153,10 +159,18 @@ export interface IComposite<G extends fabric.Group> extends IComponent<G> {
     getLayout(): ILayout<G>;
 }
 
+export interface ICompositeOptions extends fabric.IObjectOptions {
+
+}
+
 /**
  * Composite class defines common functions of UI container.
  */
 export class Composite<G extends fabric.Group> extends fabric.Group implements IComposite<G> {
+
+    parent: Composite<G>;
+
+    options: ICompositeOptions;
 
     /**
      * layout specifies layout of the composite.
@@ -167,6 +181,14 @@ export class Composite<G extends fabric.Group> extends fabric.Group implements I
      * layoutData specifies layout values of the component in container.
      */
     layoutData: ILayoutData;
+
+    valid: boolean = true;
+
+    constructor(parent: Composite<G>, items?: any[], options?: ICompositeOptions) {
+        super(items, options);
+        this.parent = parent;
+        this.options = options || {};
+    }
 
     /**
      * Return children layout of this expression.
@@ -215,6 +237,48 @@ export class Composite<G extends fabric.Group> extends fabric.Group implements I
 
     public calcBounds(recalculate: boolean): Boundary {
         return this.getBoundingRect(false, recalculate) as Boundary;
+    }
+
+    public isValid(): boolean {
+        return this.valid;
+    }
+
+    /**
+     * @override
+     */
+    public invalidate(): void {
+        this.valid = false;
+        if (this.parent) {
+            this.parent.invalidate();
+        }
+    }
+
+    /**
+     * @override
+     */
+    public validate(): void {
+        if (!this.isValid()) {
+            this.doLayout();
+        }
+    }
+
+    /**
+     * @override
+     */
+    public revalidate(): void {
+        this.invalidate();
+        let root: Composite<any> = this.parent;
+        if (!root) {
+            this.validate();
+        } else {
+            while (!root.isValid()) {
+                if (!root.parent) {
+                    break;
+                }
+                root = root.parent;
+            }
+            root.validate();
+        }
     }
 }
 

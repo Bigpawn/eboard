@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-06 09:13:13
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-07 09:16:00
+ * @Last Modified time: 2018-06-22 13:52:23
  */
 /**
  * The module extends standard fabricjs implementation.
@@ -88,3 +88,23 @@ fabric.Color.sourceFromHslObject = function(color: any) {
 
     return Color.sourceFromHsl(_color);
 }
+
+// fabric.Canvas.prototype._searchPossibleTargets = function (objects: any, pointer: any) {
+
+//     // Cache all targets where their bounding box contains point.
+//     var target, i = objects.length, normalizedPointer, subTarget;
+//     // Do not check for currently grouped objects, since we check the parent group itself.
+//     // until we call this function specifically to search inside the activeGroup
+//     while (i--) {
+//         if (this._checkTarget(pointer, objects[i])) {
+//             target = objects[i];
+//             if (target.subTargetCheck && target instanceof fabric.Group) {
+//                 normalizedPointer = this._normalizePointer(target, pointer);
+//                 subTarget = this._searchPossibleTargets(target._objects, normalizedPointer);
+//                 subTarget && this.targets.push(subTarget);
+//             }
+//             break;
+//         }
+//     }
+//     return target;
+// }

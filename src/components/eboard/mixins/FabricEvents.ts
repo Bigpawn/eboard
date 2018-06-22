@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-06 11:11:21
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 21:41:03
+ * @Last Modified time: 2018-06-22 13:56:55
  */
 
 /**
@@ -82,6 +82,8 @@ export enum FabricObservingEventType {
   OBJECT_ADD = 'object:added',
 
   OBJECT_REMOVED = 'object:removed',
+
+  TEXT_CHANGED = 'text:changed',
 }
 
 export enum FabricObjectEventType {
@@ -129,6 +131,8 @@ export enum FabricObjectEventType {
 
   DRAGLEAVE = 'dragleave',
 
+  // Text changed.
+  CHANGED = 'changed',
 }
 /**
  * Zoom event structure.
