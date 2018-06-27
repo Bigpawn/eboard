@@ -2,9 +2,9 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-06 11:10:47
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 11:21:26
+ * @Last Modified time: 2018-06-25 10:13:19
  */
-import { FabricOtherEventType } from '../mixins/FabricEvents';
+import { FabricObservingEventType } from '../mixins/FabricEvents';
 import { AbstractUndoAction} from '../mixins/Undo';
 import EBoardEngine from '../EBoardEngine';
 /**
@@ -19,7 +19,7 @@ export default class PathCreatedUndoAction extends AbstractUndoAction {
      * @override
      */
     public getType(): any {
-        return FabricOtherEventType.PATH_CREATED;
+        return FabricObservingEventType.PATH_CREATED;
     }
 
     /**

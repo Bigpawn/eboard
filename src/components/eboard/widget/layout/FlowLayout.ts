@@ -2,16 +2,16 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 22:29:18
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-22 19:27:15
+ * @Last Modified time: 2018-06-25 10:17:15
  */
 import { fabric } from 'fabric';
 import * as util from '../../utils/utils';
 import { Composite, Orientation, AbstractLayout, ILayoutOptions, Boundary, ILayoutData, Alignment, IComponent } from '../UICommon';
 
 /**
- * AlignmentPartSize saves up size and down size which are calcualted by alignment setting in FlowData of Component,
- * That up size plus down size equal height of component when flow layout is Horizontal orientation, 
- * and that left size plus right size equal width of component when flow layout is Vertical orientation. 
+ * AlignmentPartSize saves up/down/left/right size which are calcualted by alignment setting in FlowData of Component,
+ * That 'up size' plus 'down size' equal height of component when flow layout is Horizontal orientation, 
+ * and that 'left size' plus 'right size' equal width of component when flow layout is Vertical orientation. 
  * As default up size/down size are 1/2 of height and left size/right size are 1/2 of width.
  */
 export interface AlignmentPartSize {
@@ -26,13 +26,6 @@ export interface AlignmentPartSize {
  */
 export class FlowData<T extends fabric.Object> implements ILayoutData {
   private ownerComponent: IComponent<T>;
-
-  constructor(ownerComponent: IComponent<T>) {
-    this.ownerComponent = ownerComponent;
-    this.ownerComponent = this.ownerComponent;
-    this.alignment = Alignment.CENTER;
-    this.ownerComponent.setLayoutData(this);
-  }
   
   /**
    * alignElement specifies which element in current Composite is used to align, null means use composite itself.
@@ -43,6 +36,13 @@ export class FlowData<T extends fabric.Object> implements ILayoutData {
    * alignment specifies alignment value of alignElement.
    */
   alignment: Alignment;
+  
+  constructor(ownerComponent: IComponent<T>) {
+    this.ownerComponent = ownerComponent;
+    this.ownerComponent = this.ownerComponent;
+    this.alignment = Alignment.CENTER;
+    this.ownerComponent.setLayoutData(this);
+  }
   
   public setAlignElement(component: IComponent<T>) {
     this.alignElement = component;
