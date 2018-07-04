@@ -9,7 +9,7 @@ An blackboard implementation based on html canvas.
 #### For developer:
 1. Checkout this project to local.
 2. yarn install --ignore-engines
-3. yarn server
+3. yarn start
 4. open http://localhost:8000/examples/eboard-demo.html
 
 #### Publish:
