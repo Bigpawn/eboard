@@ -6,19 +6,19 @@
 An blackboard implementation based on html canvas.
 
 
-####For developer:
+#### For developer:
 1. Checkout this project to local.
 2. yarn install --ignore-engines
 3. yarn server
 4. open http://localhost:8000/examples/eboard-demo.html
 
-####Publish:
+#### Publish:
 1. npm run pub
 
-####Jest:
+#### Jest:
 1. npm run test
 
-####Plan:
+#### Plan:
 1. support custom shapes（done, liheeng, 20180607)
 
 2. redo、undo (done, liheeng, 20180607)
