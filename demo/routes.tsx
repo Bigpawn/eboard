@@ -20,7 +20,7 @@ export const routes: RouteConfig[] = [
     },
     {
         path: "/todo",
-        component: () => (<TodoPage />),
+        component: () => (<TodoPage/>),
     },
     {
         path: "/about",

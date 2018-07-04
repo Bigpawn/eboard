@@ -9,8 +9,8 @@ import { actionCreators } from "../actions/actions";
 const { Column } = Table;
 
 interface ITodoProps {
-    todoItems: TodoItem[];
-    actions: any;
+    todoItems?: TodoItem[];
+    actions?: any;
 }
 
 interface ITodoState {
@@ -35,7 +35,7 @@ class TodoPageComponent extends React.Component<ITodoProps, ITodoState> {
                 <Card bordered title="Todo List" style={{ margin: "16px 16px"}}>
                     <Button type="primary" icon="plus"
                         onClick={() => {this.setState({modalVisible: true}); }}>New Task</Button>
-                    <Table dataSource={this.props.todoItems}>
+                    <Table dataSource={this.props.todoItems||[]}>
                         <Column title="Id" dataIndex="id" key="id"/>
                         <Column title="Task" dataIndex="name" key="name"/>
                         <Column title="Status" dataIndex="isCompleted" key="isCompleted"
