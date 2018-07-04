@@ -23,7 +23,7 @@
         "build": "rc-tools run build",
         "dist": "rc-tools run dist",
         "gh-pages": "rc-tools run gh-pages",
-        "start": "rc-tools run server && node ./cli/open.js",
+        "start": "node ./cli/open.js && rc-tools run server",
         "compile": "rc-tools run compile --babel-runtime",
         "pub": "rc-tools run pub --babel-runtime",
         "lint": "rc-tools run lint --no-js-lint",
