@@ -75,7 +75,7 @@ export default class EBoardWidget extends React.Component < EBoardProps, EBoardS
 
     public render(): JSX.Element {
         return(
-            <div ref={this.__CANVAS_WRAPPER_NAME} className="drawing-area">
+            <div ref={this.__CANVAS_WRAPPER_NAME} className="drawing-area" id="canvas-container">
                 {/* <div className="pdf-layer">
                     <Document file='http://localhost:8080/阔地终端音视频引擎接口_v1.0.13_20180211.pdf' onLoadSuccess={ (evt: any) => {this.onPdfLoad(evt); }} >
                         <Page pageNumber={this.state.pageNumber} onLoadSuccess={ (evt: any) => {this.onPdfPageLoad(evt); }} />
