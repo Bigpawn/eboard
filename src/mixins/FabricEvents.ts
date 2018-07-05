@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-06 11:11:21
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-22 13:56:55
+ * @Last Modified time: 2018-07-05 14:02:12
  */
 import {fabric} from "fabric";
 /**
@@ -137,7 +137,7 @@ export enum FabricObjectEventType {
 /**
  * Zoom event structure.
  */
-export interface ZoomEvent {
+export interface IZoomEvent {
   oldVpt: number[];
   value: number;
   point: fabric.Point;

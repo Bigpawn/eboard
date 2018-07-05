@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 11:49:55
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-15 21:57:23
+ * @Last Modified time: 2018-07-05 14:01:13
  */
 import { fabric } from "fabric";
 // import ICursor from "./ICursor";
@@ -39,7 +39,10 @@ export default class CircleCursor extends AbstractCustomCursor {
     }
 
     render(point: fabric.Point): void {
-        if(void 0 ===this.canvas) return;
+        if(void 0 ===this.canvas) {
+            return;
+        }
+        
         let ctx = this.canvas.getCursorCanvasContext();
         if (ctx) {
             ctx.fillStyle = this.fill.toRgba();
