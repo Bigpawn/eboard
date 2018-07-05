@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:07:19
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 21:41:29
+ * @Last Modified time: 2018-07-05 16:28:20
  */
 import * as React from "react";
 import "./EBoardWidget.less";
@@ -11,14 +11,14 @@ import EBoardEngine from "./EBoardEngine";
 /**
  * Define eBoard props
  */
-interface EBoardProps {
+interface IEBoardProps {
     onInitEBoardEngine: Function;
 }
 
 /**
  * Define eBoard states.
  */
-interface EBoardStates {
+interface IEBoardStates {
     numPages: number,
     pageNumber: number,
 }
@@ -26,7 +26,7 @@ interface EBoardStates {
 /**
  * 
  */
-export default class EBoardWidget extends React.Component < EBoardProps, EBoardStates > {
+export default class EBoardWidget extends React.Component < IEBoardProps, IEBoardStates > {
     state = {
         numPages: 1,
         pageNumber: 1,
