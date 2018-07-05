@@ -2,11 +2,11 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 22:29:18
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-25 10:17:15
+ * @Last Modified time: 2018-07-05 16:34:45
  */
 import { fabric } from 'fabric';
 import * as util from '../../utils/utils';
-import { Composite, Orientation, AbstractLayout, ILayoutOptions, Boundary, ILayoutData, Alignment, IComponent } from '../UICommon';
+import { Composite, Orientation, AbstractLayout, ILayoutOptions, IBoundary, ILayoutData, Alignment, IComponent } from '../UICommon';
 
 /**
  * AlignmentPartSize saves up/down/left/right size which are calcualted by alignment setting in FlowData of Component,
@@ -14,7 +14,7 @@ import { Composite, Orientation, AbstractLayout, ILayoutOptions, Boundary, ILayo
  * and that 'left size' plus 'right size' equal width of component when flow layout is Vertical orientation. 
  * As default up size/down size are 1/2 of height and left size/right size are 1/2 of width.
  */
-export interface AlignmentPartSize {
+export interface IAlignmentPartSize {
   up?: number;
   down?: number;
   left?: number;
@@ -52,10 +52,10 @@ export class FlowData<T extends fabric.Object> implements ILayoutData {
     this.alignment = alignment;
   }
 
-  public calcAlignmentPartSize(orientation: Orientation, recalculate: boolean): AlignmentPartSize {
+  public calcAlignmentPartSize(orientation: Orientation, recalculate: boolean): IAlignmentPartSize {
 
-    let bounds: Boundary = this.alignElement.calcBounds(false, recalculate);
-    let partSize: AlignmentPartSize;
+    let bounds: IBoundary = this.alignElement.calcBounds(false, recalculate);
+    let partSize: IAlignmentPartSize;
 
     if (orientation === Orientation.VERTICAL) {
       // Orientation is vertical case, calculate up size and down size.
@@ -69,7 +69,7 @@ export class FlowData<T extends fabric.Object> implements ILayoutData {
     return partSize;
   }
 
-  private __calcVerticalPartSize(alignment: Alignment, partSize: AlignmentPartSize|any, bounds: Boundary): AlignmentPartSize {
+  private __calcVerticalPartSize(alignment: Alignment, partSize: IAlignmentPartSize|any, bounds: IBoundary): IAlignmentPartSize {
     switch (this.alignment) {
       case Alignment.TOP:
         partSize.up += 0;
@@ -87,7 +87,7 @@ export class FlowData<T extends fabric.Object> implements ILayoutData {
     return partSize;
   }
 
-  private __calcHorizontalPartSize(alignment: Alignment, partSize: AlignmentPartSize|any, bounds: Boundary): AlignmentPartSize {
+  private __calcHorizontalPartSize(alignment: Alignment, partSize: IAlignmentPartSize|any, bounds: IBoundary): IAlignmentPartSize {
     switch (this.alignment) {
       case Alignment.LEFT:
         partSize.left += 0;
@@ -122,7 +122,7 @@ export interface IFlowLayoutOptions<T extends fabric.Object>  extends ILayoutOpt
     /**
      * All elements which are managed by flow layout.
      */
-    elements?: IComponent<T>[]; 
+    elements?: Array<IComponent<T>>; 
 }
 
 /**
@@ -305,7 +305,7 @@ export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O exten
       width += leftEdgeMargin;
       
       let alignPartSize: any = {'up': 0, 'down': 0};
-      let subPartSize: any[] = new Array<AlignmentPartSize>(this.options.elements.length);
+      let subPartSize: any[] = new Array<IAlignmentPartSize>(this.options.elements.length);
 
       // Compute boundary of each element and set left of each element.
       for (let i = 0; i < this.options.elements.length; i++) {
@@ -315,7 +315,7 @@ export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O exten
         }
 
         let component: IComponent<T> = this.options.elements[i];
-        let compBounds: Boundary;
+        let compBounds: IBoundary;
          // If sub component is a container then do layout first.
         if (component instanceof Composite) {
           if (!(component as Composite<G>).isValid()) {
@@ -361,7 +361,7 @@ export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O exten
       height += topEdgeMargin;
 
       let alignPartSize: any = {'left': 0, 'right': 0};
-      let subPartSize: any[] = new Array<AlignmentPartSize>(this.options.elements.length);
+      let subPartSize: any[] = new Array<IAlignmentPartSize>(this.options.elements.length);
 
       // Compute boundary of each element and set left of each element.
       for (let i = 0; i < this.options.elements.length; i++) {
@@ -371,7 +371,7 @@ export class FlowLayout<G extends fabric.Group, T extends fabric.Object, O exten
         }
 
         let component: IComponent<T> = this.options.elements[i];
-        let compBounds: Boundary;
+        let compBounds: IBoundary;
          // If sub component is a container then do layout first.
         if (component instanceof Composite) {
           if (!(component as Composite<G>).isValid()) {

@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 23:31:58
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-21 18:30:19
+ * @Last Modified time: 2018-07-05 16:35:08
  */
 import { fabric } from 'fabric';
 import { Composite, AbstractLayout, ILayoutOptions, IComponent } from '../UICommon';
@@ -107,7 +107,7 @@ export interface IGridLayoutOptions<T extends fabric.Object> extends ILayoutOpti
     /**
      * All elements which are managed by flow layout.
      */
-    elements?: IComponent<T>[][]; 
+    elements?: Array<Array<IComponent<T>>>; 
 }
 
 export class GridLayout<G extends fabric.Group, T extends fabric.Object, O extends IGridLayoutOptions<T>>  extends AbstractLayout<G, T, O> {
@@ -209,7 +209,7 @@ export class GridLayout<G extends fabric.Group, T extends fabric.Object, O exten
         return null;
     }
     
-    valueOf(rowIndex: number, colIndex?: number): IComponent<T>[] {
+    valueOf(rowIndex: number, colIndex?: number): Array<IComponent<T>> {
         if (!colIndex) {
             return this.options.elements[rowIndex];
         } else {

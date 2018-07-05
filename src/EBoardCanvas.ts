@@ -2,14 +2,14 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:56:54
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-14 16:06:28
+ * @Last Modified time: 2018-07-05 15:39:52
  */
 import {fabric} from 'fabric';
 import './mixins/ExFabric';
 import AbstractBrush from './brushes/AbstractBrush';
 import {BrushType} from './brushes/BrushType';
 import {BrowserCursorName} from './cursor/BrowserCursor';
-import {FabricObservingEventType, ZoomEvent} from './mixins/FabricEvents';
+import {FabricObservingEventType, IZoomEvent} from './mixins/FabricEvents';
 import * as _ from "lodash";
 
 /**
@@ -490,7 +490,7 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
             fabric.util.invertTransform(this.viewportTransform));
         vpt[0] = value;
         vpt[3] = value;
-        var after = fabric.util.transformPoint(point, vpt);
+        let after = fabric.util.transformPoint(point, vpt);
         vpt[4] += before.x - after.x;
         vpt[5] += before.y - after.y;
         let ret = this.setViewportTransform(vpt);
@@ -501,7 +501,7 @@ export class EBoardCanvas extends FabricCanvas implements fabric.ICanvasOptions 
             'value': value,
             'point': point,
             'lastVpt': _.map(vpt, _.clone),
-        } as ZoomEvent);
+        } as IZoomEvent);
         
         return ret;
     }

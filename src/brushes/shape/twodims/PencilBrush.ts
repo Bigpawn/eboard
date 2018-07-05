@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-27 22:13:21
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 20:42:39
+ * @Last Modified time: 2018-07-05 15:41:47
  */
 import {fabric} from 'fabric';
 import AbstractBrush from '../../AbstractBrush';
@@ -41,7 +41,7 @@ export default class PencilBrush extends AbstractBrush {
     // then we should be drawing a dot. A path isn't drawn between two
     // identical dots  that's why we set them apart a bit
     if (this._points.length === 2 && p1.x === p2.x && p1.y === p2.y) {
-      var width = this.width / 1000;
+      let width = this.width / 1000;
       p1 = new fabric.Point(p1.x, p1.y);
       p2 = new fabric.Point(p2.x, p2.y);
       p1.x -= width;
@@ -52,7 +52,7 @@ export default class PencilBrush extends AbstractBrush {
     for (i = 1, len = this._points.length; i < len; i++) {
       // we pick the point between pi + 1 & pi + 2 as the
       // end point and p1 as our control point.
-      var midPoint = p1.midPointFrom(p2);
+      let midPoint = p1.midPointFrom(p2);
       ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
 
       p1 = this._points[i];
@@ -85,7 +85,7 @@ export default class PencilBrush extends AbstractBrush {
         'M ', p1.x - multSignX * width, ' ', p1.y - multSignY * width, ' ');
     for (i = 1; i < len; i++) {
       if (!p1.eq(p2)) {
-        var midPoint = p1.midPointFrom(p2);
+        let midPoint = p1.midPointFrom(p2);
         // p1 is our bezier control point
         // midpoint is our endpoint
         // start point is p(i-1) value.
@@ -142,10 +142,10 @@ export default class PencilBrush extends AbstractBrush {
    * and add it to the fabric canvas.
    */
   protected _finalizeAndAddPath() {
-    var ctx = this.canvas.getSelectionCanvasContext();
+    let ctx = this.canvas.getSelectionCanvasContext();
     ctx.closePath();
 
-    var pathData = this.convertPointsToSVGPath(this._points).join('');
+    let pathData = this.convertPointsToSVGPath(this._points).join('');
     if (pathData === 'M 0 0 Q 0 0 0 0 L 0 0') {
       // do not create 0 width/height paths, as they are
       // rendered inconsistently across browsers
@@ -155,7 +155,7 @@ export default class PencilBrush extends AbstractBrush {
       return;
     }
 
-    var path = this.createPath(pathData);
+    let path = this.createPath(pathData);
     this.canvas.clearContext(this.canvas.getSelectionCanvasContext());
     this.canvas.add(path);
     this.canvas.renderAll();

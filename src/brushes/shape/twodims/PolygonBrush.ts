@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-01 11:43:59
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 22:04:54
+ * @Last Modified time: 2018-07-05 13:59:17
  */
 import * as _ from "lodash";
 import { fabric } from "fabric";
@@ -61,7 +61,7 @@ export default class PolygonBrush extends LineBrush {
     }
 
     private __capturePolygonPath(pointer: fabric.Point) {
-        var pointerPoint = new fabric.Point(pointer.x, pointer.y);
+        let pointerPoint = new fabric.Point(pointer.x, pointer.y);
         this.__addPolygonPoint(pointerPoint);
     }
 
@@ -143,10 +143,10 @@ export default class PolygonBrush extends LineBrush {
      * @override
      */
     protected _render() {
-        var ctx = this.canvas.getSelectionCanvasContext(), v = this.canvas.viewportTransform,
+        let ctx = this.canvas.getSelectionCanvasContext(), v = this.canvas.viewportTransform,
             isClosed = this.__isClosed(this._points[1]);
 
-        var polyline = this.__createPolyline();
+        let polyline = this.__createPolyline();
         if (polyline == null) {
             return;
         }

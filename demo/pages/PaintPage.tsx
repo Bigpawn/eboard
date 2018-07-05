@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-28 20:01:31
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-13 14:17:27
+ * @Last Modified time: 2018-07-05 15:35:39
  */
 import * as _ from 'lodash';
 import * as React from "react";
@@ -37,7 +37,7 @@ import {
 } from "../icons/SvgIcons";
 
 import "./PaintPage.less";
-import { FabricObservingEventType, ZoomEvent } from '../../src/mixins/FabricEvents';
+import { FabricObservingEventType, IZoomEvent } from '../../src/mixins/FabricEvents';
 
 interface IPaintPageStates {
     currentBrush: BrushType;
@@ -108,7 +108,7 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
 
     private __setEBoardEngine(eBoardEngine: EBoardEngine) {
         this.eBoardEngine = eBoardEngine;
-        this.eBoardEngine.addEventListener(FabricObservingEventType.ZOOM_AFTER, (event: ZoomEvent) => {this.__onZoom(event); });
+        this.eBoardEngine.addEventListener(FabricObservingEventType.ZOOM_AFTER, (event: IZoomEvent) => {this.__onZoom(event); });
     }
 
     private __selectBrush(evt: any, brushType: BrushType): void {
@@ -208,7 +208,7 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
         this.eBoardEngine.getEBoardCanvas().setZoom(value);
     }
 
-    private __onZoom(event: ZoomEvent) {
+    private __onZoom(event: IZoomEvent) {
         this.setState({
             zoomValue: Math.floor(event.value * 100) / 100
         });

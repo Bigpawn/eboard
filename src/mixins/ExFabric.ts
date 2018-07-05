@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-06 09:13:13
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-22 13:52:23
+ * @Last Modified time: 2018-07-05 14:01:46
  */
 /**
  * The module extends standard fabricjs implementation.
@@ -11,7 +11,7 @@ const fabric = (window as any).fabric;
 const Color = fabric.Color;
 
 fabric.Color.prototype._tryParsingColor = function(color: any) {
-    var source;
+    let source;
 
     if (color in Color.colorNameMap) {
       color = Color.colorNameMap[color];
@@ -49,7 +49,7 @@ fabric.Color.prototype._tryParsingColor = function(color: any) {
     }    
 }
 
-fabric.Color.sourceFromRgbObject = function(color: any) {
+fabric.Color.sourceFromRgbObject = (color: any) => {
     let arr = [];
     if (typeof color.r === undefined) {
         return undefined;
@@ -69,7 +69,7 @@ fabric.Color.sourceFromRgbObject = function(color: any) {
     return Color.sourceFromRgb(_color);
 }
 
-fabric.Color.sourceFromHslObject = function(color: any) {
+fabric.Color.sourceFromHslObject = (color: any) => {
     let arr = [];
     if (typeof color.h === undefined) {
         return undefined;
