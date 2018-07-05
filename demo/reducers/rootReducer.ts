@@ -2,10 +2,10 @@ import { combineReducers } from "redux";
 // import { IState } from "../store/configStore";
 import { todos } from "./todosReducer";
 import { PaintToolbarReducer, PaintToolbarStates } from "./PaintToolbarReducer";
-import { TodoItem } from "../model/TodoItem";
+import { ITodoItem } from "../model/TodoItem";
 
 export interface IStates {
-    todos: TodoItem[];
+    todos: ITodoItem[];
     paintToolbarStates: PaintToolbarStates;
 }
 

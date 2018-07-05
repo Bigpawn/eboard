@@ -2,14 +2,14 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect } from "react-redux";
 import { Card, Table, Button, Modal, Input } from "antd";
-import { TodoItem } from "../model/TodoItem";
+import { ITodoItem } from "../model/TodoItem";
 import { IStates } from "../reducers/rootReducer";
 import { actionCreators } from "../actions/actions";
 
 const { Column } = Table;
 
 interface ITodoProps {
-    todoItems?: TodoItem[];
+    todoItems?: ITodoItem[];
     actions?: any;
 }
 
@@ -39,10 +39,10 @@ class TodoPageComponent extends React.Component<ITodoProps, ITodoState> {
                         <Column title="Id" dataIndex="id" key="id"/>
                         <Column title="Task" dataIndex="name" key="name"/>
                         <Column title="Status" dataIndex="isCompleted" key="isCompleted"
-                            render={(text: any, record: TodoItem, index: number) => {
+                            render={(text: any, record: ITodoItem, index: number) => {
                                 return <span>{record.isCompleted ? "Completed" : "Pending"}</span>;
                             }}/>
-                        <Column title="Action" key="action" render={(text: any, record: TodoItem, index: number) => (
+                        <Column title="Action" key="action" render={(text: any, record: ITodoItem, index: number) => (
                             <Button type="primary" disabled={record.isCompleted}
                                 onClick={() => {
                                     record.isCompleted = true;
@@ -64,7 +64,7 @@ class TodoPageComponent extends React.Component<ITodoProps, ITodoState> {
     }
 
     private handleOk = () => {
-        const item: TodoItem = {
+        const item: ITodoItem = {
             id: 0,
             key: 0,
             name: this.state.newTaskName,

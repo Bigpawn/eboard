@@ -1,8 +1,8 @@
 import { Action } from "redux";
 import * as todoActions from "../actions/actionTypes";
-import { TodoItem } from "../model/TodoItem";
+import { ITodoItem } from "../model/TodoItem";
 
-const initState: TodoItem[] = [{
+const initState: ITodoItem[] = [{
     key: 0,
     id: 0,
     name: "Create a template for react and typescript.",
@@ -14,7 +14,7 @@ const initState: TodoItem[] = [{
     isCompleted: false,
 }];
 
-export function todos(states: TodoItem[] = initState, action: Action) {
+export function todos(states: ITodoItem[] = initState, action: Action) {
     switch (action.type) {
         case todoActions.ActionTypes.INIT_STORE:
             return (action as todoActions.IInitStoreAction).todos;

@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { TodoItem } from "../model/TodoItem";
+import { ITodoItem } from "../model/TodoItem";
 
 export const ActionTypes = {
     INIT_STORE: "INIT_STORE",
@@ -9,13 +9,13 @@ export const ActionTypes = {
 };
 
 export interface IInitStoreAction extends Action {
-    todos: TodoItem[];
+    todos: ITodoItem[];
 }
 
 export interface IAddTodoAction extends Action {
-    todo: TodoItem;
+    todo: ITodoItem;
 }
 
 export interface ICompleteTodoAction extends Action {
-    todo: TodoItem;
+    todo: ITodoItem;
 }
