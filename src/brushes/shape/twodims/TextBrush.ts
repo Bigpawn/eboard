@@ -18,6 +18,8 @@ const defaultOpts = {
 
 export default class TextBrush extends AbstractBrush {
 
+  protected value:string;
+
   constructor(options?: IBrushOptions) {
     super(_.defaultsDeep(options, defaultOpts));
     this._init(this.options);
@@ -37,6 +39,7 @@ export default class TextBrush extends AbstractBrush {
    * @param {fabric.Point} pointer
    */
   public onMouseDown(pointer: fabric.Point): void {
+    this.value?this.value='':null;
     this._prepareForDrawing(pointer);
   }
 
@@ -56,7 +59,8 @@ export default class TextBrush extends AbstractBrush {
    */
   public onMouseUp(pointer: fabric.Point): void {
     this.canvas.disableDrawingTrack();
-    this._finalizeAndAddPath();
+    // this._finalizeAndAddPath();
+      this.__createInput(pointer);
   }
 
   /**
@@ -85,7 +89,29 @@ export default class TextBrush extends AbstractBrush {
     let textFunc = fabric[this.options.textType];
     let renderOpts = {};
     _.defaultsDeep(renderOpts, {'left': this._points[0].x, 'top': this._points[0].y}, this.options);
-    return new textFunc("This is i-text.", renderOpts);
+    return new textFunc(this.value, renderOpts);
   }
 
+    /**
+     * @param {module:.fabric/fabric-impl.Point} pointer
+     * @private
+     */
+  protected __createInput(pointer:fabric.Point) {
+    let canvasWapper:any = document.getElementById('canvas-container'),Input:any;
+    if(!this.value) {
+        Input = document.createElement('input');
+        canvasWapper.appendChild(Input);
+    }
+    let that = this;
+    Input.focus();
+    Input.style.position = 'absolute';
+    Input.style.left = `${pointer.x}px`;
+    Input.style.top = `${pointer.y}px`;
+    Input.addEventListener('blur',function (e:any){
+        that._points[0] = pointer;
+        that.value = e.target.value;
+        e.target.value?that._finalizeAndAddPath():null;
+        canvasWapper?canvasWapper.removeChild(this):null;
+    });
+  }
 }

@@ -2,13 +2,13 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 23:34:18
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 21:41:23
+ * @Last Modified time: 2018-07-05 15:41:10
  */
 import { fabric } from 'fabric';
 import { EBoardCanvas } from './EBoardCanvas';
 import { UndoEngine } from './mixins/Undo';
 import PathCreatedUndoAction from './undo/PathCreatedUndoAction';
-import { FabricObservingEventType, ZoomEvent } from './mixins/FabricEvents';
+import { FabricObservingEventType } from './mixins/FabricEvents';
 import ZoomUndoAction from './undo/ZoomUndoAction';
 
 export default class EBoardEngine {
@@ -52,7 +52,7 @@ export default class EBoardEngine {
         // TODO ...
         // REGISTER LISTENER FOR UNDO/REDO
         this.eBoardCanvas.addEventListener(FabricObservingEventType.PATH_CREATED, (event: any) => this.__handlePathCreated(event));
-        this.eBoardCanvas.addEventListener(FabricObservingEventType.ZOOM_AFTER, (event: ZoomEvent) => this.__handleZoomAfter(event));
+        this.eBoardCanvas.addEventListener(FabricObservingEventType.ZOOM_AFTER, (event: any) => this.__handleZoomAfter(event));
     }
 
     /**

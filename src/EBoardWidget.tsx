@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:07:19
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 21:41:29
+ * @Last Modified time: 2018-07-05 16:28:20
  */
 import * as React from "react";
 import "./EBoardWidget.less";
@@ -11,14 +11,14 @@ import EBoardEngine from "./EBoardEngine";
 /**
  * Define eBoard props
  */
-interface EBoardProps {
+interface IEBoardProps {
     onInitEBoardEngine: Function;
 }
 
 /**
  * Define eBoard states.
  */
-interface EBoardStates {
+interface IEBoardStates {
     numPages: number,
     pageNumber: number,
 }
@@ -26,7 +26,7 @@ interface EBoardStates {
 /**
  * 
  */
-export default class EBoardWidget extends React.Component < EBoardProps, EBoardStates > {
+export default class EBoardWidget extends React.Component < IEBoardProps, IEBoardStates > {
     state = {
         numPages: 1,
         pageNumber: 1,
@@ -75,7 +75,7 @@ export default class EBoardWidget extends React.Component < EBoardProps, EBoardS
 
     public render(): JSX.Element {
         return(
-            <div ref={this.__CANVAS_WRAPPER_NAME} className="drawing-area">
+            <div ref={this.__CANVAS_WRAPPER_NAME} className="drawing-area" id="canvas-container">
                 {/* <div className="pdf-layer">
                     <Document file='http://localhost:8080/阔地终端音视频引擎接口_v1.0.13_20180211.pdf' onLoadSuccess={ (evt: any) => {this.onPdfLoad(evt); }} >
                         <Page pageNumber={this.state.pageNumber} onLoadSuccess={ (evt: any) => {this.onPdfPageLoad(evt); }} />

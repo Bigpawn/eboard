@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-05-24 10:03:04
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-16 11:50:07
+ * @Last Modified time: 2018-07-05 14:00:33
  */
 import * as _ from 'lodash';
 import { applyMixins } from '../utils/utils';
@@ -32,7 +32,7 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
 
   strokeMiterLimit: number;
 
-  protected _points: Array<fabric.Point>;
+  protected _points: fabric.Point[];
 
   constructor(options?: any) {
     super();
@@ -165,7 +165,7 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
    * @param {Object} pointer Actual mouse position related to the canvas.
    */
   protected _prepareForDrawing(pointer: fabric.Point) {
-    var p = new fabric.Point(pointer.x, pointer.y);
+    let p = new fabric.Point(pointer.x, pointer.y);
 
     this._reset();
     this._addPoint(p);
@@ -201,7 +201,7 @@ export default abstract class AbstractBrush extends fabric.BaseBrush implements
    * @param {Object} pointer Actual mouse position related to the canvas.
    */
   protected _captureDrawingPath(pointer: fabric.Point) {
-    var pointerPoint = new fabric.Point(pointer.x, pointer.y);
+    let pointerPoint = new fabric.Point(pointer.x, pointer.y);
     this._addPoint(pointerPoint);
   }
 

@@ -3,12 +3,12 @@ import { Layout, Menu, Icon } from "antd";
 import { Link } from "react-router-dom";
 import "./Sidebar.less";
 
-interface SidebarState {
+interface ISidebarState {
     collapsed: boolean;
     mode: "vertical" | "inline" | "horizontal" | undefined;
 }
 
-class Sidebar extends React.Component<{}, SidebarState> {
+class Sidebar extends React.Component<{}, ISidebarState> {
     constructor(props: {}) {
         super(props);
         this.state = {

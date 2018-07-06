@@ -2,7 +2,7 @@
  * @Author: Liheng (liheeng@gmail.com)
  * @Date: 2018-06-13 22:42:44
  * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-14 15:05:33
+ * @Last Modified time: 2018-07-05 16:34:28
  */
 import { Composite, AbstractLayout, ILayoutOptions, IComponent } from '../UICommon';
 import {fabric} from "fabric";
@@ -25,7 +25,7 @@ export interface IBorderLayoutOptions<T extends fabric.Object> extends ILayoutOp
     /**
      * All elements which are managed by flow layout.
      */
-    elements?: IComponent<T>[]; 
+    elements?: Array<IComponent<T>>; 
 }
 
 /**
@@ -33,7 +33,7 @@ export interface IBorderLayoutOptions<T extends fabric.Object> extends ILayoutOp
  */
 export class BorderLayout<G extends fabric.Group, T extends fabric.Object, O extends IBorderLayoutOptions<T>> extends AbstractLayout<G, T, O> {
     public options:any;
-    elements: IComponent<T>[];
+    elements: Array<IComponent<T>>;
 
     constructor(container: Composite<G>, options?: O) {
         super(container, options);

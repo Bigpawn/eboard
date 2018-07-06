@@ -5,7 +5,20 @@
     "no-unused-variable": false,
     "forin": false,
     "no-console": false,
-    "object-literal-shorthand": false
+    "object-literal-shorthand": false,
+    "one-variable-per-declaration": false,
+    "ordered-imports": false,
+    "prefer-const": false,
+    "member-access": false,
+    "variable-name": false,
+    "member-ordering": false,
+    "prefer-for-of": false,
+    "ban-types": false,
+    "max-classes-per-file": false,
+    "object-literal-sort-keys": false,
+    "jsx-no-lambda": false,
+    "jsx-boolean-value": false,
+    "no-empty-interface": false
   },
   "linterOptions": {
     "exclude": [
