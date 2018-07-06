@@ -1,0 +1,19 @@
+/**
+  * @disc:canvas 样式
+  * @author:yanxinaliang
+  * @time：2018/7/4 17:44
+  */
+.eboard{
+    &-canvas{
+        position: absolute!important;
+        left: 50%!important;
+        top: 50%!important;
+        transform: translate(-50%,-50%)!important;
+    }
+    &-cursor{
+        cursor:none;
+        position: absolute;
+        transition: top 4ms ease,left 4ms ease;
+        pointer-events: none;
+    }
+}

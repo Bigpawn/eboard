@@ -29,9 +29,9 @@ class Sidebar extends React.Component<{}, SidebarState> {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="2">
-                        <Link to="/home">
+                        <Link to="/simple">
                             <Icon type="home" />
-                            <span className="nav-text">Home</span>
+                            <span className="nav-text">Simple Canvas</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="3">
