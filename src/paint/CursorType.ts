@@ -16,9 +16,9 @@ export enum CursorTypeName{
 
 export declare interface ICursorTypeProps{
     svg:string;
-    startPoint:{//鼠标作用点相对位置
-        x:number;//横向百分比
-        y:number;//纵向百分比
+    startPoint:{// 鼠标作用点相对位置
+        x:number;// 横向百分比
+        y:number;// 纵向百分比
     }
 }
 

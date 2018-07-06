@@ -7,12 +7,12 @@ import * as React from "react";
 import "../style/canvas.less";
 import {mixinPlugin} from '../utils/decorators';
 
-export declare interface CanvasProps{
-    ratio?:string;//白板比例，默认值为4:3
+export declare interface ICanvasProps{
+    ratio?:string; // 白板比例，默认值为4:3
 }
 
 
-export declare interface CalcLayout{
+export declare interface ICalcLayout{
     width:number;
     height:number;
     dimensions:{
@@ -33,14 +33,14 @@ declare interface IPluginInstanceMap{
 
 
 @mixinPlugin("paint")
-class Canvas extends React.Component<CanvasProps>{
+class Canvas extends React.Component<ICanvasProps>{
     private _placeholder:HTMLCanvasElement;
     private _parentElement:HTMLElement;
     private eBoardEngine:any;
     private pluginList:IPlugin[];
     name:string;
     public pluginInstanceMap:IPluginInstanceMap={};
-    constructor(props:CanvasProps){
+    constructor(props:ICanvasProps){
         super(props);
         this.__calc=this.__calc.bind(this);
     }
@@ -59,7 +59,7 @@ class Canvas extends React.Component<CanvasProps>{
             const ratioNum=_ratioW/_ratioH;
             const dimensionRate = Math.ceil(4000/_ratioW);
             if(size.width/size.height>ratioNum){
-                //宽度大，按照高度计算
+                // 宽度大，按照高度计算
                 return {
                     width:size.height * ratioNum,
                     height:size.height,
@@ -69,7 +69,7 @@ class Canvas extends React.Component<CanvasProps>{
                     }
                 }
             }else{
-                //高度大，按照宽度计算
+                // 高度大，按照宽度计算
                 return {
                     width:size.width,
                     height:size.width / ratioNum,
@@ -88,13 +88,13 @@ class Canvas extends React.Component<CanvasProps>{
             containerClass:"eboard-canvas"
         });
     }
-    protected _initLayout(calcSize:CalcLayout){
-        this.eBoardEngine.setDimensions({width:calcSize.width,height:calcSize.height});//设置样式大小
-        this.eBoardEngine.setDimensions(calcSize.dimensions,{backstoreOnly:true});//设置canvas 画布大小
+    protected _initLayout(calcSize:ICalcLayout){
+        this.eBoardEngine.setDimensions({width:calcSize.width,height:calcSize.height});// 设置样式大小
+        this.eBoardEngine.setDimensions(calcSize.dimensions,{backstoreOnly:true});// 设置canvas 画布大小
     }
     componentDidMount(){
         this._parentElement=this._placeholder.parentElement as HTMLElement;
-        //fix parent position
+        // fix parent position
         const position = window.getComputedStyle(this._parentElement).position;
         if("absolute" !== position && "fixed" !== position && "relative" !== position) {
             this._parentElement.style.position="relative";
@@ -103,9 +103,9 @@ class Canvas extends React.Component<CanvasProps>{
         this._initEBoardEngine();
         this._initLayout(calcSize);
         
-        //plugins 实例化
+        // plugins 实例化
         this.pluginList.forEach((plugin)=>{
-            this.pluginInstanceMap[plugin.pluginName] = new plugin.pluginReflectClass(this.eBoardEngine);//该参数统一传递
+            this.pluginInstanceMap[plugin.pluginName] = new plugin.pluginReflectClass(this.eBoardEngine);// 该参数统一传递
         });
     }
     render(){

@@ -45,14 +45,6 @@ abstract class AbsCursor{
      * Return name of cursor.
      */
     public abstract getName(): CursorTypeName;
-    
-    public getSizeNumber(){
-    
-    }
-    
-    public getSizeUnit(){
-    
-    }
 }
 
 export {AbsCursor};

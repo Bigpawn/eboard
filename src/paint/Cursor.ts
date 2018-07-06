@@ -42,8 +42,8 @@ class Cursor extends AbsCursor{
         const {x,y} = cursorType.startPoint;
         const widthSizeObject = RemUntil.getSizeObject(this.width);
         const heightSizeObject = RemUntil.getSizeObject(this.height);
-        const offsetWidth = widthSizeObject.number * x / 100 + widthSizeObject.unit; //单位不同，需要计算
-        const offsetHeight = heightSizeObject.number * y / 100 + heightSizeObject.unit; //单位不同，需要计算
+        const offsetWidth = widthSizeObject.number * x / 100 + widthSizeObject.unit; // 单位不同，需要计算
+        const offsetHeight = heightSizeObject.number * y / 100 + heightSizeObject.unit; // 单位不同，需要计算
         this.cursorEl.style.transform=`translate(-${offsetWidth},-${offsetHeight})`;
         const svgObject = cursorType.svg["default"];
         this.cursorEl.innerHTML=Cursor.createSvgElement(svgObject);
@@ -62,7 +62,7 @@ class Cursor extends AbsCursor{
         this.cursorEl.style.display="block";
         this.cursorEl.style.left=offsetX+"px";
         this.cursorEl.style.top=offsetY+"px";
-        //消息发送传递{offsetX,offsetY,canvasOffset.width,canvasOffset.height};
+        // 消息发送传递{offsetX,offsetY,canvasOffset.width,canvasOffset.height};
     }
     public setSize(width:string,height:string){
         super.setSize(width,height);
