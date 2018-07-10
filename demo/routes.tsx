@@ -14,7 +14,7 @@ export const routes: RouteConfig[] = [
         component: (props: any) => (<PaintPage />),
     },
     {
-        path: "/home",
+        path: "/simple",
         exact: true,
         component: (props: any) => (<HomePage />),
     },
