@@ -21,6 +21,7 @@ abstract class AbsPlugin {
 export enum Plugins{
     Cursor="Cursor",// 画笔
     Line="Line", // 直线
+    Text="Text",//文字输入
 }
 
 
