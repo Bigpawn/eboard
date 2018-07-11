@@ -95,7 +95,7 @@ export default class TextBrush extends AbstractBrush {
      * @param {module:.fabric/fabric-impl.Point} pointer
      * @private
      */
-  protected __createInput(pointer:fabric.Point) {
+  private __createInput(pointer:fabric.Point) {
     let canvasWapper:any = document.getElementById('canvas-container'),Input:any;
     if(!this.value) {
         Input = document.createElement('input');
