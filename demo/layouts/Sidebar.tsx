@@ -35,9 +35,9 @@ class Sidebar extends React.Component<{}, ISidebarState> {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="3">
-                        <Link to="/todo">
+                        <Link to="/html">
                             <Icon type="check-square-o" />
-                            <span className="nav-text">Todo</span>
+                            <span className="nav-text">HTMLCanvas</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="4">

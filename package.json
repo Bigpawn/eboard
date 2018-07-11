@@ -12,7 +12,9 @@
         "react-color":"^2.14.1",
         "react-pdf":"^3.0.5",
         "lodash":"^4.17.10",
-        "@types/lodash": "^4.14.110"
+        "@types/lodash": "^4.14.110",
+        "react-custom-scrollbars":"^4.2.1",
+        "@types/react-custom-scrollbars":"^4.0.4"
     },
     "repository": {
         "type": "git",

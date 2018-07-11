@@ -7,8 +7,6 @@
 import * as _ from 'lodash';
 import { applyMixins } from '../utils/utils';
 import { fabric } from 'fabric';
-import { BrowserCursorName } from '../cursor/BrowserCursor';
-import ICursor from '../cursor/ICursor';
 import { EBoardCanvas } from '../EBoardCanvas';
 import { BrushType } from './BrushType';
 import { IBrush } from './IBrush';

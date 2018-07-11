@@ -4,5 +4,5 @@
  * @time：2018/7/3 18:16
  */
 
-import EBoardWidget from './EBoardWidget';
-export default EBoardWidget;
+import {BaseCanvas} from './canvas/BaseCanvas';
+export default BaseCanvas;

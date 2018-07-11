@@ -1,18 +1,42 @@
-/*
- * @Author: Liheng (liheeng@gmail.com)
- * @Date: 2018-06-12 17:40:14
- * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-06-12 18:02:23
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/7/5 17:16
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * * @Last Modified time: 2018/7/5 17:16
+ * @disc:光标、画笔类型  系统光标使用同一套方案实现，否则系统光标不支持url及光标点设置
  */
 
-export enum CursorType {
-  /**
-   * Browser cursors are supported by browser as default and is renderd by browser.
-   */
-  BROWSER_CURSOR = 'browser_cursor',
-
-  /**
-   * Custom cursor is implemented by user and is rendered on canvas.
-   */
-  CUSTOM_CURSOR = 'custom_cursor',
+export enum CursorTypeName{
+    PaintBruch="PaintBruch",
+    Pencil="Pencil",
 }
+
+export declare interface ICursorTypeProps{
+    svg:string;
+    startPoint:{// 鼠标作用点相对位置
+        x:number;// 横向百分比
+        y:number;// 纵向百分比
+    }
+}
+
+export declare interface ICursorType{
+    [propName:string]: ICursorTypeProps;
+    [propName:number]: ICursorTypeProps;
+}
+
+export const CursorType:ICursorType={
+    [CursorTypeName.PaintBruch]:{
+        svg:require("./svg/paintbrush.svg"),
+        startPoint:{
+            x:0,
+            y:100
+        }
+    },
+    [CursorTypeName.Pencil]:{
+        svg:require("./svg/pencil.svg"),
+        startPoint:{
+            x:0,
+            y:100
+        }
+    },
+};

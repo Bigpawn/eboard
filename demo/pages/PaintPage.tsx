@@ -4,22 +4,22 @@
  * @Last Modified by: Liheng (liheeng@gmail.com)
  * @Last Modified time: 2018-07-05 15:35:39
  */
-import * as _ from 'lodash';
+// import * as _ from 'lodash';
 import * as React from "react";
 // import * as Redux from "redux";
 import { connect } from "react-redux";
-import * as classNames from 'classnames';
+/*import * as classNames from 'classnames';
 import { InputNumber } from "antd";
 import { SketchPicker as ColorPicker} from 'react-color';
 
-import { fabric } from "fabric";
+import { fabric } from "fabric";*/
 import { BrushType } from "../../src/brushes/BrushType";
-import { IBrushOptions } from "../../src/brushes/IBrush";
+// import { IBrushOptions } from "../../src/brushes/IBrush";
 import BrushManager from "../../src/brushes/BrushManager";
-import AbstractBrush from "../../src/brushes/AbstractBrush";
+/*import AbstractBrush from "../../src/brushes/AbstractBrush";
 import CircleCursor from "../../src/cursor/CircleCursor";
-import EBoardWidget from "../../src/EBoardWidget";
-import EBoardEngine from '../../src/EBoardEngine';
+import EBoardWidget from "../../src/index";
+// import EBoardEngine from '../../src/EBoardEngine';
 import {
     PointerIcon,
     LineIcon,
@@ -34,10 +34,10 @@ import {
     UndoIcon,
     RedoIcon,
     RestoreIcon
-} from "../icons/SvgIcons";
+} from "../icons/SvgIcons";*/
 
 import "./PaintPage.less";
-import { FabricObservingEventType, IZoomEvent } from '../../src/mixins/FabricEvents';
+// import { FabricObservingEventType, IZoomEvent } from '../../src/mixins/FabricEvents';
 
 interface IPaintPageStates {
     currentBrush: BrushType;
@@ -54,7 +54,7 @@ interface IPaintPageProps extends React.Props<PaintPage> {
     selectedBrush: BrushType;
     actions: any;
 }
-
+/*
 const defaultCursorOptions: any = {
     fill: "rgba(255, 0, 0, 1)",
     stroke: "rgba(0, 255, 0, 1)",
@@ -66,11 +66,11 @@ const defaultBrushOptions: IBrushOptions = {
     fill: "rgba(255, 0, 0, .1)",
     stroke: "rgba(0, 255, 0, .1)",
     strokeWidth: 3,
-};
+};*/
 
 class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
 
-    eBoardEngine: EBoardEngine;
+    // eBoardEngine: EBoardEngine;
     
     brushManager: BrushManager;
 
@@ -106,38 +106,38 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
         this.brushManager = new BrushManager();
     }
 
-    private __setEBoardEngine(eBoardEngine: EBoardEngine) {
-        this.eBoardEngine = eBoardEngine;
-        this.eBoardEngine.addEventListener(FabricObservingEventType.ZOOM_AFTER, (event: IZoomEvent) => {this.__onZoom(event); });
-    }
+    // private __setEBoardEngine(eBoardEngine: EBoardEngine) {
+    //     this.eBoardEngine = eBoardEngine;
+    //     this.eBoardEngine.addEventListener(FabricObservingEventType.ZOOM_AFTER, (event: IZoomEvent) => {this.__onZoom(event); });
+    // }
 
-    private __selectBrush(evt: any, brushType: BrushType): void {
-        let eBoardCanvas = this.eBoardEngine.getEBoardCanvas();
-        if (this.brushManager.isPointerBrush(brushType)) {
-            eBoardCanvas.clearFreeDrawingBrush();
-        } else {
-            let brushOptions: any = {};
-            
-            switch (brushType) {
-                case BrushType.TEXT_BRUSH:
-                    _.defaultsDeep(brushOptions, {canvas: eBoardCanvas}, this.state.brushSettings);
-                    break;
-                default:
-                    _.defaultsDeep(brushOptions, {canvas: eBoardCanvas}, this.state.brushSettings, defaultBrushOptions);
-                    let circleCursor = new CircleCursor(defaultCursorOptions, eBoardCanvas);
-                    brushOptions.cursor = circleCursor;
-            }
+    // private __selectBrush(evt: any, brushType: BrushType): void {
+    //     let eBoardCanvas = this.eBoardEngine.getEBoardCanvas();
+    //     if (this.brushManager.isPointerBrush(brushType)) {
+    //         eBoardCanvas.clearFreeDrawingBrush();
+    //     } else {
+    //         let brushOptions: any = {};
+    //
+    //         switch (brushType) {
+    //             case BrushType.TEXT_BRUSH:
+    //                 _.defaultsDeep(brushOptions, {canvas: eBoardCanvas}, this.state.brushSettings);
+    //                 break;
+    //             default:
+    //                 _.defaultsDeep(brushOptions, {canvas: eBoardCanvas}, this.state.brushSettings, defaultBrushOptions);
+    //                 let circleCursor = new CircleCursor(defaultCursorOptions, eBoardCanvas);
+    //                 brushOptions.cursor = circleCursor;
+    //         }
+    //
+    //         let brush: AbstractBrush = this.brushManager.selectBrush(brushType, brushOptions, true);
+    //         eBoardCanvas.setFreeDrawingBrush(brush);
+    //     }
+    //
+    //     this.setState({
+    //         currentBrush: brushType
+    //     });
+    // }
 
-            let brush: AbstractBrush = this.brushManager.selectBrush(brushType, brushOptions, true);
-            eBoardCanvas.setFreeDrawingBrush(brush);
-        }
-        
-        this.setState({
-            currentBrush: brushType
-        });
-    }
-
-    private __openStrokeColorPickerDialog(evt: MouseEvent) {
+   /* private __openStrokeColorPickerDialog(evt: MouseEvent) {
         let options: any = {};
         _.defaultsDeep(options, this.state.strokeColorPickerStyle);
         options.display = options.display === 'none' ? 'block' : 'none';
@@ -196,38 +196,38 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
         // options.display = 'none';
         // this.setState({fillColorPickerStyle: options});
     }
-
-    private __restoreOriginalVpt(evt: MouseEvent) {
-        this.eBoardEngine.getEBoardCanvas().restoreOriginalViewportTransform();
-        this.setState({
-            zoomValue: this.eBoardEngine.getEBoardCanvas().getOriginalViewportTransform()[0]
-        });
-    }
-
-    private __handlerZoomChanged(value: number) {
-        this.eBoardEngine.getEBoardCanvas().setZoom(value);
-    }
-
-    private __onZoom(event: IZoomEvent) {
-        this.setState({
-            zoomValue: Math.floor(event.value * 100) / 100
-        });
-    }
-
-    private __undo(event: any) {
-        let size = this.eBoardEngine.undo();
-        this.setState(size);
-    }
-
-    private __redo(event: any) {
-        let size = this.eBoardEngine.redo();
-        this.setState(size);
-    }
+*/
+    // private __restoreOriginalVpt(evt: MouseEvent) {
+    //     this.eBoardEngine.getEBoardCanvas().restoreOriginalViewportTransform();
+    //     this.setState({
+    //         zoomValue: this.eBoardEngine.getEBoardCanvas().getOriginalViewportTransform()[0]
+    //     });
+    // }
+    //
+    // private __handlerZoomChanged(value: number) {
+    //     this.eBoardEngine.getEBoardCanvas().setZoom(value);
+    // }
+    //
+    // private __onZoom(event: IZoomEvent) {
+    //     this.setState({
+    //         zoomValue: Math.floor(event.value * 100) / 100
+    //     });
+    // }
+    //
+    // private __undo(event: any) {
+    //     let size = this.eBoardEngine.undo();
+    //     this.setState(size);
+    // }
+    //
+    // private __redo(event: any) {
+    //     let size = this.eBoardEngine.redo();
+    //     this.setState(size);
+    // }
 
     public render(): JSX.Element {
         return (
             <div style={{height: "900px"}}>
-                <div style={{backgroundColor: "white"}}>
+             {/*   <div style={{backgroundColor: "white"}}>
                     <PointerIcon
                         color="primary"
                         className={classNames("icon", {selected : this.state.currentBrush === BrushType.POINTER_BRUSH})}
@@ -366,13 +366,13 @@ class PaintPage extends React.Component <IPaintPageProps, IPaintPageStates > {
                             this.__restoreOriginalVpt(evt);
                         }}
                     />
-                </div>
+                </div>*/}
                 <div style={{height: "100%"}}>
-                    <EBoardWidget
+                  {/*  <EBoardWidget
                         onInitEBoardEngine={ (eBoardEngine: EBoardEngine) => {
                             this.__setEBoardEngine(eBoardEngine);
                         }}
-                    />
+                    />*/}
                 </div>
             </div>
         );

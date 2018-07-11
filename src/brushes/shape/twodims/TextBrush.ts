@@ -8,7 +8,6 @@ import * as _ from 'lodash';
 import AbstractBrush from '../../AbstractBrush';
 import { IBrushOptions, TextType } from '../../IBrush';
 import { BrushType } from '../../BrushType';
-import { BrowserCursorName, DefaultCursor } from '../../../cursor/BrowserCursor';
 import { fabric } from 'fabric';
 
 const defaultOpts = {

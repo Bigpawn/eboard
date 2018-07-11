@@ -9,20 +9,18 @@
  */
 import {AbsCursor} from './AbsCursor';
 import {CursorType, CursorTypeName} from './CursorType';
-import {fabric} from "fabric";
 import {IEvent} from '~fabric/fabric-impl';
 import {RemUntil} from '../utils/RemUntil';
+import {EBoardCanvas} from '../EBoardCanvas';
+import {EBoardEngine} from '../EBoardEngine';
 
 class Cursor extends AbsCursor{
     private typeName:CursorTypeName;
-    private canvas:fabric.Canvas;
     private container:HTMLDivElement;
     private enable:boolean=false;
-    constructor(canvas:fabric.Canvas,typeName?: CursorTypeName){
-        super();
-        this.canvas=canvas;
+    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
+        super(canvas,eBoardEngine);
         this.container=canvas.getElement().parentElement as HTMLDivElement;
-        typeName&&this.setType(typeName);
         this.cursorMoveListener = this.cursorMoveListener.bind(this);
         this.cursorLeaveListener = this.cursorLeaveListener.bind(this);
     };
@@ -30,7 +28,7 @@ class Cursor extends AbsCursor{
         return `<svg version="1.2" viewBox="${svgObject.viewBox}" xmlns="http://www.w3.org/2000/svg"><use xlink:href="#${svgObject.id}"></use></svg>`;
     }
     private setCursorElement(){
-        this.canvas.defaultCursor="none";
+        this.eBoardCanvas.defaultCursor="none";
         void 0 !==this.cursorEl&&(this.cursorEl.parentElement as HTMLElement).removeChild(this.cursorEl);
         this.cursorEl=document.createElement("div");
         this.cursorEl.className="eboard-cursor";
@@ -54,7 +52,7 @@ class Cursor extends AbsCursor{
     }
     private cursorMoveListener(options:IEvent){
         const event = options.e as MouseEvent;
-        const canvasOffset:any = this.canvas.calcOffset();
+        const canvasOffset:any = this.eBoardCanvas.calcOffset();
         const {left,top} = canvasOffset._offset;
         const offsetX = event.pageX - left;
         const offsetY = event.pageY - top;
@@ -89,7 +87,7 @@ class Cursor extends AbsCursor{
      * @param {number} canvasHeight
      */
     public moveTo(offsetX:number,offsetY:number,canvasWidth:number,canvasHeight:number){
-        const canvasOffset:any = this.canvas.calcOffset();
+        const canvasOffset:any = this.eBoardCanvas.calcOffset();
         const {width,height} = canvasOffset;
         this.cursorEl.style.display="block";
         this.cursorEl.style.left=offsetX * width / canvasWidth+"px";
@@ -102,13 +100,13 @@ class Cursor extends AbsCursor{
         }
         this.enable=enable;
         if(enable){
-            this.canvas.defaultCursor="none";
-            this.canvas.on('mouse:move', this.cursorMoveListener);
-            this.canvas.on('mouse:out', this.cursorLeaveListener);
+            this.eBoardCanvas.defaultCursor="none";
+            this.eBoardCanvas.on('mouse:move', this.cursorMoveListener);
+            this.eBoardCanvas.on('mouse:out', this.cursorLeaveListener);
         }else{
-            this.canvas.defaultCursor="default";
-            this.canvas.off('mouse:move', this.cursorMoveListener);
-            this.canvas.off('mouse:out', this.cursorLeaveListener);
+            this.eBoardCanvas.defaultCursor="default";
+            this.eBoardCanvas.off('mouse:move', this.cursorMoveListener);
+            this.eBoardCanvas.off('mouse:out', this.cursorLeaveListener);
             this.cursorEl&&(this.cursorEl.style.display="none");
         }
         return this;
