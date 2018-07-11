@@ -8,20 +8,50 @@
 
 import {EBoardCanvas} from './EBoardCanvas';
 import {EBoardEngine} from './EBoardEngine';
+import {CursorTypeName} from './cursor/CursorType';
+import {Cursor} from './cursor/Cursor';
 abstract class AbsPlugin {
     protected eBoardCanvas:EBoardCanvas;
     protected eBoardEngine:EBoardEngine;
+    protected cursorType:CursorTypeName;
+    protected enable:boolean=false;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         this.eBoardCanvas=canvas;
         this.eBoardEngine=eBoardEngine;
     }
-    public abstract setEnable(enable:boolean):void;
+    
+    /**
+     * 自动处理光标显示
+     * @param {boolean} enable
+     */
+    public setEnable(enable:boolean){
+        // 光标使用
+        const cursorPlugin = this.eBoardEngine.getPlugin(Plugins.Cursor) as Cursor;
+        if(enable){
+            // Cursor启用
+            if(this.cursorType){
+                if(CursorTypeName.None === this.cursorType){
+                    cursorPlugin&&cursorPlugin.setEnable(false);
+                }else{
+                    cursorPlugin&&cursorPlugin.setType(this.cursorType).setEnable(true);
+                }
+            }else{
+                cursorPlugin&&cursorPlugin.setEnable(false);
+            }
+        }else{
+            // Cursor关闭
+            if(this.cursorType){
+                cursorPlugin&&cursorPlugin.setEnable(false);
+            }
+        }
+    };
 }
 
 export enum Plugins{
     Cursor="Cursor",// 画笔
     Line="Line", // 直线
     Text="Text",//文字输入
+    Selection="Selection",// 选择
 }
 
 

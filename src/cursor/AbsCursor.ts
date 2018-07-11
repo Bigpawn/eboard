@@ -11,8 +11,8 @@ import {AbsPlugin} from '../AbsPlugin';
 
 
 abstract class AbsCursor extends AbsPlugin{
-    protected width:string="0.5rem";
-    protected height:string="0.5rem";
+    protected width:string="1rem";
+    protected height:string="1rem";
     protected cursorEl:HTMLDivElement;
     /**
      * Return size of cursor

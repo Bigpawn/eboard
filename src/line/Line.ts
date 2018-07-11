@@ -11,20 +11,21 @@ import {AbsPlugin} from '../AbsPlugin';
 import {EBoardCanvas} from '../EBoardCanvas';
 import {EBoardEngine} from '../EBoardEngine';
 import {ArrowLine} from './ArrowLine';
+import {setCursor} from '../utils/decorators';
+import {CursorTypeName} from '../cursor/CursorType';
 const {Color} =fabric;
 
 
 
 
 
-
+@setCursor(CursorTypeName.Pencil)
 class Line extends AbsPlugin{
     private line?:ArrowLine;
     private color?:string;
     private borderDashed?:number[];
     private arrowType:ArrowType=ArrowType.NONE;
     private arrowMode:ArrowMode=ArrowMode.NEXT;
-    private enable:boolean=false;
     private lineWidth:number=4;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
@@ -131,6 +132,12 @@ class Line extends AbsPlugin{
         this.arrowMode=arrowMode;
         return this;
     }
+    
+    /**
+     * @override
+     * @param {boolean} enable
+     * @returns {this}
+     */
     public setEnable(enable:boolean){
         if(this.enable===enable){
             return;
@@ -156,6 +163,7 @@ class Line extends AbsPlugin{
             this.eBoardCanvas.off('mouse:move', this.moveHandler);
             this.eBoardCanvas.off('mouse:up', this.upHandler);
         }
+        super.setEnable(enable);// 最后调用，先处理自定义逻辑
         return this;
     }
 }

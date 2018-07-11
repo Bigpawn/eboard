@@ -9,6 +9,7 @@
 export enum CursorTypeName{
     PaintBruch="PaintBruch",
     Pencil="Pencil",
+    None="None",// 使用默认的系统鼠标指针
 }
 
 export declare interface ICursorTypeProps{
