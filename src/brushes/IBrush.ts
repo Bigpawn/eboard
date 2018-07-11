@@ -12,7 +12,7 @@ import { EBoardCanvas } from '../EBoardCanvas';
 export enum TextType {
   TEXT = 'Text',
   I_TEXT= 'IText',
-  TEXT_BOX = 'TextBox',
+  TEXT_BOX = 'Textbox',
 }
 
 export enum FontWeight {
