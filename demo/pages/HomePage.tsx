@@ -5,6 +5,7 @@ import {Cursor} from '../../src/cursor/Cursor';
 import {CursorTypeName} from '../../src/cursor/CursorType';
 import {Plugins} from '../../src/AbsPlugin';
 import {Line} from '../../src/line/Line';
+import {Selection} from '../../src/selection/Selection';
 import {ArrowMode, ArrowType, LineType} from '../../src/line/LineType';
 
 class HomePage extends React.Component<{}, {}> {
@@ -34,6 +35,10 @@ class HomePage extends React.Component<{}, {}> {
         const Line = this.Canvas.getPlugin(Plugins.Line) as Line;
         Line.setColor("red").setArrowType(ArrowType.HOLLOW).setArrowMode(ArrowMode.ALL).setLineType(LineType.DASHED).setEnable(true);
     };
+    private selection=()=>{
+        const Selection = this.Canvas.getPlugin(Plugins.Selection) as Selection;
+        Selection.setEnable(true);
+    };
     public render(): JSX.Element {
         return (
             <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
@@ -42,6 +47,7 @@ class HomePage extends React.Component<{}, {}> {
                 <button onClick={this.setCursorClose}>Cursor Close</button>
                 <button onClick={this.startLine}>Line</button>
                 <button onClick={this.startLine1}>Line1</button>
+                <button onClick={this.selection}>Selection</button>
                 <div style={{position:"relative",height:document.body.offsetHeight-220}}>
                     <BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.Canvas=ref}/>
                 </div>

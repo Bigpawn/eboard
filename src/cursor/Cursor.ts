@@ -17,7 +17,6 @@ import {EBoardEngine} from '../EBoardEngine';
 class Cursor extends AbsCursor{
     private typeName:CursorTypeName;
     private container:HTMLDivElement;
-    private enable:boolean=false;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
         this.container=canvas.getElement().parentElement as HTMLDivElement;
@@ -28,6 +27,10 @@ class Cursor extends AbsCursor{
         return `<svg version="1.2" viewBox="${svgObject.viewBox}" xmlns="http://www.w3.org/2000/svg"><use xlink:href="#${svgObject.id}"></use></svg>`;
     }
     private setCursorElement(){
+        if(this.typeName === CursorTypeName.None){
+            // 使用系统默认的
+            return;
+        }
         this.eBoardCanvas.defaultCursor="none";
         void 0 !==this.cursorEl&&(this.cursorEl.parentElement as HTMLElement).removeChild(this.cursorEl);
         this.cursorEl=document.createElement("div");
@@ -48,9 +51,17 @@ class Cursor extends AbsCursor{
         this.container.appendChild(this.cursorEl);
     }
     private cursorLeaveListener(){
+        if(this.typeName === CursorTypeName.None){
+            // 使用系统默认的
+            return;
+        }
         this.cursorEl.style.display="none";
     }
     private cursorMoveListener(options:IEvent){
+        if(this.typeName === CursorTypeName.None){
+            // 使用系统默认的
+            return;
+        }
         const event = options.e as MouseEvent;
         const canvasOffset:any = this.eBoardCanvas.calcOffset();
         const {left,top} = canvasOffset._offset;
@@ -94,6 +105,12 @@ class Cursor extends AbsCursor{
         this.cursorEl.style.top=offsetY * height / canvasHeight+"px";
         return this;
     }
+    
+    /**
+     * @override Cursor不需要默认处理Cursor的逻辑
+     * @param {boolean} enable
+     * @returns {this}
+     */
     public setEnable(enable:boolean){
         if(this.enable===enable){
             return;
