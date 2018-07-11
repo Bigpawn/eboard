@@ -6,10 +6,11 @@
  * @disc:Cursor抽象类
  */
 import {CursorTypeName, ICursorTypeProps} from './CursorType';
+import {AbsPlugin} from '../AbsPlugin';
 
 
 
-abstract class AbsCursor{
+abstract class AbsCursor extends AbsPlugin{
     protected width:string="0.5rem";
     protected height:string="0.5rem";
     protected cursorEl:HTMLDivElement;

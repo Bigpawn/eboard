@@ -1,93 +1,134 @@
 import * as React from "react";
-import * as Redux from "redux";
-import { connect } from "react-redux";
-import { Card, Table, Button, Modal, Input } from "antd";
-import { ITodoItem } from "../model/TodoItem";
-import { IStates } from "../reducers/rootReducer";
-import { actionCreators } from "../actions/actions";
+import { Card } from "antd";
+import {HTMLCanvas} from '../../src/canvas/HTMLCanvas';
+import {Cursor} from '../../src/cursor/Cursor';
+import {CursorTypeName} from '../../src/cursor/CursorType';
+import {Plugins} from '../../src/AbsPlugin';
 
-const { Column } = Table;
-
-interface ITodoProps {
-    todoItems?: ITodoItem[];
-    actions?: any;
-}
-
-interface ITodoState {
-    modalVisible: boolean;
-    newTaskName: string;
-}
-
-class TodoPageComponent extends React.Component<ITodoProps, ITodoState> {
-    constructor(props: ITodoProps) {
+class HTMLPage extends React.Component<{}, {}> {
+    private Canvas:HTMLCanvas;
+    constructor(props:any){
         super(props);
-        this.state = {
-            modalVisible: false,
-            newTaskName: "",
-        };
-        this.handleOk = this.handleOk.bind(this);
-        this.handleCancel = this.handleCancel.bind(this);
+        this.setCursor=this.setCursor.bind(this);
+        this.setCursorClose=this.setCursorClose.bind(this);
     }
-
+    private setCursor=()=>{
+        const Cursor = this.Canvas.getPlugin(Plugins.Cursor) as Cursor;
+        Cursor.setType(CursorTypeName.PaintBruch).setSize("2rem","2rem").setEnable(true);
+    };
+    private setPencilCursor=()=>{
+        const Cursor = this.Canvas.getPlugin(Plugins.Cursor) as Cursor;
+        Cursor.setType(CursorTypeName.Pencil).setSize("2rem","2rem").setEnable(true);
+    };
+    private setCursorClose=()=>{
+        const Cursor = this.Canvas.getPlugin(Plugins.Cursor) as Cursor;
+        Cursor.setEnable(false);
+    };
     public render(): JSX.Element {
         return (
-            <div>
-                <Card bordered title="Todo List" style={{ margin: "16px 16px"}}>
-                    <Button type="primary" icon="plus"
-                        onClick={() => {this.setState({modalVisible: true}); }}>New Task</Button>
-                    <Table dataSource={this.props.todoItems||[]}>
-                        <Column title="Id" dataIndex="id" key="id"/>
-                        <Column title="Task" dataIndex="name" key="name"/>
-                        <Column title="Status" dataIndex="isCompleted" key="isCompleted"
-                            render={(text: any, record: ITodoItem, index: number) => {
-                                return <span>{record.isCompleted ? "Completed" : "Pending"}</span>;
-                            }}/>
-                        <Column title="Action" key="action" render={(text: any, record: ITodoItem, index: number) => (
-                            <Button type="primary" disabled={record.isCompleted}
-                                onClick={() => {
-                                    record.isCompleted = true;
-                                    this.props.actions.completeTodoAction(record);
-                                }}>Complete</Button>
-                        )} />
-                    </Table>
-                </Card>
-                <Modal title="New Task" visible={this.state.modalVisible}
-                    onOk={() => this.handleOk()}
-                    onCancel={() => this.handleCancel()}>
-                    <Input.TextArea placeholder="Input the name of the task" rows={4}
-                        onChange={(e) => {
-                            this.setState({newTaskName: e.target.value});
-                        }} />
-                </Modal>
-            </div>
+            <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
+                <button onClick={this.setCursor}>PaintBrush</button>
+                <button onClick={this.setPencilCursor}>Pencil</button>
+                <button onClick={this.setCursorClose}>Cursor Close</button>
+                <div style={{position:"relative",height:document.body.offsetHeight-220}}>
+                    <HTMLCanvas ratio={"16:9"} ref={(ref:HTMLCanvas)=>this.Canvas=ref}>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                        html内容dsaaaaaaaaaaaaaaaadas
+                        <br/>
+                    </HTMLCanvas>
+                </div>
+            </Card>
         );
-    }
-
-    private handleOk = () => {
-        const item: ITodoItem = {
-            id: 0,
-            key: 0,
-            name: this.state.newTaskName,
-            isCompleted: false,
-        };
-        this.props.actions.addTodoAction(item);
-        this.setState({modalVisible: false});
-    }
-    private handleCancel = () => {
-        this.setState({modalVisible: false});
     }
 }
 
-const mapStateToProps = (state: IStates) => {
-    return {
-        todoItems: state.todos,
-    };
-};
-
-const mapDispatchToProps:any = (dispatch: Redux.Dispatch<any>) => {
-    return {
-        actions: Redux.bindActionCreators(actionCreators, dispatch),
-    };
-};
-
-export const TodoPage = connect(mapStateToProps, mapDispatchToProps)(TodoPageComponent);
+export default HTMLPage;

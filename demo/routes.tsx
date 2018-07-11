@@ -2,11 +2,11 @@ import * as React from "react";
 import { RouteConfig } from "react-router-config";
 import { Route, Switch } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import { TodoPage } from "./pages/TodoPage";
 import AboutPage from "./pages/AboutPage";
 import PaintPage from "./pages/PaintPage";
 import MaterialUIPage from "./pages/MaterialUIPage";
 import PageLayout from "./layouts/PageLayout";
+import HTMLPage from './pages/TodoPage';
 
 export const routes: RouteConfig[] = [
     {
@@ -19,8 +19,8 @@ export const routes: RouteConfig[] = [
         component: (props: any) => (<HomePage />),
     },
     {
-        path: "/todo",
-        component: () => (<TodoPage/>),
+        path: "/html",
+        component: () => (<HTMLPage/>),
     },
     {
         path: "/about",

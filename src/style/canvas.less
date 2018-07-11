@@ -4,16 +4,45 @@
   * @time：2018/7/4 17:44
   */
 .eboard{
-    &-canvas{
+    @center:{
         position: absolute!important;
         left: 50%!important;
         top: 50%!important;
         transform: translate(-50%,-50%)!important;
+        overflow: hidden;
+    };
+    &-canvas{
+        @center();
+    }
+    &-container{
+        @center();
     }
     &-cursor{
         cursor:none;
         position: absolute;
         transition: top 4ms ease,left 4ms ease;
         pointer-events: none;
+    }
+    &-html{
+        pointer-events: none;
+        left: 0;
+        top: 0;
+        width: 100%;
+        -webkit-transform-origin: 0 0;
+        -moz-transform-origin: 0 0;
+        -ms-transform-origin: 0 0;
+        -o-transform-origin: 0 0;
+        transform-origin: 0 0;
+        &-canvas{
+            position: absolute!important;
+            left: 0;
+            top: 0;
+        }
+        &-container{
+            position: absolute;
+            width: 100%;
+            overflow: hidden;
+            //min-height: 100%;
+        }
     }
 }

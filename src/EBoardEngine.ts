@@ -1,100 +1,54 @@
-/*
- * @Author: Liheng (liheeng@gmail.com)
- * @Date: 2018-05-24 23:34:18
- * @Last Modified by: Liheng (liheeng@gmail.com)
- * @Last Modified time: 2018-07-05 15:41:10
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/7/10 10:52
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * * @Last Modified time: 2018/7/10 10:52
+ * @disc:EBoard engine ： 基于EboardCanvas进行部分功能封装，例如Undo/Redo,
+ * 提供插件关联入口
  */
-import { fabric } from 'fabric';
-import { EBoardCanvas } from './EBoardCanvas';
-import { UndoEngine } from './mixins/Undo';
-import PathCreatedUndoAction from './undo/PathCreatedUndoAction';
-import { FabricObservingEventType } from './mixins/FabricEvents';
-import ZoomUndoAction from './undo/ZoomUndoAction';
+import {EBoardCanvas} from './EBoardCanvas';
+import {ICanvasOptions} from '~fabric/fabric-impl';
 
-export default class EBoardEngine {
-    /**
-     * Instance of board canvas.
-     */
-    private eBoardCanvas: EBoardCanvas;
+import {mixinPlugins} from './utils/decorators';
+import {Cursor} from './cursor/Cursor';
+import {AbsPlugin, Plugins} from './AbsPlugin';
+import {Line} from './line/Line';
 
-    /**
-     * Instanceof undo/redo engine.
-     */
-    private undoEngine: UndoEngine;
-    
-    /**
-     * Constructor.
-     * 
-     * @param wrapper 
-     * @param canvasEl 
-     * @param options 
-     */
-    constructor(wrapper: any, canvasEl: any, options?: any) {
-        this.__initCanvas(wrapper, canvasEl, options);
-        this.__initUndoListener();
-        this.__init();
+
+type IPlugins = Cursor | Line;
+
+declare interface IPlugin{
+    pluginName:string;
+    pluginReflectClass:IPlugins
+}
+
+
+@mixinPlugins([Plugins.Cursor,Plugins.Line])
+class EBoardEngine{
+    public eBoardCanvas:EBoardCanvas;
+    private pluginList:IPlugin[];
+    public pluginInstanceMap=new Map<string,IPlugins>();
+    private bgColor:string="rgba(0,0,0,1)";// 带透明度
+    public getDefaultColor(){
+        return this.bgColor;
     }
-
-    private __init() {
-        this.undoEngine = new UndoEngine(this);
+    private activePlugin?:AbsPlugin;
+    public getActivePlugin(){
+        return this.activePlugin;
     }
-
-    private __initCanvas(wrapper: any, canvasEl: any, options?: any) {
-        this.eBoardCanvas = new EBoardCanvas(canvasEl, options);
-        this.eBoardCanvas.setWidth(wrapper.clientWidth);
-        this.eBoardCanvas.setHeight(wrapper.clientHeight);
-        fabric.Object.prototype.transparentCorners = false;
-
-        this.eBoardCanvas.clearFreeDrawingBrush();
+    public setActivePlugin(plugin?:AbsPlugin){
+        this.activePlugin=plugin;
     }
-
-    private __initUndoListener() {
-        // TODO ...
-        // REGISTER LISTENER FOR UNDO/REDO
-        this.eBoardCanvas.addEventListener(FabricObservingEventType.PATH_CREATED, (event: any) => this.__handlePathCreated(event));
-        this.eBoardCanvas.addEventListener(FabricObservingEventType.ZOOM_AFTER, (event: any) => this.__handleZoomAfter(event));
+    constructor(element: HTMLCanvasElement | string, options?: ICanvasOptions){
+        this.eBoardCanvas = new EBoardCanvas(element,options);
+        // plugins 实例化
+        this.pluginList.forEach((plugin)=>{
+            this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
+        });
     }
-
-    /**
-     * Return instance of board canvas.
-     */
-    public getEBoardCanvas(): EBoardCanvas {
-        return this.eBoardCanvas;
-    }
-    
-    /**
-     * Undo operation.
-     * 
-     * @return {number, number} size of undo and redo stack.
-     */
-    public undo(): {undoSize: number, redoSize: number} {
-        return this.undoEngine.undo();
-    }
-
-    /**
-     * Redo operation.
-     * 
-     * @return {number, number} size of undo and redo stack.
-     */
-    public redo(): {undoSize: number, redoSize: number} {
-        return this.undoEngine.redo();
-    }
-
-    private __handlePathCreated(event: any) {
-        this.undoEngine.pushAction(new PathCreatedUndoAction(event));
-    }
-
-    private __handleZoomAfter(event: any) {
-        this.undoEngine.pushAction(new ZoomUndoAction(event));
-    }
- 
-    /**
-     * Register event listener
-     * 
-     * @param eventType 
-     * @param listener 
-     */
-    public addEventListener(eventType: FabricObservingEventType, listener: (event: any) => void) {
-        this.eBoardCanvas.addEventListener(eventType, listener);
+    public getPlugin(pluginName:string){
+        return this.pluginInstanceMap.get(pluginName);
     }
 }
+
+export {EBoardEngine};

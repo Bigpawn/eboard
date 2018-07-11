@@ -5,49 +5,32 @@
  */
 import * as React from "react";
 import "../style/canvas.less";
-import {mixinPlugin} from '../utils/decorators';
+import {EBoardEngine} from '../EBoardEngine';
 
-export declare interface ICanvasProps{
+export declare interface IBaseCanvasProps{
     ratio?:string; // 白板比例，默认值为4:3
 }
 
 
-export declare interface ICalcLayout{
-    width:number;
-    height:number;
-    dimensions:{
-        width:number;
-        height:number;
-    }
-}
 
-
-
-declare interface IPlugin{
-    pluginName:string;
-    pluginReflectClass:any
-}
-declare interface IPluginInstanceMap{
-    [pluginName:string]:object;
-}
-
-
-@mixinPlugin("paint")
-class Canvas extends React.Component<ICanvasProps>{
-    private _placeholder:HTMLCanvasElement;
-    private _parentElement:HTMLElement;
-    private eBoardEngine:any;
-    private pluginList:IPlugin[];
-    name:string;
-    public pluginInstanceMap:IPluginInstanceMap={};
-    constructor(props:ICanvasProps){
+class BaseCanvas extends React.Component<IBaseCanvasProps>{
+    protected _placeholder:HTMLCanvasElement;
+    protected eBoardEngine:EBoardEngine;
+    constructor(props:IBaseCanvasProps){
         super(props);
         this.__calc=this.__calc.bind(this);
     }
-    private __calc(){
+    
+    /**
+     * calc canvas offsetSize & dimensionSize
+     * @param {HTMLElement} parentElement
+     * @returns {{width: number; height: number; dimensions: {width: number; height: number}}}
+     * @private
+     */
+    protected __calc(parentElement:HTMLElement){
         const size={
-            width:this._parentElement.offsetWidth,
-            height:this._parentElement.offsetHeight
+            width:parentElement.offsetWidth,
+            height:parentElement.offsetHeight
         };
         const {ratio="4:3"} = this.props;
         if(!/\d+:\d+/g.test(ratio)){
@@ -82,31 +65,32 @@ class Canvas extends React.Component<ICanvasProps>{
         }
     }
     protected _initEBoardEngine(){
-        this.eBoardEngine=new fabric.Canvas(this._placeholder,{
+        this.eBoardEngine=new EBoardEngine(this._placeholder,{
             selection:false,
             skipTargetFind:true,
             containerClass:"eboard-canvas"
         });
     }
-    protected _initLayout(calcSize:ICalcLayout){
-        this.eBoardEngine.setDimensions({width:calcSize.width,height:calcSize.height});// 设置样式大小
-        this.eBoardEngine.setDimensions(calcSize.dimensions,{backstoreOnly:true});// 设置canvas 画布大小
+    protected _initLayout(parentElement:HTMLElement){
+        const calcSize=this.__calc(parentElement);
+        this.eBoardEngine.eBoardCanvas.setDimensions({width:calcSize.width,height:calcSize.height});// 设置样式大小
+        this.eBoardEngine.eBoardCanvas.setDimensions(calcSize.dimensions,{backstoreOnly:true});// 设置canvas 画布大小
     }
-    componentDidMount(){
-        this._parentElement=this._placeholder.parentElement as HTMLElement;
+    protected getParentElement(){
+        return this._placeholder.parentElement as HTMLElement;
+    }
+    public componentDidMount(){
+        const parentElement = this.getParentElement();
         // fix parent position
-        const position = window.getComputedStyle(this._parentElement).position;
+        const position = window.getComputedStyle(parentElement).position;
         if("absolute" !== position && "fixed" !== position && "relative" !== position) {
-            this._parentElement.style.position="relative";
+            parentElement.style.position="relative";
         }
-        const calcSize=this.__calc();
         this._initEBoardEngine();
-        this._initLayout(calcSize);
-        
-        // plugins 实例化
-        this.pluginList.forEach((plugin)=>{
-            this.pluginInstanceMap[plugin.pluginName] = new plugin.pluginReflectClass(this.eBoardEngine);// 该参数统一传递
-        });
+        this._initLayout(parentElement);
+    }
+    public getPlugin(pluginName:string){
+        return this.eBoardEngine.getPlugin(pluginName);
     }
     render(){
         return (
@@ -117,4 +101,4 @@ class Canvas extends React.Component<ICanvasProps>{
     }
 }
 
-export {Canvas};
+export {BaseCanvas};

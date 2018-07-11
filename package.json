@@ -8,11 +8,13 @@
         "node": ">=6"
     },
     "dependencies": {
+        "fabric":"^2.3.3",
+        "react-color":"^2.14.1",
+        "react-pdf":"^3.0.5",
+        "lodash":"^4.17.10",
         "@types/lodash": "^4.14.110",
-        "fabric": "^2.3.3",
-        "lodash": "^4.17.10",
-        "react-color": "^2.14.1",
-        "react-pdf": "^3.0.5",
+        "react-custom-scrollbars":"^4.2.1",
+        "@types/react-custom-scrollbars":"^4.0.4",
         "typings": "^2.1.1"
     },
     "repository": {
