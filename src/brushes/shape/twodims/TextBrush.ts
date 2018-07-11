@@ -12,9 +12,9 @@ import { BrowserCursorName, DefaultCursor } from '../../../cursor/BrowserCursor'
 import { fabric } from 'fabric';
 
 const defaultOpts = {
-    textType: TextType.I_TEXT,
+    textType: TextType.TEXT_BOX,
     fontSize: 40,
-}
+};
 
 export default class TextBrush extends AbstractBrush {
 
@@ -58,9 +58,9 @@ export default class TextBrush extends AbstractBrush {
    * Invoked on mouse up
    */
   public onMouseUp(pointer: fabric.Point): void {
-    this.canvas.disableDrawingTrack();
-    // this._finalizeAndAddPath();
-      this.__createInput(pointer);
+      this.canvas.disableDrawingTrack();
+      this._finalizeAndAddPath();
+      // this.__createInput(pointer);
   }
 
   /**
@@ -88,8 +88,20 @@ export default class TextBrush extends AbstractBrush {
     
     let textFunc = fabric[this.options.textType];
     let renderOpts = {};
-    _.defaultsDeep(renderOpts, {'left': this._points[0].x, 'top': this._points[0].y}, this.options);
-    return new textFunc(this.value, renderOpts);
+    _.defaultsDeep(renderOpts, {
+        left: this._points[0].x,
+        top: this._points[0].y,
+        isEditing:true,
+        width:50,
+        hasBorders:true,
+        editingBoderColor:'#ff0',
+        borderColor:'#00f',
+        onInput: (e:any)=>{
+            console.log(e,'aaaaaaaa');
+        }
+    }, this.options);
+    const textBox =  new textFunc('', renderOpts);
+    return textBox;
   }
 
     /**
@@ -97,21 +109,25 @@ export default class TextBrush extends AbstractBrush {
      * @private
      */
   private __createInput(pointer:fabric.Point) {
-    let canvasWapper:any = document.getElementById('canvas-container'),Input:any;
-    if(!this.value) {
-        Input = document.createElement('input');
-        canvasWapper.appendChild(Input);
-    }
-    let that = this;
-    Input.focus();
-    Input.style.position = 'absolute';
-    Input.style.left = `${pointer.x}px`;
-    Input.style.top = `${pointer.y}px`;
-    Input.addEventListener('blur',function (e:any){
-        that._points[0] = pointer;
-        that.value = e.target.value;
-        e.target.value?that._finalizeAndAddPath():null;
-        canvasWapper?canvasWapper.removeChild(this):null;
-    });
+        // const textBox = new fabric.Textbox('',{
+        //   borderColor:'#00f'
+        // });
+        // this._finalizeAndAddPath()
+    // let canvasWapper:any = document.getElementById('canvas-container'),Input:any;
+    // if(!this.value) {
+    //     Input = document.createElement('input');
+    //     canvasWapper.appendChild(Input);
+    // }
+    // let that = this;
+    // Input.focus();
+    // Input.style.position = 'absolute';
+    // Input.style.left = `${pointer.x}px`;
+    // Input.style.top = `${pointer.y}px`;
+    // Input.addEventListener('blur',function (e:any){
+    //     that._points[0] = pointer;
+    //     that.value = e.target.value;
+    //     e.target.value?that._finalizeAndAddPath():null;
+    //     canvasWapper?canvasWapper.removeChild(this):null;
+    // });
   }
 }
