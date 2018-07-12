@@ -14,9 +14,10 @@ import {Cursor} from './cursor/Cursor';
 import {AbsPlugin, Plugins} from './AbsPlugin';
 import {Line} from './line/Line';
 import {Selection} from './selection/Selection';
+import {Text} from "./text/Text";
 
 
-type IPlugins = Cursor | Line | Selection;
+type IPlugins = Cursor | Line | Selection | Text;
 
 declare interface IPlugin{
     pluginName:string;

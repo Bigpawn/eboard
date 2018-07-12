@@ -38,8 +38,8 @@ class HomePage extends React.Component<{}, {}> {
     };
     private startText=()=> {
         const Text = this.Canvas.getPlugin(Plugins.Text) as Text;
-        Text.setEnable(true);
-    }
+        Text.setFontSize().setColor('blue').setEnable(true);
+    };
     private selection=()=>{
         const Selection = this.Canvas.getPlugin(Plugins.Selection) as Selection;
         Selection.setEnable(true);
