@@ -1,7 +1,7 @@
 import * as React from "react";
 import HomePage, {ToolBar} from './HomePage';
 import { Card } from "antd";
-import {ImageCanvas} from '../../src/canvas/ImageCanvas';
+import {ImageCanvas} from '../../src/canvas/react/ImageCanvas';
 
 class AboutPage extends HomePage {
     public render(): JSX.Element {

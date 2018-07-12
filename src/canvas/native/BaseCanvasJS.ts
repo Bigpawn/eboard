@@ -1,39 +1,30 @@
 /**
- * @disc:fabric 占位canvas 采用常规显示器2倍缩放 ，范围[4000-4200]
- * @author:yanxinaliang
- * @time：2018/7/4 16:12
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/7/12 10:27
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * * @Last Modified time: 2018/7/12 10:27
+ * @disc:BaseCanvas JS 模式
  */
-import * as React from "react";
-import "../style/canvas.less";
-import {EBoardEngine} from '../EBoardEngine';
-import {Suspension} from "../plugins/tool/suspension/Suspension";
 
-export declare interface IBaseCanvasProps{
-    ratio?:string; // 白板比例，默认值为4:3
-}
+import {EBoardEngine} from '../../EBoardEngine';
 
-
-
-class BaseCanvas extends React.PureComponent<IBaseCanvasProps>{
-    protected _placeholder:HTMLCanvasElement;
+class BaseCanvasJS {
     protected eBoardEngine:EBoardEngine;
-    constructor(props:IBaseCanvasProps){
-        super(props);
-        this.__calc=this.__calc.bind(this);
+    protected _placeholder:HTMLCanvasElement;
+    private ratio:string;
+    protected parentElement:HTMLElement;
+    constructor(parentElement: HTMLElement,ratio?:string) {
+        this.parentElement=parentElement;
+        this.ratio=ratio||"4:3";
+        this.render();
+        this.componentDidMount();
     }
-    
-    /**
-     * calc canvas offsetSize & dimensionSize
-     * @param {HTMLElement} parentElement
-     * @returns {{width: number; height: number; dimensions: {width: number; height: number}}}
-     * @private
-     */
     protected __calc(parentElement:HTMLElement){
         const size={
             width:parentElement.offsetWidth,
             height:parentElement.offsetHeight
         };
-        const {ratio="4:3"} = this.props;
+        const ratio=this.ratio;
         if(!/\d+:\d+/g.test(ratio)){
             throw new Error(`Expected string with compare symbol, got '${ratio}'.`);
         }else{
@@ -77,11 +68,8 @@ class BaseCanvas extends React.PureComponent<IBaseCanvasProps>{
         this.eBoardEngine.eBoardCanvas.setDimensions({width:calcSize.width,height:calcSize.height});// 设置样式大小
         this.eBoardEngine.eBoardCanvas.setDimensions(calcSize.dimensions,{backstoreOnly:true});// 设置canvas 画布大小
     }
-    protected getParentElement(){
-        return this._placeholder.parentElement as HTMLElement;
-    }
-    public componentDidMount(){
-        const parentElement = this.getParentElement();
+    protected componentDidMount(){
+        const parentElement = this.parentElement;
         // fix parent position
         const position = window.getComputedStyle(parentElement).position;
         if("absolute" !== position && "fixed" !== position && "relative" !== position) {
@@ -90,20 +78,11 @@ class BaseCanvas extends React.PureComponent<IBaseCanvasProps>{
         this._initEBoardEngine();
         this._initLayout(parentElement);
     }
-    public getPlugin(pluginName:string){
-        return this.eBoardEngine.getPlugin(pluginName);
-    }
-    public getEBoardEngine(){
-        return this.eBoardEngine;
-    }
-    render(){
-        return [
-            <canvas ref={(ref:HTMLCanvasElement)=>this._placeholder=ref}>
-                当前浏览器不支持Canvas,请升级浏览器
-            </canvas>,
-            <Suspension />
-        ]
+    protected render(){
+        const placeholder = document.createElement("canvas");
+        placeholder.innerHTML="当前浏览器不支持Canvas,请升级浏览器";
+        this._placeholder=placeholder;
+        this.parentElement.appendChild(placeholder);
     }
 }
-
-export {BaseCanvas};
+export {BaseCanvasJS};

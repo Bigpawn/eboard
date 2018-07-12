@@ -17,47 +17,46 @@ input::-webkit-inner-spin-button {
 
 .eboard{
     &-pagination{
-        &-left{
+        @icon:{
+            font-size: @width; color: #ffffff;
+            line-height: @width *2;
+        };
+        @action:{
             position: fixed;
             width: @width;
             height: @width * 2;
+            background: rgba(51, 133, 255,0.5);
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            -moz-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(-50%);
+            box-sizing: border-box;
+            -webkit-background-clip: border-box;
+            -moz-background-clip: border-box;
+            background-clip: border-box;
+            cursor: pointer;
+        };
+        &-left{
+            @action();
             -webkit-border-radius: 0 @width @width 0;
             -moz-border-radius: 0 @width @width 0;
             border-radius: 0 @width @width 0;
-            background: rgba(51, 133, 255,0.5);
             left: 0;
-            top: 50%;
-            -webkit-transform: translateY(-50%);
-            -moz-transform: translateY(-50%);
-            -ms-transform: translateY(-50%);
-            -o-transform: translateY(-50%);
-            transform: translateY(-50%);
-            box-sizing: border-box;
-            -webkit-background-clip: border-box;
-            -moz-background-clip: border-box;
-            background-clip: border-box;
-            cursor: pointer;
+            & >.eboard-icon{
+                @icon();
+            }
         }
         &-right{
-            position: fixed;
-            width: @width;
-            height: @width * 2;
+            @action();
             -webkit-border-radius: @width 0 0 @width;
             -moz-border-radius: @width 0 0 @width;
             border-radius: @width 0 0 @width;
-            background: rgba(51, 133, 255,0.5);
             right: 0;
-            top: 50%;
-            -webkit-transform: translateY(-50%);
-            -moz-transform: translateY(-50%);
-            -ms-transform: translateY(-50%);
-            -o-transform: translateY(-50%);
-            transform: translateY(-50%);
-            box-sizing: border-box;
-            -webkit-background-clip: border-box;
-            -moz-background-clip: border-box;
-            background-clip: border-box;
-            cursor: pointer;
+            & >.eboard-icon{
+                @icon();
+            }
         }
         &-bottom{
             position: fixed;

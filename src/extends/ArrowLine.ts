@@ -8,8 +8,8 @@
 
 import {fabric as Fabric} from "fabric";
 import {IObjectOptions} from "fabric/fabric-impl";
-import {ArrowMode, ArrowType} from './LineType';
-import DefaultArrow from './arrows/default';
+import {ArrowMode, ArrowType} from '../plugins/shape/2D/line/LineType';
+import DefaultArrow from '../plugins/shape/2D/line/arrows/default';
 
 export declare interface ILineArrowOptions extends IObjectOptions{
     arrowType?:ArrowType;
@@ -18,6 +18,7 @@ export declare interface ILineArrowOptions extends IObjectOptions{
 
 
 class ArrowLine extends Fabric.Line{
+    public type:string="arrow-line";
     private arrowType:ArrowType=ArrowType.NONE;
     private arrowMode:ArrowMode=ArrowMode.NEXT;
     constructor(points?: number[], objObjects?: ILineArrowOptions){
@@ -32,7 +33,7 @@ class ArrowLine extends Fabric.Line{
         // 自定义箭头类
         if(ArrowType.NONE!==this.arrowType){
             try{
-                const arrowInstance:DefaultArrow = new (require(`./arrows/${this.arrowType}`).default as typeof DefaultArrow)(ctx,this);
+                const arrowInstance:DefaultArrow = new (require(`../plugins/shape/2D/line/arrows/${this.arrowType}`).default as typeof DefaultArrow)(ctx,this);
                 arrowInstance.draw(this.arrowMode);
             }catch(e){
                 throw "未找到箭头类实例";
