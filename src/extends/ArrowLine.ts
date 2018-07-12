@@ -33,7 +33,7 @@ class ArrowLine extends Fabric.Line{
         // 自定义箭头类
         if(ArrowType.NONE!==this.arrowType){
             try{
-                const arrowInstance:DefaultArrow = new (require(`./arrows/${this.arrowType}`).default as typeof DefaultArrow)(ctx,this);
+                const arrowInstance:DefaultArrow = new (require(`../plugins/shape/2D/line/arrows/${this.arrowType}`).default as typeof DefaultArrow)(ctx,this);
                 arrowInstance.draw(this.arrowMode);
             }catch(e){
                 throw "未找到箭头类实例";
