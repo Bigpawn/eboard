@@ -6,6 +6,7 @@
 import * as React from "react";
 import "../style/canvas.less";
 import {EBoardEngine} from '../EBoardEngine';
+import {Suspension} from "../plugins/tool/suspension/Suspension";
 
 export declare interface IBaseCanvasProps{
     ratio?:string; // 白板比例，默认值为4:3
@@ -96,11 +97,12 @@ class BaseCanvas extends React.PureComponent<IBaseCanvasProps>{
         return this.eBoardEngine;
     }
     render(){
-        return (
+        return [
             <canvas ref={(ref:HTMLCanvasElement)=>this._placeholder=ref}>
                 当前浏览器不支持Canvas,请升级浏览器
-            </canvas>
-        )
+            </canvas>,
+            <Suspension />
+        ]
     }
 }
 
