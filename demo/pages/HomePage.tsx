@@ -8,6 +8,7 @@ import {Line} from '../../src/line/Line';
 import {Selection} from '../../src/selection/Selection';
 import {ArrowMode, ArrowType, LineType} from '../../src/line/LineType';
 import {Text} from "../../src/text/Text";
+import {PolyLine} from "../../src/pencil/Line";
 
 class HomePage extends React.Component<{}, {}> {
     private Canvas:BaseCanvas;
@@ -44,6 +45,10 @@ class HomePage extends React.Component<{}, {}> {
         const Selection = this.Canvas.getPlugin(Plugins.Selection) as Selection;
         Selection.setEnable(true);
     };
+    private startPencilLine=()=>{
+        const PolyLine = this.Canvas.getPlugin(Plugins.Pencil) as PolyLine;
+        PolyLine.setColor('blue').setWidth(20).setEnable(true);
+    };
     public render(): JSX.Element {
         return (
             <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
@@ -54,6 +59,7 @@ class HomePage extends React.Component<{}, {}> {
                 <button onClick={this.startLine1}>Line1</button>
                 <button onClick={this.startText}>Text</button>
                 <button onClick={this.selection}>Selection</button>
+                <button onClick={this.startPencilLine}>Pencil line</button>
                 <div style={{position:"relative",height:document.body.offsetHeight-220}}>
                     <BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.Canvas=ref}/>
                 </div>

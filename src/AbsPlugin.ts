@@ -52,6 +52,7 @@ export enum Plugins{
     Line="Line", // 直线
     Text="Text",//文字输入
     Selection="Selection",// 选择
+    Pencil="Pencil",//铅笔
 }
 
 

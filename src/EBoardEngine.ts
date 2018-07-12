@@ -15,9 +15,10 @@ import {AbsPlugin, Plugins} from './AbsPlugin';
 import {Line} from './line/Line';
 import {Selection} from './selection/Selection';
 import {Text} from "./text/Text";
+import {PolyLine} from "./pencil/Line";
 
 
-type IPlugins = Cursor | Line | Selection | Text;
+type IPlugins = Cursor | Line | Selection | Text | PolyLine;
 
 declare interface IPlugin{
     pluginName:string;
@@ -25,7 +26,7 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection])
+@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.Pencil])
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
     private pluginList:IPlugin[];
