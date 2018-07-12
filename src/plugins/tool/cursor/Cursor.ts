@@ -10,9 +10,9 @@
 import {AbsCursor} from './AbsCursor';
 import {CursorType, CursorTypeName} from './CursorType';
 import {IEvent} from '~fabric/fabric-impl';
-import {RemUntil} from '../utils/RemUntil';
-import {EBoardCanvas} from '../EBoardCanvas';
-import {EBoardEngine} from '../EBoardEngine';
+import {RemUntil} from '../../../utils/RemUntil';
+import {EBoardCanvas} from '../../../EBoardCanvas';
+import {EBoardEngine} from '../../../EBoardEngine';
 
 class Cursor extends AbsCursor{
     private typeName:CursorTypeName;

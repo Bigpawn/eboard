@@ -7,12 +7,12 @@
  */
 import {fabric} from "fabric";
 import {ArrowMode, ArrowType, LineType} from './LineType';
-import {AbsPlugin} from '../AbsPlugin';
-import {EBoardCanvas} from '../EBoardCanvas';
-import {EBoardEngine} from '../EBoardEngine';
+import {AbsractPlugin} from '../../../AbsractPlugin';
+import {EBoardCanvas} from '../../../../EBoardCanvas';
+import {EBoardEngine} from '../../../../EBoardEngine';
 import {ArrowLine} from './ArrowLine';
-import {setCursor} from '../utils/decorators';
-import {CursorTypeName} from '../cursor/CursorType';
+import {setCursor} from '../../../../utils/decorators';
+import {CursorTypeName} from '../../../tool/cursor/CursorType';
 const {Color} =fabric;
 
 
@@ -20,7 +20,7 @@ const {Color} =fabric;
 
 
 @setCursor(CursorTypeName.Pencil)
-class Line extends AbsPlugin{
+class Line extends AbsractPlugin{
     private line?:ArrowLine;
     private color?:string;
     private borderDashed?:number[];

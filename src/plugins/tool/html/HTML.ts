@@ -5,9 +5,9 @@
  * * @Last Modified time: 2018/7/11 14:35
  * @disc:HTML 操作，禁用画板所有操作，启用html操作，仅HTMLCanvas 有效
  */
-import {AbsPlugin} from '../AbsPlugin';
+import {AbsractPlugin} from '../../AbsractPlugin';
 
-class HTML extends AbsPlugin{
+class HTML extends AbsractPlugin{
     public setEnable(enable:boolean){
         if(this.enable === enable){
             return;

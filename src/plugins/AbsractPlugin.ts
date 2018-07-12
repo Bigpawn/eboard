@@ -6,11 +6,12 @@
  * @disc:Plugin抽象类
  */
 
-import {EBoardCanvas} from './EBoardCanvas';
-import {EBoardEngine} from './EBoardEngine';
-import {CursorTypeName} from './cursor/CursorType';
-import {Cursor} from './cursor/Cursor';
-abstract class AbsPlugin {
+import {EBoardCanvas} from '../EBoardCanvas';
+import {EBoardEngine} from '../EBoardEngine';
+import {CursorTypeName} from './tool/cursor/CursorType';
+import {Cursor} from './tool/cursor/Cursor';
+import {Plugins} from './index';
+abstract class AbsractPlugin {
     protected eBoardCanvas:EBoardCanvas;
     protected eBoardEngine:EBoardEngine;
     protected cursorType:CursorTypeName;
@@ -47,12 +48,5 @@ abstract class AbsPlugin {
     };
 }
 
-export enum Plugins{
-    Cursor="Cursor",// 画笔
-    Line="Line", // 直线
-    Selection="Selection",// 选择
-    HTML="HTML", // HTML操作插件
-}
 
-
-export {AbsPlugin};
+export {AbsractPlugin};

@@ -1,13 +1,14 @@
 import * as React from "react";
 import { Card } from "antd";
 import {BaseCanvas} from '../../src/canvas/BaseCanvas';
-import {Cursor} from '../../src/cursor/Cursor';
-import {CursorTypeName} from '../../src/cursor/CursorType';
-import {Plugins} from '../../src/AbsPlugin';
-import {Line} from '../../src/line/Line';
-import {Selection} from '../../src/selection/Selection';
-import {ArrowMode, ArrowType, LineType} from '../../src/line/LineType';
-import {HTML} from '../../src/html/HTML';
+import {Cursor} from '../../src/plugins';
+import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
+import {Line} from '../../src/plugins';
+import {Selection} from '../../src/plugins';
+import {ArrowMode, ArrowType, LineType} from '../../src/plugins/shape/2D/line/LineType';
+import {HTML} from '../../src/plugins/tool/html/HTML';
+import {Text} from "../../src/plugins/shape/2D/text/Text";
+import {Plugins} from '../../src/plugins';
 
 
 export class ToolBar extends React.Component{
@@ -40,6 +41,10 @@ export class ToolBar extends React.Component{
         const Line = this.Canvas.getPlugin(Plugins.Line) as Line;
         Line.setColor("red").setArrowType(ArrowType.HOLLOW).setArrowMode(ArrowMode.ALL).setLineType(LineType.DASHED).setEnable(true);
     };
+    private startText=()=> {
+        const Text = this.Canvas.getPlugin(Plugins.Text) as Text;
+        Text.setFontSize().setColor('blue').setEnable(true);
+    };
     private selection=()=>{
         const Selection = this.Canvas.getPlugin(Plugins.Selection) as Selection;
         Selection.setEnable(true);
@@ -56,6 +61,7 @@ export class ToolBar extends React.Component{
                 <button onClick={this.setCursorClose}>Cursor Close</button>
                 <button onClick={this.startLine}>Line</button>
                 <button onClick={this.startLine1}>Line1</button>
+                <button onClick={this.startText}>Text</button>
                 <button onClick={this.selection}>Selection</button>
                 <button onClick={this.openHtml}>HTML操作</button>
             </div>

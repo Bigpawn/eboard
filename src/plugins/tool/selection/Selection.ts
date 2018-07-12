@@ -5,12 +5,12 @@
  * * @Last Modified time: 2018/7/11 13:31
  * @disc:选择 Selection状态下应该恢复默认的鼠标或者使用自定义系统鼠标
  */
-import {AbsPlugin} from '../AbsPlugin';
-import {setCursor} from '../utils/decorators';
+import {AbsractPlugin} from '../../AbsractPlugin';
+import {setCursor} from '../../../utils/decorators';
 import {CursorTypeName} from '../cursor/CursorType';
 
 @setCursor(CursorTypeName.None)
-class Selection extends AbsPlugin{
+class Selection extends AbsractPlugin{
     public setEnable(enable:boolean){
         if(this.enable===enable){
             return;
