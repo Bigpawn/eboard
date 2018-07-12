@@ -7,3 +7,7 @@
 * ImageCanvas 继承自HTMLCanvas，实现图片播放框架
 * HTMLCanvas HTML内容高度最小为BaseCanvas高度，高度可以撑大，根据宽度进行缩放
 * HTMLCanvas 内容区域按照BaseCanvas 限制，其内部画布和Html区域单独控制，滚动条需要同步
+* HTMLCanvas 涉及到元素缩放，太过复杂，暂时简单开发
+* 翻页逻辑：
+    1. 每一页是一个HTMLCanvas对象
+    2. 浏览器仅显示一个HTMLCanvas实例，其他实例自动回收到js runtime内存中，使用时再回复

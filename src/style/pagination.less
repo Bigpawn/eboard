@@ -1,0 +1,187 @@
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/7/11 19:38
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * * @Last Modified time: 2018/7/11 19:38
+ * @disc:Pagination style
+ */
+@width: 2rem;
+@inputWidth:4rem;
+@fontSize:18px;
+@bottomPadding:0.2rem;
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.eboard{
+    &-pagination{
+        &-left{
+            position: fixed;
+            width: @width;
+            height: @width * 2;
+            -webkit-border-radius: 0 @width @width 0;
+            -moz-border-radius: 0 @width @width 0;
+            border-radius: 0 @width @width 0;
+            background: rgba(51, 133, 255,0.5);
+            left: 0;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            -moz-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(-50%);
+            box-sizing: border-box;
+            -webkit-background-clip: border-box;
+            -moz-background-clip: border-box;
+            background-clip: border-box;
+            cursor: pointer;
+        }
+        &-right{
+            position: fixed;
+            width: @width;
+            height: @width * 2;
+            -webkit-border-radius: @width 0 0 @width;
+            -moz-border-radius: @width 0 0 @width;
+            border-radius: @width 0 0 @width;
+            background: rgba(51, 133, 255,0.5);
+            right: 0;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            -moz-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(-50%);
+            box-sizing: border-box;
+            -webkit-background-clip: border-box;
+            -moz-background-clip: border-box;
+            background-clip: border-box;
+            cursor: pointer;
+        }
+        &-bottom{
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            margin-left: -@inputWidth;
+            font-size: @fontSize;
+        }
+        &-current{
+            width: @inputWidth;
+            padding: @bottomPadding;
+            border: 1px solid transparent;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background: transparent;
+            text-align: right;
+            &:hover{
+                border:1px solid rgba(51, 133, 255,0.5);
+            }
+        }
+        &-total{
+            padding: @bottomPadding;
+            color: #09ca51;
+        }
+    }
+    &-pager{
+        &-enter-from-right{
+            -webkit-transform: translate(-50% ,-50%);
+            -moz-transform: translate(-50% ,-50%);
+            -ms-transform: translate(-50% ,-50%);
+            -o-transform: translate(-50% ,-50%);
+            transform: translate(-50% ,-50%);
+            animation: page-enter-from-right ease 500ms;
+        }
+        &-enter-from-left{
+            -webkit-transform: translate(-50% ,-50%);
+            -moz-transform: translate(-50% ,-50%);
+            -ms-transform: translate(-50% ,-50%);
+            -o-transform: translate(-50% ,-50%);
+            transform: translate(-50% ,-50%);
+            animation: page-enter-from-left ease 500ms;
+        }
+        &-leave-to-left{
+            -webkit-transform: translate(-150% ,-50%);
+            -moz-transform: translate(-150% ,-50%);
+            -ms-transform: translate(-150% ,-50%);
+            -o-transform: translate(-150% ,-50%);
+            transform: translate(-150% ,-50%);
+            animation: page-leave-to-left ease 500ms;
+        }
+        &-leave-to-right{
+            -webkit-transform: translate(50% ,-50%);
+            -moz-transform: translate(50% ,-50%);
+            -ms-transform: translate(50% ,-50%);
+            -o-transform: translate(50% ,-50%);
+            transform: translate(50% ,-50%);
+            animation: page-leave-to-right ease 500ms;
+        }
+    }
+}
+@keyframes page-enter-from-right {
+    from{
+        -webkit-transform: translate(50% ,-50%);
+        -moz-transform: translate(50% ,-50%);
+        -ms-transform: translate(50% ,-50%);
+        -o-transform: translate(50% ,-50%);
+        transform: translate(50% ,-50%);
+    }
+    to{
+        -webkit-transform: translate(-50% ,-50%);
+        -moz-transform: translate(-50% ,-50%);
+        -ms-transform: translate(-50% ,-50%);
+        -o-transform: translate(-50% ,-50%);
+        transform: translate(-50% ,-50%);
+    }
+}
+@keyframes page-enter-from-left {
+    from{
+        -webkit-transform: translate(-150% ,-50%);
+        -moz-transform: translate(-150% ,-50%);
+        -ms-transform: translate(-150% ,-50%);
+        -o-transform: translate(-150% ,-50%);
+        transform: translate(-150% ,-50%);
+    }
+    to{
+        -webkit-transform: translate(-50% ,-50%);
+        -moz-transform: translate(-50% ,-50%);
+        -ms-transform: translate(-50% ,-50%);
+        -o-transform: translate(-50% ,-50%);
+        transform: translate(-50% ,-50%);
+    }
+}
+
+@keyframes page-leave-to-left {
+    from{
+        -webkit-transform: translate(-50% ,-50%);
+        -moz-transform: translate(-50% ,-50%);
+        -ms-transform: translate(-50% ,-50%);
+        -o-transform: translate(-50% ,-50%);
+        transform: translate(-50% ,-50%);
+    }
+    to{
+        -webkit-transform: translate(-150% ,-50%);
+        -moz-transform: translate(-150% ,-50%);
+        -ms-transform: translate(-150% ,-50%);
+        -o-transform: translate(-150% ,-50%);
+        transform: translate(-150% ,-50%);
+    }
+}
+
+@keyframes page-leave-to-right {
+    from{
+        -webkit-transform: translate(-50% ,-50%);
+        -moz-transform: translate(-50% ,-50%);
+        -ms-transform: translate(-50% ,-50%);
+        -o-transform: translate(-50% ,-50%);
+        transform: translate(-50% ,-50%);
+    }
+    to{
+        -webkit-transform: translate(50% ,-50%);
+        -moz-transform: translate(50% ,-50%);
+        -ms-transform: translate(50% ,-50%);
+        -o-transform: translate(50% ,-50%);
+        transform: translate(50% ,-50%);
+    }
+}

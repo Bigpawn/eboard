@@ -7,13 +7,18 @@ import {Plugins} from '../../src/AbsPlugin';
 import {Line} from '../../src/line/Line';
 import {Selection} from '../../src/selection/Selection';
 import {ArrowMode, ArrowType, LineType} from '../../src/line/LineType';
+import {HTML} from '../../src/html/HTML';
 
-class HomePage extends React.Component<{}, {}> {
+
+export class ToolBar extends React.Component{
     private Canvas:BaseCanvas;
     constructor(props:any){
         super(props);
         this.setCursor=this.setCursor.bind(this);
         this.setCursorClose=this.setCursorClose.bind(this);
+    }
+    public setCanvas(canvas:BaseCanvas){
+        this.Canvas=canvas;
     }
     private setCursor=()=>{
         const Cursor = this.Canvas.getPlugin(Plugins.Cursor) as Cursor;
@@ -39,17 +44,38 @@ class HomePage extends React.Component<{}, {}> {
         const Selection = this.Canvas.getPlugin(Plugins.Selection) as Selection;
         Selection.setEnable(true);
     };
-    public render(): JSX.Element {
+    private openHtml=()=>{
+        const HTML = this.Canvas.getPlugin(Plugins.HTML) as HTML;
+        HTML.setEnable(true);
+    };
+    render(){
         return (
-            <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
+            <div>
                 <button onClick={this.setCursor}>PaintBrush</button>
                 <button onClick={this.setPencilCursor}>Pencil</button>
                 <button onClick={this.setCursorClose}>Cursor Close</button>
                 <button onClick={this.startLine}>Line</button>
                 <button onClick={this.startLine1}>Line1</button>
                 <button onClick={this.selection}>Selection</button>
+                <button onClick={this.openHtml}>HTML操作</button>
+            </div>
+        )
+    }
+}
+
+
+class HomePage extends React.Component<{}, {}> {
+    protected Toolbar:ToolBar;
+    protected canvas:any;
+    componentDidMount(){
+        this.Toolbar.setCanvas(this.canvas);
+    }
+    public render(): JSX.Element {
+        return (
+            <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
+                <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
                 <div style={{position:"relative",height:document.body.offsetHeight-220}}>
-                    <BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.Canvas=ref}/>
+                    <BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>
                 </div>
             </Card>
         );

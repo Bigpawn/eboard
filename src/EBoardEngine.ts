@@ -14,9 +14,10 @@ import {Cursor} from './cursor/Cursor';
 import {AbsPlugin, Plugins} from './AbsPlugin';
 import {Line} from './line/Line';
 import {Selection} from './selection/Selection';
+import {HTML} from './html/HTML';
 
 
-type IPlugins = Cursor | Line | Selection;
+type IPlugins = Cursor | Line | Selection | HTML;
 
 declare interface IPlugin{
     pluginName:string;
@@ -24,7 +25,7 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Selection])
+@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Selection,Plugins.HTML])
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
     private pluginList:IPlugin[];

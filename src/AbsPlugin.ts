@@ -51,6 +51,7 @@ export enum Plugins{
     Cursor="Cursor",// 画笔
     Line="Line", // 直线
     Selection="Selection",// 选择
+    HTML="HTML", // HTML操作插件
 }
 
 

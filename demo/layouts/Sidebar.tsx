@@ -23,9 +23,9 @@ class Sidebar extends React.Component<{}, ISidebarState> {
                 <div className="ant-layout-logo" />
                 <Menu theme="dark" mode={this.state.mode} defaultSelectedKeys={["1"]}>
                     <Menu.Item key="1">
-                        <Link to="/paint">
+                        <Link to="/pager">
                             <Icon type="edit" />
-                            <span className="nav-text">Paint</span>
+                            <span className="nav-text">Pager Canvas</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="2">
@@ -41,9 +41,9 @@ class Sidebar extends React.Component<{}, ISidebarState> {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="4">
-                        <Link to="/about">
+                        <Link to="/image">
                             <Icon type="file" />
-                            <span className="nav-text">About</span>
+                            <span className="nav-text">ImageCanvas</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="5">
