@@ -3,24 +3,23 @@
  * @Date: 2018/7/5 15:52
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * * @Last Modified time: 2018/7/5 15:52
- * @disc：包含Image层的Canvas
+ * @disc：显示图片的Canvas
  */
 import * as React from "react";
-import {HTMLCanvas} from './HTMLCanvas';
+import {HTMLCanvas, IHTMLCanvasProps} from './HTMLCanvas';
 
 
-// 处理图片，将图片处理成html片段
-
+export declare interface IImageCanvasProps extends IHTMLCanvasProps{
+    src:string;// 图片地址
+}
 
 class ImageCanvas extends HTMLCanvas{
-    
-    
-    
-    
+    public props:IImageCanvasProps;
     render(){
-        return <div>
-        
-        </div>
+        const children=(
+            <img src={this.props.src} style={{width:"100%"}}/>
+        );
+        return super._render(children);
     }
 }
 

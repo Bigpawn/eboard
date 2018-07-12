@@ -10,7 +10,7 @@ import HTMLPage from './pages/TodoPage';
 
 export const routes: RouteConfig[] = [
     {
-        path: "/paint",
+        path: "/pager",
         component: (props: any) => (<PaintPage />),
     },
     {
@@ -23,7 +23,7 @@ export const routes: RouteConfig[] = [
         component: () => (<HTMLPage/>),
     },
     {
-        path: "/about",
+        path: "/image",
         component: () => (<AboutPage />),
     },
     {

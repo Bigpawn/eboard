@@ -8,17 +8,12 @@
  */
 import {EBoardCanvas} from './EBoardCanvas';
 import {ICanvasOptions} from '~fabric/fabric-impl';
-
 import {mixinPlugins} from './utils/decorators';
-import {Cursor} from './cursor/Cursor';
-import {AbsPlugin, Plugins} from './AbsPlugin';
-import {Line} from './line/Line';
-import {Selection} from './selection/Selection';
-import {Text} from "./text/Text";
-import {PolyLine} from "./pencil/Line";
 
 
-type IPlugins = Cursor | Line | Selection | Text | PolyLine;
+import {AbsractPlugin} from './plugins/AbsractPlugin';
+import {IPlugins, Plugins} from './plugins';
+
 
 declare interface IPlugin{
     pluginName:string;
@@ -26,7 +21,7 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.Pencil])
+@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil])
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
     private pluginList:IPlugin[];
@@ -35,11 +30,11 @@ class EBoardEngine{
     public getDefaultColor(){
         return this.bgColor;
     }
-    private activePlugin?:AbsPlugin;
+    private activePlugin?:AbsractPlugin;
     public getActivePlugin(){
         return this.activePlugin;
     }
-    public setActivePlugin(plugin?:AbsPlugin){
+    public setActivePlugin(plugin?:AbsractPlugin){
         this.activePlugin=plugin;
     }
     constructor(element: HTMLCanvasElement | string, options?: ICanvasOptions){

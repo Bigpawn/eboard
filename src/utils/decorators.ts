@@ -5,7 +5,7 @@
  * * @Last Modified time: 2018/7/6 16:10
  * @disc:装饰器
  */
-import {CursorTypeName} from '../cursor/CursorType';
+import {CursorTypeName} from '../plugins/tool/cursor/CursorType';
 
 function mixinPlugin(pluginName:string):ClassDecorator{
     return (target:any)=>{
@@ -13,7 +13,7 @@ function mixinPlugin(pluginName:string):ClassDecorator{
         const pluginList=target.prototype.pluginList||[];
         pluginList.push({
             pluginName:pluginName,
-            pluginReflectClass:require(`../${pluginName.toLowerCase()}/index`).default
+            pluginReflectClass:require(`../plugins`)[pluginName]
         });
         Object.assign(target.prototype, {
             pluginList:pluginList,
@@ -27,7 +27,7 @@ function mixinPlugins(pluginNames:string[]):ClassDecorator{
         pluginNames.forEach((pluginName)=>{
             pluginList.push({
                 pluginName:pluginName,
-                pluginReflectClass:require(`../${pluginName.toLowerCase()}/index`).default
+                pluginReflectClass:require(`../plugins`)[pluginName]
             });
         });
         Object.assign(target.prototype, {
@@ -60,5 +60,19 @@ function setCursor(cursorType:CursorTypeName):ClassDecorator{
     }
 }
 
+/**
+ * 动画样式前缀
+ * @param {string} animationCssPrefix
+ * @returns {ClassDecorator}
+ */
+function setAnimationName(animationCssPrefix:string):ClassDecorator{
+    return (target:any)=>{
+        // 附加到插件列表中去
+        Object.assign(target.prototype, {
+            animationCssPrefix:animationCssPrefix,
+        });
+    }
+}
 
-export {mixinPlugin,mixinPlugins,defaultValue,setCursor};
+
+export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName};

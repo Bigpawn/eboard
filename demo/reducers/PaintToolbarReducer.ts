@@ -1,13 +1,12 @@
 import * as _ from 'lodash';
 import { ActionTypes } from "../actions/actionTypes";
-import { BrushType } from "../../src/brushes/BrushType";
 
 export interface PaintToolbarStates {
-    currentBrush: BrushType;
+    currentBrush: any;
 }
 
 const initStates: PaintToolbarStates = {
-    currentBrush: BrushType.POINTER_BRUSH,
+    currentBrush: "",
 };
 
 export function PaintToolbarReducer(states: PaintToolbarStates = initStates, action: any) {

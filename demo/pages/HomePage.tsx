@@ -1,21 +1,26 @@
 import * as React from "react";
 import { Card } from "antd";
 import {BaseCanvas} from '../../src/canvas/BaseCanvas';
-import {Cursor} from '../../src/cursor/Cursor';
-import {CursorTypeName} from '../../src/cursor/CursorType';
-import {Plugins} from '../../src/AbsPlugin';
-import {Line} from '../../src/line/Line';
-import {Selection} from '../../src/selection/Selection';
-import {ArrowMode, ArrowType, LineType} from '../../src/line/LineType';
-import {Text} from "../../src/text/Text";
-import {PolyLine} from "../../src/pencil/Line";
+import {Cursor} from '../../src/plugins';
+import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
+import {Line} from '../../src/plugins';
+import {Selection} from '../../src/plugins';
+import {ArrowMode, ArrowType, LineType} from '../../src/plugins/shape/2D/line/LineType';
+import {HTML} from '../../src/plugins/tool/html/HTML';
+import {Text} from "../../src/plugins/shape/2D/text/Text";
+import {Plugins} from '../../src/plugins';
+import {Pencil} from "../../src/plugins/shape/2D/pencil/Pencil";
 
-class HomePage extends React.Component<{}, {}> {
+
+export class ToolBar extends React.Component{
     private Canvas:BaseCanvas;
     constructor(props:any){
         super(props);
         this.setCursor=this.setCursor.bind(this);
         this.setCursorClose=this.setCursorClose.bind(this);
+    }
+    public setCanvas(canvas:BaseCanvas){
+        this.Canvas=canvas;
     }
     private setCursor=()=>{
         const Cursor = this.Canvas.getPlugin(Plugins.Cursor) as Cursor;
@@ -46,12 +51,16 @@ class HomePage extends React.Component<{}, {}> {
         Selection.setEnable(true);
     };
     private startPencilLine=()=>{
-        const PolyLine = this.Canvas.getPlugin(Plugins.Pencil) as PolyLine;
-        PolyLine.setColor('blue').setWidth(20).setEnable(true);
+        const PencilLine = this.Canvas.getPlugin(Plugins.Pencil) as Pencil;
+        PencilLine.setColor('blue').setWidth(20).setEnable(true);
     };
-    public render(): JSX.Element {
+    private openHtml=()=>{
+        const HTML = this.Canvas.getPlugin(Plugins.HTML) as HTML;
+        HTML.setEnable(true);
+    };
+    render(){
         return (
-            <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
+            <div>
                 <button onClick={this.setCursor}>PaintBrush</button>
                 <button onClick={this.setPencilCursor}>Pencil</button>
                 <button onClick={this.setCursorClose}>Cursor Close</button>
@@ -60,8 +69,25 @@ class HomePage extends React.Component<{}, {}> {
                 <button onClick={this.startText}>Text</button>
                 <button onClick={this.selection}>Selection</button>
                 <button onClick={this.startPencilLine}>Pencil line</button>
+                <button onClick={this.openHtml}>HTML操作</button>
+            </div>
+        )
+    }
+}
+
+
+class HomePage extends React.Component<{}, {}> {
+    protected Toolbar:ToolBar;
+    protected canvas:any;
+    componentDidMount(){
+        this.Toolbar.setCanvas(this.canvas);
+    }
+    public render(): JSX.Element {
+        return (
+            <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
+                <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
                 <div style={{position:"relative",height:document.body.offsetHeight-220}}>
-                    <BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.Canvas=ref}/>
+                    <BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>
                 </div>
             </Card>
         );

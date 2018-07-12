@@ -5,10 +5,14 @@
   */
 .eboard{
     @center:{
-        position: absolute!important;
-        left: 50%!important;
-        top: 50%!important;
-        transform: translate(-50%,-50%)!important;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
         overflow: hidden;
     };
     &-canvas{
@@ -16,6 +20,16 @@
     }
     &-container{
         @center();
+    }
+    &-pager{
+        @center();
+        &-hide{
+            -webkit-transform: translate(-150%, -50%);
+            -moz-transform: translate(-150%, -50%);
+            -ms-transform: translate(-150%, -50%);
+            -o-transform: translate(-150%, -50%);
+            transform: translate(-150%, -50%);
+        }
     }
     &-cursor{
         cursor:none;

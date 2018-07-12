@@ -12,6 +12,15 @@ class EBoardCanvas extends fabric.Canvas{
     constructor(element: HTMLCanvasElement | string, options?: ICanvasOptions){
         super(element,options);
     }
+    public getLowerCanvas(){
+        return this.getElement() as HTMLCanvasElement;
+    }
+    public getUpperCanvas(){
+        return this.getElement().nextElementSibling as HTMLCanvasElement;
+    }
+    public getContainer(){
+        return this.getElement().parentElement as HTMLDivElement;
+    }
 }
 
 export {EBoardCanvas};
