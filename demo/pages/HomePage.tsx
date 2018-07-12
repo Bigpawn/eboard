@@ -9,6 +9,7 @@ import {ArrowMode, ArrowType, LineType} from '../../src/plugins/shape/2D/line/Li
 import {HTML} from '../../src/plugins/tool/html/HTML';
 import {Text} from "../../src/plugins/shape/2D/text/Text";
 import {Plugins} from '../../src/plugins';
+import {Pencil} from "../../src/plugins/shape/2D/pencil/Pencil";
 
 
 export class ToolBar extends React.Component{
@@ -49,6 +50,10 @@ export class ToolBar extends React.Component{
         const Selection = this.Canvas.getPlugin(Plugins.Selection) as Selection;
         Selection.setEnable(true);
     };
+    private startPencilLine=()=>{
+        const PencilLine = this.Canvas.getPlugin(Plugins.Pencil) as Pencil;
+        PencilLine.setColor('blue').setWidth(20).setEnable(true);
+    };
     private openHtml=()=>{
         const HTML = this.Canvas.getPlugin(Plugins.HTML) as HTML;
         HTML.setEnable(true);
@@ -63,6 +68,7 @@ export class ToolBar extends React.Component{
                 <button onClick={this.startLine1}>Line1</button>
                 <button onClick={this.startText}>Text</button>
                 <button onClick={this.selection}>Selection</button>
+                <button onClick={this.startPencilLine}>Pencil line</button>
                 <button onClick={this.openHtml}>HTML操作</button>
             </div>
         )

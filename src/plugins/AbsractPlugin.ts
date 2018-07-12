@@ -10,7 +10,8 @@ import {EBoardCanvas} from '../EBoardCanvas';
 import {EBoardEngine} from '../EBoardEngine';
 import {CursorTypeName} from './tool/cursor/CursorType';
 import {Cursor} from './tool/cursor/Cursor';
-import {Plugins} from './index';
+import {Plugins} from "./index";
+
 abstract class AbsractPlugin {
     protected eBoardCanvas:EBoardCanvas;
     protected eBoardEngine:EBoardEngine;
@@ -48,5 +49,12 @@ abstract class AbsractPlugin {
     };
 }
 
+// export enum Plugins{
+//     Cursor="Cursor",// 画笔
+//     Line="Line", // 直线
+//     Text="Text",//文字输入
+//     Selection="Selection",// 选择
+//     Pencil="Pencil",//铅笔
+// }
 
 export {AbsractPlugin};

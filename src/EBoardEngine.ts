@@ -9,6 +9,8 @@
 import {EBoardCanvas} from './EBoardCanvas';
 import {ICanvasOptions} from '~fabric/fabric-impl';
 import {mixinPlugins} from './utils/decorators';
+
+
 import {AbsractPlugin} from './plugins/AbsractPlugin';
 import {IPlugins, Plugins} from './plugins';
 
@@ -19,7 +21,7 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML])
+@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil])
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
     private pluginList:IPlugin[];
