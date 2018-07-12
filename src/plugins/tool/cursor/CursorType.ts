@@ -10,6 +10,7 @@ export enum CursorTypeName{
     PaintBruch="PaintBruch",
     Pencil="Pencil",
     None="None",// 使用默认的系统鼠标指针
+    Compass="Compass"
 }
 
 export declare interface ICursorTypeProps{
@@ -37,6 +38,13 @@ export const CursorType:ICursorType={
         svg:require("./svg/pencil.svg"),
         startPoint:{
             x:0,
+            y:100
+        }
+    },
+    [CursorTypeName.Compass]:{
+        svg:require("./svg/compass.svg"),
+        startPoint:{
+            x:50,
             y:100
         }
     },
