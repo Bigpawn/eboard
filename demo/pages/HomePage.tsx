@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Card } from "antd";
-import {BaseCanvas} from '../../src/canvas/BaseCanvas';
+import {BaseCanvas} from '../../src/canvas/react/BaseCanvas';
 import {Cursor} from '../../src/plugins';
 import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
 import {Line} from '../../src/plugins';

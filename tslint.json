@@ -19,7 +19,8 @@
     "jsx-no-lambda": false,
     "jsx-boolean-value": false,
     "no-empty-interface": false,
-    "no-string-literal": false
+    "no-string-literal": false,
+    "only-arrow-functions": false
   },
   "linterOptions": {
     "exclude": [

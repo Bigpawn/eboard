@@ -74,5 +74,24 @@ function setAnimationName(animationCssPrefix:string):ClassDecorator{
     }
 }
 
+/**
+ * pip 管道模式注解
+ * @param target
+ * @param {string} name
+ * @param {PropertyDescriptor} descriptor
+ * @returns {PropertyDescriptor}
+ */
+function pipMode(target:any, name:string, descriptor:PropertyDescriptor){
+    const popPromise:Promise<any> = new Promise((resolve)=>resolve(true));
+    const oldValue = descriptor.value;
+    // this 指向问题
+    descriptor.value =function(){
+        const _arguments=arguments;
+        popPromise.then(()=>{
+            return oldValue.apply(this,_arguments);
+        });
+    };
+    return descriptor;
+}
 
-export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName};
+export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode};

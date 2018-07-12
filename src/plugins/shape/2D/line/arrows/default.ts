@@ -6,7 +6,7 @@
  * @disc:default Arrow
  */
 
-import {ArrowLine} from '../ArrowLine';
+import {ArrowLine} from '../../../../../extends/ArrowLine';
 import {ArrowMode} from '../LineType';
 
 export declare interface ILinePoints{

@@ -1,18 +1,37 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/7/12 10:35
+ * @Date: 2018/7/5 15:52
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/12 10:35
- * @disc:HTMLCanvas JS模式
+ * * @Last Modified time: 2018/7/5 15:52
+ * @disc:包含HTML层的Canvas
  */
-import {BaseCanvasJS} from './BaseCanvasJS';
-import {EBoardEngine} from '../EBoardEngine';
 
-class HTMLCanvasJS extends BaseCanvasJS{
-    private className?:string;
-    constructor(parentElement: HTMLElement,ratio?:string,className?:string){
-        super(parentElement,ratio);
-        this.className=className;
+import {BaseCanvas, IBaseCanvasProps} from './BaseCanvas';
+import * as React from "react";
+import Scrollbars from 'react-custom-scrollbars';
+import {EBoardEngine} from '../../EBoardEngine';
+import {ReactNode} from 'react';
+
+
+export declare interface IHTMLCanvasProps extends IBaseCanvasProps{
+    children?:ReactNode;
+    width?:number;// 源画布区域宽度 ，表示实际画布比例  如果没有则当前作为源画布，计算其大小
+    height?:number;// 源画布区域高度 ， 表示实际画布比例 如果没有则当前作为源画布，计算其大小
+    className?:string;
+}
+
+/**
+ * HTMLCanvas 需要用到源画布大小，根据源画布大小计算scale比例
+ */
+class HTMLCanvas extends BaseCanvas{
+    public props:IHTMLCanvasProps;
+    constructor(props:IHTMLCanvasProps){
+        super(props);
+    }
+    private container:HTMLDivElement;
+    private htmlContainer:HTMLDivElement;
+    protected getParentElement(){
+        return this.container.parentElement as HTMLElement;
     }
     protected _initLayout(parentElement:HTMLElement){
         const calcSize=this.__calc(parentElement);
@@ -25,17 +44,17 @@ class HTMLCanvasJS extends BaseCanvasJS{
             // 作为子Canvas
             // html实际高度及缩放大小计算  计算transform scale倍数
             const scale = calcSize.width/this.props.width;
-            
+    
             const height = Math.max(this.props.height * scale,calcSize.height); // Html区域实际高度
-            
+    
             this.htmlContainer.style.height = height + "px";// 最小高度
             (this.htmlContainer.firstElementChild as HTMLDivElement).style.transform=`scale(${scale})`;
-            
-            
+    
+    
             // 计算html 占用高度，通过该高度计算canvas高度
-            
+    
             this.eBoardEngine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 根据实际分辨率设置大小
-            
+    
             // 需要计算实际的大小
             this.eBoardEngine.eBoardCanvas.setDimensions({
                 width:calcSize.dimensions.width,
@@ -45,7 +64,7 @@ class HTMLCanvasJS extends BaseCanvasJS{
             // 作为源Canvas
             const height = Math.max(this.htmlContainer.offsetHeight,calcSize.height);
             this.eBoardEngine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 根据实际分辨率设置大小
-            
+    
             // 需要计算实际的大小
             this.eBoardEngine.eBoardCanvas.setDimensions({
                 width:calcSize.dimensions.width,
@@ -60,13 +79,25 @@ class HTMLCanvasJS extends BaseCanvasJS{
             containerClass:"eboard-html-canvas"
         });
     }
-    protected render(){
-    
+    render() {
+        return this._render(this.props.children);
     }
-    protected _render(){
-        // const container = document.createElement();
-        // 滚动  需要实现一套 react-custom-scroll js 版本
+    protected _render(children?:ReactNode){
+        return (
+            <div className={`eboard-container ${this.props.className||""}`} ref={(ref:HTMLDivElement)=>this.container=ref}>
+                <Scrollbars universal>
+                    <div className="eboard-html-container" ref={(ref:HTMLDivElement)=>this.htmlContainer=ref}>
+                        <div className="eboard-html">
+                            {children}
+                        </div>
+                    </div>
+                    <canvas ref={(ref: HTMLCanvasElement) => this._placeholder = ref}>
+                        当前浏览器不支持Canvas,请升级浏览器
+                    </canvas>
+                </Scrollbars>
+            </div>
+        );
     }
 }
 
-export {HTMLCanvasJS};
+export {HTMLCanvas};

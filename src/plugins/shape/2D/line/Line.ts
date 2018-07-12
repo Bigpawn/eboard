@@ -10,7 +10,7 @@ import {ArrowMode, ArrowType, LineType} from './LineType';
 import {AbsractPlugin} from '../../../AbsractPlugin';
 import {EBoardCanvas} from '../../../../EBoardCanvas';
 import {EBoardEngine} from '../../../../EBoardEngine';
-import {ArrowLine} from './ArrowLine';
+import {ArrowLine} from '../../../../extends/ArrowLine';
 import {setCursor} from '../../../../utils/decorators';
 import {CursorTypeName} from '../../../tool/cursor/CursorType';
 const {Color} =fabric;

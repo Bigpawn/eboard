@@ -8,8 +8,8 @@
 
 import {fabric as Fabric} from "fabric";
 import {IObjectOptions} from "fabric/fabric-impl";
-import {ArrowMode, ArrowType} from './LineType';
-import DefaultArrow from './arrows/default';
+import {ArrowMode, ArrowType} from '../plugins/shape/2D/line/LineType';
+import DefaultArrow from '../plugins/shape/2D/line/arrows/default';
 
 export declare interface ILineArrowOptions extends IObjectOptions{
     arrowType?:ArrowType;
@@ -18,6 +18,7 @@ export declare interface ILineArrowOptions extends IObjectOptions{
 
 
 class ArrowLine extends Fabric.Line{
+    public type:string="arrow-line";
     private arrowType:ArrowType=ArrowType.NONE;
     private arrowMode:ArrowMode=ArrowMode.NEXT;
     constructor(points?: number[], objObjects?: ILineArrowOptions){

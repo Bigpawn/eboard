@@ -7,13 +7,14 @@
  */
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {EBoardEngine} from '../EBoardEngine';
-import {EBoardCanvas} from '../EBoardCanvas';
+import {EBoardEngine} from '../../EBoardEngine';
+import {EBoardCanvas} from '../../EBoardCanvas';
 import {HTMLCanvas, IHTMLCanvasProps} from './HTMLCanvas';
 import {ImageCanvas} from './ImageCanvas';
-import {Pagination} from './Pagination';
-import {PageTurn} from './PageTurn';
+import {Pagination} from '../../components/Pagination';
+import {PageTurn} from '../PageTurn';
 import {BaseCanvas} from './BaseCanvas';
+import {pipMode} from '../../utils/decorators';
 
 export enum PageType{
     Image="image",
@@ -38,8 +39,9 @@ export declare interface IEBoardCache{
     element:HTMLElement;
 }
 
-
-
+/**
+ * 分页canvas
+ */
 class PagerCanvas extends React.Component<IPagerCanvasProps>{
     private pageDataSet:IPageData[];
     private currentIndex:number=1;// 默认第一页
@@ -50,72 +52,86 @@ class PagerCanvas extends React.Component<IPagerCanvasProps>{
     private Pagination:Pagination;
     constructor(props:IPagerCanvasProps){
         super(props);
-        // props.pageDataSet&&(this.pageDataSet=props.pageDataSet);
         this.onPagerChange=this.onPagerChange.bind(this);
-        this.changeCallback=this.changeCallback.bind(this);
-        this.PageTurn = new PageTurn(this.changeCallback);
+        this.PageTurn = new PageTurn();
         let {pageDataSet=[],currentIndex=1} = props;
         this.pageDataSet=pageDataSet;
         this.currentIndex=currentIndex;
     }
-    private changeCallback(currentElement:HTMLElement,nextElement:HTMLElement){
-        // 从节点中移除currentElement 并且进行缓存
-        (currentElement.parentElement as HTMLElement).removeChild(currentElement);
-    }
+    @pipMode
     private onPagerChange(index:number){
         // index切换
         if(index===this.currentIndex){
-            return;
+            return 0;
         }else{
             this.Pagination&&this.Pagination.setCurrentIndex(index);
-            this.addPage(index,index>this.currentIndex);
-            this.currentIndex=index;// 不能保证顺序
+            const isNext=index>this.currentIndex;
+            this.currentIndex=index;
+            return this.addPage(index,isNext);
         }
+    }
+    private getCurrentElement(){
+        return  this.pagerContainer.querySelector(".eboard-container") as HTMLElement;
     }
     private addPage(index:number,next:boolean){
         // 如果缓存中有则从缓存中取，否则创建
-        const cache = this.eBoardCacheMap.get(index);
-        if(void 0 !==cache){
-            const nextElement = cache.element;
-            nextElement.className +="eboard-pager-hiden";
-            this.pagerContainer.insertBefore(nextElement,this.pagerContainer.firstElementChild);
-            if(next){
-                this.PageTurn.next(this.pagerContainer.children[1] as HTMLElement,nextElement);
-            }else{
-                this.PageTurn.prev(this.pagerContainer.children[1] as HTMLElement,nextElement);
-            }
-        }else{
-            // 新页面，未缓存，需要动态创建
-            const pageData = this.pageDataSet[index-1];
-            const wraper=document.createElement("div");
-            wraper.style.position="absolute";
-            wraper.style.width="100%";
-            wraper.style.height="100%";
-            wraper.style.left="-100%";
-            this.pagerContainer.insertBefore(wraper,this.pagerContainer.firstElementChild);
-            const {pageDataSet,currentIndex,...props} = this.props;
-            let newCanvas:ImageCanvas;
-            ReactDOM.render(
-                pageData.type===PageType.Image?<ImageCanvas className="eboard-pager-hide" ref={(ref:ImageCanvas)=>newCanvas=ref} {...props} src={pageData.data}/>:
-                    <HTMLCanvas ref={(ref:HTMLCanvas)=>this.canvas=ref} {...props} children={pageData.data}/>,
-                wraper,
-                ()=>{
-                    const eBoardEngine = newCanvas.getEBoardEngine();
-                    const child = wraper.firstElementChild as HTMLElement;
-                    this.eBoardCacheMap.set(this.currentIndex,{
-                        eBoardEngine:eBoardEngine,
-                        eBoardCanvas:eBoardEngine.eBoardCanvas,
-                        element:child,
+        return new Promise((resolve)=>{
+            const cache = this.eBoardCacheMap.get(index);
+            const currentElement = this.getCurrentElement();
+            if(void 0 !==cache){
+                const nextElement = cache.element;
+                nextElement.className +="eboard-pager-hiden";
+                this.pagerContainer.insertBefore(nextElement,currentElement);
+                if(next){
+                    this.PageTurn.next(currentElement,nextElement,()=>{
+                        (currentElement.parentElement as HTMLElement).removeChild(currentElement);
+                        resolve(true);
                     });
-                    this.pagerContainer.replaceChild(child,wraper);
-                    if(next){
-                        this.PageTurn.next(this.pagerContainer.children[1] as HTMLElement,child);
-                    }else{
-                        this.PageTurn.prev(this.pagerContainer.children[1] as HTMLElement,child);
-                    }
+                }else{
+                    this.PageTurn.prev(currentElement,nextElement,()=>{
+                        (currentElement.parentElement as HTMLElement).removeChild(currentElement);
+                        resolve(true);
+                    });
                 }
-            );
-        }
+            }else{
+                // 新页面，未缓存，需要动态创建
+                const pageData = this.pageDataSet[index-1];
+                const wraper=document.createElement("div");
+                wraper.style.position="absolute";
+                wraper.style.width="100%";
+                wraper.style.height="100%";
+                wraper.style.left="-100%";
+                this.pagerContainer.insertBefore(wraper,currentElement);
+                const {pageDataSet,currentIndex,...props} = this.props;
+                let newCanvas:ImageCanvas;
+                ReactDOM.render(
+                    pageData.type===PageType.Image?<ImageCanvas className="eboard-pager-hide" ref={(ref:ImageCanvas)=>newCanvas=ref} {...props} src={pageData.data}/>:
+                        <HTMLCanvas ref={(ref:HTMLCanvas)=>this.canvas=ref} {...props} children={pageData.data}/>,
+                    wraper,
+                    ()=>{
+                        const eBoardEngine = newCanvas.getEBoardEngine();
+                        const child = wraper.firstElementChild as HTMLElement;
+                        this.eBoardCacheMap.set(this.currentIndex,{
+                            eBoardEngine:eBoardEngine,
+                            eBoardCanvas:eBoardEngine.eBoardCanvas,
+                            element:child,
+                        });
+                        this.pagerContainer.replaceChild(child,wraper);
+                        if(next){
+                            this.PageTurn.next(currentElement,child,()=>{
+                                (currentElement.parentElement as HTMLElement).removeChild(currentElement);
+                                resolve(true);
+                            });
+                        }else{
+                            this.PageTurn.prev(currentElement,child,()=>{
+                                (currentElement.parentElement as HTMLElement).removeChild(currentElement);
+                                resolve(true);
+                            });
+                        }
+                    }
+                );
+            }
+        })
     }
     shouldComponentUpdate(){
         return false;
@@ -142,6 +158,13 @@ class PagerCanvas extends React.Component<IPagerCanvasProps>{
             this.addPage(index,index>this.currentIndex);
             this.currentIndex=index;
         }
+    }
+    /**
+     * @override
+     */
+    public getPlugin(pluginName:string){
+        const eBoardCache = this.eBoardCacheMap.get(this.currentIndex) as IEBoardCache;
+        return eBoardCache.eBoardEngine.getPlugin(pluginName);
     }
     render(){
         const {pageDataSet,currentIndex,...props} = this.props;

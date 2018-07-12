@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Card } from "antd";
 import HomePage, {ToolBar} from './HomePage';
-import {PagerCanvas, PageType} from '../../src/canvas/PagerCanvas';
+import {PagerCanvas, PageType} from '../../src/canvas/react/PagerCanvas';
 
 class PaintPage extends HomePage{
     public render(): JSX.Element {

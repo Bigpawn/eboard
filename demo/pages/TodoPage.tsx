@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Card } from "antd";
-import {HTMLCanvas} from '../../src/canvas/HTMLCanvas';
+import {HTMLCanvas} from '../../src/canvas/react/HTMLCanvas';
 import HomePage, {ToolBar} from './HomePage';
 
 class HTMLPage extends HomePage{
