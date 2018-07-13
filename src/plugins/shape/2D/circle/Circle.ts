@@ -26,7 +26,7 @@ class Circle extends AbsractPlugin{
         this.moveHandler=this.moveHandler.bind(this);
         this.upHandler=this.upHandler.bind(this);
     }
-    private downHandler=(o:any)=>{
+    private downHandler(o:any){
         this.start = this.eBoardCanvas.getPointer(o.e);
         // 创建对象实例
         this.circle=new fabric.Circle({
@@ -40,7 +40,7 @@ class Circle extends AbsractPlugin{
         });
         this.eBoardCanvas.add(this.circle);
     };
-    private moveHandler=(o:any)=>{
+    private moveHandler(o:any){
         if(this.start&&this.circle){
             let pos = this.eBoardCanvas.getPointer(o.e);
             const radius=Math.sqrt(Math.pow(pos.x-this.start.x,2)+Math.pow(pos.y-this.start.y,2));
@@ -50,7 +50,7 @@ class Circle extends AbsractPlugin{
             this.eBoardCanvas.requestRenderAll();
         }
     };
-    private upHandler=(o:any)=>{
+    private upHandler(o:any){
         if(this.start&&this.circle){
             let pos = this.eBoardCanvas.getPointer(o.e);
             const radius=Math.sqrt(Math.pow(pos.x-this.start.x,2)+Math.pow(pos.y-this.start.y,2));
