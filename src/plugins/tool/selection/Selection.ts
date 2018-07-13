@@ -5,15 +5,15 @@
  * * @Last Modified time: 2018/7/11 13:31
  * @disc:选择 Selection状态下应该恢复默认的鼠标或者使用自定义系统鼠标
  */
-import {AbsractPlugin} from '../../AbsractPlugin';
 import {setCursor} from '../../../utils/decorators';
 import {CursorTypeName} from '../cursor/CursorType';
 import {EBoardCanvas} from "../../../EBoardCanvas";
 import {EBoardEngine} from "../../../EBoardEngine";
 import {Suspension} from "../suspension/Suspension";
+import {AbstractPlugin} from '../../AbstractPlugin';
 
 @setCursor(CursorTypeName.None)
-class Selection extends AbsractPlugin{
+class Selection extends AbstractPlugin{
 
     constructor(canvas:EBoardCanvas,eboardEngine:EBoardEngine){
         super(canvas,eboardEngine);

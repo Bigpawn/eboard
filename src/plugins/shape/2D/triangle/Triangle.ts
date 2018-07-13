@@ -1,20 +1,19 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/7/13 12:51
+ * @Date: 2018/7/13 21:47
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/13 12:51
- * @disc:矩形Plugin
+ * * @Last Modified time: 2018/7/13 21:47
+ * @disc:三角形  flipX,flipY 实现翻转
  */
+
+import {AbstractPlugin} from '../../../AbstractPlugin';
 import {EBoardCanvas} from '../../../../EBoardCanvas';
 import {fabric} from "fabric";
 import {Ellipse} from '../ellipse/Ellipse';
 import {EBoardEngine} from '../../../../EBoardEngine';
-import {ctrlKeyEnable} from '../../../../utils/decorators';
-import {AbstractPlugin} from '../../../AbstractPlugin';
 
-@ctrlKeyEnable(true)
-class Rectangle extends AbstractPlugin{
-    private rect?:fabric.Rect;
+class Triangle extends AbstractPlugin{
+    private triangle?:fabric.Triangle;
     private start?:{ x: number; y: number; };
     private end:{ x: number; y: number; };
     private fill?:string;
@@ -61,7 +60,7 @@ class Rectangle extends AbstractPlugin{
         this.start = this.eBoardCanvas.getPointer(o.e);
         this.end = this.start;
         // 创建对象实例
-        this.rect=new fabric.Rect({
+        this.triangle=new fabric.Triangle({
             fill:this.fill,
             left: this.start.x,
             top: this.start.y,
@@ -69,20 +68,26 @@ class Rectangle extends AbstractPlugin{
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.getCanvasPixel(this.strokeWidth)
         });
-        this.eBoardCanvas.add(this.rect);
+        this.eBoardCanvas.add(this.triangle);
     };
     private moveHandler(o:any){
-        if(this.start&&this.rect){
+        if(this.start&&this.triangle){
             let pos = this.eBoardCanvas.getPointer(o.e);
             this.end = pos;
-            const width=Math.abs(pos.x-this.start.x);
-            const height=Math.abs(pos.y-this.start.y);
+            
+            const offsetX = pos.x-this.start.x;
+            const offsetY = pos.y-this.start.y;
+            
+            const width=Math.abs(offsetX);
+            const height=Math.abs(offsetY);
             const length = Math.min(width,height);
             const startPoint = this.ctrlKey?this.getCtrlStartPoint(length):this.getStartPoint();
             if(void 0 ===startPoint){return;}
-            this.rect.set({
+            this.triangle.set({
                 width:this.ctrlKey?length:width,
                 height:this.ctrlKey?length:height,
+                flipY:offsetX<0,
+                flipX:offsetY<0,
                 left: startPoint.x,
                 top: startPoint.y,
             }).setCoords();
@@ -90,26 +95,30 @@ class Rectangle extends AbstractPlugin{
         }
     };
     private upHandler(o:any){
-        if(this.start&&this.rect){
+        if(this.start&&this.triangle){
             let pos = this.eBoardCanvas.getPointer(o.e);
             this.end = pos;
-            const width=Math.abs(pos.x-this.start.x);
-            const height=Math.abs(pos.y-this.start.y);
+            const offsetX = pos.x-this.start.x;
+            const offsetY = pos.y-this.start.y;
+            const width=Math.abs(offsetX);
+            const height=Math.abs(offsetY);
             if(width<4||height<4){
-                this.eBoardCanvas.remove(this.rect);
+                this.eBoardCanvas.remove(this.triangle);
             }else{
                 const length = Math.min(width,height);
                 const startPoint = this.ctrlKey?this.getCtrlStartPoint(length):this.getStartPoint();
                 if(void 0 ===startPoint){return;}
-                this.rect.set({
+                this.triangle.set({
                     width:this.ctrlKey?length:width,
                     height:this.ctrlKey?length:height,
+                    flipY:offsetX<0,
+                    flipX:offsetY<0,
                     left: startPoint.x,
                     top: startPoint.y,
                 }).setCoords();
             }
             this.eBoardCanvas.renderAll();
-            this.rect=undefined;
+            this.triangle=undefined;
             this.start=undefined;
         }
     };
@@ -118,20 +127,20 @@ class Rectangle extends AbstractPlugin{
         const keyCode = e.keyCode;
         if(17===keyCode){
             this.ctrlKey=true;
-            if(this.start&&this.rect){
+            if(this.start&&this.triangle){
                 const width=Math.abs(this.end.x-this.start.x);
                 const height=Math.abs(this.end.y-this.start.y);
                 const length = Math.min(width,height);
                 // 起点需要重新算
                 const startPoint = this.getCtrlStartPoint(length);
                 if(void 0 === startPoint){return}
-                this.rect.set({
+                this.triangle.set({
                     width:length,
                     height:length,
                     left:startPoint.x,
                     top:startPoint.y
                 }).setCoords();
-                this.eBoardCanvas.renderAll();
+                this.eBoardCanvas.requestRenderAll();
             }
         }
     }
@@ -140,18 +149,18 @@ class Rectangle extends AbstractPlugin{
         if(17===keyCode){
             // 恢复
             this.ctrlKey=false;
-            if(this.start&&this.rect){
+            if(this.start&&this.triangle){
                 const width=Math.abs(this.end.x-this.start.x);
                 const height=Math.abs(this.end.y-this.start.y);
                 const startPoint = this.getStartPoint();
                 if(void 0 === startPoint){return}
-                this.rect.set({
+                this.triangle.set({
                     width:width,
                     height:height,
                     left:startPoint.x,
                     top:startPoint.y
                 }).setCoords();
-                this.eBoardCanvas.renderAll();
+                this.eBoardCanvas.requestRenderAll();
             }
         }
     }
@@ -179,7 +188,7 @@ class Rectangle extends AbstractPlugin{
                 this.eBoardEngine.setActivePlugin(undefined);
             }
             this.start=undefined;
-            this.rect=undefined;
+            this.triangle=undefined;
             this.eBoardCanvas.off('mouse:down', this.downHandler);
             this.eBoardCanvas.off('mouse:move', this.moveHandler);
             this.eBoardCanvas.off('mouse:up', this.upHandler);
@@ -191,4 +200,4 @@ class Rectangle extends AbstractPlugin{
     }
 }
 
-export {Rectangle};
+export {Triangle};

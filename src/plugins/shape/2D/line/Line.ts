@@ -7,12 +7,12 @@
  */
 import {fabric} from "fabric";
 import {ArrowMode, ArrowType, LineType} from './LineType';
-import {AbsractPlugin} from '../../../AbsractPlugin';
 import {EBoardCanvas} from '../../../../EBoardCanvas';
 import {EBoardEngine} from '../../../../EBoardEngine';
 import {ArrowLine} from '../../../../extends/ArrowLine';
 import {setCursor} from '../../../../utils/decorators';
 import {CursorTypeName} from '../../../tool/cursor/CursorType';
+import {AbstractPlugin} from '../../../AbstractPlugin';
 const {Color} =fabric;
 
 
@@ -20,7 +20,7 @@ const {Color} =fabric;
 
 
 @setCursor(CursorTypeName.Pencil)
-class Line extends AbsractPlugin{
+class Line extends AbstractPlugin{
     private line?:ArrowLine;
     private color?:string;
     private borderDashed?:number[];
@@ -57,7 +57,7 @@ class Line extends AbsractPlugin{
                 y2:pos.y,
                 x2:pos.x,
             }).setCoords();
-            this.eBoardCanvas.requestRenderAll();
+            this.eBoardCanvas.renderAll();
         }
     };
     private upHandler=(o:any)=>{
@@ -73,7 +73,7 @@ class Line extends AbsractPlugin{
                     x2:pos.x
                 }).setCoords();
             }
-            this.eBoardCanvas.requestRenderAll();
+            this.eBoardCanvas.renderAll();
             this.line=undefined;
             this.start=undefined;
         }

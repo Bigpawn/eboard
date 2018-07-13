@@ -6,13 +6,13 @@
  * @disc:Ellipse
  */
 
-import {AbsractPlugin} from '../../../AbsractPlugin';
 import {EBoardCanvas} from '../../../../EBoardCanvas';
 import {fabric} from "fabric";
 import {EBoardEngine} from '../../../../EBoardEngine';
+import {AbstractPlugin} from '../../../AbstractPlugin';
 
 
-class Ellipse extends AbsractPlugin{
+class Ellipse extends AbstractPlugin{
     private ellipse?:fabric.Ellipse;
     private start?:{ x: number; y: number; };
     private end:{ x: number; y: number; };
@@ -84,7 +84,7 @@ class Ellipse extends AbsractPlugin{
                 left: startPoint.x,
                 top: startPoint.y,
             }).setCoords();
-            this.eBoardCanvas.requestRenderAll();
+            this.eBoardCanvas.renderAll();
         }
     };
     private upHandler(o:any){
@@ -106,7 +106,7 @@ class Ellipse extends AbsractPlugin{
                     top: startPoint.y,
                 }).setCoords();
             }
-            this.eBoardCanvas.requestRenderAll();
+            this.eBoardCanvas.renderAll();
             this.ellipse=undefined;
             this.start=undefined;
         }
@@ -129,7 +129,7 @@ class Ellipse extends AbsractPlugin{
                     left:startPoint.x,
                     top:startPoint.y
                 }).setCoords();
-                this.eBoardCanvas.requestRenderAll();
+                this.eBoardCanvas.renderAll();
             }
         }
     }
@@ -149,7 +149,7 @@ class Ellipse extends AbsractPlugin{
                     left:startPoint.x,
                     top:startPoint.y
                 }).setCoords();
-                this.eBoardCanvas.requestRenderAll();
+                this.eBoardCanvas.renderAll();
             }
         }
     }

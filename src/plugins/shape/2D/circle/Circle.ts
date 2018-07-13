@@ -6,15 +6,15 @@
  * @disc:Circle
  */
 
-import {AbsractPlugin} from '../../../AbsractPlugin';
 import {EBoardCanvas} from '../../../../EBoardCanvas';
 import {EBoardEngine} from '../../../../EBoardEngine';
 import {fabric} from "fabric";
 import {setCursor} from '../../../../utils/decorators';
 import {CursorTypeName} from '../../../tool/cursor/CursorType';
+import {AbstractPlugin} from '../../../AbstractPlugin';
 
 @setCursor(CursorTypeName.Compass)
-class Circle extends AbsractPlugin{
+class Circle extends AbstractPlugin{
     private circle?:fabric.Circle;
     private start?:{ x: number; y: number; };
     private fill?:string;
@@ -49,7 +49,7 @@ class Circle extends AbsractPlugin{
             this.circle.set({
                 radius:radius,
             }).setCoords();
-            this.eBoardCanvas.requestRenderAll();
+            this.eBoardCanvas.renderAll();
         }
     };
     private upHandler(o:any){
@@ -63,7 +63,7 @@ class Circle extends AbsractPlugin{
                     radius:radius
                 }).setCoords();
             }
-            this.eBoardCanvas.requestRenderAll();
+            this.eBoardCanvas.renderAll();
             this.circle=undefined;
             this.start=undefined;
         }

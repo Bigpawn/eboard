@@ -12,7 +12,7 @@ import {CursorTypeName} from './tool/cursor/CursorType';
 import {Cursor} from './tool/cursor/Cursor';
 import {Plugins} from "./index";
 
-abstract class AbsractPlugin {
+abstract class AbstractPlugin {
     protected eBoardCanvas:EBoardCanvas;
     protected eBoardEngine:EBoardEngine;
     protected cursorType:CursorTypeName;
@@ -58,4 +58,4 @@ abstract class AbsractPlugin {
     }
 }
 
-export {AbsractPlugin};
+export {AbstractPlugin};

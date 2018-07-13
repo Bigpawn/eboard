@@ -21,7 +21,7 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square])
+@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle])
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
     private pluginList:IPlugin[];

@@ -16,9 +16,10 @@ import {Circle} from './shape/2D/circle/Circle';
 import {Ellipse} from './shape/2D/ellipse/Ellipse';
 import {Rectangle} from './shape/2D/rectangle/Rectangle';
 import {Square} from './shape/2D/square/Square';
+import {Triangle} from './shape/2D/triangle/Triangle';
 
-export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square};
-export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square;
+export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle};
+export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle;
 export enum Plugins{
     Cursor='Cursor',// 画笔
     Line='Line', // 直线
@@ -29,5 +30,6 @@ export enum Plugins{
     Circle='Circle',
     Ellipse='Ellipse',
     Rectangle='Rectangle',
-    Square="Square"
+    Square='Square',
+    Triangle="Triangle"
 }
