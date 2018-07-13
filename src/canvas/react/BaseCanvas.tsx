@@ -6,7 +6,7 @@
 import * as React from "react";
 import "../../style/canvas.less";
 import {EBoardEngine} from '../../EBoardEngine';
-import {Suspension} from "../plugins/tool/suspension/Suspension";
+import {Suspension} from "../../plugins/tool/suspension/Suspension";
 
 export declare interface IBaseCanvasProps{
     ratio?:string; // 白板比例，默认值为4:3
