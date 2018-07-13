@@ -14,10 +14,11 @@ import {Text} from './shape/2D/text/Text';
 import {Pencil} from "./shape/2D/pencil/Pencil";
 import {Circle} from "./shape/2D/circle/Circle";
 import {Ellipse} from "./shape/2D/ellipse/Ellipse";
+import {Rectangle} from './shape/2D/rectangle/Rectangle';
 
 
-export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse};
-export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse;
+export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle};
+export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle;
 export enum Plugins{
     Cursor="Cursor",// 画笔
     Line="Line", // 直线
@@ -26,5 +27,6 @@ export enum Plugins{
     HTML="HTML", // HTML操作插件
     Pencil="Pencil",// 铅笔操作
     Circle="Circle",
-    Ellipse="Ellipse"
+    Ellipse="Ellipse",
+    Rectangle="Rectangle"
 }

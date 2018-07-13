@@ -1,24 +1,23 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/7/12 21:38
+ * @Date: 2018/7/13 12:51
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/12 21:38
- * @disc:Ellipse
+ * * @Last Modified time: 2018/7/13 12:51
+ * @disc:矩形Plugin
  */
-
 import {AbsractPlugin} from '../../../AbsractPlugin';
 import {EBoardCanvas} from '../../../../EBoardCanvas';
 import {fabric} from "fabric";
+import {Ellipse} from '../ellipse/Ellipse';
 import {EBoardEngine} from '../../../../EBoardEngine';
 
-
-class Ellipse extends AbsractPlugin{
-    private ellipse?:fabric.Ellipse;
+class Rectangle extends AbsractPlugin{
+    private rect?:fabric.Rect;
     private start?:{ x: number; y: number; };
     private end:{ x: number; y: number; };
     private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
-    private strokeDashArray?:any[];
+    private borderColor?:string="rgba(0,0,0,1)";
+    private borderDashed?:any[];
     private strokeWidth:number=1;
     private ctrlKey:boolean=false;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
@@ -41,15 +40,15 @@ class Ellipse extends AbsractPlugin{
             return;
         }
     }
-    private getCtrlStartPoint(radius:number):{x:number;y:number}|undefined{
+    private getCtrlStartPoint(length:number):{x:number;y:number}|undefined{
         const start = this.start;
         const end = this.end;
         if(start){
             // 如果end.x>start.x 则x===start.x，否则x===start.x-radius
             // 如果end.y>start.y 则y===start.y，否则y===start.y-radius
             return {
-                x:end.x>start.x?start.x:start.x-radius * 2,
-                y:end.y>start.y?start.y:start.y-radius * 2
+                x:end.x>start.x?start.x:start.x-length,
+                y:end.y>start.y?start.y:start.y-length
             };
         }else{
             return;
@@ -59,28 +58,28 @@ class Ellipse extends AbsractPlugin{
         this.start = this.eBoardCanvas.getPointer(o.e);
         this.end = this.start;
         // 创建对象实例
-        this.ellipse=new fabric.Ellipse({
+        this.rect=new fabric.Rect({
             fill:this.fill,
             left: this.start.x,
             top: this.start.y,
-            stroke:this.stroke,
-            strokeDashArray:this.strokeDashArray,
+            stroke:this.borderColor,
+            strokeDashArray:this.borderDashed,
             strokeWidth:this.getCanvasPixel(this.strokeWidth)
         });
-        this.eBoardCanvas.add(this.ellipse);
+        this.eBoardCanvas.add(this.rect);
     };
     private moveHandler(o:any){
-        if(this.start&&this.ellipse){
+        if(this.start&&this.rect){
             let pos = this.eBoardCanvas.getPointer(o.e);
             this.end = pos;
-            const rx=Math.abs(pos.x-this.start.x)/2;
-            const ry=Math.abs(pos.y-this.start.y)/2;
-            const radius = Math.min(rx,ry);
-            const startPoint = this.ctrlKey?this.getCtrlStartPoint(radius):this.getStartPoint();
+            const width=Math.abs(pos.x-this.start.x);
+            const height=Math.abs(pos.y-this.start.y);
+            const length = Math.min(width,height);
+            const startPoint = this.ctrlKey?this.getCtrlStartPoint(length):this.getStartPoint();
             if(void 0 ===startPoint){return;}
-            this.ellipse.set({
-                rx:this.ctrlKey?radius:rx,
-                ry:this.ctrlKey?radius:ry,
+            this.rect.set({
+                width:this.ctrlKey?length:width,
+                height:this.ctrlKey?length:height,
                 left: startPoint.x,
                 top: startPoint.y,
             }).setCoords();
@@ -88,26 +87,26 @@ class Ellipse extends AbsractPlugin{
         }
     };
     private upHandler(o:any){
-        if(this.start&&this.ellipse){
+        if(this.start&&this.rect){
             let pos = this.eBoardCanvas.getPointer(o.e);
             this.end = pos;
-            const rx=Math.abs(pos.x-this.start.x)/2;
-            const ry=Math.abs(pos.y-this.start.y)/2;
-            if(rx<4||ry<4){
-                this.eBoardCanvas.remove(this.ellipse);
+            const width=Math.abs(pos.x-this.start.x);
+            const height=Math.abs(pos.y-this.start.y);
+            if(width<4||height<4){
+                this.eBoardCanvas.remove(this.rect);
             }else{
-                const radius = Math.min(rx,ry);
-                const startPoint = this.ctrlKey?this.getCtrlStartPoint(radius):this.getStartPoint();
+                const length = Math.min(width,height);
+                const startPoint = this.ctrlKey?this.getCtrlStartPoint(length):this.getStartPoint();
                 if(void 0 ===startPoint){return;}
-                this.ellipse.set({
-                    rx:this.ctrlKey?radius:rx,
-                    ry:this.ctrlKey?radius:ry,
+                this.rect.set({
+                    width:this.ctrlKey?length:width,
+                    height:this.ctrlKey?length:height,
                     left: startPoint.x,
                     top: startPoint.y,
                 }).setCoords();
             }
             this.eBoardCanvas.requestRenderAll();
-            this.ellipse=undefined;
+            this.rect=undefined;
             this.start=undefined;
         }
     };
@@ -116,16 +115,16 @@ class Ellipse extends AbsractPlugin{
         const keyCode = e.keyCode;
         if(17===keyCode){
             this.ctrlKey=true;
-            if(this.start&&this.ellipse){
-                const rx=Math.abs(this.end.x-this.start.x)/2;
-                const ry=Math.abs(this.end.y-this.start.y)/2;
-                const radius = Math.min(rx,ry);
+            if(this.start&&this.rect){
+                const width=Math.abs(this.end.x-this.start.x);
+                const height=Math.abs(this.end.y-this.start.y);
+                const length = Math.min(width,height);
                 // 起点需要重新算
-                const startPoint = this.getCtrlStartPoint(radius);
+                const startPoint = this.getCtrlStartPoint(length);
                 if(void 0 === startPoint){return}
-                this.ellipse.set({
-                    rx:radius,
-                    ry:radius,
+                this.rect.set({
+                    width:length,
+                    height:length,
                     left:startPoint.x,
                     top:startPoint.y
                 }).setCoords();
@@ -138,14 +137,14 @@ class Ellipse extends AbsractPlugin{
         if(17===keyCode){
             // 恢复
             this.ctrlKey=false;
-            if(this.start&&this.ellipse){
-                const rx=Math.abs(this.end.x-this.start.x)/2;
-                const ry=Math.abs(this.end.y-this.start.y)/2;
+            if(this.start&&this.rect){
+                const width=Math.abs(this.end.x-this.start.x);
+                const height=Math.abs(this.end.y-this.start.y);
                 const startPoint = this.getStartPoint();
                 if(void 0 === startPoint){return}
-                this.ellipse.set({
-                    rx:rx,
-                    ry:ry,
+                this.rect.set({
+                    width:width,
+                    height:height,
                     left:startPoint.x,
                     top:startPoint.y
                 }).setCoords();
@@ -175,7 +174,7 @@ class Ellipse extends AbsractPlugin{
                 this.eBoardEngine.setActivePlugin(undefined);
             }
             this.start=undefined;
-            this.ellipse=undefined;
+            this.rect=undefined;
             this.eBoardCanvas.off('mouse:down', this.downHandler);
             this.eBoardCanvas.off('mouse:move', this.moveHandler);
             this.eBoardCanvas.off('mouse:up', this.upHandler);
@@ -187,4 +186,4 @@ class Ellipse extends AbsractPlugin{
     }
 }
 
-export {Ellipse};
+export {Rectangle};

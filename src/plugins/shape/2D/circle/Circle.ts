@@ -18,8 +18,9 @@ class Circle extends AbsractPlugin{
     private circle?:fabric.Circle;
     private start?:{ x: number; y: number; };
     private fill?:string;
-    private borderColor?:string="rgba(0,0,0,1)";
-    private borderDashed?:any[];
+    private stroke?:string="rgba(0,0,0,1)";
+    private strokeDashArray?:any[];
+    private strokeWidth:number=1;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
         this.downHandler=this.downHandler.bind(this);
@@ -35,8 +36,9 @@ class Circle extends AbsractPlugin{
             fill:this.fill,
             left: this.start.x,
             top: this.start.y,
-            stroke:this.borderColor,
-            strokeDashArray:this.borderDashed,
+            stroke:this.stroke,
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth)
         });
         this.eBoardCanvas.add(this.circle);
     };
