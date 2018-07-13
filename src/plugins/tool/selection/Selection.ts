@@ -8,9 +8,27 @@
 import {AbsractPlugin} from '../../AbsractPlugin';
 import {setCursor} from '../../../utils/decorators';
 import {CursorTypeName} from '../cursor/CursorType';
+import {EBoardCanvas} from "../../../EBoardCanvas";
+import {EBoardEngine} from "../../../EBoardEngine";
+import {Suspension} from "../suspension/Suspension";
 
 @setCursor(CursorTypeName.None)
 class Selection extends AbsractPlugin{
+
+    constructor(canvas:EBoardCanvas,eboardEngine:EBoardEngine){
+        super(canvas,eboardEngine);
+        this.upHandle.bind(this);
+    }
+
+    private upHandle=(o:any)=>{
+        if(this.eBoardCanvas.getActiveObject()) {
+            new Suspension(this.eBoardCanvas.getActiveObject());
+        }
+        // (this.eBoardCanvas.getActiveObjects()||[]).map((item:any,index:number)=>{
+        //     console.log(item.type,'aaaaaaaaaaaaaaaaaa');
+        // });
+    };
+
     public setEnable(enable:boolean){
         if(this.enable===enable){
             return;
@@ -25,6 +43,7 @@ class Selection extends AbsractPlugin{
             this.eBoardEngine.setActivePlugin(this);
             this.eBoardCanvas.selection=true;
             this.eBoardCanvas.skipTargetFind=false;
+            this.eBoardCanvas.on('mouse:up',this.upHandle);
         }else{
             // 关闭当前的插件
             if(activePlugin && activePlugin instanceof Selection){
