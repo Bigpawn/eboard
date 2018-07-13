@@ -75,6 +75,20 @@ function setAnimationName(animationCssPrefix:string):ClassDecorator{
 }
 
 /**
+ * ctrl热键状态
+ * @param {boolean} enable
+ * @returns {ClassDecorator}
+ */
+function ctrlKeyEnable(enable:boolean):ClassDecorator{
+    return (target:any)=>{
+        // 附加到插件列表中去
+        Object.assign(target.prototype, {
+            ctrlKeyEnable:enable,
+        });
+    }
+}
+
+/**
  * pip 管道模式注解
  * @param target
  * @param {string} name
@@ -94,4 +108,4 @@ function pipMode(target:any, name:string, descriptor:PropertyDescriptor){
     return descriptor;
 }
 
-export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode};
+export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,ctrlKeyEnable};

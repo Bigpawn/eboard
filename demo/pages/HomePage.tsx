@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Card } from "antd";
 import {BaseCanvas} from '../../src/canvas/react/BaseCanvas';
-import {Circle, Cursor, Ellipse, Rectangle} from '../../src/plugins';
+import {Circle, Cursor, Ellipse, Rectangle, Square} from '../../src/plugins';
 import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
 import {Line} from '../../src/plugins';
 import {Selection} from '../../src/plugins';
@@ -70,6 +70,10 @@ export class ToolBar extends React.Component{
         const Rectangle = this.Canvas.getPlugin(Plugins.Rectangle) as Rectangle;
         Rectangle.setEnable(true);
     };
+    private square=()=>{
+        const Square = this.Canvas.getPlugin(Plugins.Square) as Square;
+        Square.setEnable(true);
+    };
     render(){
         return (
             <div>
@@ -85,6 +89,7 @@ export class ToolBar extends React.Component{
                 <button onClick={this.circle}>Circle</button>
                 <button onClick={this.ellipse}>Ellipse</button>
                 <button onClick={this.rectangle}>Rectangle</button>
+                <button onClick={this.square}>Square</button>
             </div>
         )
     }

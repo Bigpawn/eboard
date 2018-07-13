@@ -10,7 +10,9 @@ import {EBoardCanvas} from '../../../../EBoardCanvas';
 import {fabric} from "fabric";
 import {Ellipse} from '../ellipse/Ellipse';
 import {EBoardEngine} from '../../../../EBoardEngine';
+import {ctrlKeyEnable} from '../../../../utils/decorators';
 
+@ctrlKeyEnable(true)
 class Rectangle extends AbsractPlugin{
     private rect?:fabric.Rect;
     private start?:{ x: number; y: number; };
@@ -19,7 +21,8 @@ class Rectangle extends AbsractPlugin{
     private borderColor?:string="rgba(0,0,0,1)";
     private borderDashed?:any[];
     private strokeWidth:number=1;
-    private ctrlKey:boolean=false;
+    protected ctrlKeyEnable:boolean;
+    protected ctrlKey:boolean=false;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
         this.downHandler=this.downHandler.bind(this);
@@ -167,8 +170,10 @@ class Rectangle extends AbsractPlugin{
             this.eBoardCanvas.on('mouse:down', this.downHandler);
             this.eBoardCanvas.on('mouse:move', this.moveHandler);
             this.eBoardCanvas.on('mouse:up', this.upHandler);
-            window.addEventListener("keydown",this.ctrlKeyDownHandler);
-            window.addEventListener("keyup",this.ctrlKeyUpHandler);
+            if(this.ctrlKeyEnable){
+                window.addEventListener("keydown",this.ctrlKeyDownHandler);
+                window.addEventListener("keyup",this.ctrlKeyUpHandler);
+            }
         }else{
             if(activePlugin && activePlugin instanceof Ellipse){
                 this.eBoardEngine.setActivePlugin(undefined);
