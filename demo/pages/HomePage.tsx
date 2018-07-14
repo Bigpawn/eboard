@@ -6,10 +6,10 @@ import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
 import {Line} from '../../src/plugins';
 import {Selection} from '../../src/plugins';
 import {ArrowMode, ArrowType, LineType} from '../../src/plugins/shape/2D/line/LineType';
-import {HTML} from '../../src/plugins/tool/html/HTML';
-import {Text} from "../../src/plugins/shape/2D/text/Text";
+import {HTML} from '../../src/plugins';
+import {Text} from "../../src/plugins";
 import {Plugins} from '../../src/plugins';
-import {Pencil} from "../../src/plugins/shape/2D/pencil/Pencil";
+import {Pencil} from "../../src/plugins";
 
 
 export class ToolBar extends React.Component{

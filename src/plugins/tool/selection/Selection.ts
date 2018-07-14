@@ -10,23 +10,45 @@ import {setCursor} from '../../../utils/decorators';
 import {CursorTypeName} from '../cursor/CursorType';
 import {EBoardCanvas} from "../../../EBoardCanvas";
 import {EBoardEngine} from "../../../EBoardEngine";
-import {Suspension} from "../suspension/Suspension";
+import {SuspensionShell} from "../suspension/SuspensionShell";
 
 @setCursor(CursorTypeName.None)
 class Selection extends AbsractPlugin{
-
+    private suspensionShell:any;
     constructor(canvas:EBoardCanvas,eboardEngine:EBoardEngine){
         super(canvas,eboardEngine);
         this.upHandle.bind(this);
+        this.moveHandle.bind(this);
     }
 
-    private upHandle=(o:any)=>{
+    public upHandle=(o:any)=>{
         if(this.eBoardCanvas.getActiveObject()) {
-            new Suspension(this.eBoardCanvas.getActiveObject());
+            if(!this.suspensionShell) {
+                this.suspensionShell = new SuspensionShell(this.eBoardCanvas.getActiveObject(),this.eBoardCanvas);
+            }else {
+                this.suspensionShell.initSuspension(this.eBoardCanvas.getActiveObject(),this.eBoardCanvas);
+            }
+        }else {
+            if(this.suspensionShell) {
+                this.suspensionShell.removeElement(this.eBoardCanvas);
+                this.suspensionShell = null;
+            }
         }
-        // (this.eBoardCanvas.getActiveObjects()||[]).map((item:any,index:number)=>{
-        //     console.log(item.type,'aaaaaaaaaaaaaaaaaa');
-        // });
+    };
+
+    private moveHandle=(o:any)=>{
+        if(this.eBoardCanvas.getActiveObject()) {
+            if(!this.suspensionShell) {
+                this.suspensionShell = new SuspensionShell(this.eBoardCanvas.getActiveObject(),this.eBoardCanvas);
+            }else {
+                this.suspensionShell.initSuspension(this.eBoardCanvas.getActiveObject(),this.eBoardCanvas);
+            }
+        }else {
+            if(this.suspensionShell) {
+                this.suspensionShell.removeElement(this.eBoardCanvas);
+                this.suspensionShell = null;
+            }
+        }
     };
 
     public setEnable(enable:boolean){
@@ -44,6 +66,7 @@ class Selection extends AbsractPlugin{
             this.eBoardCanvas.selection=true;
             this.eBoardCanvas.skipTargetFind=false;
             this.eBoardCanvas.on('mouse:up',this.upHandle);
+            this.eBoardCanvas.on('mouse:move',this.moveHandle);
         }else{
             // 关闭当前的插件
             if(activePlugin && activePlugin instanceof Selection){
@@ -51,6 +74,8 @@ class Selection extends AbsractPlugin{
             }
             this.eBoardCanvas.selection=false;
             this.eBoardCanvas.skipTargetFind=true;
+            this.eBoardCanvas.off('mouse:up',this.upHandle);
+            this.eBoardCanvas.off('mouse:move',this.moveHandle);
         }
         super.setEnable(enable);
     }
