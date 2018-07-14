@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Card } from "antd";
 import {BaseCanvas} from '../../src/canvas/react/BaseCanvas';
-import {Cursor} from '../../src/plugins';
+import {Circle, Cursor, Ellipse, Rectangle} from '../../src/plugins';
 import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
 import {Line} from '../../src/plugins';
 import {Selection} from '../../src/plugins';
@@ -58,6 +58,18 @@ export class ToolBar extends React.Component{
         const HTML = this.Canvas.getPlugin(Plugins.HTML) as HTML;
         HTML.setEnable(true);
     };
+    private circle=()=>{
+        const Circle = this.Canvas.getPlugin(Plugins.Circle) as Circle;
+        Circle.setEnable(true);
+    };
+    private ellipse=()=>{
+        const Ellipse = this.Canvas.getPlugin(Plugins.Ellipse) as Ellipse;
+        Ellipse.setEnable(true);
+    };
+    private rectangle=()=>{
+        const Rectangle = this.Canvas.getPlugin(Plugins.Rectangle) as Rectangle;
+        Rectangle.setEnable(true);
+    };
     render(){
         return (
             <div>
@@ -70,6 +82,9 @@ export class ToolBar extends React.Component{
                 <button onClick={this.selection}>Selection</button>
                 <button onClick={this.startPencilLine}>Pencil line</button>
                 <button onClick={this.openHtml}>HTML操作</button>
+                <button onClick={this.circle}>Circle</button>
+                <button onClick={this.ellipse}>Ellipse</button>
+                <button onClick={this.rectangle}>Rectangle</button>
             </div>
         )
     }

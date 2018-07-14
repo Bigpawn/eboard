@@ -43,6 +43,7 @@ class BaseCanvas extends React.PureComponent<IBaseCanvasProps>{
             const dimensionRate = Math.ceil(4000/_ratioW);
             if(size.width/size.height>ratioNum){
                 // 宽度大，按照高度计算
+                this.eBoardEngine.setPixelRatio(Math.floor(dimensionRate * _ratioH/size.height));
                 return {
                     width:size.height * ratioNum,
                     height:size.height,
@@ -53,6 +54,7 @@ class BaseCanvas extends React.PureComponent<IBaseCanvasProps>{
                 }
             }else{
                 // 高度大，按照宽度计算
+                this.eBoardEngine.setPixelRatio(Math.floor(dimensionRate * _ratioW/size.width));
                 return {
                     width:size.width,
                     height:size.width / ratioNum,

@@ -27,6 +27,7 @@ class Line extends AbsractPlugin{
     private arrowType:ArrowType=ArrowType.NONE;
     private arrowMode:ArrowMode=ArrowMode.NEXT;
     private lineWidth:number=4;
+    private start?:{ x: number; y: number; };
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
         this.downHandler=this.downHandler.bind(this);
@@ -37,7 +38,6 @@ class Line extends AbsractPlugin{
         const defaultColor=this.eBoardEngine?this.eBoardEngine.getDefaultColor():undefined;
         return this.color||defaultColor;
     }
-    private start?:{ x: number; y: number; };
     private downHandler=(o:any)=>{
         this.start = this.eBoardCanvas.getPointer(o.e);
         // 创建对象实例

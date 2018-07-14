@@ -47,14 +47,15 @@ abstract class AbsractPlugin {
             }
         }
     };
+    
+    /**
+     * Canvas 像素与实际像素换算
+     * @param {number} pixel
+     * @returns {number}
+     */
+    public getCanvasPixel(pixel:number){
+        return pixel * this.eBoardEngine.getPixelRatio();
+    }
 }
-
-// export enum Plugins{
-//     Cursor="Cursor",// 画笔
-//     Line="Line", // 直线
-//     Text="Text",//文字输入
-//     Selection="Selection",// 选择
-//     Pencil="Pencil",//铅笔
-// }
 
 export {AbsractPlugin};

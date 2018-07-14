@@ -21,12 +21,13 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil])
+@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle])
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
     private pluginList:IPlugin[];
     public pluginInstanceMap=new Map<string,IPlugins>();
     private bgColor:string="rgba(0,0,0,1)";// 带透明度
+    private pixelRatio:number=1;
     public getDefaultColor(){
         return this.bgColor;
     }
@@ -46,6 +47,12 @@ class EBoardEngine{
     }
     public getPlugin(pluginName:string){
         return this.pluginInstanceMap.get(pluginName);
+    }
+    public setPixelRatio(pixelRatio:number){
+        this.pixelRatio=pixelRatio;
+    }
+    public getPixelRatio(){
+        return this.pixelRatio;
     }
 }
 
