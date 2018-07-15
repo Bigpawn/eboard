@@ -382,8 +382,8 @@ interface IAnimationOptions {
 //////////////////////////////////////////////////////////////////////////////
 export class Color {
 	/**
-	 * Color class
-	 * The purpose of Color is to abstract and encapsulate common color operations;
+	 * ScreenComponent class
+	 * The purpose of ScreenComponent is to abstract and encapsulate common color operations;
 	 * @param color optional in hex or rgb(a) format
 	 */
 	constructor(color?: string);
@@ -450,37 +450,37 @@ export class Color {
 
 	/**
 	 * Returns new color object, when given a color in RGB format
-	 * @param color Color value ex: rgb(0-255,0-255,0-255)
+	 * @param color ScreenComponent value ex: rgb(0-255,0-255,0-255)
 	 */
 	static fromRgb(color: string): Color;
 	/**
 	 * Returns new color object, when given a color in RGBA format
-	 * @param color Color value ex: rgb(0-255,0-255,0-255)
+	 * @param color ScreenComponent value ex: rgb(0-255,0-255,0-255)
 	 */
 	static fromRgba(color: string): Color;
 	/**
 	 * Returns array represenatation (ex: [100, 100, 200, 1]) of a color that's in RGB or RGBA format
-	 * @param color Color value ex: rgb(0-255,0-255,0-255), rgb(0%-100%,0%-100%,0%-100%)
+	 * @param color ScreenComponent value ex: rgb(0-255,0-255,0-255), rgb(0%-100%,0%-100%,0%-100%)
 	 */
 	static sourceFromRgb(color: string): number[];
 	/**
 	 * Returns new color object, when given a color in HSL format
-	 * @param color Color value ex: hsl(0-260,0%-100%,0%-100%)
+	 * @param color ScreenComponent value ex: hsl(0-260,0%-100%,0%-100%)
 	 */
 	static fromHsl(color: string): Color;
 	/**
 	 * Returns new color object, when given a color in HSLA format
-	 * @param color Color value ex: hsl(0-260,0%-100%,0%-100%)
+	 * @param color ScreenComponent value ex: hsl(0-260,0%-100%,0%-100%)
 	 */
 	static fromHsla(color: string): Color;
 	/**
 	 * Returns array represenatation (ex: [100, 100, 200, 1]) of a color that's in HSL or HSLA format.
-	 * @param color Color value ex: hsl(0-360,0%-100%,0%-100%) or hsla(0-360,0%-100%,0%-100%, 0-1)
+	 * @param color ScreenComponent value ex: hsl(0-360,0%-100%,0%-100%) or hsla(0-360,0%-100%,0%-100%, 0-1)
 	 */
 	static sourceFromHsl(color: string): number[];
 	/**
 	 * Returns new color object, when given a color in HEX format
-	 * @param color Color value ex: FF5555
+	 * @param color ScreenComponent value ex: FF5555
 	 */
 	static fromHex(color: string): Color;
 
@@ -525,7 +525,7 @@ interface IGradientOptions {
 	 */
 	r2?: number;
 	/**
-	 * Color stops object eg. {0:string; 1:string;
+	 * ScreenComponent stops object eg. {0:string; 1:string;
 	 */
 	colorStops?: any;
 }
@@ -959,14 +959,14 @@ export class StaticCanvas {
 
 	/**
 	 * Sets {@link fabric.StaticCanvas#overlayColor|background color} for this canvas
-	 * @param overlayColor Color or pattern to set background color to
+	 * @param overlayColor ScreenComponent or pattern to set background color to
 	 * @param callback Callback to invoke when background color is set
 	 */
 	setOverlayColor(overlayColor: string | Pattern, callback: (pattern: Pattern | undefined) => void): this;
 
 	/**
 	 * Sets {@link fabric.StaticCanvas#backgroundColor|background color} for this canvas
-	 * @param backgroundColor Color or pattern to set background color to
+	 * @param backgroundColor ScreenComponent or pattern to set background color to
 	 * @param callback Callback to invoke when background color is set
 	 */
 	setBackgroundColor(backgroundColor: string | Pattern, callback: (pattern: Pattern | undefined) => void): StaticCanvas;
@@ -1296,7 +1296,7 @@ interface ICanvasOptions extends IStaticCanvasOptions {
 	selection?: boolean;
 
 	/**
-	 * Color of selection
+	 * ScreenComponent of selection
 	 */
 	selectionColor?: string;
 
@@ -1307,7 +1307,7 @@ interface ICanvasOptions extends IStaticCanvasOptions {
 	selectionDashArray?: any[];
 
 	/**
-	 * Color of the border of selection (usually slightly darker than color of selection itself)
+	 * ScreenComponent of the border of selection (usually slightly darker than color of selection itself)
 	 */
 	selectionBorderColor?: string;
 
@@ -2132,12 +2132,12 @@ interface IObjectOptions {
 	padding?: number;
 
 	/**
-	 * Color of controlling borders of an object (when it's active)
+	 * ScreenComponent of controlling borders of an object (when it's active)
 	 */
 	borderColor?: string;
 
 	/**
-	 * Color of controlling corners of an object (when it's active)
+	 * ScreenComponent of controlling corners of an object (when it's active)
 	 */
 	cornerColor?: string;
 
@@ -2152,7 +2152,7 @@ interface IObjectOptions {
 	cornerSize?: number;
 
 	/**
-	 * Color of controlling corners of an object (when it's active and transparentCorners false)
+	 * ScreenComponent of controlling corners of an object (when it's active and transparentCorners false)
 	 */
 	cornerStrokeColor?: string;
 
@@ -2176,7 +2176,7 @@ interface IObjectOptions {
 	centeredRotation?: boolean;
 
 	/**
-	 * Color of object's fill
+	 * ScreenComponent of object's fill
 	 */
 	fill?: string;
 
@@ -2604,7 +2604,7 @@ export class Object {
 
 	/**
 	 * Sets "color" of an instance (alias of `set('fill', …)`)
-	 * @param color Color value
+	 * @param color ScreenComponent value
 	 */
 	setColor(color: string): this;
 
@@ -3411,7 +3411,7 @@ interface IITextOptions extends IObjectOptions, ITextOptions {
 	selectionEnd?: number;
 
 	/**
-	 * Color of text selection
+	 * ScreenComponent of text selection
 	 */
 	selectionColor?: string;
 
@@ -3436,7 +3436,7 @@ interface IITextOptions extends IObjectOptions, ITextOptions {
 	cursorWidth?: number;
 
 	/**
-	 * Color of default cursor (when not overwritten by character style)
+	 * ScreenComponent of default cursor (when not overwritten by character style)
 	 */
 	cursorColor?: string;
 
@@ -3836,7 +3836,7 @@ interface IAllFilters {
 	Multiply: {
 		new(options?: {
 			/**
-			 * Color to multiply the image pixels with
+			 * ScreenComponent to multiply the image pixels with
 			 * @default #000000
 			 */
 			color: string;
@@ -3912,7 +3912,7 @@ interface IAllFilters {
 	Tint: {
 		new(options?: {
 			/**
-			 * Color to tint the image with
+			 * ScreenComponent to tint the image with
 			 * @default #000000
 			 */
 			color?: string;
@@ -4071,7 +4071,7 @@ interface ITintFilter {
 ////////////////////////////////////////////////////////////
 export class BaseBrush {
 	/**
-	 * Color of a brush
+	 * ScreenComponent of a brush
 	 */
 	color: string;
 

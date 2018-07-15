@@ -1,0 +1,1 @@
+/* * @Author: Bigpawn * @Date: 2018/7/14 11:44 * @Last Modified by: Bigpawn * @Last Modified time: 2018/7/14 11:44 */export enum OperationType {    颜色="color",    线型粗细="thickness",    字体大小="fontSize",}
