@@ -6,16 +6,16 @@
  * @disc:三角形  flipX,flipY 实现翻转
  */
 
-import {AbstractPlugin} from '../../../AbstractPlugin';
 import {EBoardCanvas} from '../../../../EBoardCanvas';
 import {fabric} from "fabric";
-import {Ellipse} from '../ellipse/Ellipse';
 import {EBoardEngine} from '../../../../EBoardEngine';
+import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
+import {IEvent} from '~fabric/fabric-impl';
+import {ctrlKeyEnable} from '../../../../utils/decorators';
 
-class Triangle extends AbstractPlugin{
-    private triangle?:fabric.Triangle;
-    private start?:{ x: number; y: number; };
-    private end:{ x: number; y: number; };
+@ctrlKeyEnable(true)
+class Triangle extends AbstractShapePlugin{
+    private instance:fabric.Triangle;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
@@ -24,102 +24,117 @@ class Triangle extends AbstractPlugin{
     protected ctrlKey:boolean=false;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
-        this.downHandler=this.downHandler.bind(this);
-        this.moveHandler=this.moveHandler.bind(this);
-        this.upHandler=this.upHandler.bind(this);
         this.ctrlKeyDownHandler=this.ctrlKeyDownHandler.bind(this);
         this.ctrlKeyUpHandler=this.ctrlKeyUpHandler.bind(this);
     }
-    private getStartPoint():{x:number;y:number}|undefined{
+    private getStartPoint():{x:number;y:number}{
         const start = this.start;
         const end = this.end;
-        if(start){
-            return {
-                x:Math.min(start.x,end.x),
-                y:Math.min(start.y,end.y)
-            };
-        }else{
-            return;
+        const quadrant = this.calcQuadrant(end);
+        switch (quadrant){
+            case Quadrant.RT:// 第一象限
+                return {
+                    x:start.x,
+                    y:end.y
+                };
+            case Quadrant.LT:// 第二象限
+                return {
+                    x:end.x,
+                    y:end.y
+                };
+            case Quadrant.LB:// 第三象限
+                return {
+                    x:end.x,
+                    y:start.y
+                };
+            case Quadrant.RB:// 第四象限
+            default:
+                return {
+                    x:start.x,
+                    y:start.y
+                };
         }
     }
-    private getCtrlStartPoint(length:number):{x:number;y:number}|undefined{
+    private getCtrlStartPoint(size:{width:number,height:number}):{x:number;y:number}{
         const start = this.start;
         const end = this.end;
-        if(start){
-            // 如果end.x>start.x 则x===start.x，否则x===start.x-radius
-            // 如果end.y>start.y 则y===start.y，否则y===start.y-radius
-            return {
-                x:end.x>start.x?start.x:start.x-length,
-                y:end.y>start.y?start.y:start.y-length
-            };
-        }else{
-            return;
+        const quadrant = this.calcQuadrant(end);
+        switch (quadrant){
+            case Quadrant.RT:// 第一象限
+                return {
+                    x:start.x,
+                    y:start.y-size.height
+                };
+            case Quadrant.LT:// 第二象限
+                return {
+                    x:start.x-size.width,
+                    y:start.y-size.height
+                };
+            case Quadrant.LB:// 第三象限
+                return {
+                    x:start.x-size.width,
+                    y:start.y
+                };
+            case Quadrant.RB:// 第四象限
+            default:
+                return {
+                    x:start.x,
+                    y:start.y
+                };
         }
     };
-    private downHandler(o:any){
-        this.start = this.eBoardCanvas.getPointer(o.e);
-        this.end = this.start;
-        // 创建对象实例
-        this.triangle=new fabric.Triangle({
-            fill:this.fill,
-            left: this.start.x,
-            top: this.start.y,
-            stroke:this.stroke,
-            strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth)
-        });
-        this.eBoardCanvas.add(this.triangle);
-    };
-    private moveHandler(o:any){
-        if(this.start&&this.triangle){
-            let pos = this.eBoardCanvas.getPointer(o.e);
-            this.end = pos;
-            
-            const offsetX = pos.x-this.start.x;
-            const offsetY = pos.y-this.start.y;
-            
-            const width=Math.abs(offsetX);
-            const height=Math.abs(offsetY);
-            const length = Math.min(width,height);
-            const startPoint = this.ctrlKey?this.getCtrlStartPoint(length):this.getStartPoint();
-            if(void 0 ===startPoint){return;}
-            this.triangle.set({
-                width:this.ctrlKey?length:width,
-                height:this.ctrlKey?length:height,
-                flipY:offsetX<0,
-                flipX:offsetY<0,
+    protected onMouseMove(event:IEvent){
+        if(void 0 === this.start){
+            return;
+        }
+        super.onMouseMove(event);
+        
+        const pos = this.eBoardCanvas.getPointer(event.e);
+        this.end = pos;
+        const offsetX = pos.x-this.start.x;
+        const offsetY = pos.y-this.start.y;
+        const width=Math.abs(offsetX);
+        const height=Math.abs(offsetY);
+        const calcSize = this.calcEquilate(width,height);
+        const startPoint = this.ctrlKey?this.getCtrlStartPoint(calcSize):this.getStartPoint();
+        if(void 0 ===this.instance){
+            this.instance=new fabric.Triangle({
+                fill:this.fill,
+                left: startPoint.x,
+                top: startPoint.y,
+                stroke:this.stroke,
+                flipX:offsetX<0,
+                flipY:offsetY<0,
+                width:this.ctrlKey?calcSize.width:width,
+                height:this.ctrlKey?calcSize.height:height,
+                strokeDashArray:this.strokeDashArray,
+                strokeWidth:this.getCanvasPixel(this.strokeWidth)
+            });
+            this.eBoardCanvas.add(this.instance);
+        }else{
+            this.instance.set({
+                width:this.ctrlKey?calcSize.width:width,
+                height:this.ctrlKey?calcSize.height:height,
+                flipX:offsetX<0,
+                flipY:offsetY<0,
                 left: startPoint.x,
                 top: startPoint.y,
             }).setCoords();
             this.eBoardCanvas.renderAll();
         }
     };
-    private upHandler(o:any){
-        if(this.start&&this.triangle){
-            let pos = this.eBoardCanvas.getPointer(o.e);
-            this.end = pos;
-            const offsetX = pos.x-this.start.x;
-            const offsetY = pos.y-this.start.y;
-            const width=Math.abs(offsetX);
-            const height=Math.abs(offsetY);
-            if(width<4||height<4){
-                this.eBoardCanvas.remove(this.triangle);
-            }else{
-                const length = Math.min(width,height);
-                const startPoint = this.ctrlKey?this.getCtrlStartPoint(length):this.getStartPoint();
-                if(void 0 ===startPoint){return;}
-                this.triangle.set({
-                    width:this.ctrlKey?length:width,
-                    height:this.ctrlKey?length:height,
-                    flipY:offsetX<0,
-                    flipX:offsetY<0,
-                    left: startPoint.x,
-                    top: startPoint.y,
-                }).setCoords();
-            }
-            this.eBoardCanvas.renderAll();
-            this.triangle=undefined;
-            this.start=undefined;
+    protected onMouseUp(event:IEvent){
+        super.onMouseUp(event);
+        this.start=undefined as any;
+        this.instance=undefined as any;
+    };
+    private calcEquilate(width:number,height:number){
+        // 根据宽度计算高度  根据高度计算宽度，同时取小值
+        const calcHeight = width * Math.sqrt(3)/2;
+        const calcWidth = height * 2 / Math.sqrt(3);
+        return {
+            width:Math.min(calcWidth,width),
+            height:Math.min(calcHeight,height)
         }
     };
     private ctrlKeyDownHandler(e:KeyboardEvent){
@@ -127,20 +142,22 @@ class Triangle extends AbstractPlugin{
         const keyCode = e.keyCode;
         if(17===keyCode){
             this.ctrlKey=true;
-            if(this.start&&this.triangle){
-                const width=Math.abs(this.end.x-this.start.x);
-                const height=Math.abs(this.end.y-this.start.y);
-                const length = Math.min(width,height);
-                // 起点需要重新算
-                const startPoint = this.getCtrlStartPoint(length);
-                if(void 0 === startPoint){return}
-                this.triangle.set({
-                    width:length,
-                    height:length,
-                    left:startPoint.x,
-                    top:startPoint.y
+            if(void 0 !== this.instance){
+                const offsetX = this.end.x-this.start.x;
+                const offsetY = this.end.y-this.start.y;
+                const width=Math.abs(offsetX);
+                const height=Math.abs(offsetY);
+                const calcSize = this.calcEquilate(width,height);
+                const startPoint = this.getCtrlStartPoint(calcSize);
+                this.instance.set({
+                    width:this.ctrlKey?calcSize.width:width,
+                    height:this.ctrlKey?calcSize.height:height,
+                    flipY:offsetY<0,
+                    flipX:offsetX<0,
+                    left: startPoint.x,
+                    top: startPoint.y,
                 }).setCoords();
-                this.eBoardCanvas.requestRenderAll();
+                this.eBoardCanvas.renderAll();
             }
         }
     }
@@ -149,18 +166,21 @@ class Triangle extends AbstractPlugin{
         if(17===keyCode){
             // 恢复
             this.ctrlKey=false;
-            if(this.start&&this.triangle){
+            if(void 0 !== this.instance){
                 const width=Math.abs(this.end.x-this.start.x);
                 const height=Math.abs(this.end.y-this.start.y);
+                const offsetX = this.end.x-this.start.x;
+                const offsetY = this.end.y-this.start.y;
                 const startPoint = this.getStartPoint();
-                if(void 0 === startPoint){return}
-                this.triangle.set({
+                this.instance.set({
                     width:width,
                     height:height,
+                    flipY:offsetY<0,
+                    flipX:offsetX<0,
                     left:startPoint.x,
                     top:startPoint.y
                 }).setCoords();
-                this.eBoardCanvas.requestRenderAll();
+                this.eBoardCanvas.renderAll();
             }
         }
     }
@@ -176,22 +196,22 @@ class Triangle extends AbstractPlugin{
                 activePlugin.setEnable(false);
             }
             this.eBoardEngine.setActivePlugin(this);
-            this.eBoardCanvas.on('mouse:down', this.downHandler);
-            this.eBoardCanvas.on('mouse:move', this.moveHandler);
-            this.eBoardCanvas.on('mouse:up', this.upHandler);
+            this.eBoardCanvas.on('mouse:down', this.onMouseDown);
+            this.eBoardCanvas.on('mouse:move', this.onMouseMove);
+            this.eBoardCanvas.on('mouse:up', this.onMouseUp);
             if(this.ctrlKeyEnable){
                 window.addEventListener("keydown",this.ctrlKeyDownHandler);
                 window.addEventListener("keyup",this.ctrlKeyUpHandler);
             }
         }else{
-            if(activePlugin && activePlugin instanceof Ellipse){
+            if(activePlugin && activePlugin instanceof Triangle){
                 this.eBoardEngine.setActivePlugin(undefined);
             }
-            this.start=undefined;
-            this.triangle=undefined;
-            this.eBoardCanvas.off('mouse:down', this.downHandler);
-            this.eBoardCanvas.off('mouse:move', this.moveHandler);
-            this.eBoardCanvas.off('mouse:up', this.upHandler);
+            this.start=undefined as any;
+            this.instance=undefined as any;
+            this.eBoardCanvas.off('mouse:down', this.onMouseDown);
+            this.eBoardCanvas.off('mouse:move', this.onMouseMove);
+            this.eBoardCanvas.off('mouse:up', this.onMouseUp);
             window.removeEventListener("keydown",this.ctrlKeyDownHandler);
             window.removeEventListener("keyup",this.ctrlKeyUpHandler);
         }

@@ -14,12 +14,13 @@ import {Text} from './shape/2D/text/Text';
 import {Pencil} from './shape/2D/pencil/Pencil';
 import {Circle} from './shape/2D/circle/Circle';
 import {Ellipse} from './shape/2D/ellipse/Ellipse';
-import {Rectangle} from './shape/2D/rectangle/Rectangle';
-import {Square} from './shape/2D/square/Square';
+import {Rectangle} from './shape/2D/quadrangle/Rectangle';
+import {Square} from './shape/2D/quadrangle/Square';
 import {Triangle} from './shape/2D/triangle/Triangle';
+import {EquilateralTriangle} from './shape/2D/triangle/EquilateralTriangle';
 
-export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle};
-export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle;
+export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle};
+export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle;
 export enum Plugins{
     Cursor='Cursor',// 画笔
     Line='Line', // 直线
@@ -31,5 +32,6 @@ export enum Plugins{
     Ellipse='Ellipse',
     Rectangle='Rectangle',
     Square='Square',
-    Triangle="Triangle"
+    Triangle="Triangle",
+    EquilateralTriangle="EquilateralTriangle"
 }
