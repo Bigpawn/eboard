@@ -10,7 +10,7 @@ import {IObjectOptions} from "~fabric/fabric-impl";
 
 
 class FabricPentagon extends fabric.Polygon{
-    public type:string="star";
+    public type:string="pentagon";
     public static sin18:number=Math.abs(Math.sin(18/180 * Math.PI));
     public static cos18:number=Math.abs(Math.cos(18/180 * Math.PI));
     public static sin54:number=Math.abs(Math.sin(54/180 * Math.PI));

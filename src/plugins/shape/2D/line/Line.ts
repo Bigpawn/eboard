@@ -39,7 +39,7 @@ class Line extends AbstractShapePlugin{
         if(void 0 === this.start){
             return;
         }
-        super.onMouseDown(event);
+        super.onMouseMove(event);
         if(void 0 === this.instance){
             this.instance=new ArrowLine([this.start.x,this.start.y,this.end.x,this.end.y],{
                 stroke: this.getColor(),
@@ -53,7 +53,7 @@ class Line extends AbstractShapePlugin{
             this.instance.set({
                 y2:this.end.y,
                 x2:this.end.x,
-            }).setCoords();
+            });
             this.eBoardCanvas.renderAll();
         }
     }

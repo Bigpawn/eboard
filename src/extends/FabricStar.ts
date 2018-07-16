@@ -11,10 +11,10 @@ import {IObjectOptions} from "~fabric/fabric-impl";
 
 class FabricStar extends fabric.Polygon{
     public type:string="star";
-    public static sin18:number=Math.abs(Math.sin(18/180 * Math.PI));
-    public static cos18:number=Math.abs(Math.cos(18/180 * Math.PI));
-    public static sin54:number=Math.abs(Math.sin(54/180 * Math.PI));
-    public static cos54:number=Math.abs(Math.cos(54/180 * Math.PI));
+    private static sin18:number=Math.abs(Math.sin(18/180 * Math.PI));
+    private static cos18:number=Math.abs(Math.cos(18/180 * Math.PI));
+    private static sin54:number=Math.abs(Math.sin(54/180 * Math.PI));
+    private static cos54:number=Math.abs(Math.cos(54/180 * Math.PI));
     /**
      * 计算五角星各定点坐标
      * @param {{x: number; y: number}} center
