@@ -151,11 +151,12 @@ class Polygon extends AbstractShapePlugin{
      * @returns {this}
      */
     public setEnable(enable:boolean){
-        if(enable){
+/*        if(enable){
             this.eBoardCanvas.renderOnAddRemove=false;
         }else{
+            alert("1111");
             this.eBoardCanvas.renderOnAddRemove=true;
-        }
+        }*/
         return super.setEnable(enable);
     }
 }

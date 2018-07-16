@@ -72,7 +72,7 @@ abstract class AbstractPlugin {
                 this.eBoardCanvas.on('mouse:move', this.onMouseMove);
             }
             if(void 0 !== this.onMouseUp){
-                this.eBoardCanvas.on('mouse:move', this.onMouseUp);
+                this.eBoardCanvas.on('mouse:up', this.onMouseUp);
             }
             if(void 0 !== this.ctrlKeyDownHandler){
                 window.addEventListener("keydown",this.ctrlKeyDownHandler);
