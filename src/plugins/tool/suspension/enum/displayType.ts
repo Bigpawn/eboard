@@ -1,1 +1,1 @@
-/* * @Author: Bigpawn * @Date: 2018/7/14 10:50 * @Last Modified by: Bigpawn * @Last Modified time: 2018/7/14 10:50 */export enum DisplayType {    Path="path",    IText="i-text",    ArrowLine="arrow-line"}
+/* * @Author: Bigpawn * @Date: 2018/7/14 10:50 * @Last Modified by: Bigpawn * @Last Modified time: 2018/7/14 10:50 */export enum DisplayType {    Path="path",    IText="i-text",    ArrowLine="arrow-line",    Circle="circle",    Ellipse="ellipse",    Rect="rect",}
