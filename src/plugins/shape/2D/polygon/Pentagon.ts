@@ -1,16 +1,18 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/7/16 12:55
+ * @Date: 2018/7/16 17:46
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/16 12:55
- * @disc:五角星 extend Polygon
+ * * @Last Modified time: 2018/7/16 17:46
+ * @disc:五边形 暂不支持旋转
  */
-import {FabricStar} from "../../../../extends/FabricStar";
-import {AbstractShapePlugin} from '../../AbstractShapePlugin';
-import {IEvent} from "~fabric/fabric-impl";
 
-class Star extends AbstractShapePlugin{
-    protected instance:FabricStar;
+import {AbstractShapePlugin} from '../../AbstractShapePlugin';
+import {FabricPentagon} from '../../../../extends/FabricPentagon';
+import {IEvent} from '~fabric/fabric-impl';
+
+
+class Pentagon extends AbstractShapePlugin{
+    protected instance:FabricPentagon;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
@@ -23,7 +25,7 @@ class Star extends AbstractShapePlugin{
         const radius = Math.sqrt(Math.pow(this.start.x-this.end.x,2)+Math.pow(this.start.y-this.end.y,2));
         
         if(void 0 ===this.instance){
-            this.instance=new FabricStar(this.start,radius, {
+            this.instance=new FabricPentagon(this.start,radius, {
                 stroke: this.stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
@@ -39,7 +41,7 @@ class Star extends AbstractShapePlugin{
         }else{
             this.eBoardCanvas.renderOnAddRemove=false;// 渲染过程控制
             this.eBoardCanvas.remove(this.instance);
-            this.instance=new FabricStar(this.start,radius, {
+            this.instance=new FabricPentagon(this.start,radius, {
                 stroke: this.stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
@@ -58,4 +60,4 @@ class Star extends AbstractShapePlugin{
     };
 }
 
-export {Star};
+export {Pentagon};

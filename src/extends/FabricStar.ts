@@ -9,7 +9,7 @@ import {fabric} from "fabric";
 import {IObjectOptions} from "~fabric/fabric-impl";
 
 
-class Star extends fabric.Polygon{
+class FabricStar extends fabric.Polygon{
     public type:string="star";
     public static sin18:number=Math.abs(Math.sin(18/180 * Math.PI));
     public static cos18:number=Math.abs(Math.cos(18/180 * Math.PI));
@@ -46,8 +46,8 @@ class Star extends fabric.Polygon{
      * @param {boolean} skipOffset
      */
     constructor(center:{x: number; y: number},radius:number,options?: IObjectOptions, skipOffset?: boolean){
-        super(Star.calcPointsByRadius(center,radius),options,skipOffset);
+        super(FabricStar.calcPointsByRadius(center,radius),options,skipOffset);
     }
 }
 
-export {Star};
+export {FabricStar};

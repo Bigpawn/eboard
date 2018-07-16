@@ -2,7 +2,8 @@ import * as React from "react";
 import { Card } from "antd";
 import {BaseCanvas} from '../../src/canvas/react/BaseCanvas';
 import {
-    Circle, Cursor, Ellipse, EquilateralTriangle, OrthogonalTriangle, Polygon,
+    Circle, Cursor, Ellipse, EquilateralTriangle, OrthogonalTriangle, Pentagon,
+    Polygon,
     Rectangle,
     Square, Star,
     Triangle,
@@ -99,6 +100,10 @@ export class ToolBar extends React.Component{
         const Star = this.Canvas.getPlugin(Plugins.Star) as Star;
         Star.setEnable(true);
     };
+    private Pentagon=()=>{
+        const Pentagon = this.Canvas.getPlugin(Plugins.Pentagon) as Pentagon;
+        Pentagon.setEnable(true);
+    };
     render(){
         return (
             <div>
@@ -120,6 +125,7 @@ export class ToolBar extends React.Component{
                 <button onClick={this.OrthogonalTriangle}>OrthogonalTriangle</button>
                 <button onClick={this.Polygon}>Polygon</button>
                 <button onClick={this.Star}>Star</button>
+                <button onClick={this.Pentagon}>Pentagon</button>
             </div>
         )
     }
