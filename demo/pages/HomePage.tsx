@@ -56,7 +56,7 @@ export class ToolBar extends React.Component{
     };
     private startPencilLine=()=>{
         const PencilLine = this.Canvas.getPlugin(Plugins.Pencil) as Pencil;
-        PencilLine.setColor('blue').setWidth(20).setEnable(true);
+        PencilLine.setColor('rgba(0,0,0,1)').setWidth(20).setEnable(true);
     };
     private openHtml=()=>{
         const HTML = this.Canvas.getPlugin(Plugins.HTML) as HTML;
