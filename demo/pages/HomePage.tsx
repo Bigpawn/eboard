@@ -4,7 +4,7 @@ import {BaseCanvas} from '../../src/canvas/react/BaseCanvas';
 import {
     Circle, Cursor, Ellipse, EquilateralTriangle, OrthogonalTriangle, Polygon,
     Rectangle,
-    Square,
+    Square, Star,
     Triangle,
 } from '../../src/plugins';
 import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
@@ -95,6 +95,10 @@ export class ToolBar extends React.Component{
         const Polygon = this.Canvas.getPlugin(Plugins.Polygon) as Polygon;
         Polygon.setEnable(true);
     };
+    private Star=()=>{
+        const Star = this.Canvas.getPlugin(Plugins.Star) as Star;
+        Star.setEnable(true);
+    };
     render(){
         return (
             <div>
@@ -115,6 +119,7 @@ export class ToolBar extends React.Component{
                 <button onClick={this.EquilateralTriangle}>EquilateralTriangle</button>
                 <button onClick={this.OrthogonalTriangle}>OrthogonalTriangle</button>
                 <button onClick={this.Polygon}>Polygon</button>
+                <button onClick={this.Star}>Star</button>
             </div>
         )
     }

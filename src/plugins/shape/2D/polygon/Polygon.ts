@@ -51,6 +51,7 @@ class Polygon extends AbstractShapePlugin{
         // 判断是否是起点，如果是起点则关闭并且在相差区域内默认调整为起点
     }
     private finish(){
+        this.eBoardCanvas.renderOnAddRemove=false;// 渲染过程控制
         this.eBoardCanvas.remove(this.instance);
         this.instance = new fabric.Polyline(this.points, {
             stroke:this.stroke,
@@ -62,6 +63,7 @@ class Polygon extends AbstractShapePlugin{
         this.circle&&this.eBoardCanvas.remove(this.circle);
         this.eBoardCanvas.renderAll();
         this.recovery();
+        this.eBoardCanvas.renderOnAddRemove=true;// 渲染过程控制
     }
     
     /**
@@ -109,7 +111,7 @@ class Polygon extends AbstractShapePlugin{
         }
         super.onMouseMove(event);
         const pos = this.end;
-       
+        this.eBoardCanvas.renderOnAddRemove=false;// 渲染过程控制
         const lastPoint = this.points.pop() as Point;
         if("final"===lastPoint.state) {
             this.points.push(lastPoint,new Point(pos.x,pos.y,"temporary"));
@@ -124,7 +126,6 @@ class Polygon extends AbstractShapePlugin{
                 fill:this.fill,
             });
             this.eBoardCanvas.add(this.instance);
-            this.eBoardCanvas.renderAll();
         }else{
             this.eBoardCanvas.remove(this.instance);
             this.instance = new fabric.Polyline(this.points, {
@@ -135,29 +136,20 @@ class Polygon extends AbstractShapePlugin{
             });
             this.eBoardCanvas.add(this.instance);
             this.showCanvas(pos);
-            this.eBoardCanvas.renderAll();
         }
-    }
-    protected onMouseUp(event:IEvent){
-        // 不进行实例消除
-        // this.instance=undefined as any;
-        // this.start=undefined as any;
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     }
     
     /**
      * @override
-     * 关闭画布自动绘制，手动调用render
-     * @param {boolean} enable
-     * @returns {this}
+     * 清楚默认操作
+     * @param {"~fabric/fabric-impl".IEvent} event
      */
-    public setEnable(enable:boolean){
-/*        if(enable){
-            this.eBoardCanvas.renderOnAddRemove=false;
-        }else{
-            alert("1111");
-            this.eBoardCanvas.renderOnAddRemove=true;
-        }*/
-        return super.setEnable(enable);
+    protected onMouseUp(event:IEvent){
+        // 不进行实例消除
+        // this.instance=undefined as any;
+        // this.start=undefined as any;
     }
 }
 

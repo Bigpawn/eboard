@@ -20,9 +20,10 @@ import {Triangle} from './shape/2D/triangle/Triangle';
 import {EquilateralTriangle} from './shape/2D/triangle/EquilateralTriangle';
 import {OrthogonalTriangle} from './shape/2D/triangle/OrthogonalTriangle';
 import {Polygon} from './shape/2D/polygon/Polygon';
+import {Star} from './shape/2D/polygon/Star';
 
-export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon};
-export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon;
+export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon,Star};
+export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon | Star;
 export enum Plugins{
     Cursor='Cursor',// 画笔
     Line='Line', // 直线
@@ -34,8 +35,9 @@ export enum Plugins{
     Ellipse='Ellipse',
     Rectangle='Rectangle',
     Square='Square',
-    Triangle="Triangle",
-    EquilateralTriangle="EquilateralTriangle",
-    OrthogonalTriangle="OrthogonalTriangle",
-    Polygon="Polygon"
+    Triangle='Triangle',
+    EquilateralTriangle='EquilateralTriangle',
+    OrthogonalTriangle='OrthogonalTriangle',
+    Polygon='Polygon',
+    Star="Star"
 }

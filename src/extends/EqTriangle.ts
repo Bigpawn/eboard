@@ -7,7 +7,7 @@
  */
 import {fabric} from "fabric";
 
-class EqTriangle extends fabric.Polygon{
+class EqTriangle extends fabric.Path{
     public type="eq-triangle";
 }
 
