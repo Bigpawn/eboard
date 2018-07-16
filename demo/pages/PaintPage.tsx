@@ -5,20 +5,13 @@ import {PagerCanvas, PageType} from '../../src/canvas/react/PagerCanvas';
 
 class PaintPage extends HomePage{
     public render(): JSX.Element {
-        const dataSet=[
-            {
+        const dataSet=[];
+        for (let i=0;i<114;i++){
+            dataSet.push({
                 type:PageType.Image,
-                data:"https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2622681255,3418216244&fm=173&app=25&f=JPEG?w=639&h=381&s=7084E2BB4A501CC0543717BC0300700E"
-            },
-            {
-                type:PageType.Image,
-                data:"https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2622681255,3418216244&fm=173&app=25&f=JPEG?w=639&h=381&s=7084E2BB4A501CC0543717BC0300700E"
-            },
-            {
-                type:PageType.Image,
-                data:"https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2622681255,3418216244&fm=173&app=25&f=JPEG?w=639&h=381&s=7084E2BB4A501CC0543717BC0300700E"
-            }
-            ];
+                data:"https://res2dev.9itest.com/resource2/1000/document/20180716/56e61d90a7d7435c80a2499621055ceb_png/"+i+".png"
+            })
+        }
         return (
             <Card bordered title="PagerCanvas" style={{ margin: "16px 16px"}}>
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
