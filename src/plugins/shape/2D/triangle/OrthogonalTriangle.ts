@@ -3,9 +3,8 @@
  * @Date: 2018/7/15 14:58
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * * @Last Modified time: 2018/7/15 14:58
- * @disc:直角三角形  会触发两次重绘，后期考虑优化
+ * @disc:直角三角形 继承自Path
  */
-import {fabric} from "fabric";
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {OrTriangle} from '../../../../extends/OrTriangle';
@@ -13,7 +12,7 @@ import {OrTriangle} from '../../../../extends/OrTriangle';
 
 
 class OrthogonalTriangle extends AbstractShapePlugin{
-    protected instance:fabric.Path;
+    protected instance:OrTriangle;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
@@ -46,6 +45,7 @@ class OrthogonalTriangle extends AbstractShapePlugin{
             });
             this.eBoardCanvas.add(this.instance);
         }else{
+            this.eBoardCanvas.renderOnAddRemove=false;
             this.eBoardCanvas.remove(this.instance);
             this.instance=new OrTriangle(path, {
                 stroke: this.stroke,
@@ -54,6 +54,8 @@ class OrthogonalTriangle extends AbstractShapePlugin{
                 strokeDashArray:this.strokeDashArray,
             });
             this.eBoardCanvas.add(this.instance);
+            this.eBoardCanvas.renderAll();
+            this.eBoardCanvas.renderOnAddRemove=true;
         }
     };
 }
