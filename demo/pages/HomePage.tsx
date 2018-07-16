@@ -2,8 +2,11 @@ import * as React from "react";
 import { Card } from "antd";
 import {BaseCanvas} from '../../src/canvas/react/BaseCanvas';
 import {
-    Circle, Cursor, Ellipse, EquilateralTriangle, OrthogonalTriangle, Rectangle,
-    Square,
+    Circle, Cursor, Ellipse, EquilateralTriangle, Hexagon, OrthogonalTriangle,
+    Pentagon,
+    Polygon,
+    Rectangle,
+    Square, Star,
     Triangle,
 } from '../../src/plugins';
 import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
@@ -90,6 +93,22 @@ export class ToolBar extends React.Component{
         const OrthogonalTriangle = this.Canvas.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle;
         OrthogonalTriangle.setEnable(true);
     };
+    private Polygon=()=>{
+        const Polygon = this.Canvas.getPlugin(Plugins.Polygon) as Polygon;
+        Polygon.setEnable(true);
+    };
+    private Star=()=>{
+        const Star = this.Canvas.getPlugin(Plugins.Star) as Star;
+        Star.setEnable(true);
+    };
+    private Pentagon=()=>{
+        const Pentagon = this.Canvas.getPlugin(Plugins.Pentagon) as Pentagon;
+        Pentagon.setEnable(true);
+    };
+    private Hexagon=()=>{
+        const Hexagon = this.Canvas.getPlugin(Plugins.Hexagon) as Hexagon;
+        Hexagon.setEnable(true);
+    }
     render(){
         return (
             <div>
@@ -109,6 +128,10 @@ export class ToolBar extends React.Component{
                 <button onClick={this.triangle}>Triangle</button>
                 <button onClick={this.EquilateralTriangle}>EquilateralTriangle</button>
                 <button onClick={this.OrthogonalTriangle}>OrthogonalTriangle</button>
+                <button onClick={this.Polygon}>Polygon</button>
+                <button onClick={this.Star}>Star</button>
+                <button onClick={this.Pentagon}>Pentagon</button>
+                <button onClick={this.Hexagon}>Hexagon</button>
             </div>
         )
     }

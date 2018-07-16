@@ -45,7 +45,7 @@ import {IEvent} from '~fabric/fabric-impl';
 
 @ctrlKeyEnable(true)
 class Rectangle extends AbstractShapePlugin{
-    protected instance?:fabric.Rect;
+    protected instance:fabric.Rect;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
@@ -54,8 +54,6 @@ class Rectangle extends AbstractShapePlugin{
     protected ctrlKey:boolean=false;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
-        this.ctrlKeyDownHandler=this.ctrlKeyDownHandler.bind(this);
-        this.ctrlKeyUpHandler=this.ctrlKeyUpHandler.bind(this);
     }
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
@@ -118,8 +116,7 @@ class Rectangle extends AbstractShapePlugin{
             return;
         }
         super.onMouseMove(event);
-        let pos = this.eBoardCanvas.getPointer(event.e);
-        this.end = pos;
+        const pos = this.end;
         const width=Math.abs(pos.x-this.start.x);
         const height=Math.abs(pos.y-this.start.y);
         const length = Math.min(width,height);
@@ -146,12 +143,7 @@ class Rectangle extends AbstractShapePlugin{
             this.eBoardCanvas.add(this.instance);
         }
     };
-    protected onMouseUp(event:IEvent){
-        super.onMouseUp(event);
-        this.instance = undefined as any;
-        this.start = undefined as any;
-    }
-    private ctrlKeyDownHandler(e:KeyboardEvent){
+    protected ctrlKeyDownHandler(e:KeyboardEvent){
         // 判断是否处于绘制模式
         const keyCode = e.keyCode;
         if(17===keyCode){
@@ -172,7 +164,7 @@ class Rectangle extends AbstractShapePlugin{
             this.eBoardCanvas.renderAll();
         }
     }
-    private ctrlKeyUpHandler(e:KeyboardEvent){
+    protected ctrlKeyUpHandler(e:KeyboardEvent){
         const keyCode = e.keyCode;
         if(17===keyCode){
             // 恢复
@@ -191,40 +183,6 @@ class Rectangle extends AbstractShapePlugin{
             }).setCoords();
             this.eBoardCanvas.renderAll();
         }
-    }
-    public setEnable(enable:boolean){
-        if(this.enable===enable){
-            return;
-        }
-        this.enable=enable;
-        const activePlugin=this.eBoardEngine.getActivePlugin();
-        if(enable){
-            // 关闭当前激活的组件
-            if(activePlugin){
-                activePlugin.setEnable(false);
-            }
-            this.eBoardEngine.setActivePlugin(this);
-            this.eBoardCanvas.on('mouse:down', this.onMouseDown);
-            this.eBoardCanvas.on('mouse:move', this.onMouseMove);
-            this.eBoardCanvas.on('mouse:up', this.onMouseUp);
-            if(this.ctrlKeyEnable){
-                window.addEventListener("keydown",this.ctrlKeyDownHandler);
-                window.addEventListener("keyup",this.ctrlKeyUpHandler);
-            }
-        }else{
-            if(activePlugin && activePlugin instanceof Rectangle){
-                this.eBoardEngine.setActivePlugin(undefined);
-            }
-            this.start=undefined as any;
-            this.instance=undefined as any;
-            this.eBoardCanvas.off('mouse:down', this.onMouseDown);
-            this.eBoardCanvas.off('mouse:move', this.onMouseMove);
-            this.eBoardCanvas.off('mouse:up', this.onMouseUp);
-            window.removeEventListener("keydown",this.ctrlKeyDownHandler);
-            window.removeEventListener("keyup",this.ctrlKeyUpHandler);
-        }
-        super.setEnable(enable);// 最后调用，先处理自定义逻辑
-        return this;
     }
 }
 

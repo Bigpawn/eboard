@@ -6,7 +6,9 @@
  * @disc:等边三角形
  */
 import {fabric} from "fabric";
+
 class EqTriangle extends fabric.Path{
     public type="eq-triangle";
 }
+
 export {EqTriangle};

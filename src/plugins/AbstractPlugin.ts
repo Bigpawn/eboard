@@ -11,23 +11,102 @@
 import {EBoardCanvas} from '../EBoardCanvas';
 import {EBoardEngine} from '../EBoardEngine';
 import {CursorTypeName} from './tool/cursor/CursorType';
-import {Cursor} from './tool/cursor/Cursor';
-import {Plugins} from "./index";
+import {IEvent} from '~fabric/fabric-impl';
+import {fabric} from "fabric";
 
 abstract class AbstractPlugin {
     protected eBoardCanvas:EBoardCanvas;
     protected eBoardEngine:EBoardEngine;
     protected cursorType:CursorTypeName;
+    protected instance:fabric.Object;
     protected enable:boolean=false;
+    protected start:{x:number;y:number};
+    protected end:{ x: number; y: number; };
+    protected onMouseDown?(event:IEvent):void;
+    protected onMouseMove?(event:IEvent):void;
+    protected onMouseUp?(event:IEvent):void;
+    protected ctrlKeyDownHandler?(event:KeyboardEvent):void;
+    protected ctrlKeyUpHandler?(event:KeyboardEvent):void;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         this.eBoardCanvas=canvas;
         this.eBoardEngine=eBoardEngine;
+        // bind this
+        if(void 0 !== this.onMouseDown){
+            this.onMouseDown=this.onMouseDown.bind(this);
+        }
+        if(void 0 !== this.onMouseMove){
+            this.onMouseMove=this.onMouseMove.bind(this);
+        }
+        if(void 0 !== this.onMouseUp){
+            this.onMouseUp=this.onMouseUp.bind(this);
+        }
+        if(void 0 !== this.ctrlKeyDownHandler){
+            this.ctrlKeyDownHandler=this.ctrlKeyDownHandler.bind(this);
+        }
+        if(void 0 !== this.ctrlKeyUpHandler){
+            this.ctrlKeyUpHandler=this.ctrlKeyUpHandler.bind(this);
+        }
     }
     /**
-     * 自动处理光标显示
+     * 插件启用开关
      * @param {boolean} enable
      */
     public setEnable(enable:boolean){
+        if(this.enable===enable){
+            return;
+        }
+        this.start=undefined as any;
+        this.instance=undefined as any;
+        this.enable=enable;
+        const activePlugin=this.eBoardEngine.getActivePlugin();
+        if(enable){
+            // 关闭当前激活的组件
+            if(activePlugin){
+                activePlugin.setEnable(false);
+            }
+            this.eBoardEngine.setActivePlugin(this);
+            if(void 0 !== this.onMouseDown){
+                this.eBoardCanvas.on('mouse:down', this.onMouseDown);
+            }
+            if(void 0 !== this.onMouseMove){
+                this.eBoardCanvas.on('mouse:move', this.onMouseMove);
+            }
+            if(void 0 !== this.onMouseUp){
+                this.eBoardCanvas.on('mouse:up', this.onMouseUp);
+            }
+            if(void 0 !== this.ctrlKeyDownHandler){
+                window.addEventListener("keydown",this.ctrlKeyDownHandler);
+            }
+            if(void 0 !== this.ctrlKeyUpHandler){
+                window.addEventListener("keyup",this.ctrlKeyUpHandler);
+            }
+        }else{
+            if(activePlugin && activePlugin instanceof this.constructor){
+                this.eBoardEngine.setActivePlugin(undefined);
+            }
+            if(void 0 !== this.onMouseDown){
+                this.eBoardCanvas.off('mouse:down', this.onMouseDown);
+            }
+            if(void 0 !== this.onMouseMove){
+                this.eBoardCanvas.off('mouse:move', this.onMouseMove);
+            }
+            if(void 0 !== this.onMouseUp){
+                this.eBoardCanvas.off('mouse:up', this.onMouseUp);
+            }
+            if(void 0 !== this.ctrlKeyDownHandler){
+                window.removeEventListener("keydown",this.ctrlKeyDownHandler);
+            }
+            if(void 0 !== this.ctrlKeyUpHandler){
+                window.removeEventListener("keyup",this.ctrlKeyUpHandler);
+            }
+        }
+        return this;
+        
+        
+        
+        
+        // 暂时关闭光标
+/*
         // 光标使用
         const cursorPlugin = this.eBoardEngine.getPlugin(Plugins.Cursor) as Cursor;
         if(enable){
@@ -46,7 +125,7 @@ abstract class AbstractPlugin {
             if(this.cursorType){
                 cursorPlugin&&cursorPlugin.setEnable(false);
             }
-        }
+        }*/
     };
     
     /**
