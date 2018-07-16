@@ -1,54 +1,66 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/7/12 21:10
+ * @Date: 2018/7/15 14:58
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/12 21:10
- * @disc:Circle
+ * * @Last Modified time: 2018/7/15 14:58
+ * @disc:直角三角形  会触发两次重绘，后期考虑优化
  */
-
 import {fabric} from "fabric";
-import {setCursor} from '../../../../utils/decorators';
-import {CursorTypeName} from '../../../tool/cursor/CursorType';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
+import {IEvent} from '~fabric/fabric-impl';
+import {OrTriangle} from '../../../../extends/OrTriangle';
 
-@setCursor(CursorTypeName.Compass)
-class Circle extends AbstractShapePlugin{
+
+
+class OrthogonalTriangle extends AbstractShapePlugin{
+    private instance:fabric.Path;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
-    private instance:fabric.Circle;
-    protected onMouseMove(event:any){
-        if(void 0 ===this.start){
+    protected onMouseMove(event:IEvent){
+        if(void 0 === this.start){
             return;
         }
         super.onMouseMove(event);
-        let pos = this.eBoardCanvas.getPointer(event.e);
-        const radius=Math.sqrt(Math.pow(pos.x-this.start.x,2)+Math.pow(pos.y-this.start.y,2));
-        if(this.instance){
-            this.instance.set({
-                radius:radius,
-            }).setCoords();
-            this.eBoardCanvas.renderAll();
-        }else{
-            this.instance=new fabric.Circle({
-                originX:"center",
-                originY:"center",
-                fill:this.fill,
-                left: this.start.x,
-                top: this.start.y,
-                stroke:this.stroke,
+        this.end = this.eBoardCanvas.getPointer(event.e);
+        const path =
+            "M " +
+            this.start.x +
+            " " +
+            this.start.y +
+            " L " +
+            this.start.x +
+            " " +
+            this.end.y +
+            " L " +
+            this.end.x +
+            " " +
+            this.end.y +
+            " z";
+        if(void 0 ===this.instance){
+            this.instance=new OrTriangle(path, {
+                stroke: this.stroke,
+                strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth),
-                radius:radius
+                fill: this.fill
+            });
+            this.eBoardCanvas.add(this.instance);
+        }else{
+            this.eBoardCanvas.remove(this.instance);
+            this.instance=new OrTriangle(path, {
+                stroke: this.stroke,
+                strokeWidth: this.getCanvasPixel(this.strokeWidth),
+                fill: this.fill,
+                strokeDashArray:this.strokeDashArray,
             });
             this.eBoardCanvas.add(this.instance);
         }
     };
-    protected onMouseUp(event:any){
+    protected onMouseUp(event:IEvent){
         super.onMouseUp(event);
-        this.instance=undefined as any;
         this.start=undefined as any;
+        this.instance=undefined as any;
     };
     public setEnable(enable:boolean){
         if(this.enable===enable){
@@ -66,7 +78,7 @@ class Circle extends AbstractShapePlugin{
             this.eBoardCanvas.on('mouse:move', this.onMouseMove);
             this.eBoardCanvas.on('mouse:up', this.onMouseUp);
         }else{
-            if(activePlugin && activePlugin instanceof Circle){
+            if(activePlugin && activePlugin instanceof OrthogonalTriangle){
                 this.eBoardEngine.setActivePlugin(undefined);
             }
             this.start=undefined as any;
@@ -79,5 +91,4 @@ class Circle extends AbstractShapePlugin{
         return this;
     }
 }
-
-export {Circle};
+export {OrthogonalTriangle};

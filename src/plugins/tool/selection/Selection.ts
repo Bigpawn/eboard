@@ -5,22 +5,20 @@
  * * @Last Modified time: 2018/7/11 13:31
  * @disc:选择 Selection状态下应该恢复默认的鼠标或者使用自定义系统鼠标
  */
-import {AbsractPlugin} from '../../AbsractPlugin';
 import {setCursor} from '../../../utils/decorators';
 import {CursorTypeName} from '../cursor/CursorType';
 import {EBoardCanvas} from "../../../EBoardCanvas";
 import {EBoardEngine} from "../../../EBoardEngine";
+import {AbstractPlugin} from '../../AbstractPlugin';
 import {SuspensionShell} from "../suspension/SuspensionShell";
-
 @setCursor(CursorTypeName.None)
-class Selection extends AbsractPlugin{
+class Selection extends AbstractPlugin{
     private suspensionShell:any;
     constructor(canvas:EBoardCanvas,eboardEngine:EBoardEngine){
         super(canvas,eboardEngine);
         this.upHandle.bind(this);
         this.moveHandle.bind(this);
     }
-
     public upHandle=(o:any)=>{
         if(this.eBoardCanvas.getActiveObject()) {
             if(!this.suspensionShell) {

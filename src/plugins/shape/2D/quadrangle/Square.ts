@@ -1,51 +1,56 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/7/12 21:10
+ * @Date: 2018/7/13 15:40
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/12 21:10
- * @disc:Circle
+ * * @Last Modified time: 2018/7/13 15:40
+ * @disc:Square 正方形 extends Rectangle without Ctrl KeyEvent;
+ * 修改成起点为正方形中心点，终点为正方形一个角，自动旋转
  */
-
 import {fabric} from "fabric";
-import {setCursor} from '../../../../utils/decorators';
-import {CursorTypeName} from '../../../tool/cursor/CursorType';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
+import {IEvent} from '~fabric/fabric-impl';
 
-@setCursor(CursorTypeName.Compass)
-class Circle extends AbstractShapePlugin{
+class Square extends AbstractShapePlugin{
+    private instance:fabric.Rect;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
-    private instance:fabric.Circle;
-    protected onMouseMove(event:any){
-        if(void 0 ===this.start){
+    protected onMouseMove(event:IEvent){
+        if(void 0 === this.start){
             return;
         }
         super.onMouseMove(event);
-        let pos = this.eBoardCanvas.getPointer(event.e);
-        const radius=Math.sqrt(Math.pow(pos.x-this.start.x,2)+Math.pow(pos.y-this.start.y,2));
-        if(this.instance){
-            this.instance.set({
-                radius:radius,
-            }).setCoords();
-            this.eBoardCanvas.renderAll();
-        }else{
-            this.instance=new fabric.Circle({
-                originX:"center",
-                originY:"center",
+        const pos = this.eBoardCanvas.getPointer(event.e);
+        const width=Math.abs(pos.x-this.start.x);
+        const height=Math.abs(pos.y-this.start.y);
+        const length = Math.sqrt(2) * Math.sqrt(Math.pow(width,2)+Math.pow(height,2));
+        const angle = this.calcAngle(pos);
+        if(void 0 === this.instance){
+            this.instance=new fabric.Rect({
                 fill:this.fill,
                 left: this.start.x,
                 top: this.start.y,
                 stroke:this.stroke,
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
-                radius:radius
+                originX:"center",
+                originY:"center",
+                width:length,
+                height:length,
+                angle:angle-45
             });
             this.eBoardCanvas.add(this.instance);
+        }else{
+            this.instance.set({
+                width:length,
+                height:length,
+                angle:angle-45
+            }).setCoords();
+            this.eBoardCanvas.renderAll();
         }
     };
-    protected onMouseUp(event:any){
+    protected onMouseUp(event:IEvent){
         super.onMouseUp(event);
         this.instance=undefined as any;
         this.start=undefined as any;
@@ -66,7 +71,7 @@ class Circle extends AbstractShapePlugin{
             this.eBoardCanvas.on('mouse:move', this.onMouseMove);
             this.eBoardCanvas.on('mouse:up', this.onMouseUp);
         }else{
-            if(activePlugin && activePlugin instanceof Circle){
+            if(activePlugin && activePlugin instanceof Square){
                 this.eBoardEngine.setActivePlugin(undefined);
             }
             this.start=undefined as any;
@@ -80,4 +85,4 @@ class Circle extends AbstractShapePlugin{
     }
 }
 
-export {Circle};
+export {Square}

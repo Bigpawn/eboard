@@ -1,9 +1,9 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/7/12 21:38
+ * @Date: 2018/7/13 21:47
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/12 21:38
- * @disc:Ellipse  flip翻转属性不起作用，使用动态计算起点位置实现
+ * * @Last Modified time: 2018/7/13 21:47
+ * @disc:三角形  flipX,flipY 实现翻转
  */
 
 import {EBoardCanvas} from '../../../../EBoardCanvas';
@@ -11,15 +11,17 @@ import {fabric} from "fabric";
 import {EBoardEngine} from '../../../../EBoardEngine';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
+import {ctrlKeyEnable} from '../../../../utils/decorators';
 
-
-class Ellipse extends AbstractShapePlugin{
-    private instance:fabric.Ellipse;
+@ctrlKeyEnable(true)
+class Triangle extends AbstractShapePlugin{
+    private instance:fabric.Triangle;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
-    private ctrlKey:boolean=false;
+    protected ctrlKeyEnable:boolean;
+    protected ctrlKey:boolean=false;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
         this.ctrlKeyDownHandler=this.ctrlKeyDownHandler.bind(this);
@@ -53,25 +55,24 @@ class Ellipse extends AbstractShapePlugin{
                 };
         }
     }
-    private getCtrlStartPoint(radius:number):{x:number;y:number}{
+    private getCtrlStartPoint(size:{width:number,height:number}):{x:number;y:number}{
         const start = this.start;
         const end = this.end;
-        const length = radius * 2;
         const quadrant = this.calcQuadrant(end);
         switch (quadrant){
             case Quadrant.RT:// 第一象限
                 return {
                     x:start.x,
-                    y:start.y-length
+                    y:start.y-size.height
                 };
             case Quadrant.LT:// 第二象限
                 return {
-                    x:start.x-length,
-                    y:start.x-length
+                    x:start.x-size.width,
+                    y:start.y-size.height
                 };
             case Quadrant.LB:// 第三象限
                 return {
-                    x:start.x-length,
+                    x:start.x-size.width,
                     y:start.y
                 };
             case Quadrant.RB:// 第四象限
@@ -83,62 +84,81 @@ class Ellipse extends AbstractShapePlugin{
         }
     };
     protected onMouseMove(event:IEvent){
-        if(void 0 ===this.start){
+        if(void 0 === this.start){
             return;
         }
         super.onMouseMove(event);
+        
         const pos = this.eBoardCanvas.getPointer(event.e);
         this.end = pos;
-        const rx=Math.abs(pos.x-this.start.x)/2;
-        const ry=Math.abs(pos.y-this.start.y)/2;
-        const radius = Math.min(rx,ry);
-        const startPoint = this.ctrlKey?this.getCtrlStartPoint(radius):this.getStartPoint();
-        if(this.instance){
+        const offsetX = pos.x-this.start.x;
+        const offsetY = pos.y-this.start.y;
+        const width=Math.abs(offsetX);
+        const height=Math.abs(offsetY);
+        const calcSize = this.calcEquilate(width,height);
+        const startPoint = this.ctrlKey?this.getCtrlStartPoint(calcSize):this.getStartPoint();
+        if(void 0 ===this.instance){
+            this.instance=new fabric.Triangle({
+                fill:this.fill,
+                left: startPoint.x,
+                top: startPoint.y,
+                stroke:this.stroke,
+                flipX:offsetX<0,
+                flipY:offsetY<0,
+                width:this.ctrlKey?calcSize.width:width,
+                height:this.ctrlKey?calcSize.height:height,
+                strokeDashArray:this.strokeDashArray,
+                strokeWidth:this.getCanvasPixel(this.strokeWidth)
+            });
+            this.eBoardCanvas.add(this.instance);
+        }else{
             this.instance.set({
-                rx:this.ctrlKey?radius:rx,
-                ry:this.ctrlKey?radius:ry,
+                width:this.ctrlKey?calcSize.width:width,
+                height:this.ctrlKey?calcSize.height:height,
+                flipX:offsetX<0,
+                flipY:offsetY<0,
                 left: startPoint.x,
                 top: startPoint.y,
             }).setCoords();
             this.eBoardCanvas.renderAll();
-        }else{
-            this.instance = new fabric.Ellipse({
-                    fill:this.fill,
-                    left: startPoint.x,
-                    top: startPoint.y,
-                    rx:this.ctrlKey?radius:rx,
-                    ry:this.ctrlKey?radius:ry,
-                    stroke:this.stroke,
-                    strokeDashArray:this.strokeDashArray,
-                    strokeWidth:this.getCanvasPixel(this.strokeWidth)
-                });
-            this.eBoardCanvas.add(this.instance);
         }
     };
     protected onMouseUp(event:IEvent){
         super.onMouseUp(event);
-        this.instance = undefined as any;
-        this.start = undefined as any;
+        this.start=undefined as any;
+        this.instance=undefined as any;
+    };
+    private calcEquilate(width:number,height:number){
+        // 根据宽度计算高度  根据高度计算宽度，同时取小值
+        const calcHeight = width * Math.sqrt(3)/2;
+        const calcWidth = height * 2 / Math.sqrt(3);
+        return {
+            width:Math.min(calcWidth,width),
+            height:Math.min(calcHeight,height)
+        }
     };
     private ctrlKeyDownHandler(e:KeyboardEvent){
         // 判断是否处于绘制模式
         const keyCode = e.keyCode;
         if(17===keyCode){
             this.ctrlKey=true;
-            if(void 0 === this.instance||void 0 === this.start){
-                return;
+            if(void 0 !== this.instance){
+                const offsetX = this.end.x-this.start.x;
+                const offsetY = this.end.y-this.start.y;
+                const width=Math.abs(offsetX);
+                const height=Math.abs(offsetY);
+                const calcSize = this.calcEquilate(width,height);
+                const startPoint = this.getCtrlStartPoint(calcSize);
+                this.instance.set({
+                    width:this.ctrlKey?calcSize.width:width,
+                    height:this.ctrlKey?calcSize.height:height,
+                    flipY:offsetY<0,
+                    flipX:offsetX<0,
+                    left: startPoint.x,
+                    top: startPoint.y,
+                }).setCoords();
+                this.eBoardCanvas.renderAll();
             }
-            const rx=Math.abs(this.end.x-this.start.x)/2;
-            const ry=Math.abs(this.end.y-this.start.y)/2;
-            const radius = Math.min(rx,ry);
-            const startPoint = this.getCtrlStartPoint(radius);
-            this.instance.set({
-                rx:radius,
-                ry:radius,
-                left: startPoint.x,
-                top: startPoint.y,
-            }).setCoords();
-            this.eBoardCanvas.renderAll();
         }
     }
     private ctrlKeyUpHandler(e:KeyboardEvent){
@@ -146,19 +166,22 @@ class Ellipse extends AbstractShapePlugin{
         if(17===keyCode){
             // 恢复
             this.ctrlKey=false;
-            if(void 0 ===this.instance){
-                return;
+            if(void 0 !== this.instance){
+                const width=Math.abs(this.end.x-this.start.x);
+                const height=Math.abs(this.end.y-this.start.y);
+                const offsetX = this.end.x-this.start.x;
+                const offsetY = this.end.y-this.start.y;
+                const startPoint = this.getStartPoint();
+                this.instance.set({
+                    width:width,
+                    height:height,
+                    flipY:offsetY<0,
+                    flipX:offsetX<0,
+                    left:startPoint.x,
+                    top:startPoint.y
+                }).setCoords();
+                this.eBoardCanvas.renderAll();
             }
-            const rx=Math.abs(this.end.x-this.start.x)/2;
-            const ry=Math.abs(this.end.y-this.start.y)/2;
-            const startPoint = this.getStartPoint();
-            this.instance.set({
-                rx:rx,
-                ry:ry,
-                left: startPoint.x,
-                top: startPoint.y,
-            }).setCoords();
-            this.eBoardCanvas.renderAll();
         }
     }
     public setEnable(enable:boolean){
@@ -176,10 +199,12 @@ class Ellipse extends AbstractShapePlugin{
             this.eBoardCanvas.on('mouse:down', this.onMouseDown);
             this.eBoardCanvas.on('mouse:move', this.onMouseMove);
             this.eBoardCanvas.on('mouse:up', this.onMouseUp);
-            window.addEventListener("keydown",this.ctrlKeyDownHandler);
-            window.addEventListener("keyup",this.ctrlKeyUpHandler);
+            if(this.ctrlKeyEnable){
+                window.addEventListener("keydown",this.ctrlKeyDownHandler);
+                window.addEventListener("keyup",this.ctrlKeyUpHandler);
+            }
         }else{
-            if(activePlugin && activePlugin instanceof Ellipse){
+            if(activePlugin && activePlugin instanceof Triangle){
                 this.eBoardEngine.setActivePlugin(undefined);
             }
             this.start=undefined as any;
@@ -195,4 +220,4 @@ class Ellipse extends AbstractShapePlugin{
     }
 }
 
-export {Ellipse};
+export {Triangle};

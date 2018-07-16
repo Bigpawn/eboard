@@ -1,7 +1,11 @@
 import * as React from "react";
 import { Card } from "antd";
 import {BaseCanvas} from '../../src/canvas/react/BaseCanvas';
-import {Circle, Cursor, Ellipse, Rectangle} from '../../src/plugins';
+import {
+    Circle, Cursor, Ellipse, EquilateralTriangle, OrthogonalTriangle, Rectangle,
+    Square,
+    Triangle,
+} from '../../src/plugins';
 import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
 import {Line} from '../../src/plugins';
 import {Selection} from '../../src/plugins';
@@ -70,6 +74,22 @@ export class ToolBar extends React.Component{
         const Rectangle = this.Canvas.getPlugin(Plugins.Rectangle) as Rectangle;
         Rectangle.setEnable(true);
     };
+    private square=()=>{
+        const Square = this.Canvas.getPlugin(Plugins.Square) as Square;
+        Square.setEnable(true);
+    };
+    private triangle=()=>{
+        const Triangle = this.Canvas.getPlugin(Plugins.Triangle) as Triangle;
+        Triangle.setEnable(true);
+    };
+    private EquilateralTriangle=()=>{
+        const EquilateralTriangle = this.Canvas.getPlugin(Plugins.EquilateralTriangle) as EquilateralTriangle;
+        EquilateralTriangle.setEnable(true);
+    };
+    private OrthogonalTriangle=()=>{
+        const OrthogonalTriangle = this.Canvas.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle;
+        OrthogonalTriangle.setEnable(true);
+    };
     render(){
         return (
             <div>
@@ -85,6 +105,10 @@ export class ToolBar extends React.Component{
                 <button onClick={this.circle}>Circle</button>
                 <button onClick={this.ellipse}>Ellipse</button>
                 <button onClick={this.rectangle}>Rectangle</button>
+                <button onClick={this.square}>Square</button>
+                <button onClick={this.triangle}>Triangle</button>
+                <button onClick={this.EquilateralTriangle}>EquilateralTriangle</button>
+                <button onClick={this.OrthogonalTriangle}>OrthogonalTriangle</button>
             </div>
         )
     }

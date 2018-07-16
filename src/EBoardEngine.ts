@@ -11,7 +11,7 @@ import {ICanvasOptions} from '~fabric/fabric-impl';
 import {mixinPlugins} from './utils/decorators';
 
 
-import {AbsractPlugin} from './plugins/AbsractPlugin';
+import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins, Plugins} from './plugins';
 
 
@@ -21,7 +21,7 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle])
+@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle])
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
     private pluginList:IPlugin[];
@@ -31,11 +31,11 @@ class EBoardEngine{
     public getDefaultColor(){
         return this.bgColor;
     }
-    private activePlugin?:AbsractPlugin;
+    private activePlugin?:AbstractPlugin;
     public getActivePlugin(){
         return this.activePlugin;
     }
-    public setActivePlugin(plugin?:AbsractPlugin){
+    public setActivePlugin(plugin?:AbstractPlugin){
         this.activePlugin=plugin;
     }
     constructor(element: HTMLCanvasElement | string, options?: ICanvasOptions){
