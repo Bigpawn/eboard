@@ -14,7 +14,7 @@ import {IEvent} from '~fabric/fabric-impl';
 
 
 class Ellipse extends AbstractShapePlugin{
-    private instance:fabric.Ellipse;
+    protected instance:fabric.Ellipse;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
@@ -22,8 +22,6 @@ class Ellipse extends AbstractShapePlugin{
     private ctrlKey:boolean=false;
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
-        this.ctrlKeyDownHandler=this.ctrlKeyDownHandler.bind(this);
-        this.ctrlKeyUpHandler=this.ctrlKeyUpHandler.bind(this);
     }
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
@@ -87,10 +85,8 @@ class Ellipse extends AbstractShapePlugin{
             return;
         }
         super.onMouseMove(event);
-        const pos = this.eBoardCanvas.getPointer(event.e);
-        this.end = pos;
-        const rx=Math.abs(pos.x-this.start.x)/2;
-        const ry=Math.abs(pos.y-this.start.y)/2;
+        const rx=Math.abs(this.end.x-this.start.x)/2;
+        const ry=Math.abs(this.end.y-this.start.y)/2;
         const radius = Math.min(rx,ry);
         const startPoint = this.ctrlKey?this.getCtrlStartPoint(radius):this.getStartPoint();
         if(this.instance){
@@ -115,12 +111,7 @@ class Ellipse extends AbstractShapePlugin{
             this.eBoardCanvas.add(this.instance);
         }
     };
-    protected onMouseUp(event:IEvent){
-        super.onMouseUp(event);
-        this.instance = undefined as any;
-        this.start = undefined as any;
-    };
-    private ctrlKeyDownHandler(e:KeyboardEvent){
+    protected ctrlKeyDownHandler(e:KeyboardEvent){
         // 判断是否处于绘制模式
         const keyCode = e.keyCode;
         if(17===keyCode){
@@ -141,7 +132,7 @@ class Ellipse extends AbstractShapePlugin{
             this.eBoardCanvas.renderAll();
         }
     }
-    private ctrlKeyUpHandler(e:KeyboardEvent){
+    protected ctrlKeyUpHandler(e:KeyboardEvent){
         const keyCode = e.keyCode;
         if(17===keyCode){
             // 恢复
@@ -160,38 +151,6 @@ class Ellipse extends AbstractShapePlugin{
             }).setCoords();
             this.eBoardCanvas.renderAll();
         }
-    }
-    public setEnable(enable:boolean){
-        if(this.enable===enable){
-            return;
-        }
-        this.enable=enable;
-        const activePlugin=this.eBoardEngine.getActivePlugin();
-        if(enable){
-            // 关闭当前激活的组件
-            if(activePlugin){
-                activePlugin.setEnable(false);
-            }
-            this.eBoardEngine.setActivePlugin(this);
-            this.eBoardCanvas.on('mouse:down', this.onMouseDown);
-            this.eBoardCanvas.on('mouse:move', this.onMouseMove);
-            this.eBoardCanvas.on('mouse:up', this.onMouseUp);
-            window.addEventListener("keydown",this.ctrlKeyDownHandler);
-            window.addEventListener("keyup",this.ctrlKeyUpHandler);
-        }else{
-            if(activePlugin && activePlugin instanceof Ellipse){
-                this.eBoardEngine.setActivePlugin(undefined);
-            }
-            this.start=undefined as any;
-            this.instance=undefined as any;
-            this.eBoardCanvas.off('mouse:down', this.onMouseDown);
-            this.eBoardCanvas.off('mouse:move', this.onMouseMove);
-            this.eBoardCanvas.off('mouse:up', this.onMouseUp);
-            window.removeEventListener("keydown",this.ctrlKeyDownHandler);
-            window.removeEventListener("keyup",this.ctrlKeyUpHandler);
-        }
-        super.setEnable(enable);// 最后调用，先处理自定义逻辑
-        return this;
     }
 }
 

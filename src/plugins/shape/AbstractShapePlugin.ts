@@ -19,26 +19,35 @@ export enum Quadrant{
 }
 
 abstract class AbstractShapePlugin extends AbstractPlugin{
-    protected start:{x:number;y:number};
-    protected end:{ x: number; y: number; };
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
-        this.onMouseDown=this.onMouseDown.bind(this);
-        this.onMouseMove=this.onMouseMove.bind(this);
-        this.onMouseUp=this.onMouseUp.bind(this);
     }
+    
+    /**
+     * default mouseDown Event
+     * @param {"~fabric/fabric-impl".IEvent} event
+     */
     protected onMouseDown(event:IEvent){
         this.start = this.eBoardCanvas.getPointer(event.e);
     }
+    
+    /**
+     * default mouseMove Event
+     * @param {"~fabric/fabric-impl".IEvent} event
+     */
     protected onMouseMove(event:IEvent){
-        if(void 0 === this.start){
-            ;
-        }
-    }
-    protected onMouseUp(event:IEvent){
-        this.onMouseMove(event);
+        this.end = this.eBoardCanvas.getPointer(event.e);
     }
     
+    /**
+     * default mouseUp Event
+     * 复杂逻辑
+     * @param {"~fabric/fabric-impl".IEvent} event
+     */
+    protected onMouseUp(event:IEvent){
+        this.instance=undefined as any;
+        this.start=undefined as any;
+    };
     /**
      * 计算位置相对象限
      * @param {{x: number; y: number}} point
