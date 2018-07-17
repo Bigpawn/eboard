@@ -25,7 +25,6 @@ class ArrowLine extends Fabric.Line{
         super(points,objObjects);
         this.arrowType = (objObjects && objObjects.arrowType) ?objObjects.arrowType:ArrowType.NONE;
         this.arrowMode = (objObjects && objObjects.arrowMode) ?objObjects.arrowMode:ArrowMode.NEXT;
-        console.log(objObjects);
     }
     protected _render(ctx:CanvasRenderingContext2D){
         super["_render"](ctx);// 私有方法
