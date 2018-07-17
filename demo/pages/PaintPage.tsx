@@ -9,7 +9,7 @@ class PaintPage extends HomePage{
         for (let i=0;i<114;i++){
             dataSet.push({
                 type:PageType.Image,
-                data:"https://res2dev.9itest.com/resource2/1000/document/20180716/56e61d90a7d7435c80a2499621055ceb_png/"+i+".png"
+                data:"https://res2dev.9itest.com/resource2/1000/document/20180716/56e61d90a7d7435c80a2499621055ceb_png/0.png"
             })
         }
         return (

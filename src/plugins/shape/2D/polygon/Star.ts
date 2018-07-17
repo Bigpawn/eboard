@@ -8,9 +8,10 @@
 import {FabricStar} from "../../../../extends/FabricStar";
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from "~fabric/fabric-impl";
+import {fabric} from "fabric";
 
 class Star extends AbstractShapePlugin{
-    protected instance:FabricStar;
+    protected instance:fabric.Polygon;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
@@ -21,39 +22,35 @@ class Star extends AbstractShapePlugin{
         }
         super.onMouseMove(event);
         const radius = Math.sqrt(Math.pow(this.start.x-this.end.x,2)+Math.pow(this.start.y-this.end.y,2));
+        const angle = this.calcAngle(this.end);
         
+        const points = FabricStar.calcPointsByRadius(this.start,radius,angle);
         if(void 0 ===this.instance){
-            this.instance=new FabricStar(this.start,radius, {
+            this.instance=new FabricStar(points,{
                 stroke: this.stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
                 fill: this.fill,
-                // left:this.start.x,
-                // top:this.start.y,
-                // originX:"center",
-                // originY:"center",
-                // width:radius * 2,
-                // height:radius * 2
+                width:radius *2,
+                height:radius *2,
+                left:this.start.x,
+                top:this.start.y,
+                originY:"center",
+                originX:"center"
             });
             this.eBoardCanvas.add(this.instance);
         }else{
-            this.eBoardCanvas.renderOnAddRemove=false;// 渲染过程控制
-            this.eBoardCanvas.remove(this.instance);
-            this.instance=new FabricStar(this.start,radius, {
-                stroke: this.stroke,
-                strokeWidth: this.getCanvasPixel(this.strokeWidth),
-                strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
-                // left:this.start.x,
-                // top:this.start.y,
-                // originX:"center",
-                // originY:"center",
-                // width:radius * 2,
-                // height:radius * 2
-            });
-            this.eBoardCanvas.add(this.instance);
+            // 不能重新创建实例，需要确保一个实例，保证uuid不变，否则会出现不停创建的消息
+            this.instance.set({
+                points:points,
+                width:radius *2,
+                height:radius *2,
+                left:this.start.x,
+                top:this.start.y,
+                originY:"center",
+                originX:"center"
+            }).setCoords();
             this.eBoardCanvas.renderAll();
-            this.eBoardCanvas.renderOnAddRemove=true;// 渲染过程控制
         }
     };
 }

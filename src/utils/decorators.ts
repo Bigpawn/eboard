@@ -96,12 +96,12 @@ function ctrlKeyEnable(enable:boolean):ClassDecorator{
  * @returns {PropertyDescriptor}
  */
 function pipMode(target:any, name:string, descriptor:PropertyDescriptor){
-    const popPromise:Promise<any> = new Promise((resolve)=>resolve(true));
+    let popPromise:Promise<any> = new Promise((resolve)=>resolve(true));
     const oldValue = descriptor.value;
     // this 指向问题
     descriptor.value =function(){
         const _arguments=arguments;
-        popPromise.then(()=>{
+        popPromise=popPromise.then(()=>{
             return oldValue.apply(this,_arguments);
         });
     };

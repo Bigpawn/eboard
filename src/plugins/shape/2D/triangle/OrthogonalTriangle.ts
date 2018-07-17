@@ -22,40 +22,27 @@ class OrthogonalTriangle extends AbstractShapePlugin{
             return;
         }
         super.onMouseMove(event);
-        const path =
-            "M " +
-            this.start.x +
-            " " +
-            this.start.y +
-            " L " +
-            this.start.x +
-            " " +
-            this.end.y +
-            " L " +
-            this.end.x +
-            " " +
-            this.end.y +
-            " z";
+        const points= OrTriangle.calcPointsByCursorPoint(this.start,this.end);
         if(void 0 ===this.instance){
-            this.instance=new OrTriangle(path, {
+            this.instance=new OrTriangle(points, {
                 stroke: this.stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill
+                fill: this.fill,
             });
             this.eBoardCanvas.add(this.instance);
         }else{
             this.eBoardCanvas.renderOnAddRemove=false;
             this.eBoardCanvas.remove(this.instance);
-            this.instance=new OrTriangle(path, {
+            this.instance=new OrTriangle(points, {
                 stroke: this.stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
-                fill: this.fill,
                 strokeDashArray:this.strokeDashArray,
+                fill: this.fill,
             });
             this.eBoardCanvas.add(this.instance);
             this.eBoardCanvas.renderAll();
-            this.eBoardCanvas.renderOnAddRemove=true;
+            this.eBoardCanvas.renderOnAddRemove=false;
         }
     };
 }
