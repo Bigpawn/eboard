@@ -3,7 +3,7 @@
  * @Date: 2018/7/16 17:46
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * * @Last Modified time: 2018/7/16 17:46
- * @disc:五边形 暂不支持旋转
+ * @disc:五边形 支持旋转
  */
 
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
@@ -23,39 +23,33 @@ class Pentagon extends AbstractShapePlugin{
         }
         super.onMouseMove(event);
         const radius = Math.sqrt(Math.pow(this.start.x-this.end.x,2)+Math.pow(this.start.y-this.end.y,2));
-        
+        const angle =this.calcAngle(this.end);
+        const points = FabricPentagon.calcPointsByRadius(this.start,radius,angle);
         if(void 0 ===this.instance){
-            this.instance=new FabricPentagon(this.start,radius, {
+            this.instance=new FabricPentagon(points, {
                 stroke: this.stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
                 fill: this.fill,
-                // left:this.start.x,
-                // top:this.start.y,
-                // originX:"center",
-                // originY:"center",
-                // width:radius * 2,
-                // height:radius * 2
+                width:radius *2,
+                height:radius *2,
+                left:this.start.x,
+                top:this.start.y,
+                originY:"center",
+                originX:"center"
             });
             this.eBoardCanvas.add(this.instance);
         }else{
-            this.eBoardCanvas.renderOnAddRemove=false;// 渲染过程控制
-            this.eBoardCanvas.remove(this.instance);
-            this.instance=new FabricPentagon(this.start,radius, {
-                stroke: this.stroke,
-                strokeWidth: this.getCanvasPixel(this.strokeWidth),
-                strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
-                // left:this.start.x,
-                // top:this.start.y,
-                // originX:"center",
-                // originY:"center",
-                // width:radius * 2,
-                // height:radius * 2
-            });
-            this.eBoardCanvas.add(this.instance);
+            this.instance.set({
+                points:points,
+                width:radius *2,
+                height:radius *2,
+                left:this.start.x,
+                top:this.start.y,
+                originY:"center",
+                originX:"center"
+            }).setCoords();
             this.eBoardCanvas.renderAll();
-            this.eBoardCanvas.renderOnAddRemove=true;// 渲染过程控制
         }
     };
 }

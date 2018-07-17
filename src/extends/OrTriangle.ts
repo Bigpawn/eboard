@@ -7,8 +7,16 @@
  */
 import {fabric} from "fabric";
 
-class OrTriangle extends fabric.Path{
+class OrTriangle extends fabric.Polygon{
     public type="or-triangle";
+    public static calcPointsByCursorPoint(center:{x:number;y:number},point:{x:number;y:number}){
+        return [
+            new fabric.Point(center.x,center.y),
+            new fabric.Point(point.x,point.y),
+            new fabric.Point(center.x,point.y),
+        ]
+    }
+    
 }
 
 export {OrTriangle};
