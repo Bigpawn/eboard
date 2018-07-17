@@ -24,9 +24,7 @@ class Pentagon extends AbstractShapePlugin{
         super.onMouseMove(event);
         const radius = Math.sqrt(Math.pow(this.start.x-this.end.x,2)+Math.pow(this.start.y-this.end.y,2));
         const angle =this.calcAngle(this.end);
-        console.log(radius);
         const points = FabricPentagon.calcPointsByRadius(this.start,radius,angle);
-        console.log(points);
         if(void 0 ===this.instance){
             this.instance=new FabricPentagon(points, {
                 stroke: this.stroke,

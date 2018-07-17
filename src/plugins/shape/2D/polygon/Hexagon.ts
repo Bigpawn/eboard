@@ -23,7 +23,6 @@ class Hexagon extends AbstractShapePlugin{
         const radius = Math.sqrt(Math.pow(this.start.x-this.end.x,2)+Math.pow(this.start.y-this.end.y,2));
         const angle =this.calcAngle(this.end);
         const points = FabricHexagon.calcPointsByRadius(this.start,radius,angle);
-        console.log(points);
         if(void 0 ===this.instance){
             this.instance=new FabricHexagon(points, {
                 stroke: this.stroke,

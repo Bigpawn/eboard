@@ -2,6 +2,7 @@
  * @disc:fabric 占位canvas 采用常规显示器2倍缩放 ，范围[4000-4200]
  * @author:yanxinaliang
  * @time：2018/7/4 16:12
+ * dimensions 学生端根据教师端设置，不能进行过度放大，放大会消耗CPU
  */
 import * as React from "react";
 import "../../style/canvas.less";
@@ -48,8 +49,10 @@ class BaseCanvas extends React.PureComponent<IBaseCanvasProps>{
                     width:size.height * ratioNum,
                     height:size.height,
                     dimensions:{
-                        width:dimensionRate * _ratioW,
-                        height:dimensionRate * _ratioH
+                        // width:dimensionRate * _ratioW,
+                        // height:dimensionRate * _ratioH
+                        width:size.height * ratioNum,
+                        height:size.height,
                     }
                 }
             }else{
@@ -59,8 +62,10 @@ class BaseCanvas extends React.PureComponent<IBaseCanvasProps>{
                     width:size.width,
                     height:size.width / ratioNum,
                     dimensions:{
-                        width:dimensionRate * _ratioW,
-                        height:dimensionRate * _ratioH
+                        // width:dimensionRate * _ratioW,
+                        // height:dimensionRate * _ratioH
+                        width:size.width,
+                        height:size.width / ratioNum,
                     }
                 }
             }
