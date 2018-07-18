@@ -8,17 +8,18 @@
         "node": ">=6"
     },
     "dependencies": {
-        "fabric":"^2.3.3",
-        "react-color":"^2.14.1",
-        "react-pdf":"^3.0.5",
-        "lodash":"^4.17.10",
         "@types/lodash": "^4.14.110",
         "react-custom-scrollbars":"^4.2.1",
         "@types/react-custom-scrollbars":"^4.0.4",
         "typings": "^2.1.1",
         "pdfjs-dist":"^2.0.489",
         "@types/pdfjs-dist":"^0.1.2",
-        "worker-loader":"^2.0.0"
+        "worker-loader":"^2.0.0",
+        "fabric": "^2.3.3",
+        "lodash": "^4.17.10",
+        "react-color": "^2.14.1",
+        "react-pdf": "^3.0.5",
+        "react-select": "^1.2.1"
     },
     "repository": {
         "type": "git",
@@ -39,7 +40,7 @@
         "chrome-test": "rc-test run chrome-test",
         "coverage": "rc-test run coverage",
         "prepublish": "rc-tools run guard",
-        "typings":"typings install fabric=github:codyysh/DefinitelyTyped/types/fabric/index.d.ts --save"
+        "typings": "typings install fabric=github:codyysh/DefinitelyTyped/types/fabric/index.d.ts --save"
     },
     "files": [
         "lib",
@@ -55,26 +56,20 @@
         "@types/node": "^10.3.2",
         "@types/react": "^16.3.17",
         "@types/react-dom": "^16.0.6",
-        "typescript": "^2.9.1",
-        "rc-tools":"^8.0.1",
         "async": "^0.9.0",
+        "babel-runtime": "6.x",
         "bluebird": "~2.9.30",
         "core-js": "^2.5.1",
-        "babel-runtime": "6.x",
+        "rc-tools": "^8.0.1",
         "react": "^16.4.0",
         "react-dom": "^16.4.0",
         "jest": "^23.2.0",
         "@types/jest":"^23.1.4",
         "antd":"^3.6.5",
-        "react-router-dom":"^4.3.1",
         "@types/react-router-dom":"^4.2.7",
-        "react-redux":"^5.0.7",
         "@types/react-redux":"^6.0.3",
-        "react-router-config":"^1.0.0-beta.4",
         "@types/react-router-config":"^1.0.7",
-        "redux-devtools-extension":"^2.13.5",
         "@types/redux-devtools-extension":"^2.13.2",
-        "redux-thunk":"^2.3.0",
         "@types/redux-thunk":"^2.1.0",
         "classnames":"^2.2.6",
         "@types/classnames":"^2.2.4",
@@ -83,5 +78,11 @@
         "open":"^0.0.5",
         "tslint-react":"^3.6.0",
         "tslint-config-prettier":"^1.13.0"
+        "react-redux": "^5.0.7",
+        "react-router-config": "^1.0.0-beta.4",
+        "react-router-dom": "^4.3.1",
+        "redux-devtools-extension": "^2.13.5",
+        "redux-thunk": "^2.3.0",
+        "typescript": "^2.9.1"
     }
 }

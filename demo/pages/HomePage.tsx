@@ -12,7 +12,7 @@ import {
 import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
 import {Line} from '../../src/plugins';
 import {Selection} from '../../src/plugins';
-import {ArrowMode, ArrowType, LineType} from '../../src/plugins/shape/2D/line/LineType';
+import {ArrowMode, ArrowType} from '../../src/plugins/shape/2D/line/LineType';
 import {HTML} from '../../src/plugins';
 import {Text} from "../../src/plugins";
 import {Plugins} from '../../src/plugins';
@@ -43,11 +43,11 @@ export class ToolBar extends React.Component{
     };
     private startLine=()=>{
         const Line = this.Canvas.getPlugin(Plugins.Line) as Line;
-        Line.setColor("red").setArrowType(ArrowType.DEFAULT).setLineType(LineType.DASHED).setEnable(true);
+        Line.setArrowType(ArrowType.DEFAULT).setEnable(true);
     };
     private startLine1=()=>{
         const Line = this.Canvas.getPlugin(Plugins.Line) as Line;
-        Line.setColor("red").setArrowType(ArrowType.HOLLOW).setArrowMode(ArrowMode.ALL).setLineType(LineType.DASHED).setEnable(true);
+        Line.setArrowType(ArrowType.HOLLOW).setArrowMode(ArrowMode.ALL).setEnable(true);
     };
     private startText=()=> {
         const Text = this.Canvas.getPlugin(Plugins.Text) as Text;
@@ -59,7 +59,7 @@ export class ToolBar extends React.Component{
     };
     private startPencilLine=()=>{
         const PencilLine = this.Canvas.getPlugin(Plugins.Pencil) as Pencil;
-        PencilLine.setColor('rgba(0,0,0,1)').setWidth(20).setEnable(true);
+        PencilLine.setColor('rgba(0,0,0,1)').setWidth(1).setEnable(true);
     };
     private openHtml=()=>{
         const HTML = this.Canvas.getPlugin(Plugins.HTML) as HTML;
