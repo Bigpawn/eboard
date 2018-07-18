@@ -6,7 +6,7 @@
  * @disc:线条插件
  */
 import {fabric} from "fabric";
-import {ArrowMode, ArrowType, LineType} from './LineType';
+import {ArrowMode, ArrowType} from './LineType';
 import {EBoardCanvas} from '../../../../EBoardCanvas';
 import {EBoardEngine} from '../../../../EBoardEngine';
 import {ArrowLine} from '../../../../extends/ArrowLine';
@@ -24,7 +24,6 @@ const {Color} =fabric;
 class Line extends AbstractShapePlugin{
     protected instance:ArrowLine;
     private color?:string;
-    private borderDashed?:number[];
     private arrowType:ArrowType=ArrowType.NONE;
     private arrowMode:ArrowMode=ArrowMode.NEXT;
     private lineWidth:number=4;
@@ -43,7 +42,6 @@ class Line extends AbstractShapePlugin{
         if(void 0 === this.instance){
             this.instance=new ArrowLine([this.start.x,this.start.y,this.end.x,this.end.y],{
                 stroke: this.getColor(),
-                strokeDashArray:this.borderDashed,
                 strokeWidth:this.lineWidth,
                 arrowType:this.arrowType,
                 arrowMode:this.arrowMode
@@ -53,7 +51,7 @@ class Line extends AbstractShapePlugin{
             this.instance.set({
                 y2:this.end.y,
                 x2:this.end.x,
-            });
+            }).setCoords();
             this.eBoardCanvas.renderAll();
         }
     }
@@ -89,20 +87,6 @@ class Line extends AbstractShapePlugin{
     public setLineWidth(lineWidth:number){
         this.lineWidth=lineWidth;
     }
-    public setLineType(lineType:LineType){
-        switch (lineType){
-            case LineType.SOLID:
-                this.borderDashed=undefined;
-                break;
-            case LineType.DASHED:
-                this.borderDashed=[15,5];
-                break;
-            default:
-                this.borderDashed=undefined;
-                break;
-        }
-        return this;
-    };
     public setArrowType(arrowType:ArrowType){
         this.arrowType=arrowType;
         return this;
