@@ -27,7 +27,7 @@ export const routes: RouteConfig[] = [
         component: () => (<AboutPage />),
     },
     {
-        path: "/materialui",
+        path: "/pdf",
         component: () => (<MaterialUIPage />),
     },
 ];

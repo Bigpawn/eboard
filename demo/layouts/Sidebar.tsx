@@ -47,9 +47,9 @@ class Sidebar extends React.Component<{}, ISidebarState> {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="5">
-                        <Link to="/materialui">
+                        <Link to="/pdf">
                             <Icon type="edit" />
-                            <span className="nav-text">MaterialUI</span>
+                            <span className="nav-text">PdfCanvas</span>
                         </Link>
                     </Menu.Item>
                 </Menu>

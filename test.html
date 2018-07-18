@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.489/web/pdf_viewer.css">
+    <script type="text/javascript" src='https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.489/build/pdf.js'></script>
+    <script type="text/javascript" src='https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.489/web/pdf_viewer.js'></script>
+</head>
+<body>
+
+</body>
+<script>
+  /*  pdfjsLib.getDocument({
+        url:'./demo/pages/4.pdf',
+    }).then(function(pdf) {
+        console.log(pdf);
+        pdf.getPage(1).then((page)=>{
+            console.log(page.streamTextContent());
+
+        })
+    });*/
+    var viewer2=new pdfjsViewer.PDFSinglePageViewer({container:document.body,viewer:document.body,url:"./demo/pages/4.pdf"})
+    pdfjsLib.getDocument({
+        url:'./demo/pages/4.pdf',
+    }).then(function(pdf) {
+        console.log(pdf);viewer2.setDocument(pdf);
+        pdf.getPage(1).then((page)=>{
+            console.log(page.streamTextContent());
+
+        })
+    });
+</script>
+</html>
