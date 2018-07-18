@@ -20,7 +20,8 @@
     "jsx-boolean-value": false,
     "no-empty-interface": false,
     "no-string-literal": false,
-    "only-arrow-functions": false
+    "only-arrow-functions": false,
+    "no-var-requires": false
   },
   "linterOptions": {
     "exclude": [
