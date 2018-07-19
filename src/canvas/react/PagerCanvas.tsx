@@ -43,8 +43,8 @@ export declare interface IPageData{
 }
 
 export declare interface IPagerCanvasProps extends IHTMLCanvasProps{
-    pageDataSet?:IPageData[];// 必传，如果没有则不创建该Element
-    currentIndex?:number;
+    pageDataSet?:IPageData[];// 必传，如果没有则不创建该Element   pageDataSet 和filePath 不支持动态更新
+    pageNum?:number;
     filePath?:string;// load pdf file or ...
 }
 
@@ -54,43 +54,50 @@ export declare interface IEBoardCache{
     element:HTMLElement;
 }
 
+
+export declare interface IPagerCanvasState{
+    pageNum:number;
+    totalPages:number;
+}
+
 /**
  * 分页canvas
  */
-class PagerCanvas extends React.Component<IPagerCanvasProps>{
+class PagerCanvas extends React.Component<IPagerCanvasProps,IPagerCanvasState>{
     private pageDataSet:IPageData[]=[];
-    private currentIndex:number=1;// 默认第一页
     private pagerContainer:HTMLDivElement;
     private eBoardCacheMap=new Map<number,IEBoardCache>();
     private canvas:BaseCanvas;
     private PageTurn:PageTurn;
     private Pagination:Pagination;
     private filePath?:string;// load pdf file
-    private numPages:number=0;// 文档页数
     constructor(props:IPagerCanvasProps){
         super(props);
         this.onPagerChange=this.onPagerChange.bind(this);
         this.PageTurn = new PageTurn();
-        let {filePath="",pageDataSet=[],currentIndex=1} = props;
+        let {filePath="",pageDataSet=[],pageNum=1} = props;
         if(/.pdf$/.test(filePath)){
             // pdf 文件
             this.filePath=filePath;
             // 获取页数
         }else{
             this.pageDataSet=pageDataSet;
-            this.numPages=pageDataSet.length;
         }
-        this.currentIndex=currentIndex;
+        this.state={
+            pageNum:pageNum||1,
+            totalPages:this.filePath?0:pageDataSet.length
+        };
     }
     @pipMode
     private onPagerChange(index:number){
         // index切换
-        if(index===this.currentIndex){
+        if(index===this.state.pageNum){
             return 0;
         }else{
-            this.Pagination&&this.Pagination.setCurrentIndex(index);
-            const isNext=index>this.currentIndex;
-            this.currentIndex=index;
+            const isNext=index>this.state.pageNum;
+            this.setState({
+                pageNum:index
+            });
             return this.addPage(index,isNext);
         }
     }
@@ -127,7 +134,7 @@ class PagerCanvas extends React.Component<IPagerCanvasProps>{
                 wraper.style.height="100%";
                 wraper.style.left="-100%";
                 this.pagerContainer.insertBefore(wraper,currentElement);
-                const {pageDataSet,currentIndex,...props} = this.props;
+                const {pageDataSet,pageNum,...props} = this.props;
                 let newCanvas:ImageCanvas|PdfCanvas|HTMLCanvas;
                 ReactDOM.render(
                     this.filePath?<PdfCanvas ref={(ref:PdfCanvas)=>newCanvas=ref} {...props}/>:pageData.type===PageType.Image?<ImageCanvas className="eboard-pager-hide" ref={(ref:ImageCanvas)=>newCanvas=ref} {...props} src={pageData.data}/>:
@@ -136,27 +143,31 @@ class PagerCanvas extends React.Component<IPagerCanvasProps>{
                     ()=>{
                         const eBoardEngine = newCanvas.getEBoardEngine();
                         const child = wraper.firstElementChild as HTMLElement;
-                        this.eBoardCacheMap.set(this.currentIndex,{
+                        this.eBoardCacheMap.set(this.state.pageNum,{
                             eBoardEngine:eBoardEngine,
                             eBoardCanvas:eBoardEngine.eBoardCanvas,
                             element:child,
                         });
                         this.pagerContainer.replaceChild(child,wraper);
                         
-                        // child
-                        const canvas = (child.querySelector(".eboard-html") as any).firstElementChild as HTMLCanvasElement;
-                        this.loadPdfPage(index,(page)=>{
-                            const defaultViewport = page.getViewport(1);
-                            const scale = child.offsetWidth/defaultViewport.width;
-                            const viewport = page.getViewport(scale);
-                            canvas.width=viewport.width;
-                            canvas.height=viewport.height;
-                            const renderContext = {
-                                canvasContext: canvas.getContext("2d"),
-                                viewport: viewport
-                            };
-                            page.render(renderContext as any);
-                        });
+                        // pdf 模式需要后续处理
+                        if(this.filePath){
+                            // child
+                            const canvas = (child.querySelector(".eboard-html") as any).firstElementChild as HTMLCanvasElement;
+                            this.loadPdfPage(index,(page)=>{
+                                const defaultViewport = page.getViewport(1);
+                                const scale = child.offsetWidth/defaultViewport.width;
+                                const viewport = page.getViewport(scale);
+                                canvas.width=viewport.width;
+                                canvas.height=viewport.height;
+                                const renderContext = {
+                                    canvasContext: canvas.getContext("2d"),
+                                    viewport: viewport
+                                };
+                                page.render(renderContext as any);
+                            });
+                        }
+                        
                         if(next){
                             this.PageTurn.next(currentElement,child,()=>{
                                 (currentElement.parentElement as HTMLElement).removeChild(currentElement);
@@ -180,10 +191,6 @@ class PagerCanvas extends React.Component<IPagerCanvasProps>{
             pdf.getPage(pageNumber).then(callback);
         })
     };
-    shouldComponentUpdate(){
-        return true;
-        // return false;
-    }
     componentDidMount(){
         // 父容器样式修改
         if(this.pagerContainer){
@@ -192,7 +199,7 @@ class PagerCanvas extends React.Component<IPagerCanvasProps>{
             this.pagerContainer.style.width = offswtWidth + "px";
             this.pagerContainer.style.height = child.offsetHeight + "px";
             const eBoardEngine = this.canvas.getEBoardEngine();
-            this.eBoardCacheMap.set(this.currentIndex,{
+            this.eBoardCacheMap.set(this.state.pageNum,{
                 eBoardEngine:eBoardEngine,
                 eBoardCanvas:eBoardEngine.eBoardCanvas,
                 element:child,
@@ -202,8 +209,9 @@ class PagerCanvas extends React.Component<IPagerCanvasProps>{
                 this.loadPdfDocumentPromise = pdfjsLib.getDocument(this.filePath);
                 const canvas = (child.querySelector(".eboard-html") as any).firstElementChild as HTMLCanvasElement;
                 this.loadPdfDocumentPromise.then(pdf=>{
-                    this.numPages=pdf.numPages;
-                    this.setState({});
+                    this.setState({
+                        totalPages:pdf.numPages
+                    });
                     this.loadPdfPage(1,(page)=>{
                         const defaultViewport = page.getViewport(1);
                         const scale = offswtWidth/defaultViewport.width;
@@ -221,35 +229,35 @@ class PagerCanvas extends React.Component<IPagerCanvasProps>{
         }
     }
     public go(index:number){
-        if(index === this.currentIndex){
+        // 加入队列
+        if(index === this.state.pageNum){
             return;
         }else{
-            this.Pagination&&this.Pagination.setCurrentIndex(index);
-            this.addPage(index,index>this.currentIndex);
-            this.currentIndex=index;
+            this.setState({
+                pageNum:index
+            });
         }
     }
     /**
      * @override
      */
     public getPlugin(pluginName:string){
-        const eBoardCache = this.eBoardCacheMap.get(this.currentIndex) as IEBoardCache;
+        const eBoardCache = this.eBoardCacheMap.get(this.state.pageNum) as IEBoardCache;
         return eBoardCache.eBoardEngine.getPlugin(pluginName);
     }
     render(){
         const filePath = this.filePath;
-        const numPages = this.numPages;
-        const {pageDataSet,currentIndex,...props} = this.props;
-        
-        const pageData = this.pageDataSet[this.currentIndex-1];
+        const {pageDataSet,pageNum,...props} = this.props;
+        const {pageNum:pageIndex,totalPages} = this.state;
+        const pageData = this.pageDataSet[pageIndex-1];
         // 当前显示的需要显示，其他的则需要进行隐藏
         return (
             <div className="eboard-pager" ref={(ref:HTMLDivElement)=>this.pagerContainer=ref} style={{width:"100%",height:"100%"}}>
-                {/*显示第一个需要显示的，后面都进行动态创建，动态创建怎么获取其实力*/}
+                {/*显示第一个需要显示的，后面都进行动态创建，动态创建怎么获取其实例*/}
                 {
                     filePath?<PdfCanvas ref={(ref:ImageCanvas)=>this.canvas=ref} {...props}/>:pageData.type===PageType.Image?<ImageCanvas ref={(ref:ImageCanvas)=>this.canvas=ref} {...props} src={pageData.data}/>:<HTMLCanvas ref={(ref:HTMLCanvas)=>this.canvas=ref} {...props} children={pageData.data}/>
                 }
-                <Pagination ref={(ref:Pagination)=>this.Pagination=ref} onPagerChange={this.onPagerChange} pageNum={this.currentIndex} totalPages={numPages}/>
+                <Pagination ref={(ref:Pagination)=>this.Pagination=ref} onPagerChange={this.onPagerChange} pageNum={pageIndex} totalPages={totalPages}/>
             </div>
         );
     }

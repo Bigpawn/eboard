@@ -13,8 +13,8 @@ module.exports=function(webpackConfig) {
     });
     
     webpackConfig.module.rules.unshift({
-        test: /\S*icon\S*.(svg|eot|ttf|woff)$/,
-        use: { loader: 'file-loader'},
+        test: /\S*icon\S*.svg$/,
+        use: { loader: 'url-loader',options:{name: 'examples/[hash].[ext]',publicPath:"../",limit:10000}},
     });
     webpackConfig.module.rules.unshift({
         test:/\.worker\.js$/,

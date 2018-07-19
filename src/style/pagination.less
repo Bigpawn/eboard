@@ -37,6 +37,10 @@ input::-webkit-inner-spin-button {
             -moz-background-clip: border-box;
             background-clip: border-box;
             cursor: pointer;
+            &.disabled{
+                opacity:0.3;
+                cursor: not-allowed;
+            }
         };
         &-left{
             @action();

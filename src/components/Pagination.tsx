@@ -37,7 +37,6 @@ class Pagination extends React.PureComponent<IPaginationProps,IPaginationState>{
         this.onChange=this.onChange.bind(this);
         this.onBlur=this.onBlur.bind(this);
         this.onKeyUp=this.onKeyUp.bind(this);
-        this.setCurrentIndex=this.setCurrentIndex.bind(this);
         this.prev=this.prev.bind(this);
         this.next=this.next.bind(this);
         this.pageNum=props.pageNum||1;
@@ -54,24 +53,26 @@ class Pagination extends React.PureComponent<IPaginationProps,IPaginationState>{
     }
     private onBlur(){
         if(!isNaN(this.state.input) && this.pageNum!==this.state.input){
-            this.pageNum = this.state.input;
-            this.onPageChange();
+            if(-1 === this.state.input){
+                // 不变
+                this.setState({
+                    input:NaN
+                })
+            }else{
+                this.pageNum = this.state.input;
+                this.onPageChange();
+            }
         }
     }
     private onChange(e:ChangeEvent<HTMLInputElement>){
         // 不能大于最大值，可以为空，不能为0
         const value = Number(e.target.value);// maybe NaN
-        if(isNaN(value)||value<0||value>this.props.totalPages||value===0&&e.target.value!==""){
+        if(value<0||value>this.props.totalPages||value===0&&e.target.value!==""){
             return; // 输入框禁用输入
         }
         this.setState({
-            input:value?value: NaN
+            input:value?value: -1// -1表示空，内容删除，临街状态
         });
-    }
-    public setCurrentIndex(index:number){
-        this.pageNum = index;
-        this.setState({
-        })
     }
     private prev(){
         if(this.pageNum>1){
@@ -90,11 +91,12 @@ class Pagination extends React.PureComponent<IPaginationProps,IPaginationState>{
     private onKeyUp(event:KeyboardEvent<HTMLInputElement>){
         if(event.keyCode === 13){
             this.onBlur();
+            (event.target as HTMLInputElement).blur();// 自动失去焦点
         }
     }
     public componentWillReceiveProps(nextProps:IPaginationProps){
         // 如果属性发生变化
-        if(this.props.pageNum!==nextProps.pageNum){
+        if(this.props.pageNum!==nextProps.pageNum&&nextProps.pageNum!==this.pageNum){
             this.pageNum=nextProps.pageNum;// 同步更新
             this.onPageChange();
         }
@@ -103,8 +105,8 @@ class Pagination extends React.PureComponent<IPaginationProps,IPaginationState>{
         const currentIndex = isNaN(this.state.input)?this.pageNum:this.state.input;
         const totalCount = this.props.totalPages||0;
         // 计算当前翻页是否可用
-        const canPrev = currentIndex>1;
-        const canNext = currentIndex<totalCount;
+        const canPrev = this.pageNum>1; // 只能判断当前的
+        const canNext = this.pageNum<totalCount;
         if(totalCount===0){
             return null;
         }else{
@@ -117,7 +119,7 @@ class Pagination extends React.PureComponent<IPaginationProps,IPaginationState>{
                         <i className="eboard-icon eboard-icon-next"/>
                     </div>,
                     <div key="bottom" className="eboard-pagination-bottom">
-                        <input onKeyUp={this.onKeyUp} type="number" className="eboard-pagination-current" onBlur={this.onBlur} onChange={this.onChange} value={currentIndex}/>/<span className="eboard-pagination-total">{totalCount}</span>
+                        <input onKeyUp={this.onKeyUp} type="number" className="eboard-pagination-current" onBlur={this.onBlur} onChange={this.onChange} value={currentIndex===-1?"":currentIndex}/>/<span className="eboard-pagination-total">{totalCount}</span>
                     </div>,
                 ]
             )
