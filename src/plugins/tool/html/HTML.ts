@@ -9,31 +9,20 @@ import {AbstractPlugin} from '../../AbstractPlugin';
 
 class HTML extends AbstractPlugin{
     public setEnable(enable:boolean){
-        if(this.enable === enable){
-            return;
-        }
-        this.enable=enable;
-        const activePlugin=this.eBoardEngine.getActivePlugin();
+        super.setEnable(enable);
+        const parentElement = this.eBoardCanvas.getContainer();
         if(enable){
-            // 禁用画布操作，启用html操作
-            activePlugin&&activePlugin.setEnable(false);
-            this.eBoardEngine.setActivePlugin(this);
-            const parentElement = this.eBoardCanvas.getContainer();
             if(/eboard-html-canvas/.test(parentElement.className)){
                 parentElement.style.pointerEvents="none";
                 (parentElement.previousElementSibling as HTMLDivElement).style.pointerEvents="all";
             }
         }else{
-            // 禁用html操作，启用画布操作
-            if(activePlugin && activePlugin instanceof HTML){
-                this.eBoardEngine.setActivePlugin(undefined);
-            }
-            const parentElement = this.eBoardCanvas.getContainer();
             if(/eboard-html-canvas/.test(parentElement.className)){
                 parentElement.style.pointerEvents="all";
                 (parentElement.previousElementSibling as HTMLDivElement).style.pointerEvents="none";
             }
         }
+        return this;
     }
 }
 export {HTML}

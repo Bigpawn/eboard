@@ -50,32 +50,15 @@ class Selection extends AbstractPlugin{
     };
 
     public setEnable(enable:boolean){
-        if(this.enable===enable){
-            return;
-        }
-        this.enable=enable;
-        const activePlugin=this.eBoardEngine.getActivePlugin();
+        super.setEnable(enable);
         if(enable){
-            // 禁用当前激活的插件
-            if(activePlugin){
-                activePlugin.setEnable(false);
-            }
-            this.eBoardEngine.setActivePlugin(this);
             this.eBoardCanvas.selection=true;
             this.eBoardCanvas.skipTargetFind=false;
-            this.eBoardCanvas.on('mouse:up',this.upHandle);
-            this.eBoardCanvas.on('mouse:move',this.moveHandle);
         }else{
-            // 关闭当前的插件
-            if(activePlugin && activePlugin instanceof Selection){
-                this.eBoardEngine.setActivePlugin(undefined);
-            }
             this.eBoardCanvas.selection=false;
             this.eBoardCanvas.skipTargetFind=true;
-            this.eBoardCanvas.off('mouse:up',this.upHandle);
-            this.eBoardCanvas.off('mouse:move',this.moveHandle);
         }
-        super.setEnable(enable);
+        return this;
     }
 }
 

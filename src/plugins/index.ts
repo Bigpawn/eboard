@@ -23,9 +23,10 @@ import {Polygon} from './shape/2D/polygon/Polygon';
 import {Star} from './shape/2D/polygon/Star';
 import {Pentagon} from './shape/2D/polygon/Pentagon';
 import {Hexagon} from './shape/2D/polygon/Hexagon';
+import {Clear} from './tool/clear/Clear';
 
-export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon,Star,Pentagon,Hexagon};
-export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon | Star | Pentagon | Hexagon;
+export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon,Star,Pentagon,Hexagon,Clear};
+export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon | Star | Pentagon | Hexagon | Clear;
 export enum Plugins{
     Cursor='Cursor',// 画笔
     Line='Line', // 直线
@@ -42,6 +43,7 @@ export enum Plugins{
     OrthogonalTriangle='OrthogonalTriangle',
     Polygon='Polygon',
     Star='Star',
-    Pentagon="Pentagon",
-    Hexagon="Hexagon"
+    Pentagon='Pentagon',
+    Hexagon='Hexagon',
+    Clear="Clear"
 }
