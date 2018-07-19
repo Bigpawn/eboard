@@ -27,7 +27,7 @@ class Polygon extends AbstractShapePlugin{
     private fill?:string="#28ff28";
     private stroke?:string="pink";
     private strokeDashArray?:any[];
-    private strokeWidth:number=3;
+    private strokeWidth:number=1;
     private circle:fabric.Circle;// 起始点磁贴效果
     protected onMouseDown(event:IEvent){
         // 关闭自动渲染
@@ -99,8 +99,8 @@ class Polygon extends AbstractShapePlugin{
                 left: this.start.x,
                 top: this.start.y,
                 stroke:"#ff8040",
-                strokeWidth:this.getCanvasPixel(3),
-                radius:this.getCanvasPixel(10),
+                strokeWidth:this.getCanvasPixel(1),
+                radius:this.getCanvasPixel(3),
             });
             this.eBoardCanvas.add(this.circle);
         }
