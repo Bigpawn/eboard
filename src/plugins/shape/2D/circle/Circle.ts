@@ -39,9 +39,11 @@ class Circle extends AbstractShapePlugin{
                 stroke:this.stroke,
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
-                radius:radius
+                radius:radius,
             });
             this.eBoardCanvas.add(this.instance);
+            console.log(this.instance);
+            console.log(this.eBoardCanvas.getObjects());
         }
     };
 }

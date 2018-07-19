@@ -1,1 +1,0 @@
-declare module 'Select';declare module 'react-select';
