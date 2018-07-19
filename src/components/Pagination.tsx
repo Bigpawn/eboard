@@ -4,6 +4,11 @@
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * * @Last Modified time: 2018/7/5 15:52
  * @disc：分页管理组件
+ * changelist:
+ *      * 支持总页数动态修改
+ *      * 支持当前页数动态修改
+ *      * 当当前显示页数发生改变时触发onPagerChange事件
+ *      * 支持翻页disabled判断
  */
 
 import * as React from "react";
@@ -14,18 +19,18 @@ import "../font/iconfont.css";
 
 
 export declare interface IPaginationProps{
-    defaultCurrentIndex:number;
+    pageNum:number;
     totalPages:number;
     onPagerChange:(index:number)=>void;
 }
 
 declare interface IPaginationState{
-    currentIndex:number;
+    input:number;// 缓存临时输入值
 }
 
 
 class Pagination extends React.PureComponent<IPaginationProps,IPaginationState>{
-    private currentIndex:number=1;
+    private pageNum:number=1;// 变量缓存启用的页面，进行差量比较，如果props发生改变则判断state是否有值，如果有值则使用state中的值
     constructor(props:IPaginationProps){
         super(props);
         this.onPageChange=this.onPageChange.bind(this);
@@ -35,62 +40,51 @@ class Pagination extends React.PureComponent<IPaginationProps,IPaginationState>{
         this.setCurrentIndex=this.setCurrentIndex.bind(this);
         this.prev=this.prev.bind(this);
         this.next=this.next.bind(this);
-        this.currentIndex=props.defaultCurrentIndex||1;
+        this.pageNum=props.pageNum||1;
         this.state={
-            currentIndex:props.defaultCurrentIndex||1
+            input:NaN,
         }
     }
     private onPageChange(){
-        const current = Number(this.currentIndex);
-        const next = Number(this.state.currentIndex);
-        if(current!==next){
-            this.props.onPagerChange(next);
-            this.currentIndex=next;
-        }
+        const current = Number(this.pageNum);
+        this.props.onPagerChange(current);
+        this.setState({
+            input:NaN
+        });
     }
     private onBlur(){
-        if(this.state.currentIndex){
+        if(!isNaN(this.state.input) && this.pageNum!==this.state.input){
+            this.pageNum = this.state.input;
             this.onPageChange();
-        }else{
-            // 0
-            this.setState({
-                currentIndex:1
-            },()=>{
-                this.onPageChange();
-            });
         }
     }
     private onChange(e:ChangeEvent<HTMLInputElement>){
         // 不能大于最大值，可以为空，不能为0
-        const value = Number(e.target.value);
-        if(value<0||value>this.props.totalPages||value===0&&e.target.value!==""){
-            return;
+        const value = Number(e.target.value);// maybe NaN
+        if(isNaN(value)||value<0||value>this.props.totalPages||value===0&&e.target.value!==""){
+            return; // 输入框禁用输入
         }
         this.setState({
-            currentIndex:value?value: NaN
+            input:value?value: NaN
         });
     }
     public setCurrentIndex(index:number){
+        this.pageNum = index;
         this.setState({
-            currentIndex:index
         })
     }
     private prev(){
-        if(this.state.currentIndex>1){
-            this.setState({
-                currentIndex:this.state.currentIndex-1
-            },()=>{
-                this.onPageChange();
-            })
+        if(this.pageNum>1){
+            this.pageNum-=1;
+            this.onPageChange();
+            this.setState({});// 更新UI显示
         }
     }
     private next(){
-        if(this.state.currentIndex<this.props.totalPages){
-            this.setState({
-                currentIndex:this.state.currentIndex+1
-            },()=>{
-                this.onPageChange();
-            })
+        if(this.pageNum<this.props.totalPages){
+            this.pageNum+=1;
+            this.onPageChange();
+            this.setState({});// 更新UI显示
         }
     }
     private onKeyUp(event:KeyboardEvent<HTMLInputElement>){
@@ -98,20 +92,36 @@ class Pagination extends React.PureComponent<IPaginationProps,IPaginationState>{
             this.onBlur();
         }
     }
+    public componentWillReceiveProps(nextProps:IPaginationProps){
+        // 如果属性发生变化
+        if(this.props.pageNum!==nextProps.pageNum){
+            this.pageNum=nextProps.pageNum;// 同步更新
+            this.onPageChange();
+        }
+    }
     render(){
-        return (
-            [
-                <div key="left" className="eboard-pagination-left" onClick={this.prev}>
-                    <i className="eboard-icon eboard-icon-prev"/>
-                </div>,
-                <div key="right" className="eboard-pagination-right" onClick={this.next}>
-                    <i className="eboard-icon eboard-icon-next"/>
-                </div>,
-                <div key="bottom" className="eboard-pagination-bottom">
-                    <input onKeyUp={this.onKeyUp} type="number" className="eboard-pagination-current" onBlur={this.onBlur} onChange={this.onChange} value={this.state.currentIndex}/>/<span className="eboard-pagination-total">{this.props.totalPages||0}</span>
-                </div>,
-            ]
-        )
+        const currentIndex = isNaN(this.state.input)?this.pageNum:this.state.input;
+        const totalCount = this.props.totalPages||0;
+        // 计算当前翻页是否可用
+        const canPrev = currentIndex>1;
+        const canNext = currentIndex<totalCount;
+        if(totalCount===0){
+            return null;
+        }else{
+            return (
+                [
+                    <div key="left" className={`eboard-pagination-left ${canPrev?"":"disabled"}`} onClick={this.prev}>
+                        <i className="eboard-icon eboard-icon-prev"/>
+                    </div>,
+                    <div key="right" className={`eboard-pagination-right ${canNext?"":"disabled"}`} onClick={this.next}>
+                        <i className="eboard-icon eboard-icon-next"/>
+                    </div>,
+                    <div key="bottom" className="eboard-pagination-bottom">
+                        <input onKeyUp={this.onKeyUp} type="number" className="eboard-pagination-current" onBlur={this.onBlur} onChange={this.onChange} value={currentIndex}/>/<span className="eboard-pagination-total">{totalCount}</span>
+                    </div>,
+                ]
+            )
+        }
     }
 }
 

@@ -4,13 +4,17 @@
  * @author:yanxinaliang
  * @time：2018/7/18 8:56
  */
-const webpack = require('webpack');
 module.exports=function(webpackConfig) {
-    // 支持iconfont字体库[`./examples/${file}`]
-    // webpackConfig.entry["vender"]="pdfjs-dist/build/pdf.worker.js";
+    // 修改svg loader
+    webpackConfig.module.rules.forEach((rule)=>{
+        if("svg-sprite"===rule.loader){
+            rule.test=/^(?!.*icon).*\.svg$/
+        }
+    });
+    
     webpackConfig.module.rules.unshift({
         test: /\S*icon\S*.(svg|eot|ttf|woff)$/,
-        loader: 'file',
+        use: { loader: 'file-loader'},
     });
     webpackConfig.module.rules.unshift({
         test:/\.worker\.js$/,
@@ -20,9 +24,6 @@ module.exports=function(webpackConfig) {
         test: /.pdf$/,
         use: { loader: 'file-loader',options: { name: 'examples/[hash].pdf',publicPath:"../"}}
     });
-/*    webpackConfig.plugins.push(new webpack.optimize.CommonsChunkPlugin({
-        name: 'vender',
-        filename: 'examples/test.js',
-    }));*/
+    console.log(webpackConfig.module.rules);
     return webpackConfig;
 };

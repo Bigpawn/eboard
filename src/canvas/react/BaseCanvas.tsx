@@ -2,7 +2,8 @@
  * @disc:fabric 占位canvas 采用常规显示器2倍缩放 ，范围[4000-4200]
  * @author:yanxinaliang
  * @time：2018/7/4 16:12
- * dimensions 学生端根据教师端设置，不能进行过度放大，放大会消耗CPU
+ * changelist:
+ *      * dimensions 学生端根据教师端设置，不能进行过度放大，放大会消耗CPU   2018/7/15
  */
 import * as React from "react";
 import "../../style/canvas.less";

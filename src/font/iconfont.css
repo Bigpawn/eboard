@@ -1,31 +1,45 @@
-
 @font-face {
-  font-family: 'eboard-icon';
-  src: url('iconfont.eot');
-  src: url('iconfont.eot?#iefix') format('embedded-opentype'),
-  url('iconfont.woff') format('woff'),
-  url('iconfont.ttf') format('truetype');
+    font-family: 'eboard-icon';
+    src: url('iconfont.eot');
+    src: url('iconfont.eot?#iefix') format('embedded-opentype'),
+    url('iconfont.woff') format('woff'),
+    url('iconfont.ttf') format('truetype'),
+    url('iconfont.svg?t=1531398306139#eboard-icon') format('svg');
 }
 
 .eboard-icon {
-  font-family:"eboard-icon" !important;
-  font-size:16px;
-  font-style:normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-family: "eboard-icon" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.eboard-icon-prev:before { content: "\e60b"; }
+.eboard-icon-prev:before {
+    content: "\e60b";
+}
 
-.eboard-icon-next:before { content: "\e60d"; }
+.eboard-icon-next:before {
+    content: "\e60d";
+}
 
-.eboard-icon-boder-color:before { content: "\e600"; }
+.eboard-icon-boder-color:before {
+    content: "\e600";
+}
 
-.eboard-icon-font-color:before { content: "\e6a2"; }
+.eboard-icon-font-color:before {
+    content: "\e6a2";
+}
 
-.eboard-icon-fill-color:before { content: "\e601"; }
+.eboard-icon-fill-color:before {
+    content: "\e601";
+}
 
-.eboard-icon-bold:before { content: "\e677"; }
+.eboard-icon-bold:before {
+    content: "\e677";
+}
 
-.eboard-icon-xieti:before { content: "\e6ed"; }
+.eboard-icon-xieti:before {
+    content: "\e6ed";
+}
 

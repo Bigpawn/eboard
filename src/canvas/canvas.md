@@ -3,7 +3,7 @@
 * canvas 显示大小受父元素影响，比例由父元素大小控制
 * canvas 画布大小根据比例进行计算，属于动态固定值，同一个比例的情况下值固定不变
 * HTMLCanvas 继承自BaseCanvas，实现HTML绘制框架
-* PDFCanvas 继承自HTMLCanvas，实现PDF框架
+* PDFCanvas 继承自HTMLCanvas，实现PDF单页框架 不可单独使用，在PagerCanvas中私有使用
 * ImageCanvas 继承自HTMLCanvas，实现图片播放框架
 * HTMLCanvas HTML内容高度最小为BaseCanvas高度，高度可以撑大，根据宽度进行缩放
 * HTMLCanvas 内容区域按照BaseCanvas 限制，其内部画布和Html区域单独控制，滚动条需要同步

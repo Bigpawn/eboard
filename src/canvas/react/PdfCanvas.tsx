@@ -12,6 +12,9 @@ import {HTMLCanvas, IHTMLCanvasProps} from './HTMLCanvas';
 export declare interface IPdfCanvasProps extends IHTMLCanvasProps{
 }
 
+/**
+ * 显示Pdf 一页内容的私有组建
+ */
 class PdfCanvas extends HTMLCanvas{
     public props:IPdfCanvasProps;
     render(){

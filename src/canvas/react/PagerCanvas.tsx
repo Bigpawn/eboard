@@ -249,9 +249,7 @@ class PagerCanvas extends React.Component<IPagerCanvasProps>{
                 {
                     filePath?<PdfCanvas ref={(ref:ImageCanvas)=>this.canvas=ref} {...props}/>:pageData.type===PageType.Image?<ImageCanvas ref={(ref:ImageCanvas)=>this.canvas=ref} {...props} src={pageData.data}/>:<HTMLCanvas ref={(ref:HTMLCanvas)=>this.canvas=ref} {...props} children={pageData.data}/>
                 }
-                {
-                    numPages>1?<Pagination ref={(ref:Pagination)=>this.Pagination=ref} onPagerChange={this.onPagerChange} defaultCurrentIndex={this.currentIndex} totalPages={numPages}/>:null
-                }
+                <Pagination ref={(ref:Pagination)=>this.Pagination=ref} onPagerChange={this.onPagerChange} pageNum={this.currentIndex} totalPages={numPages}/>
             </div>
         );
     }
