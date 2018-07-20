@@ -14,7 +14,6 @@ const PageLayout: React.StatelessComponent<{}> = () => {
             <Layout>
                 <Layout.Content>
                     <Header />
-                    <Redirect to="/pager" />
                     {renderRoutes(routes)}
                 </Layout.Content>
             </Layout>

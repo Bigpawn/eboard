@@ -12,32 +12,6 @@ const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 
 
 class MaterialUIPage extends HomePage{
-/*    componentDidMount(){
-        pdfjsLib.getDocument(require("./4.pdf")).then(pdf=>{
-            console.log(pdf);
-           pdf.getPage(1).then(page=>{
-               console.log(page);
-               // page.render()
-    
-               // 指定大小
-    
-    
-               var desiredWidth = 100;
-               var viewport1 = page.getViewport(1);
-               var scale = desiredWidth / viewport1.width;
-               const viewport = page.getViewport(scale);
-               const context = this.canvas.getContext('2d');
-               this.canvas.height = viewport.height;
-               this.canvas.width = viewport.width;
-                console.log(viewport);
-               const renderContext = {
-                   canvasContext: context,
-                   viewport: viewport
-               };
-               page.render(renderContext as any);
-           })
-        });
-    }*/
     public render() {
         return (
             <Card bordered title="PdfCanvas" style={{ margin: "16px 16px"}}>

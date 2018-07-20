@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Card } from "antd";
-import {BaseCanvas} from '../../src/canvas/react/BaseCanvas';
 import {
     Circle, Clear, Cursor, Ellipse, EquilateralTriangle, Hexagon,
     OrthogonalTriangle,
@@ -18,16 +17,19 @@ import {HTML} from '../../src/plugins';
 import {Text} from "../../src/plugins";
 import {Plugins} from '../../src/plugins';
 import {Pencil} from "../../src/plugins";
+import {EBoard, FrameType} from '../../src/EBoard';
+import {BaseFrame} from '../../src/frames/BaseFrame';
+import {IFrame} from '../../src/frames/IFrame';
 
 
 export class ToolBar extends React.Component{
-    private Canvas:BaseCanvas;
+    private Canvas:IFrame;
     constructor(props:any){
         super(props);
         this.setCursor=this.setCursor.bind(this);
         this.setCursorClose=this.setCursorClose.bind(this);
     }
-    public setCanvas(canvas:BaseCanvas){
+    public setCanvas(canvas:IFrame){
         this.Canvas=canvas;
     }
     private setCursor=()=>{
@@ -147,15 +149,25 @@ export class ToolBar extends React.Component{
 class HomePage extends React.Component<{}, {}> {
     protected Toolbar:ToolBar;
     protected canvas:any;
+    protected container:any;
     componentDidMount(){
-        this.Toolbar.setCanvas(this.canvas);
+        // this.Toolbar.setCanvas(this.canvas);
+        EBoard.createFrame({
+            container:this.container,
+            type:FrameType.Empty,
+            id:1,
+            messageId:2,
+            ratio:"16:9"
+        }).switchToFrame(1);
+        const frame = EBoard.findFrameById(1) as BaseFrame;
+        this.Toolbar.setCanvas(frame);
     }
     public render(): JSX.Element {
         return (
             <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
-                <div style={{position:"relative",height:document.body.offsetHeight-220}}>
-                    <BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>
+                <div ref={ref=>this.container=ref} id={"test"} style={{position:"relative",height:document.body.offsetHeight-220}}>
+                    {/*<BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>*/}
                 </div>
             </Card>
         );
