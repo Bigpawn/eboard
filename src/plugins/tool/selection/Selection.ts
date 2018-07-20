@@ -16,10 +16,8 @@ class Selection extends AbstractPlugin{
     private suspensionShell:any;
     constructor(canvas:EBoardCanvas,eboardEngine:EBoardEngine){
         super(canvas,eboardEngine);
-        this.upHandle.bind(this);
-        this.moveHandle.bind(this);
     }
-    public upHandle=(o:any)=>{
+    public onMouseUp(o:any){
         if(this.eBoardCanvas.getActiveObject()) {
             if(!this.suspensionShell) {
                 this.suspensionShell = new SuspensionShell(this.eBoardCanvas.getActiveObject(),this.eBoardCanvas);
@@ -34,7 +32,7 @@ class Selection extends AbstractPlugin{
         }
     };
 
-    private moveHandle=(o:any)=>{
+    public onMouseMove(o:any){
         if(this.eBoardCanvas.getActiveObject()) {
             if(!this.suspensionShell) {
                 this.suspensionShell = new SuspensionShell(this.eBoardCanvas.getActiveObject(),this.eBoardCanvas);
