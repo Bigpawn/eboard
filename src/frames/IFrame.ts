@@ -20,13 +20,15 @@ export declare interface IFrame{
     src?:string;// ImageFrame 拥有属性
     canvas?:HTMLCanvasElement;// CanvasImage 私有属性
     getPlugin(pluginName:string):AbstractPlugin|undefined;
+    destroy():void;
 }
 
 
 export declare interface IFrameOptions{
     container:HTMLDivElement;
-    id:number;
-    messageId:number;
+    id:number;// frame的id
+    messageId:number;// frame 创建的消息Id
+    childMessageId?:number;// childFrame 创建的messageId
     ratio?:string;
     scrollbar?:ScrollbarType;
     htmlFragment?:string;

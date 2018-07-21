@@ -95,6 +95,12 @@ class BaseFrame implements IFrame{
     public getPlugin(pluginName:string){
         return this.engine.getPlugin(pluginName);
     }
+    public destroy(){
+        if(this.dom&&this.dom.parentElement){
+            this.dom.parentElement.removeChild(this.dom);
+        }
+        this.engin.eBoardCanvas.clear();
+    }
 }
 
 export {BaseFrame};

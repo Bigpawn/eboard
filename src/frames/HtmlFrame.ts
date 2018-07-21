@@ -11,6 +11,7 @@ import PerfectScrollbar from 'perfect-scrollbar';
 import {IFrameOptions} from './IFrame';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import "../style/scrollbar.less";
+import {isNullOrUndefined} from "util";
 
 export enum ScrollbarType{
     horizontal,
@@ -109,6 +110,13 @@ class HtmlFrame extends BaseFrame{
         this.htmlWrap.innerHTML=htmlFragment;
         if(this.scrollbar){
             this.scrollbar.update();
+        }
+    }
+    public destroy(){
+        super.destroy();
+        if(this.scrollbar){
+            this.scrollbar.destroy();
+            this.scrollbar=undefined as PerfectScrollbar;
         }
     }
 }
