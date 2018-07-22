@@ -21,6 +21,7 @@ export declare interface IFrame{
     canvas?:HTMLCanvasElement;// CanvasImage 私有属性
     getPlugin(pluginName:string):AbstractPlugin|undefined;
     destroy():void;
+    switchToFrame?(childId:number):this;// 切换到子frame
 }
 
 

@@ -15,9 +15,10 @@ import {BaseFrame} from './frames/BaseFrame';
 import {HtmlFrame} from './frames/HtmlFrame';
 import {ImageFrame} from './frames/ImageFrame';
 import {CanvasFrame} from './frames/CanvasFrame';
+import {PdfFrame} from "./frames/PdfFrame";
 
 export enum FrameType{
-    Empty,Pager,Image,HTML,Canvas // 目前只存在两种模式，一个是空的白板，一个是带翻页的白板，扩展支持一个图片或者一段Html的白板类型
+    Empty,Pager,Image,HTML,Canvas,Pdf // 目前只存在两种模式，一个是空的白板，一个是带翻页的白板，扩展支持一个图片或者一段Html的白板类型
 }
 
 
@@ -50,6 +51,9 @@ class EBoard{
             case FrameType.Canvas:
                 frame = new CanvasFrame(options);
                 break;
+            case FrameType.Pdf:
+                frame = new PdfFrame(options);
+                break;
             case FrameType.Empty:
             default:
                 frame = new BaseFrame(options);
@@ -62,7 +66,7 @@ class EBoard{
     /**
      * 切换到需要显示的frame 需要改frame存在，如果不存在则不执行任何操作
      * @param {number} id
-     * @returns {this}
+     * @returns {IFrame | undefined}
      */
     public static switchToFrame(id:number){
         if(id === this.activeFrame||!this.hasFrame(id)){
@@ -77,15 +81,15 @@ class EBoard{
         this.activeFrame = id;
         const activeFrame = this.findFrameById(id);
         if(activeFrame&&activeFrame.dom){
-            activeFrame.container.appendChild(activeFrame.dom);
+            activeFrame.container.appendChild(activeFrame.dom);// 如果是子frame则存在问题
         }
-        return this;
+        return activeFrame;
     }
     
     /**
      * 根据id获取frame实例
      * @param {number} id
-     * @returns {Frame | undefined}
+     * @returns {IFrame | undefined}
      */
     public static findFrameById(id:number){
         return this.frames.get(id);
