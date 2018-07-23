@@ -13,12 +13,16 @@
  *          Tab === Frame 项目中引入Frame概念，Frame支持类型字段，类型包括
  *
  */
+import {MessageIdMiddleWare} from './MessageIdMiddleWare';
+import * as LZString from "lz-string";
 
 export declare interface IMessage{
-    id?:number;// 消息的id，内部抛出的消息不包含该字段，该字段在中间件中自动生成
-    
+
 }
 
+export declare interface IReceiveMessage extends IMessage{
+    id:number;
+}
 
 class MessageMiddleWare{
     private static compress:boolean=true;
@@ -33,9 +37,16 @@ class MessageMiddleWare{
     
     /**
      * 内部调用该方法向外部发送消息
+     * @param {IMessage} message
+     * @returns {number}
      */
     static sendMessage(message:IMessage){
-    
+        // 自动生成id并返回id
+        const id = MessageIdMiddleWare.getId();
+        const outMessage = Object.assign({},message,{id:id});
+        // 发送该消息
+        this.messageListener&&this.messageListener.call(this,this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage));
+        return id;
     }
 }
 
