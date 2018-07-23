@@ -15,8 +15,8 @@ const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 class MaterialUIPage extends HomePage{
     componentDidMount(){
         // this.Toolbar.setCanvas(this.canvas);
-        EBoard.createFrame({
-            container:this.container,
+        EBoard.clearCache().createFrame({
+            container:document.getElementById("eboardContainer") as HTMLDivElement,
             type:FrameType.Pdf,
             id:6,
             childMessageId:7,
@@ -32,7 +32,7 @@ class MaterialUIPage extends HomePage{
         return (
             <Card bordered title="PdfCanvas" style={{ margin: "16px 16px"}}>
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
-                <div ref={ref=>this.container=ref} style={{position:"relative",height:document.body.offsetHeight-220}}/>
+                <div id={"eboardContainer"} ref={ref=>this.container=ref} style={{position:"relative",height:document.body.offsetHeight-220}}/>
             </Card>
         );
     }

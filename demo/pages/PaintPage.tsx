@@ -11,8 +11,8 @@ class PaintPage extends HomePage{
         for (let i=0;i<114;i++){
             dataSet.push(i+".png");
         }
-        EBoard.createFrame({
-            container:this.container,
+        EBoard.clearCache().createFrame({
+            container:document.getElementById("eboardContainer") as HTMLDivElement,
             type:FrameType.Images,
             id:9,
             childMessageId:7,
@@ -29,7 +29,7 @@ class PaintPage extends HomePage{
         return (
             <Card bordered title="PagerCanvas" style={{ margin: "16px 16px"}}>
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
-                <div ref={ref=>this.container=ref} style={{position:"relative",height:document.body.offsetHeight-220}}/>
+                <div id={"eboardContainer"} ref={ref=>this.container=ref} style={{position:"relative",height:document.body.offsetHeight-220}}/>
             </Card>
         )
     }

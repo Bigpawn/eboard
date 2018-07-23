@@ -152,8 +152,8 @@ class HomePage extends React.Component<{}, {}> {
     protected container:any;
     componentDidMount(){
         // this.Toolbar.setCanvas(this.canvas);
-        EBoard.createFrame({
-            container:this.container,
+        EBoard.clearCache().createFrame({
+            container:document.getElementById("eboardContainer") as HTMLDivElement,
             type:FrameType.Empty,
             id:1,
             messageId:2,
@@ -166,7 +166,7 @@ class HomePage extends React.Component<{}, {}> {
         return (
             <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
-                <div ref={ref=>this.container=ref} id={"test"} style={{position:"relative",height:document.body.offsetHeight-220}}>
+                <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220}}>
                     {/*<BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>*/}
                 </div>
             </Card>

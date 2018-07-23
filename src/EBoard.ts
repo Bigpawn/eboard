@@ -41,7 +41,7 @@ class EBoard{
      */
     public static createFrame(options:ICFrameOptions){
         if(this.hasFrame(options.id)){
-            return this;
+            return this;// 如果已经存在
         }
         let frame:IFrame;
         switch (options.type){
@@ -108,6 +108,20 @@ class EBoard{
      */
     public static hasFrame(id:number){
         return this.frames.has(id);
+    }
+    
+    /**
+     * 清空缓存
+     * @returns {this}
+     */
+    public static clearCache(){
+        if(this.frames.size>0){
+            this.frames.forEach(frame=>{
+                frame.destroy();
+            });
+            this.frames.clear();
+        }
+        return this;
     }
 }
 
