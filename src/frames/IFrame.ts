@@ -21,7 +21,7 @@ export declare interface IFrame{
     canvas?:HTMLCanvasElement;// CanvasImage 私有属性
     getPlugin(pluginName:string):AbstractPlugin|undefined;
     destroy():void;
-    switchToFrame?(childId:number):this;// 切换到子frame
+    switchToFrame?(childId:number,messageId:number):this|Promise<this>;// 切换到子frame
 }
 
 
@@ -36,4 +36,8 @@ export declare interface IFrameOptions{
     src?:string;// ImageFrame 拥有属性
     url?:string;// PdfFrame 私有属性，表示文档地址
     pageNum?:number;// PdfFrame 私有属性，表示当前显示
+    
+    // imagesFrame 私有属性
+    urlPrefix?:string;
+    images?:string[];
 }

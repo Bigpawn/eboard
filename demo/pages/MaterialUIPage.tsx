@@ -1,12 +1,9 @@
 import * as React from 'react';
 // import * as PropTypes from 'prop-types';
 import {ToolBar} from './HomePage';
-import {PagerCanvas} from '../../src/canvas/react/PagerCanvas';
 import Card from 'antd/es/card';
 import HomePage from './HomePage';
 import {EBoard, FrameType} from "../../src/EBoard";
-import {BaseFrame} from "../../src/frames/BaseFrame";
-import {PagerFrame} from "../../src/frames/PagerFrame";
 import {PdfFrame} from "../../src/frames/PdfFrame";
 /*
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
@@ -26,8 +23,8 @@ class MaterialUIPage extends HomePage{
             messageId:6,
             ratio:"16:9",
             url:require("./4.pdf"),
-            pageNo:1,
-        }).switchToFrame(6).switchToFrame();
+            pageNum:1,
+        }).switchToFrame(6);
         const frame = EBoard.findFrameById(6) as PdfFrame;
         this.Toolbar.setCanvas(frame);
     }

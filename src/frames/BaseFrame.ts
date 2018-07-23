@@ -99,7 +99,7 @@ class BaseFrame implements IFrame{
         if(this.dom&&this.dom.parentElement){
             this.dom.parentElement.removeChild(this.dom);
         }
-        this.engin.eBoardCanvas.clear();
+        this.engine.eBoardCanvas.clear();
     }
 }
 

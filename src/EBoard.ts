@@ -16,9 +16,12 @@ import {HtmlFrame} from './frames/HtmlFrame';
 import {ImageFrame} from './frames/ImageFrame';
 import {CanvasFrame} from './frames/CanvasFrame';
 import {PdfFrame} from "./frames/PdfFrame";
+import {ImagesFrame} from './frames/ImagesFrame';
+
+import "./style/canvas.less";
 
 export enum FrameType{
-    Empty,Pager,Image,HTML,Canvas,Pdf // 目前只存在两种模式，一个是空的白板，一个是带翻页的白板，扩展支持一个图片或者一段Html的白板类型
+    Empty,Image,HTML,Canvas,Pdf,Images // 目前只存在两种模式，一个是空的白板，一个是带翻页的白板，扩展支持一个图片或者一段Html的白板类型
 }
 
 
@@ -53,6 +56,9 @@ class EBoard{
                 break;
             case FrameType.Pdf:
                 frame = new PdfFrame(options);
+                break;
+            case FrameType.Images:
+                frame = new ImagesFrame(options);
                 break;
             case FrameType.Empty:
             default:
