@@ -4,6 +4,7 @@ import HomePage, {ToolBar} from './HomePage';
 import {PagerCanvas, PageType} from '../../src/canvas/react/PagerCanvas';
 
 class PaintPage extends HomePage{
+
     public render(): JSX.Element {
         const dataSet=[];
         for (let i=0;i<114;i++){
