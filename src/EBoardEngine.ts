@@ -4,15 +4,16 @@
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * * @Last Modified time: 2018/7/10 10:52
  * @disc:EBoard engine ： 基于EboardCanvas进行部分功能封装，例如Undo/Redo,
- * 提供插件关联入口
+ * 1. 添加消息拦截器，拦截器自动检测是否有上层Frame，如果有则向上抛i，如果没有则直接输出,拦截器配置全部拦截还是优化拦截，全部拦截，子项所有操作都会进行消息传递，优化拦截子项传递关键操作
  */
 import {EBoardCanvas} from './EBoardCanvas';
 import {ICanvasOptions} from '~fabric/fabric-impl';
-import {mixinPlugins} from './utils/decorators';
+import {mixinPlugins, registerMessageInterceptor} from './utils/decorators';
 
 
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins, Plugins} from './plugins';
+import {MessageHandlerInterceptorAdapter} from './interceptor/MessageHandlerInterceptorAdapter';
 
 
 declare interface IPlugin{
@@ -22,28 +23,29 @@ declare interface IPlugin{
 
 
 @mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear])
+@registerMessageInterceptor(MessageHandlerInterceptorAdapter)
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
     private pluginList:IPlugin[];
     public pluginInstanceMap=new Map<string,IPlugins>();
     private bgColor:string="rgba(0,0,0,1)";// 带透明度
     private pixelRatio:number=1;
-    public getDefaultColor(){
-        return this.bgColor;
-    }
     private activePlugin?:AbstractPlugin;
-    public getActivePlugin(){
-        return this.activePlugin;
-    }
-    public setActivePlugin(plugin?:AbstractPlugin){
-        this.activePlugin=plugin;
-    }
     constructor(element: HTMLCanvasElement | string, options?: ICanvasOptions){
         this.eBoardCanvas = new EBoardCanvas(element,options);
         // plugins 实例化
         this.pluginList.forEach((plugin)=>{
             this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
         });
+    }
+    public setActivePlugin(plugin?:AbstractPlugin){
+        this.activePlugin=plugin;
+    }
+    public getActivePlugin(){
+        return this.activePlugin;
+    }
+    public getDefaultColor(){
+        return this.bgColor;
     }
     public getPlugin(pluginName:string){
         return this.pluginInstanceMap.get(pluginName);
