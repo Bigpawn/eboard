@@ -8,8 +8,8 @@ import {ScrollbarType} from '../../src/frames/HtmlFrame';
 class HTMLPage extends HomePage{
     componentDidMount(){
         // this.Toolbar.setCanvas(this.canvas);
-        EBoard.createFrame({
-            container:this.container,
+        EBoard.clearCache().createFrame({
+            container:document.getElementById("eboardContainer") as HTMLDivElement,
             type:FrameType.HTML,
             id:2,
             messageId:3,
@@ -115,7 +115,7 @@ class HTMLPage extends HomePage{
         return (
             <Card bordered title="HTML Canvas" style={{ margin: "16px 16px"}}>
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
-                <div ref={ref=>this.container=ref} style={{position:"relative",height:document.body.offsetHeight-220}}/>
+                <div id={"eboardContainer"} ref={ref=>this.container=ref} style={{position:"relative",height:document.body.offsetHeight-220}}/>
             </Card>
         )
     }

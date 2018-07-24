@@ -21,20 +21,28 @@ class Pagination{
     private prev:HTMLDivElement;
     private next:HTMLDivElement;
     private input:HTMLInputElement;
+    private onGoListener:(pageNum:number,messageId:number)=>void;
     constructor(pageNum:number,totalPages:number){
         this.pageNum=pageNum;
         this.totalPages=totalPages;
         this.onPrev=this.onPrev.bind(this);
         this.onNext=this.onNext.bind(this);
+        this.onKeyEnter=this.onKeyEnter.bind(this);
         this.initLayout();
         this.setPageNum(pageNum);
         this.setTotalPages(totalPages);
     }
     private onPrev(){
-        alert("prev");
+        if(this.onGoListener){
+            // TODO 需要调用Api生成消息Id
+            this.onGoListener.call(this,this.pageNum-1,10);
+        }
     }
     private onNext(){
-        alert("next");
+        if(this.onGoListener){
+            // TODO 需要调用Api生成消息Id
+            this.onGoListener.call(this,this.pageNum+1,10);
+        }
     }
     private initLayout(){
         const wrap = document.createElement("div");
@@ -51,6 +59,7 @@ class Pagination{
         const input = document.createElement("input");
         input.type="number";
         input.className="eboard-pagination-current";
+        input.addEventListener("keydown",this.onKeyEnter);
         this.input=input;
         const span = document.createElement("span");
         span.className="eboard-pagination-total";
@@ -62,6 +71,27 @@ class Pagination{
         wrap.appendChild(next);
         wrap.appendChild(bottom);
         this.dom=wrap;
+    }
+    private todoChange(){
+        const value = this.input.value;
+        const number =Number(value);
+        if("" === value || number<1 || number>this.totalPages){
+            this.input.value=this.pageNum as any;
+        }else{
+            this.pageNum = number;
+            if(this.onGoListener){
+                // TODO 需要调用Api生成消息Id
+                this.onGoListener.call(this,number,10);
+            }
+        }
+    }
+    
+    private onKeyEnter(event:any){
+        if(event.keyCode === 13){
+            // 回车
+            this.todoChange();
+            this.input.blur();// 自动失去焦点
+        }
     }
 
     /**
@@ -93,7 +123,7 @@ class Pagination{
      */
     public setPageNum(pageNum:number){
         this.pageNum=pageNum;
-        this.input.value=pageNum;
+        this.input.value=pageNum as any;
         this.initPagerAction();
         return this;
     }
@@ -105,7 +135,7 @@ class Pagination{
      */
     public setTotalPages(totalPages:number){
         this.totalPages=totalPages;
-        this.span.innerText=totalPages;
+        this.span.innerText=totalPages as any;
         if(totalPages>0){
             this.dom.style.display="block";
         }else{
@@ -113,6 +143,14 @@ class Pagination{
         }
         this.initPagerAction();
         return this;
+    }
+    
+    /**
+     * 翻页事件监听
+     * @param {(pageNum: number, messageId: number) => void} onGoListener
+     */
+    public addGoListener(onGoListener:(pageNum:number,messageId:number)=>void){
+        this.onGoListener=onGoListener;
     }
 }
 
