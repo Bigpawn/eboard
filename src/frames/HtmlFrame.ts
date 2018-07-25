@@ -8,7 +8,7 @@
 import {BaseFrame} from './BaseFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import PerfectScrollbar from 'perfect-scrollbar';
-import {IFrameOptions} from './IFrame';
+import {IHTMLFrame, IHTMLFrameOptions, IImageFrameOptions} from './IFrame';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import "../style/scrollbar.less";
 
@@ -21,15 +21,15 @@ export enum ScrollbarType{
 
 
 
-class HtmlFrame extends BaseFrame{
+class HtmlFrame extends BaseFrame implements IHTMLFrame{
     private supportScrollbar:ScrollbarType=ScrollbarType.none;
     private scrollbar:PerfectScrollbar;
-    private htmlFragment:string;
+    private htmlFragment:string|HTMLElement;
     private htmlWrap:HTMLDivElement;
-    protected initialize(options:IFrameOptions){
+    protected initialize(options:IHTMLFrameOptions|IImageFrameOptions){
         super.initialize(options);
         this.supportScrollbar=options.scrollbar||ScrollbarType.none;
-        this.htmlFragment=options.htmlFragment||"";
+        this.htmlFragment=options["htmlFragment"]||"";
     }
     protected getChildren():string|HTMLElement{
         return this.htmlFragment;

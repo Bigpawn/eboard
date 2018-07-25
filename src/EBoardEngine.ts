@@ -14,6 +14,7 @@ import {mixinPlugins, registerMessageInterceptor} from './utils/decorators';
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins, Plugins} from './plugins';
 import {MessageHandlerInterceptorAdapter} from './interceptor/MessageHandlerInterceptorAdapter';
+import {IFrame} from './frames/IFrame';
 
 
 declare interface IPlugin{
@@ -22,7 +23,7 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear])
+@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear,Plugins.Arrow])
 @registerMessageInterceptor(MessageHandlerInterceptorAdapter)
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
@@ -31,8 +32,10 @@ class EBoardEngine{
     private bgColor:string="rgba(0,0,0,1)";// 带透明度
     private pixelRatio:number=1;
     private activePlugin?:AbstractPlugin;
-    constructor(element: HTMLCanvasElement | string, options?: ICanvasOptions){
+    protected parentFrame?:IFrame;
+    constructor(element: HTMLCanvasElement | string, options?: ICanvasOptions,frame?:IFrame){
         this.eBoardCanvas = new EBoardCanvas(element,options);
+        this.parentFrame=frame;
         // plugins 实例化
         this.pluginList.forEach((plugin)=>{
             this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this));// 该参数统一传递,插件构造函数统一入参EBoardCanvas

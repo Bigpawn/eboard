@@ -5,21 +5,26 @@
  * * @Last Modified time: 2018/7/20 16:52
  * @disc:Pdf 演示Frame 属于复合Frame ,器内部有多个Frame组成
  */
-import {IFrame, IFrameOptions} from './IFrame';
 import {PDFDocumentProxy, PDFJSStatic, PDFPromise, PDFRenderParams} from 'pdfjs-dist';
 import {CanvasFrame} from './CanvasFrame';
 import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
 import {pipMode, setAnimationName} from '../utils/decorators';
+import {IPdfFrame, IPdfFrameOptions} from './IFrameGroup';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
 
 
 @setAnimationName('eboard-pager')
-class PdfFrame implements IFrame{
+class PdfFrame implements IPdfFrame{
+    private pageFrame:CanvasFrame;
+    private pagination:Pagination;
+    private pdf:PDFPromise<PDFDocumentProxy>;
+    private animationCssPrefix:string;
+    public group:true=true;
     public container:HTMLDivElement;
-    public id:number;
+    public type:string;
     public messageId:number;
     public ratio:string;
     public dom:HTMLDivElement;
@@ -27,15 +32,11 @@ class PdfFrame implements IFrame{
     public pageNum:number;
     public totalPages:number;
     public child:Map<number,CanvasFrame>=new Map();
-    private pdf:PDFPromise<PDFDocumentProxy>;
-    private options:IFrameOptions;
-    private pageFrame:CanvasFrame;
-    private pagination:Pagination;
-    private animationCssPrefix:string;
-    constructor(options:IFrameOptions){
+    public options:IPdfFrameOptions;
+    constructor(options:IPdfFrameOptions,container:HTMLDivElement){
         this.options=options;
-        this.container=options.container;
-        this.id=options.id;
+        this.container=container;
+        this.type=options.type;
         this.messageId=options.messageId;
         this.ratio=options.ratio||"4:3";
         this.onGo=this.onGo.bind(this);
@@ -77,12 +78,11 @@ class PdfFrame implements IFrame{
                 this.setTotalPages(pdf.numPages);
             });
             const pageFrame = new CanvasFrame({
-                container:options.container,
-                id:this.pageNum,
-                messageId:options.childMessageId as number,
+                type:this.pageNum+"",
+                messageId:options.messageId,
                 ratio:options.ratio,
                 scrollbar:ScrollbarType.vertical,
-            });
+            },this.container);
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
             this.dom.appendChild(this.pageFrame.dom);
@@ -167,12 +167,11 @@ class PdfFrame implements IFrame{
         if(void 0 === nextPageFrame){
             // 创建
             nextPageFrame = new CanvasFrame({
-                container:this.options.container,
-                id:pageNum,
+                type:pageNum+"",
                 messageId:messageId,
                 ratio:this.options.ratio,
                 scrollbar:ScrollbarType.vertical,
-            });
+            },this.container);
             this.child.set(pageNum,nextPageFrame);
             // 需要getPage
             this.pdf.then(pdf=>{

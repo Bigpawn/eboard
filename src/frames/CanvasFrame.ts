@@ -7,8 +7,12 @@
  */
 
 import {HtmlFrame} from './HtmlFrame';
-class CanvasFrame extends HtmlFrame{
+import {ICanvasFrame, ICanvasFrameOptions} from './IFrame';
+class CanvasFrame extends HtmlFrame implements ICanvasFrame{
     public canvas:HTMLCanvasElement;
+    constructor(options:ICanvasFrameOptions,container:HTMLDivElement){
+        super(options,container);
+    }
     protected getChildren(){
         const canvas = document.createElement("canvas");
         canvas.style.width="100%";

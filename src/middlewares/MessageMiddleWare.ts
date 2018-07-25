@@ -15,9 +15,25 @@
  */
 import {MessageIdMiddleWare} from './MessageIdMiddleWare';
 import * as LZString from "lz-string";
+import {IFrameOptions} from '../frames/IFrame';
+
+export enum MessageTagEnum{
+    Start,Temporary,Process,End,Action
+}
+
 
 export declare interface IMessage{
-
+    tag:MessageTagEnum;
+    messageId?:number;
+    point?:{x:number;y:number};
+    radius?:number;
+    type:string;// 实例类型及Id组合
+    frameOptions?:IFrameOptions,// frame 创建属性
+    frameGroupOptions?:IFrameOptions// frame组创建属性
+    rx?:number;
+    ry?:number;
+    start?:{x:number;y:number};
+    end?:{x:number;y:number};
 }
 
 export declare interface IReceiveMessage extends IMessage{
@@ -43,7 +59,8 @@ class MessageMiddleWare{
     static sendMessage(message:IMessage){
         // 自动生成id并返回id
         const id = MessageIdMiddleWare.getId();
-        const outMessage = Object.assign({},message,{id:id});
+        const outMessage = Object.assign({},message,{messageId:id});
+        console.log(outMessage);
         // 发送该消息
         this.messageListener&&this.messageListener.call(this,this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage));
         return id;
