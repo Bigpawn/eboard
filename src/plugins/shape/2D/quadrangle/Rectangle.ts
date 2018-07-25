@@ -6,42 +6,24 @@
  * @disc:矩形Plugin  还可以使用Path实现   flipX flipY 不起作用，使用动态计算left top实现四象限
  */
 
-// path 实现矩形绘制
-/*var path =
-    "M " +
-    mouseFrom.x +
-    " " +
-    mouseFrom.y +
-    " L " +
-    mouseTo.x +
-    " " +
-    mouseFrom.y +
-    " L " +
-    mouseTo.x +
-    " " +
-    mouseTo.y +
-    " L " +
-    mouseFrom.x +
-    " " +
-    mouseTo.y +
-    " L " +
-    mouseFrom.x +
-    " " +
-    mouseFrom.y +
-    " z";
-canvasObject = new fabric.Path(path, {
-    left: left,
-    top: top,
-    stroke: color,
-    strokeWidth: drawWidth,
-    fill: "rgba(255, 255, 255, 0)"
-});*/
 import {EBoardCanvas} from '../../../../EBoardCanvas';
 import {fabric} from "fabric";
 import {EBoardEngine} from '../../../../EBoardEngine';
 import {ctrlKeyEnable} from '../../../../utils/decorators';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
+import {
+    IMessage,
+    MessageTagEnum,
+} from '../../../../middlewares/MessageMiddleWare';
+import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
+
+export declare interface IRectangleMessage extends IMessage{
+    start:{x:number;y:number};
+    width:number;
+    height:number;
+}
+
 
 @ctrlKeyEnable(true)
 class Rectangle extends AbstractShapePlugin{
@@ -52,8 +34,24 @@ class Rectangle extends AbstractShapePlugin{
     private strokeWidth:number=1;
     protected ctrlKeyEnable:boolean;
     protected ctrlKey:boolean=false;
+    private type="rectangle";
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
+    }
+    private newInstance(start:{x:number;y:number},width:number,height:number,type?:string){
+        const instance = new fabric.Rect({
+            type:type||`${this.type}_${Date.now()}`,
+            fill:this.fill,
+            left: start.x,
+            top: start.y,
+            stroke:this.stroke,
+            strokeDashArray:this.strokeDashArray,
+            width:width,
+            height:height,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth)
+        });
+        this.eBoardCanvas.add(instance);
+        return instance;
     }
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
@@ -129,18 +127,10 @@ class Rectangle extends AbstractShapePlugin{
                 top: startPoint.y,
             }).setCoords();
             this.eBoardCanvas.renderAll();
+            this.throw(MessageTagEnum.Temporary);
         }else{
-            this.instance=new fabric.Rect({
-                fill:this.fill,
-                left: this.start.x,
-                top: this.start.y,
-                stroke:this.stroke,
-                strokeDashArray:this.strokeDashArray,
-                width:this.ctrlKey?length:width,
-                height:this.ctrlKey?length:height,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth)
-            });
-            this.eBoardCanvas.add(this.instance);
+            this.instance=this.newInstance(this.start,this.ctrlKey?length:width,this.ctrlKey?length:height);
+            this.throw(MessageTagEnum.Start);
         }
     };
     protected ctrlKeyDownHandler(e:KeyboardEvent){
@@ -151,10 +141,14 @@ class Rectangle extends AbstractShapePlugin{
             if(void 0 === this.start || void 0 === this.instance){
                 return;
             }
+      
             const width=Math.abs(this.end.x-this.start.x);
             const height=Math.abs(this.end.y-this.start.y);
             const length = Math.min(width,height);
             const startPoint = this.getCtrlStartPoint(length);
+            if(width===this.instance.width&&height===this.instance.height&&startPoint.x===this.instance.left&&startPoint.y===this.instance.top){
+                return;
+            }
             this.instance.set({
                 width:length,
                 height:length,
@@ -162,6 +156,7 @@ class Rectangle extends AbstractShapePlugin{
                 top:startPoint.y
             }).setCoords();
             this.eBoardCanvas.renderAll();
+            this.throw(MessageTagEnum.Temporary);
         }
     }
     protected ctrlKeyUpHandler(e:KeyboardEvent){
@@ -182,6 +177,67 @@ class Rectangle extends AbstractShapePlugin{
                 top:startPoint.y
             }).setCoords();
             this.eBoardCanvas.renderAll();
+            this.throw(MessageTagEnum.Temporary);
+        }
+    }
+    protected onMouseUp(event:IEvent){
+        this.throw(MessageTagEnum.End);
+        super.onMouseUp(event);
+    }
+    private throw(tag:MessageTagEnum){
+        // 需要生成一个消息的id 及实例的id
+        if(void 0 === this.instance){
+            return;
+        }
+        super.throwMessage({
+            type:this.instance.type as string,
+            messageId:MessageIdMiddleWare.getId(),
+            tag:tag,
+            start:{x:this.instance.left as number,y:this.instance.top as number},
+            width:this.instance.width,
+            height:this.instance.height,
+        });
+    }
+    /**
+     * 通过id获取实例
+     * @param {number} id
+     * @returns {"~fabric/fabric-impl".Circle | undefined}
+     */
+    private getInstanceById(type:string){
+        return this.eBoardCanvas.getObjects(type)[0];
+    }
+    
+    /**
+     * 接收消息处理
+     * @param {ICircleMessage} message
+     */
+    public onMessage(message:IRectangleMessage){
+        const {type,start,width,height,tag} = message;
+        let instance = this.getInstanceById(type) as fabric.Rect;
+        switch (tag){
+            case MessageTagEnum.Start:
+                if(void 0 === instance){
+                    instance=this.newInstance(start,width,height,type);
+                }
+                break;
+            case MessageTagEnum.Temporary:
+            case MessageTagEnum.End:
+                // 如果有则更新，否则创建
+                this.eBoardCanvas.renderOnAddRemove=false;
+                if(void 0 === instance){
+                    instance=this.newInstance(start,width,height,type);
+                }
+                instance.set({
+                    width:width,
+                    height:height,
+                    left:start.x,
+                    top:start.y
+                }).setCoords();
+                this.eBoardCanvas.renderAll();
+                this.eBoardCanvas.renderOnAddRemove=true;
+                break;
+            default:
+                break;
         }
     }
 }
