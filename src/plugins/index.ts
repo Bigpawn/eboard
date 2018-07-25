@@ -24,7 +24,6 @@ import {Star} from './shape/2D/polygon/Star';
 import {Pentagon} from './shape/2D/polygon/Pentagon';
 import {Hexagon} from './shape/2D/polygon/Hexagon';
 import {Clear} from './tool/clear/Clear';
-import {ArrowLine} from './shape/2D/line/ArrowLine';
 import {Arrow} from './shape/2D/arrow/Arrow';
 
 export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon,Star,Pentagon,Hexagon,Clear,Arrow};

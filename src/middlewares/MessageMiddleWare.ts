@@ -34,6 +34,8 @@ export declare interface IMessage{
     ry?:number;
     start?:{x:number;y:number};
     end?:{x:number;y:number};
+    length?:number;
+    angle?:number
 }
 
 export declare interface IReceiveMessage extends IMessage{
