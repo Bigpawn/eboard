@@ -144,9 +144,8 @@ abstract class AbstractPlugin {
      */
     public throwMessage(message:IMessage){
         // 需要添加实例id，消息id
-        if("messageHandle" in this.eBoardEngine){
-            // 向上传递消息
-            this.eBoardEngine["messageHandle"](message);
+        if(void 0!== this.eBoardEngine.messageHandle){
+            this.eBoardEngine.messageHandle.call(this.eBoardEngine,message);
         }else{
             MessageMiddleWare.sendMessage(message);
         }

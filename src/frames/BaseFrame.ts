@@ -28,7 +28,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
         this.parent=parent;
         if(parent){
             this.handleAll=parent["handleAll"];
-            this.messageHandle=parent["messageHandle"].bind(this);
+            this.messageHandle=parent["messageHandle"];
         }
         this.initialize(options);
         this.fixContainer();
