@@ -24,6 +24,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { fabric } from "fabric";
 import { AbstractShapePlugin, Quadrant } from '../../AbstractShapePlugin';
 import { ctrlKeyEnable } from '../../../../utils/decorators';
+import { MessageTagEnum, } from '../../../../middlewares/MessageMiddleWare';
+import { MessageIdMiddleWare } from '../../../../middlewares/MessageIdMiddleWare';
 var Triangle = /** @class */ (function (_super) {
     __extends(Triangle, _super);
     function Triangle(canvas, eBoardEngine) {
@@ -31,8 +33,26 @@ var Triangle = /** @class */ (function (_super) {
         _this.stroke = "rgba(0,0,0,1)";
         _this.strokeWidth = 1;
         _this.ctrlKey = false;
+        _this.type = "triangle";
         return _this;
     }
+    Triangle.prototype.newInstance = function (start, flipX, flipY, width, height, type) {
+        var instance = new fabric.Triangle({
+            type: type || this.type + "_" + Date.now(),
+            fill: this.fill,
+            left: start.x,
+            top: start.y,
+            stroke: this.stroke,
+            flipX: flipX,
+            flipY: flipY,
+            width: width,
+            height: height,
+            strokeDashArray: this.strokeDashArray,
+            strokeWidth: this.getCanvasPixel(this.strokeWidth)
+        });
+        this.eBoardCanvas.add(instance);
+        return instance;
+    };
     Triangle.prototype.getStartPoint = function () {
         var start = this.start;
         var end = this.end;
@@ -103,19 +123,8 @@ var Triangle = /** @class */ (function (_super) {
         var calcSize = this.calcEquilate(width, height);
         var startPoint = this.ctrlKey ? this.getCtrlStartPoint(calcSize) : this.getStartPoint();
         if (void 0 === this.instance) {
-            this.instance = new fabric.Triangle({
-                fill: this.fill,
-                left: startPoint.x,
-                top: startPoint.y,
-                stroke: this.stroke,
-                flipX: offsetX < 0,
-                flipY: offsetY < 0,
-                width: this.ctrlKey ? calcSize.width : width,
-                height: this.ctrlKey ? calcSize.height : height,
-                strokeDashArray: this.strokeDashArray,
-                strokeWidth: this.getCanvasPixel(this.strokeWidth)
-            });
-            this.eBoardCanvas.add(this.instance);
+            this.instance = this.newInstance(startPoint, offsetX < 0, offsetY < 0, this.ctrlKey ? calcSize.width : width, this.ctrlKey ? calcSize.height : height);
+            this.throw(MessageTagEnum.Start);
         }
         else {
             this.instance.set({
@@ -127,6 +136,7 @@ var Triangle = /** @class */ (function (_super) {
                 top: startPoint.y,
             }).setCoords();
             this.eBoardCanvas.renderAll();
+            this.throw(MessageTagEnum.Temporary);
         }
     };
     ;
@@ -161,6 +171,7 @@ var Triangle = /** @class */ (function (_super) {
                     top: startPoint.y,
                 }).setCoords();
                 this.eBoardCanvas.renderAll();
+                this.throw(MessageTagEnum.Temporary);
             }
         }
     };
@@ -184,7 +195,71 @@ var Triangle = /** @class */ (function (_super) {
                     top: startPoint.y
                 }).setCoords();
                 this.eBoardCanvas.renderAll();
+                this.throw(MessageTagEnum.Temporary);
             }
+        }
+    };
+    Triangle.prototype.onMouseUp = function (event) {
+        this.throw(MessageTagEnum.End);
+        _super.prototype.onMouseUp.call(this, event);
+    };
+    Triangle.prototype.throw = function (tag) {
+        // 需要生成一个消息的id 及实例的id
+        if (void 0 === this.instance) {
+            return;
+        }
+        _super.prototype.throwMessage.call(this, {
+            type: this.instance.type,
+            messageId: MessageIdMiddleWare.getId(),
+            tag: tag,
+            start: { x: this.instance.left, y: this.instance.top },
+            flipX: this.instance.flipX,
+            flipY: this.instance.flipY,
+            width: this.instance.width,
+            height: this.instance.height,
+        });
+    };
+    /**
+     * 通过id获取实例
+     * @param {number} id
+     * @returns {"~fabric/fabric-impl".Circle | undefined}
+     */
+    Triangle.prototype.getInstanceById = function (type) {
+        return this.eBoardCanvas.getObjects(type)[0];
+    };
+    /**
+     * 接收消息处理
+     * @param {ICircleMessage} message
+     */
+    Triangle.prototype.onMessage = function (message) {
+        var type = message.type, start = message.start, flipX = message.flipX, flipY = message.flipY, width = message.width, height = message.height, tag = message.tag;
+        var instance = this.getInstanceById(type);
+        switch (tag) {
+            case MessageTagEnum.Start:
+                if (void 0 === instance) {
+                    instance = this.newInstance(start, flipX, flipY, width, height, type);
+                }
+                break;
+            case MessageTagEnum.Temporary:
+            case MessageTagEnum.End:
+                // 如果有则更新，否则创建
+                this.eBoardCanvas.renderOnAddRemove = false;
+                if (void 0 === instance) {
+                    instance = this.newInstance(start, flipX, flipY, width, height, type);
+                }
+                instance.set({
+                    width: width,
+                    height: height,
+                    flipX: flipX,
+                    flipY: flipY,
+                    left: start.x,
+                    top: start.y,
+                }).setCoords();
+                this.eBoardCanvas.renderAll();
+                this.eBoardCanvas.renderOnAddRemove = true;
+                break;
+            default:
+                break;
         }
     };
     Triangle = __decorate([

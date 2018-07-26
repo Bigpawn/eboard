@@ -12,7 +12,7 @@ var pdfjsLib = require('pdfjs-dist/build/pdf.js');
 var PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 pdfjsLib.GlobalWorkerOptions.workerPort = new PdfjsWorker();
 var PdfFrame = /** @class */ (function () {
-    function PdfFrame(options, container) {
+    function PdfFrame(options, container, parent) {
         this.group = true;
         this.child = new Map();
         this.options = options;
@@ -20,6 +20,11 @@ var PdfFrame = /** @class */ (function () {
         this.type = options.type;
         this.messageId = options.messageId;
         this.ratio = options.ratio || "4:3";
+        this.parent = parent;
+        if (parent) {
+            this.handleAll = parent["handleAll"];
+            this.messageHandle = parent["messageHandle"].bind(this);
+        }
         this.onGo = this.onGo.bind(this);
         this.fixContainer();
         this.initLayout();
@@ -65,7 +70,7 @@ var PdfFrame = /** @class */ (function () {
                 messageId: options.messageId,
                 ratio: options.ratio,
                 scrollbar: ScrollbarType.vertical,
-            }, this.container);
+            }, this.container, this);
             this.pageFrame = pageFrame_1;
             this.dom.innerHTML = "";
             this.dom.appendChild(this.pageFrame.dom);
@@ -150,7 +155,7 @@ var PdfFrame = /** @class */ (function () {
                 messageId: messageId,
                 ratio: this.options.ratio,
                 scrollbar: ScrollbarType.vertical,
-            }, this.container);
+            }, this.container, this);
             this.child.set(pageNum, nextPageFrame);
             // 需要getPage
             this.pdf.then(function (pdf) {
@@ -203,6 +208,15 @@ var PdfFrame = /** @class */ (function () {
             });
             this.child.clear();
         }
+    };
+    PdfFrame.prototype.getParent = function () {
+        return this.parent;
+    };
+    PdfFrame.prototype.isHandleAll = function () {
+        return this.handleAll;
+    };
+    PdfFrame.prototype.getMessageHandle = function () {
+        return this.messageHandle;
     };
     __decorate([
         pipMode

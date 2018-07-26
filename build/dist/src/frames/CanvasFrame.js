@@ -15,11 +15,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { HtmlFrame } from './HtmlFrame';
+import { GenericHtmlFrame } from './HtmlFrame';
 var CanvasFrame = /** @class */ (function (_super) {
     __extends(CanvasFrame, _super);
-    function CanvasFrame(options, container) {
-        return _super.call(this, options, container) || this;
+    function CanvasFrame() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     CanvasFrame.prototype.getChildren = function () {
         var canvas = document.createElement("canvas");
@@ -28,6 +28,6 @@ var CanvasFrame = /** @class */ (function (_super) {
         return canvas;
     };
     return CanvasFrame;
-}(HtmlFrame));
+}(GenericHtmlFrame));
 export { CanvasFrame };
 //# sourceMappingURL=CanvasFrame.js.map

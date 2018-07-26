@@ -19,5 +19,7 @@ export var DisplayType;
     DisplayType["Star"] = "star";
     DisplayType["Pentagon"] = "pentagon";
     DisplayType["Hexagon"] = "hexagon";
+    DisplayType["Line"] = "line";
+    DisplayType["Arrow"] = "arrow";
 })(DisplayType || (DisplayType = {}));
 //# sourceMappingURL=displayType.js.map

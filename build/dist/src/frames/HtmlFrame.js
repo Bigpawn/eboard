@@ -15,7 +15,7 @@ var __extends = (this && this.__extends) || (function () {
  * * @Last Modified time: 2018/7/20 14:42
  * @disc:HTMLFrame HTMLFrame 支持配置是否显示滚动条 属于单层Frame，不会出现子Frame
  */
-import { BaseFrame } from './BaseFrame';
+import { GenericBaseFrame } from './BaseFrame';
 import { EBoardEngine } from '../EBoardEngine';
 import PerfectScrollbar from 'perfect-scrollbar';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
@@ -27,22 +27,22 @@ export var ScrollbarType;
     ScrollbarType[ScrollbarType["both"] = 2] = "both";
     ScrollbarType[ScrollbarType["none"] = 3] = "none";
 })(ScrollbarType || (ScrollbarType = {}));
-var HtmlFrame = /** @class */ (function (_super) {
-    __extends(HtmlFrame, _super);
-    function HtmlFrame() {
+var GenericHtmlFrame = /** @class */ (function (_super) {
+    __extends(GenericHtmlFrame, _super);
+    function GenericHtmlFrame() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.supportScrollbar = ScrollbarType.none;
         return _this;
     }
-    HtmlFrame.prototype.initialize = function (options) {
+    GenericHtmlFrame.prototype.initialize = function (options) {
         _super.prototype.initialize.call(this, options);
         this.supportScrollbar = options.scrollbar || ScrollbarType.none;
-        this.htmlFragment = options["htmlFragment"] || "";
+        this.htmlFragment = options.htmlFragment || "";
     };
-    HtmlFrame.prototype.getChildren = function () {
+    GenericHtmlFrame.prototype.getChildren = function () {
         return this.htmlFragment;
     };
-    HtmlFrame.prototype.initEngine = function () {
+    GenericHtmlFrame.prototype.initEngine = function () {
         var container = document.createElement("div");
         container.className = "eboard-container";
         var htmlContainer = document.createElement("div");
@@ -68,7 +68,7 @@ var HtmlFrame = /** @class */ (function (_super) {
             selection: false,
             skipTargetFind: true,
             containerClass: "eboard-canvas"
-        });
+        }, this);
         // scrollbar 设置
         switch (this.supportScrollbar) {
             case ScrollbarType.horizontal:
@@ -94,7 +94,7 @@ var HtmlFrame = /** @class */ (function (_super) {
         }
         this.dom = container;
     };
-    HtmlFrame.prototype.initLayout = function () {
+    GenericHtmlFrame.prototype.initLayout = function () {
         var calcSize = this.calc();
         // set container size
         this.dom.style.width = calcSize.width + "px";
@@ -104,27 +104,34 @@ var HtmlFrame = /** @class */ (function (_super) {
         this.engine.eBoardCanvas.setDimensions({ width: calcSize.width, height: height }); // 根据实际分辨率设置大小
         this.engine.eBoardCanvas.setDimensions({ width: calcSize.width, height: height }, { backstoreOnly: true }); // 设置canvas 画布大小
     };
-    HtmlFrame.prototype.getScrollbar = function () {
+    GenericHtmlFrame.prototype.getScrollbar = function () {
         return this.scrollbar;
     };
     /**
      * 修改html内容
      * @param {string} htmlFragment
      */
-    HtmlFrame.prototype.setHtml = function (htmlFragment) {
+    GenericHtmlFrame.prototype.setHtml = function (htmlFragment) {
         this.htmlWrap.innerHTML = htmlFragment;
         if (this.scrollbar) {
             this.scrollbar.update();
         }
     };
-    HtmlFrame.prototype.destroy = function () {
+    GenericHtmlFrame.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
         if (this.scrollbar) {
             this.scrollbar.destroy();
             this.scrollbar = undefined;
         }
     };
+    return GenericHtmlFrame;
+}(GenericBaseFrame));
+var HtmlFrame = /** @class */ (function (_super) {
+    __extends(HtmlFrame, _super);
+    function HtmlFrame() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
     return HtmlFrame;
-}(BaseFrame));
-export { HtmlFrame };
+}(GenericHtmlFrame));
+export { HtmlFrame, GenericHtmlFrame };
 //# sourceMappingURL=HtmlFrame.js.map

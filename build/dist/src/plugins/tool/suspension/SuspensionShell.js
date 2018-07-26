@@ -32,6 +32,11 @@ var SuspensionShell = /** @class */ (function (_super) {
         _this.initSuspension(eBoardCanvasObject, eBordCanvas);
         return _this;
     }
+    /**
+     *
+     * @param {module:.fabric/fabric-impl.Object} fabricObject
+     * @param eBordCanvas
+     */
     SuspensionShell.prototype.initSuspension = function (fabricObject, eBordCanvas) {
         var _a = this._count(fabricObject, eBordCanvas), left = _a.left, top = _a.top;
         var typeArray = this._typeArray(fabricObject);
@@ -39,6 +44,11 @@ var SuspensionShell = /** @class */ (function (_super) {
         this._createElement(eBordCanvas);
         ReactDOM.render(React.createElement(ScreenComponent, { left: left, top: top, fabricObject: fabricObject, eBordCanvas: eBordCanvas, typeArray: typeArray, initStyleArray: initStyleArray }), this.divElement);
     };
+    /**
+     * 创建浮层外层元素
+     * @param eBordCanvas
+     * @private
+     */
     SuspensionShell.prototype._createElement = function (eBordCanvas) {
         if (!this.divElement) {
             this.divElement = document.createElement('div');
@@ -46,6 +56,13 @@ var SuspensionShell = /** @class */ (function (_super) {
             container.appendChild(this.divElement);
         }
     };
+    /**
+     * 位置
+     * @param {module:.fabric/fabric-impl.Object} fabricObject
+     * @param eBordCanvas
+     * @returns {{left: number; top: number}}
+     * @private
+     */
     SuspensionShell.prototype._count = function (fabricObject, eBordCanvas) {
         var canvasWrapper = eBordCanvas.getContainer();
         var canvasWrapperWidth = canvasWrapper.clientWidth;
@@ -59,6 +76,12 @@ var SuspensionShell = /** @class */ (function (_super) {
             top: thisTop - 59
         };
     };
+    /**
+     * 被选中元素的type集合
+     * @param fabricObject
+     * @returns {any}
+     * @private
+     */
     SuspensionShell.prototype._typeArray = function (fabricObject) {
         var array = [];
         var objects = fabricObject && fabricObject._objects;
@@ -72,6 +95,12 @@ var SuspensionShell = /** @class */ (function (_super) {
         }
         return array;
     };
+    /**
+     * 默认样式
+     * @param fabricObject
+     * @returns {any}
+     * @private
+     */
     SuspensionShell.prototype._initStyle = function (fabricObject) {
         var objects = fabricObject && fabricObject._objects;
         var initStyleArray;
@@ -80,6 +109,10 @@ var SuspensionShell = /** @class */ (function (_super) {
         }
         return initStyleArray;
     };
+    /**
+     * 移除外层元素
+     * @param eBordCanvas
+     */
     SuspensionShell.prototype.removeElement = function (eBordCanvas) {
         var container = eBordCanvas.getContainer();
         container.removeChild(this.divElement);

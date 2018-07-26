@@ -4,18 +4,31 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/7/23 13:53
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * * @Last Modified time: 2018/7/23 13:53
+ * @disc:图片轮播Frame
+ */
 import { ScrollbarType } from "./HtmlFrame";
 import { Pagination } from "../components/Pagination";
 import { pipMode, setAnimationName } from '../utils/decorators';
 import { ImageFrame } from './ImageFrame';
 var ImagesFrame = /** @class */ (function () {
-    function ImagesFrame(options) {
+    function ImagesFrame(options, container, parent) {
+        this.group = true;
         this.child = new Map();
         this.options = options;
-        this.container = options.container;
-        this.id = options.id;
+        this.type = options.type;
+        this.container = container;
         this.messageId = options.messageId;
         this.ratio = options.ratio || "4:3";
+        this.parent = parent;
+        if (parent) {
+            this.handleAll = parent["handleAll"];
+            this.messageHandle = parent["messageHandle"].bind(this);
+        }
         this.onGo = this.onGo.bind(this);
         this.fixContainer();
         this.initLayout();
@@ -52,13 +65,12 @@ var ImagesFrame = /** @class */ (function () {
         }
         if (this.images.length > 0) {
             var pageFrame = new ImageFrame({
-                container: options.container,
-                id: this.pageNum,
-                messageId: options.childMessageId,
+                type: this.pageNum + "",
+                messageId: options.messageId,
                 ratio: options.ratio,
                 src: this.urlPrefix + this.images[this.pageNum],
                 scrollbar: ScrollbarType.vertical,
-            });
+            }, this.container, this);
             this.pageFrame = pageFrame;
             this.dom.innerHTML = "";
             this.dom.appendChild(this.pageFrame.dom);
@@ -125,13 +137,12 @@ var ImagesFrame = /** @class */ (function () {
         if (void 0 === nextPageFrame) {
             // 创建
             nextPageFrame = new ImageFrame({
-                container: this.options.container,
-                id: pageNum,
+                type: pageNum + "",
                 messageId: messageId,
                 src: this.urlPrefix + this.images[pageNum],
                 ratio: this.options.ratio,
                 scrollbar: ScrollbarType.vertical,
-            });
+            }, this.container, this);
             this.child.set(pageNum, nextPageFrame);
         }
         return new Promise(function (resolve) {
@@ -168,6 +179,15 @@ var ImagesFrame = /** @class */ (function () {
             });
             this.child.clear();
         }
+    };
+    ImagesFrame.prototype.getParent = function () {
+        return this.parent;
+    };
+    ImagesFrame.prototype.isHandleAll = function () {
+        return this.handleAll;
+    };
+    ImagesFrame.prototype.getMessageHandle = function () {
+        return this.messageHandle;
     };
     __decorate([
         pipMode

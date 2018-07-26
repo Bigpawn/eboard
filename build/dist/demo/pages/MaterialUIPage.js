@@ -13,12 +13,14 @@ import * as React from 'react';
 import { ToolBar } from './HomePage';
 import Card from 'antd/es/card';
 import HomePage from './HomePage';
-import { EBoard, FrameType } from "../../src/EBoard";
+import { FrameType } from "../../src/EBoard";
+import { EBoardInstance } from './EBoardInstance';
 /*
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
 */
+var eBoard = EBoardInstance.getInstance();
 var MaterialUIPage = /** @class */ (function (_super) {
     __extends(MaterialUIPage, _super);
     function MaterialUIPage() {
@@ -26,17 +28,14 @@ var MaterialUIPage = /** @class */ (function (_super) {
     }
     MaterialUIPage.prototype.componentDidMount = function () {
         // this.Toolbar.setCanvas(this.canvas);
-        EBoard.clearCache().createFrame({
-            container: document.getElementById("eboardContainer"),
+        var frame = eBoard.clearCache().createPdfFrame({
             type: FrameType.Pdf,
-            id: 6,
-            childMessageId: 7,
-            messageId: 6,
             ratio: "16:9",
             url: require("./4.pdf"),
             pageNum: 1,
-        }).switchToFrame(6);
-        var frame = EBoard.findFrameById(6);
+            messageId: 0
+        });
+        eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
     };
     MaterialUIPage.prototype.render = function () {
