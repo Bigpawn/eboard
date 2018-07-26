@@ -5,25 +5,30 @@
  * * @Last Modified time: 2018/7/20 13:12
  * @disc:基础窗口
  */
-import {IFrame, IFrameOptions} from './IFrame';
+import {IBaseFrame, IBaseFrameOptions} from './IFrame';
 import {EBoardEngine} from '../EBoardEngine';
+import {MessageHandlerInterceptorAdapter} from '../interceptor/MessageHandlerInterceptorAdapter';
+import {registerMessageInterceptor} from '../utils/decorators';
 
-class BaseFrame implements IFrame{
+@registerMessageInterceptor(MessageHandlerInterceptorAdapter)
+class BaseFrame implements IBaseFrame{
     public container:HTMLDivElement;
-    public id:number;
+    public type:string;
     public messageId:number;
     public ratio:string;
     public dom:HTMLDivElement;
     public engine:EBoardEngine;
-    constructor(options:IFrameOptions){
+    public options:IBaseFrameOptions;
+    constructor(options:IBaseFrameOptions,container:HTMLDivElement){
+        this.container=container;
+        this.options=options;
         this.initialize(options);
         this.fixContainer();
         this.initEngine();
         this.initLayout();
     }
-    protected initialize(options:IFrameOptions){
-        this.container=options.container;
-        this.id=options.id;
+    protected initialize(options:IBaseFrameOptions){
+        this.type=options.type;
         this.messageId=options.messageId;
         this.ratio=options.ratio||"4:3";
     }
@@ -42,7 +47,7 @@ class BaseFrame implements IFrame{
             selection:false,
             skipTargetFind:true,
             containerClass:"eboard-canvas"
-        });
+        },this);
         this.dom = this.engine.eBoardCanvas.getContainer();
     }
     protected calc(){

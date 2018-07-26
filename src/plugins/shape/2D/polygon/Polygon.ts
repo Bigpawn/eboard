@@ -10,6 +10,16 @@
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {fabric} from "fabric";
 import {IEvent} from '~fabric/fabric-impl';
+import {
+    IMessage,
+    MessageTagEnum,
+} from '../../../../middlewares/MessageMiddleWare';
+import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
+
+
+export declare interface IPolygonMessage extends IMessage{
+    points:any[]
+}
 
 
 class Point extends fabric.Point{
@@ -29,6 +39,7 @@ class Polygon extends AbstractShapePlugin{
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     private circle:fabric.Circle;// 起始点磁贴效果
+    private type="polygon";
     protected onMouseDown(event:IEvent){
         // 关闭自动渲染
         if(void 0 === this.start){
@@ -54,6 +65,7 @@ class Polygon extends AbstractShapePlugin{
         this.eBoardCanvas.renderOnAddRemove=false;// 渲染过程控制
         this.eBoardCanvas.remove(this.instance);
         this.instance = new fabric.Polyline(this.points, {
+            type:this.instance.type,
             stroke:this.stroke,
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.getCanvasPixel(this.strokeWidth),
@@ -62,6 +74,7 @@ class Polygon extends AbstractShapePlugin{
         this.eBoardCanvas.add(this.instance);
         this.circle&&this.eBoardCanvas.remove(this.circle);
         this.eBoardCanvas.renderAll();
+        this.throw(MessageTagEnum.End);
         this.recovery();
         this.eBoardCanvas.renderOnAddRemove=true;// 渲染过程控制
     }
@@ -120,15 +133,18 @@ class Polygon extends AbstractShapePlugin{
         }
         if(void 0 === this.instance){
             this.instance = new fabric.Polyline(this.points, {
+                type:`${this.type}_${Date.now()}`,
                 stroke:this.stroke,
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
                 fill:this.fill,
             });
             this.eBoardCanvas.add(this.instance);
+            this.throw(MessageTagEnum.Start);
         }else{
             this.eBoardCanvas.remove(this.instance);
             this.instance = new fabric.Polyline(this.points, {
+                type:this.instance.type,
                 stroke:this.stroke,
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
@@ -136,6 +152,7 @@ class Polygon extends AbstractShapePlugin{
             });
             this.eBoardCanvas.add(this.instance);
             this.showCanvas(pos);
+            this.throw(MessageTagEnum.Temporary);
         }
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
@@ -150,6 +167,69 @@ class Polygon extends AbstractShapePlugin{
         // 不进行实例消除
         // this.instance=undefined as any;
         // this.start=undefined as any;
+    }
+    
+    private throw(tag:MessageTagEnum){
+        // 需要生成一个消息的id 及实例的id
+        if(void 0 === this.instance){
+            return;
+        }
+        super.throwMessage({
+            type:this.instance.type as string,
+            messageId:MessageIdMiddleWare.getId(),
+            tag:tag,
+            points:this.instance.points
+        });
+    }
+    
+    /**
+     * 通过id获取实例
+     * @returns {"~fabric/fabric-impl".Circle | undefined}
+     * @param type
+     */
+    private getInstanceById(type:string){
+        return this.eBoardCanvas.getObjects(type)[0];
+    }
+    
+    /**
+     * 接收消息处理
+     * @param {ICircleMessage} message
+     */
+    public onMessage(message:IPolygonMessage){
+        const {type,points,tag} = message;
+        let instance = this.getInstanceById(type) as fabric.Polygon;
+        switch (tag){
+            case MessageTagEnum.Start:
+                if(void 0 === instance){
+                    instance=new fabric.Polyline(points, {
+                        type:type,
+                        stroke:this.stroke,
+                        strokeDashArray:this.strokeDashArray,
+                        strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                        fill:this.fill,
+                    });
+                    this.eBoardCanvas.add(instance);
+                }
+                break;
+            case MessageTagEnum.Temporary:
+            case MessageTagEnum.End:
+                // 如果有则更新，否则创建
+                this.eBoardCanvas.renderOnAddRemove=false;
+                this.eBoardCanvas.remove(instance);
+                instance=new fabric.Polyline(points, {
+                    type:type,
+                    stroke:this.stroke,
+                    strokeDashArray:this.strokeDashArray,
+                    strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                    fill:this.fill,
+                });
+                this.eBoardCanvas.add(instance);
+                this.eBoardCanvas.renderAll();
+                this.eBoardCanvas.renderOnAddRemove=true;
+                break;
+            default:
+                break;
+        }
     }
 }
 

@@ -7,11 +7,11 @@
  *      滚动条支持：perfect-scrollbar
  */
 import {HtmlFrame} from './HtmlFrame';
-import {IFrameOptions} from './IFrame';
+import {IImageFrame, IImageFrameOptions} from './IFrame';
 
-class ImageFrame extends HtmlFrame{
+class ImageFrame extends HtmlFrame implements IImageFrame{
     public src:string;
-    protected initialize(options:IFrameOptions){
+    protected initialize(options:IImageFrameOptions){
         super.initialize(options);
         this.src=options.src||"";
     }

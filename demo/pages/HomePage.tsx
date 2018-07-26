@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Card } from "antd";
 import {
+    Arrow,
+    ArrowLine,
     Circle, Clear, Cursor, Ellipse, EquilateralTriangle, Hexagon,
     OrthogonalTriangle,
     Pentagon,
@@ -46,11 +48,11 @@ export class ToolBar extends React.Component{
     };
     private startLine=()=>{
         const Line = this.Canvas.getPlugin(Plugins.Line) as Line;
-        Line.setArrowType(ArrowType.DEFAULT).setEnable(true);
+        Line.setEnable(true);
     };
     private startLine1=()=>{
-        const Line = this.Canvas.getPlugin(Plugins.Line) as Line;
-        Line.setArrowType(ArrowType.HOLLOW).setArrowMode(ArrowMode.ALL).setEnable(true);
+        const Line = this.Canvas.getPlugin(Plugins.Arrow) as Arrow;
+        Line.setEnable(true);
     };
     private startText=()=> {
         const Text = this.Canvas.getPlugin(Plugins.Text) as Text;
@@ -145,21 +147,18 @@ export class ToolBar extends React.Component{
     }
 }
 
+const eBoard = new EBoard(()=>document.getElementById("eboardContainer") as HTMLDivElement);
 
 class HomePage extends React.Component<{}, {}> {
     protected Toolbar:ToolBar;
     protected canvas:any;
     protected container:any;
     componentDidMount(){
-        // this.Toolbar.setCanvas(this.canvas);
-        EBoard.clearCache().createFrame({
-            container:document.getElementById("eboardContainer") as HTMLDivElement,
+        const frame = eBoard.clearCache().createFrame({
             type:FrameType.Empty,
-            id:1,
-            messageId:2,
             ratio:"16:9"
-        }).switchToFrame(1);
-        const frame = EBoard.findFrameById(1) as BaseFrame;
+        }) as BaseFrame;
+        eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
     }
     public render(): JSX.Element {

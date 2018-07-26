@@ -6,7 +6,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import App from "../demo/App";
-
+import "../demo/build.less";
 
 ReactDOM.render(
     <App/>,

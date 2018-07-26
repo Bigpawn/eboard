@@ -13,6 +13,7 @@ import {EBoardEngine} from '../EBoardEngine';
 import {CursorTypeName} from './tool/cursor/CursorType';
 import {IEvent} from '~fabric/fabric-impl';
 import {fabric} from "fabric";
+import {IMessage, MessageMiddleWare} from '../middlewares/MessageMiddleWare';
 
 abstract class AbstractPlugin {
     protected eBoardCanvas:EBoardCanvas;
@@ -135,6 +136,20 @@ abstract class AbstractPlugin {
      */
     public getCanvasPixel(pixel:number){
         return pixel * this.eBoardEngine.getPixelRatio();
+    }
+    
+    /**
+     * 向上冒泡消息
+     * @param {IMessage} message
+     */
+    public throwMessage(message:IMessage){
+        // 需要添加实例id，消息id
+        if("messageHandle" in this.eBoardEngine){
+            // 向上传递消息
+            this.eBoardEngine["messageHandle"](message);
+        }else{
+            MessageMiddleWare.sendMessage(message);
+        }
     }
 }
 

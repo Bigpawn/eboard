@@ -28,7 +28,11 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
      * @param {"~fabric/fabric-impl".IEvent} event
      */
     protected onMouseDown(event:IEvent){
-        this.start = this.eBoardCanvas.getPointer(event.e);
+        const point = this.eBoardCanvas.getPointer(event.e);
+        this.start = {
+            x:Math.round(point.x),
+            y:Math.round(point.y)
+        };
     }
     
     /**
@@ -36,7 +40,11 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
      * @param {"~fabric/fabric-impl".IEvent} event
      */
     protected onMouseMove(event:IEvent){
-        this.end = this.eBoardCanvas.getPointer(event.e);
+        const point = this.eBoardCanvas.getPointer(event.e);
+        this.end = {
+            x:Math.round(point.x),
+            y:Math.round(point.y)
+        };
     }
     
     /**

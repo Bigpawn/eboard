@@ -6,6 +6,7 @@
  * @disc:装饰器
  */
 import {CursorTypeName} from '../plugins/tool/cursor/CursorType';
+import {MessageHandlerInterceptorAdapter} from '../interceptor/MessageHandlerInterceptorAdapter';
 
 function mixinPlugin(pluginName:string):ClassDecorator{
     return (target:any)=>{
@@ -108,4 +109,18 @@ function pipMode(target:any, name:string, descriptor:PropertyDescriptor){
     return descriptor;
 }
 
-export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,ctrlKeyEnable};
+/**
+ * 消息输出拦截器
+ * @param {typeof MessageHandlerInterceptorAdapter} interceptor
+ * @returns {(target: any) => void}
+ */
+function registerMessageInterceptor(interceptor:typeof MessageHandlerInterceptorAdapter){
+    return (target:any)=>{
+        Object.assign(target.prototype, {
+            handleAll:interceptor.handleAll,
+            messageHandle:interceptor.messageHandle
+        });
+    }
+}
+
+export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,ctrlKeyEnable,registerMessageInterceptor};

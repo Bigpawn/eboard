@@ -5,7 +5,7 @@
  * * @Last Modified time: 2018/7/20 11:45
  * @disc:前端应用架构类 设计到窗口概念  frame 可应用为Tab
  * frame 中管理canvas实例，canvas实例中管理绘制object实例  层级化，frame中提供object实例查询 canvas中提供跨实例object实例查询
- *
+ * 支持页面中多实例模式，多容器模式，从静态类修改成实体类
  *
  *
  */
@@ -19,64 +19,106 @@ import {PdfFrame} from "./frames/PdfFrame";
 import {ImagesFrame} from './frames/ImagesFrame';
 
 import "./style/canvas.less";
+import {
+    MessageMiddleWare,
+    MessageTagEnum,
+} from './middlewares/MessageMiddleWare';
+import {MessageIdMiddleWare} from './middlewares/MessageIdMiddleWare';
 
 export enum FrameType{
-    Empty,Image,HTML,Canvas,Pdf,Images // 目前只存在两种模式，一个是空的白板，一个是带翻页的白板，扩展支持一个图片或者一段Html的白板类型
+    Empty="empty",Image="image",HTML="html",Canvas="canvas",Pdf="pdf",Images="images"
 }
 
-
 export declare interface ICFrameOptions extends IFrameOptions{
-    type:FrameType
+    container?:HTMLDivElement;
 }
 
 
 class EBoard{
-    private static frames:Map<number,IFrame>=new Map();// frame管理
-    private static activeFrame:number;
+    private frames:Map<string,IFrame>=new Map();// frame管理
+    private activeFrame:string;
+    private container:HTMLDivElement|(()=>HTMLDivElement);
+    private getConteiner(){
+        return "tagName" in this.container?this.container:this.container();
+    }
+    constructor(containerFilter:HTMLDivElement|(()=>HTMLDivElement)){
+        this.container = containerFilter;
+    }
+    /**
+     * 根据type字符串返回真实type和id
+     * @param {string} type
+     * @returns {{type: string; id: string}}
+     */
+    private getFrameTypeAndId(type:string) {
+        const arr = type.split("_");
+        return {
+            type:arr[0],
+            id:arr[1]
+        }
+    }
     
     /**
      * 创建frame
-     * @param {ICFrameOptions} options
-     * @returns {this}
+     * @param {IFrameOptions} options
+     * @returns {any}
      */
-    public static createFrame(options:ICFrameOptions){
-        if(this.hasFrame(options.id)){
+    public createFrame(options:ICFrameOptions){
+        if(this.hasFrame(options.type)){
             return this;// 如果已经存在
         }
+        // 判断是操作者创建还是控制,操作者需要创建消息Id
+        const {type,id} = this.getFrameTypeAndId(options.type);
         let frame:IFrame;
-        switch (options.type){
+        options.type=void 0 === id?`${options.type}_${Date.now()}`:options.type;
+        if(void 0 === id){
+            // 消息发送
+            options.messageId=MessageIdMiddleWare.getId();// id 补充
+            MessageMiddleWare.sendMessage(Object.assign({},options,{
+                tag:MessageTagEnum.Action
+            }));
+        }
+        // 消息中不需要传递container
+        const container = this.getConteiner();
+        switch (type){
             case FrameType.HTML:
-                frame = new HtmlFrame(options);
+                frame = new HtmlFrame(options,container);
                 break;
             case FrameType.Image:
-                frame = new ImageFrame(options);
+                frame = new ImageFrame(options,container);
                 break;
             case FrameType.Canvas:
-                frame = new CanvasFrame(options);
+                frame = new CanvasFrame(options,container);
                 break;
             case FrameType.Pdf:
-                frame = new PdfFrame(options);
+                frame = new PdfFrame(options,container);
                 break;
             case FrameType.Images:
                 frame = new ImagesFrame(options);
                 break;
             case FrameType.Empty:
             default:
-                frame = new BaseFrame(options);
+                frame = new BaseFrame(options,container);
                 break;
         }
-        this.frames.set(options.id,frame);
-        return this;
+        this.frames.set(options.type,frame);
+        return frame;
     }
     
     /**
      * 切换到需要显示的frame 需要改frame存在，如果不存在则不执行任何操作
-     * @param {number} id
-     * @returns {IFrame | undefined}
+     * @param {string | IFrame} type
+     * @returns {undefined | IFrame}
      */
-    public static switchToFrame(id:number){
-        if(id === this.activeFrame||!this.hasFrame(id)){
-            return;
+    public switchToFrame(type:string|IFrame){
+        // 支持frameType标识和对象
+        if(typeof type === 'string'){
+            if(type === this.activeFrame||!this.hasFrame(type)){
+                return;
+            }
+        }else{
+            if(type.type === this.activeFrame||!this.hasFrame(type.type)){
+                return;
+            }
         }
         if(this.activeFrame){
             const frame = this.findFrameById(this.activeFrame);
@@ -84,8 +126,8 @@ class EBoard{
                 frame.dom.parentElement.removeChild(frame.dom); // 隐藏
             }
         }
-        this.activeFrame = id;
-        const activeFrame = this.findFrameById(id);
+        this.activeFrame = typeof type === 'string'?type:type.type;
+        const activeFrame = typeof type === 'string'?this.findFrameById(type):type;
         if(activeFrame&&activeFrame.dom){
             activeFrame.container.appendChild(activeFrame.dom);// 如果是子frame则存在问题
         }
@@ -94,27 +136,27 @@ class EBoard{
     
     /**
      * 根据id获取frame实例
-     * @param {number} id
+     * @param {string} type
      * @returns {IFrame | undefined}
      */
-    public static findFrameById(id:number){
-        return this.frames.get(id);
+    public findFrameById(type:string){
+        return this.frames.get(type);
     }
     
     /**
      * 检测是否存在某个frame
-     * @param {number} id
+     * @param {string} type
      * @returns {boolean}
      */
-    public static hasFrame(id:number){
-        return this.frames.has(id);
+    public hasFrame(type:string){
+        return this.frames.has(type);
     }
     
     /**
      * 清空缓存
      * @returns {this}
      */
-    public static clearCache(){
+    public clearCache(){
         if(this.frames.size>0){
             this.frames.forEach(frame=>{
                 frame.destroy();
