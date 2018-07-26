@@ -11,6 +11,7 @@ import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
 import {pipMode, setAnimationName} from '../utils/decorators';
 import {IPdfFrame, IPdfFrameOptions} from './IFrameGroup';
+import {EBoard} from '../EBoard';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
@@ -33,12 +34,20 @@ class PdfFrame implements IPdfFrame{
     public totalPages:number;
     public child:Map<number,CanvasFrame>=new Map();
     public options:IPdfFrameOptions;
-    constructor(options:IPdfFrameOptions,container:HTMLDivElement){
+    private parent?:EBoard;
+    private handleAll?:boolean;
+    private messageHandle?:Function;
+    constructor(options:IPdfFrameOptions,container:HTMLDivElement,parent?:EBoard){
         this.options=options;
         this.container=container;
         this.type=options.type;
         this.messageId=options.messageId;
         this.ratio=options.ratio||"4:3";
+        this.parent=parent;
+        if(parent){
+            this.handleAll=parent["handleAll"];
+            this.messageHandle=parent["messageHandle"].bind(this);
+        }
         this.onGo=this.onGo.bind(this);
        this.fixContainer();
         this.initLayout();
@@ -82,7 +91,7 @@ class PdfFrame implements IPdfFrame{
                 messageId:options.messageId,
                 ratio:options.ratio,
                 scrollbar:ScrollbarType.vertical,
-            },this.container);
+            },this.container,this);
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
             this.dom.appendChild(this.pageFrame.dom);
@@ -171,7 +180,7 @@ class PdfFrame implements IPdfFrame{
                 messageId:messageId,
                 ratio:this.options.ratio,
                 scrollbar:ScrollbarType.vertical,
-            },this.container);
+            },this.container,this);
             this.child.set(pageNum,nextPageFrame);
             // 需要getPage
             this.pdf.then(pdf=>{
@@ -224,6 +233,15 @@ class PdfFrame implements IPdfFrame{
             });
             this.child.clear();
         }
+    }
+    public getParent(){
+        return this.parent;
+    }
+    public isHandleAll(){
+        return this.handleAll;
+    }
+    public getMessageHandle(){
+        return this.messageHandle;
     }
 }
 

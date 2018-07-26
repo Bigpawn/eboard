@@ -12,6 +12,21 @@ import {EBoardEngine} from '../../../../EBoardEngine';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {ctrlKeyEnable} from '../../../../utils/decorators';
+import {
+    IMessage,
+    MessageTagEnum,
+} from '../../../../middlewares/MessageMiddleWare';
+import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
+
+export declare interface ITriangleMessage extends IMessage{
+    start:{x:number;y:number};
+    width:number;
+    height:number;
+    flipX:boolean;
+    flipY:boolean;
+}
+
+
 
 @ctrlKeyEnable(true)
 class Triangle extends AbstractShapePlugin{
@@ -22,8 +37,26 @@ class Triangle extends AbstractShapePlugin{
     private strokeWidth:number=1;
     protected ctrlKeyEnable:boolean;
     protected ctrlKey:boolean=false;
+    private type="triangle";
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
         super(canvas,eBoardEngine);
+    }
+    private newInstance(start:{x:number;y:number},flipX:boolean,flipY:boolean,width:number,height:number,type?:string){
+        const instance = new fabric.Triangle({
+            type:type||`${this.type}_${Date.now()}`,
+            fill:this.fill,
+            left: start.x,
+            top: start.y,
+            stroke:this.stroke,
+            flipX:flipX,
+            flipY:flipY,
+            width:width,
+            height:height,
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth)
+        });
+        this.eBoardCanvas.add(instance);
+        return instance;
     }
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
@@ -95,19 +128,8 @@ class Triangle extends AbstractShapePlugin{
         const calcSize = this.calcEquilate(width,height);
         const startPoint = this.ctrlKey?this.getCtrlStartPoint(calcSize):this.getStartPoint();
         if(void 0 ===this.instance){
-            this.instance=new fabric.Triangle({
-                fill:this.fill,
-                left: startPoint.x,
-                top: startPoint.y,
-                stroke:this.stroke,
-                flipX:offsetX<0,
-                flipY:offsetY<0,
-                width:this.ctrlKey?calcSize.width:width,
-                height:this.ctrlKey?calcSize.height:height,
-                strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth)
-            });
-            this.eBoardCanvas.add(this.instance);
+            this.instance=this.newInstance(startPoint,offsetX<0,offsetY<0,this.ctrlKey?calcSize.width:width,this.ctrlKey?calcSize.height:height);
+            this.throw(MessageTagEnum.Start);
         }else{
             this.instance.set({
                 width:this.ctrlKey?calcSize.width:width,
@@ -118,6 +140,7 @@ class Triangle extends AbstractShapePlugin{
                 top: startPoint.y,
             }).setCoords();
             this.eBoardCanvas.renderAll();
+            this.throw(MessageTagEnum.Temporary);
         }
     };
     private calcEquilate(width:number,height:number){
@@ -150,6 +173,7 @@ class Triangle extends AbstractShapePlugin{
                     top: startPoint.y,
                 }).setCoords();
                 this.eBoardCanvas.renderAll();
+                this.throw(MessageTagEnum.Temporary);
             }
         }
     }
@@ -173,7 +197,74 @@ class Triangle extends AbstractShapePlugin{
                     top:startPoint.y
                 }).setCoords();
                 this.eBoardCanvas.renderAll();
+                this.throw(MessageTagEnum.Temporary);
             }
+        }
+    }
+    
+    protected onMouseUp(event:IEvent){
+        this.throw(MessageTagEnum.End);
+        super.onMouseUp(event);
+    }
+    private throw(tag:MessageTagEnum){
+        // 需要生成一个消息的id 及实例的id
+        if(void 0 === this.instance){
+            return;
+        }
+        super.throwMessage({
+            type:this.instance.type as string,
+            messageId:MessageIdMiddleWare.getId(),
+            tag:tag,
+            start:{x:this.instance.left as number,y:this.instance.top as number},
+            flipX:this.instance.flipX,
+            flipY:this.instance.flipY,
+            width:this.instance.width,
+            height:this.instance.height,
+        });
+    }
+    
+    /**
+     * 通过id获取实例
+     * @param {number} id
+     * @returns {"~fabric/fabric-impl".Circle | undefined}
+     */
+    private getInstanceById(type:string){
+        return this.eBoardCanvas.getObjects(type)[0];
+    }
+    
+    /**
+     * 接收消息处理
+     * @param {ICircleMessage} message
+     */
+    public onMessage(message:ITriangleMessage){
+        const {type,start,flipX,flipY,width,height,tag} = message;
+        let instance = this.getInstanceById(type) as fabric.Triangle;
+        switch (tag){
+            case MessageTagEnum.Start:
+                if(void 0 === instance){
+                    instance=this.newInstance(start,flipX,flipY,width,height,type);
+                }
+                break;
+            case MessageTagEnum.Temporary:
+            case MessageTagEnum.End:
+                // 如果有则更新，否则创建
+                this.eBoardCanvas.renderOnAddRemove=false;
+                if(void 0 === instance){
+                    instance=this.newInstance(start,flipX,flipY,width,height,type);
+                }
+                instance.set({
+                    width:width,
+                    height:height,
+                    flipX:flipX,
+                    flipY:flipY,
+                    left: start.x,
+                    top: start.y,
+                }).setCoords();
+                this.eBoardCanvas.renderAll();
+                this.eBoardCanvas.renderOnAddRemove=true;
+                break;
+            default:
+                break;
         }
     }
 }

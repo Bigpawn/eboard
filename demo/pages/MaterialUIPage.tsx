@@ -3,29 +3,27 @@ import * as React from 'react';
 import {ToolBar} from './HomePage';
 import Card from 'antd/es/card';
 import HomePage from './HomePage';
-import {EBoard, FrameType} from "../../src/EBoard";
-import {PdfFrame} from "../../src/frames/PdfFrame";
+import {FrameType} from "../../src/EBoard";
+import {EBoardInstance} from './EBoardInstance';
 /*
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
 */
 
+const eBoard =EBoardInstance.getInstance();
 
 class MaterialUIPage extends HomePage{
     componentDidMount(){
         // this.Toolbar.setCanvas(this.canvas);
-        EBoard.clearCache().createFrame({
-            container:document.getElementById("eboardContainer") as HTMLDivElement,
+        const frame = eBoard.clearCache().createPdfFrame({
             type:FrameType.Pdf,
-            id:6,
-            childMessageId:7,
-            messageId:6,
             ratio:"16:9",
             url:require("./4.pdf"),
             pageNum:1,
-        }).switchToFrame(6);
-        const frame = EBoard.findFrameById(6) as PdfFrame;
+            messageId:0
+        });
+        eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
     }
     public render() {

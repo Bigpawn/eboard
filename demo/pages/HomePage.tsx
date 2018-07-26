@@ -2,7 +2,6 @@ import * as React from "react";
 import { Card } from "antd";
 import {
     Arrow,
-    ArrowLine,
     Circle, Clear, Cursor, Ellipse, EquilateralTriangle, Hexagon,
     OrthogonalTriangle,
     Pentagon,
@@ -14,14 +13,13 @@ import {
 import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
 import {Line} from '../../src/plugins';
 import {Selection} from '../../src/plugins';
-import {ArrowMode, ArrowType} from '../../src/plugins/shape/2D/line/LineType';
 import {HTML} from '../../src/plugins';
 import {Text} from "../../src/plugins";
 import {Plugins} from '../../src/plugins';
 import {Pencil} from "../../src/plugins";
-import {EBoard, FrameType} from '../../src/EBoard';
-import {BaseFrame} from '../../src/frames/BaseFrame';
+import {FrameType} from '../../src/EBoard';
 import {IFrame} from '../../src/frames/IFrame';
+import {EBoardInstance} from './EBoardInstance';
 
 
 export class ToolBar extends React.Component{
@@ -64,7 +62,7 @@ export class ToolBar extends React.Component{
     };
     private startPencilLine=()=>{
         const PencilLine = this.Canvas.getPlugin(Plugins.Pencil) as Pencil;
-        PencilLine.setColor('rgba(0,0,0,1)').setWidth(1).setEnable(true);
+        PencilLine.setEnable(true);
     };
     private openHtml=()=>{
         const HTML = this.Canvas.getPlugin(Plugins.HTML) as HTML;
@@ -147,17 +145,18 @@ export class ToolBar extends React.Component{
     }
 }
 
-const eBoard = new EBoard(()=>document.getElementById("eboardContainer") as HTMLDivElement);
+const eBoard =EBoardInstance.getInstance();
 
 class HomePage extends React.Component<{}, {}> {
     protected Toolbar:ToolBar;
     protected canvas:any;
     protected container:any;
     componentDidMount(){
-        const frame = eBoard.clearCache().createFrame({
+        const frame = eBoard.clearCache().createBaseFrame({
             type:FrameType.Empty,
-            ratio:"16:9"
-        }) as BaseFrame;
+            ratio:"16:9",
+            messageId:0
+        });
         eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
     }

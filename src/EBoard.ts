@@ -6,11 +6,15 @@
  * @disc:前端应用架构类 设计到窗口概念  frame 可应用为Tab
  * frame 中管理canvas实例，canvas实例中管理绘制object实例  层级化，frame中提供object实例查询 canvas中提供跨实例object实例查询
  * 支持页面中多实例模式，多容器模式，从静态类修改成实体类
+ * 消息代理应该从该对象拦截
  *
  *
  */
 
-import {IFrame, IFrameOptions} from './frames/IFrame';
+import {
+    IBaseFrameOptions, ICanvasFrameOptions, IFrame,
+    IHTMLFrameOptions, IImageFrameOptions,
+} from './frames/IFrame';
 import {BaseFrame} from './frames/BaseFrame';
 import {HtmlFrame} from './frames/HtmlFrame';
 import {ImageFrame} from './frames/ImageFrame';
@@ -24,21 +28,22 @@ import {
     MessageTagEnum,
 } from './middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from './middlewares/MessageIdMiddleWare';
+import {MessageHandlerInterceptorAdapter} from './interceptor/MessageHandlerInterceptorAdapter';
+import {registerMessageInterceptor} from './utils/decorators';
+import {IImagesFrameOptions, IPdfFrameOptions} from './frames/IFrameGroup';
 
 export enum FrameType{
     Empty="empty",Image="image",HTML="html",Canvas="canvas",Pdf="pdf",Images="images"
 }
 
-export declare interface ICFrameOptions extends IFrameOptions{
-    container?:HTMLDivElement;
-}
 
-
+@registerMessageInterceptor(MessageHandlerInterceptorAdapter)
 class EBoard{
     private frames:Map<string,IFrame>=new Map();// frame管理
     private activeFrame:string;
     private container:HTMLDivElement|(()=>HTMLDivElement);
-    private getConteiner(){
+    
+    private getContainer(){
         return "tagName" in this.container?this.container:this.container();
     }
     constructor(containerFilter:HTMLDivElement|(()=>HTMLDivElement)){
@@ -62,9 +67,9 @@ class EBoard{
      * @param {IFrameOptions} options
      * @returns {any}
      */
-    public createFrame(options:ICFrameOptions){
+    public createFrame(options:IBaseFrameOptions|IHTMLFrameOptions|IImageFrameOptions|ICanvasFrameOptions|IPdfFrameOptions|IImagesFrameOptions){
         if(this.hasFrame(options.type)){
-            return this;// 如果已经存在
+            return this.findFrameById(options.type);// 如果已经存在
         }
         // 判断是操作者创建还是控制,操作者需要创建消息Id
         const {type,id} = this.getFrameTypeAndId(options.type);
@@ -78,32 +83,56 @@ class EBoard{
             }));
         }
         // 消息中不需要传递container
-        const container = this.getConteiner();
+        const container = this.getContainer();
         switch (type){
             case FrameType.HTML:
-                frame = new HtmlFrame(options,container);
+                frame = new HtmlFrame(options as IHTMLFrameOptions,container,this);
                 break;
             case FrameType.Image:
-                frame = new ImageFrame(options,container);
+                frame = new ImageFrame(options as IImageFrameOptions,container,this);
                 break;
             case FrameType.Canvas:
-                frame = new CanvasFrame(options,container);
+                frame = new CanvasFrame(options as ICanvasFrameOptions,container,this);
                 break;
             case FrameType.Pdf:
-                frame = new PdfFrame(options,container);
+                frame = new PdfFrame(options as IPdfFrameOptions,container,this);
                 break;
             case FrameType.Images:
-                frame = new ImagesFrame(options);
+                frame = new ImagesFrame(options as IImagesFrameOptions,container,this);
                 break;
             case FrameType.Empty:
             default:
-                frame = new BaseFrame(options,container);
+                frame = new BaseFrame(options,container,this);
                 break;
         }
         this.frames.set(options.type,frame);
         return frame;
     }
     
+    
+    public createBaseFrame(options:IBaseFrameOptions){
+        return this.createFrame(options) as BaseFrame;
+    }
+    
+    public createHtmlFrame(options:IHTMLFrameOptions){
+        return this.createFrame(options) as HtmlFrame;
+    }
+    
+    public createImageFrame(options:IImageFrameOptions){
+        return this.createFrame(options) as ImageFrame;
+    }
+    
+    public createCanvasFrame(options:ICanvasFrameOptions){
+        return this.createFrame(options) as CanvasFrame;
+    }
+    
+    public createPdfFrame(options:IPdfFrameOptions){
+        return this.createFrame(options) as PdfFrame;
+    }
+    
+    public createImagesFrame(options:IImagesFrameOptions){
+        return this.createFrame(options) as ImagesFrame;
+    }
     /**
      * 切换到需要显示的frame 需要改frame存在，如果不存在则不执行任何操作
      * @param {string | IFrame} type

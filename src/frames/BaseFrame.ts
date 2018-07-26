@@ -5,29 +5,37 @@
  * * @Last Modified time: 2018/7/20 13:12
  * @disc:基础窗口
  */
-import {IBaseFrame, IBaseFrameOptions} from './IFrame';
+import {IBaseFrame, IBaseFrameOptions, IFrame, IFrameOptions} from './IFrame';
 import {EBoardEngine} from '../EBoardEngine';
-import {MessageHandlerInterceptorAdapter} from '../interceptor/MessageHandlerInterceptorAdapter';
-import {registerMessageInterceptor} from '../utils/decorators';
+import {EBoard} from '../EBoard';
+import {IFrameGroup} from './IFrameGroup';
 
-@registerMessageInterceptor(MessageHandlerInterceptorAdapter)
-class BaseFrame implements IBaseFrame{
+
+class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
     public container:HTMLDivElement;
     public type:string;
     public messageId:number;
     public ratio:string;
     public dom:HTMLDivElement;
     public engine:EBoardEngine;
-    public options:IBaseFrameOptions;
-    constructor(options:IBaseFrameOptions,container:HTMLDivElement){
+    public options:T;
+    private parent?:EBoard|IFrameGroup;
+    private handleAll?:boolean;
+    private messageHandle?:Function;
+    constructor(options:T,container:HTMLDivElement,parent?:EBoard|IFrameGroup){
         this.container=container;
         this.options=options;
+        this.parent=parent;
+        if(parent){
+            this.handleAll=parent["handleAll"];
+            this.messageHandle=parent["messageHandle"].bind(this);
+        }
         this.initialize(options);
         this.fixContainer();
         this.initEngine();
         this.initLayout();
     }
-    protected initialize(options:IBaseFrameOptions){
+    protected initialize(options:T){
         this.type=options.type;
         this.messageId=options.messageId;
         this.ratio=options.ratio||"4:3";
@@ -106,6 +114,22 @@ class BaseFrame implements IBaseFrame{
         }
         this.engine.eBoardCanvas.clear();
     }
+    public getParent(){
+        return this.parent;
+    }
+    public isHandleAll(){
+        return this.handleAll;
+    }
+    public getMessageHandle(){
+        return this.messageHandle;
+    }
+}
+
+export {GenericBaseFrame};
+
+
+class BaseFrame extends GenericBaseFrame<IBaseFrameOptions> implements IBaseFrame{
+
 }
 
 export {BaseFrame};

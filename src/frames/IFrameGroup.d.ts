@@ -12,7 +12,6 @@ import {ScrollbarType} from './HtmlFrame';
 
 
 export declare interface IFrameGroupOptions{
-    container:HTMLDivElement;
     type:string;// frame 的类型及id标识
     messageId:number;// frame 创建的消息Id
     ratio?:string;
@@ -24,7 +23,6 @@ export declare interface IFrameGroup{
     group:true;// 是否组合，强制为true,用于消息拦截器做检测，或者其他做检测
     type:string;// 窗口标识id
     messageId:number;// 窗口创建对应消息
-    container:HTMLDivElement;// 窗口父元素
     dom:HTMLElement;// 窗口内容dom
     ratio:string;
     child:Map<number,IFrame>;

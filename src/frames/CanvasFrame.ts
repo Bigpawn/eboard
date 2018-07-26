@@ -6,13 +6,10 @@
  * @disc:CanvasFrame 用于Pdfjs想显示等需要使用Canvas绘制的场景
  */
 
-import {HtmlFrame} from './HtmlFrame';
+import {GenericHtmlFrame} from './HtmlFrame';
 import {ICanvasFrame, ICanvasFrameOptions} from './IFrame';
-class CanvasFrame extends HtmlFrame implements ICanvasFrame{
+class CanvasFrame extends GenericHtmlFrame<ICanvasFrameOptions> implements ICanvasFrame{
     public canvas:HTMLCanvasElement;
-    constructor(options:ICanvasFrameOptions,container:HTMLDivElement){
-        super(options,container);
-    }
     protected getChildren(){
         const canvas = document.createElement("canvas");
         canvas.style.width="100%";
