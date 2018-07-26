@@ -65,7 +65,7 @@ class MessageMiddleWare{
      */
     static sendMessage(message:IMessage){
         // 自动生成id并返回id
-        const id = MessageIdMiddleWare.getId();
+        const id = void 0 === message.messageId?MessageIdMiddleWare.getId():message.messageId;
         const outMessage = Object.assign({},message,{messageId:id});
         console.log(outMessage);
         // 发送该消息
