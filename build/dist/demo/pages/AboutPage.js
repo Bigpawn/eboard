@@ -11,8 +11,10 @@ var __extends = (this && this.__extends) || (function () {
 import * as React from "react";
 import HomePage, { ToolBar } from './HomePage';
 import { Card } from "antd";
-import { EBoard, FrameType } from '../../src/EBoard';
+import { FrameType } from '../../src/EBoard';
 import { ScrollbarType } from '../../src/frames/HtmlFrame';
+import { EBoardInstance } from './EBoardInstance';
+var eBoard = EBoardInstance.getInstance();
 var AboutPage = /** @class */ (function (_super) {
     __extends(AboutPage, _super);
     function AboutPage() {
@@ -20,16 +22,14 @@ var AboutPage = /** @class */ (function (_super) {
     }
     AboutPage.prototype.componentDidMount = function () {
         // this.Toolbar.setCanvas(this.canvas);
-        EBoard.clearCache().createFrame({
-            container: document.getElementById("eboardContainer"),
+        var frame = eBoard.clearCache().createImageFrame({
             type: FrameType.Image,
-            id: 3,
-            messageId: 4,
             ratio: "16:9",
             src: "https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2622681255,3418216244&fm=173&app=25&f=JPEG?w=639&h=381&s=7084E2BB4A501CC0543717BC0300700E",
             scrollbar: ScrollbarType.vertical,
-        }).switchToFrame(3);
-        var frame = EBoard.findFrameById(3);
+            messageId: 0
+        });
+        eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
     };
     AboutPage.prototype.render = function () {

@@ -1,27 +1,34 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import { EBoardEngine } from '../EBoardEngine';
-import { MessageHandlerInterceptorAdapter } from '../interceptor/MessageHandlerInterceptorAdapter';
-import { registerMessageInterceptor } from '../utils/decorators';
-var BaseFrame = /** @class */ (function () {
-    function BaseFrame(options, container) {
+var GenericBaseFrame = /** @class */ (function () {
+    function GenericBaseFrame(options, container, parent) {
         this.container = container;
         this.options = options;
+        this.parent = parent;
+        if (parent) {
+            this.handleAll = parent["handleAll"];
+            this.messageHandle = parent["messageHandle"].bind(this);
+        }
         this.initialize(options);
         this.fixContainer();
         this.initEngine();
         this.initLayout();
     }
-    BaseFrame.prototype.initialize = function (options) {
+    GenericBaseFrame.prototype.initialize = function (options) {
         this.type = options.type;
         this.messageId = options.messageId;
         this.ratio = options.ratio || "4:3";
     };
-    BaseFrame.prototype.fixContainer = function () {
+    GenericBaseFrame.prototype.fixContainer = function () {
         var parentElement = this.container;
         // fix parent position
         var position = window.getComputedStyle(parentElement).position;
@@ -29,7 +36,7 @@ var BaseFrame = /** @class */ (function () {
             parentElement.style.position = "relative";
         }
     };
-    BaseFrame.prototype.initEngine = function () {
+    GenericBaseFrame.prototype.initEngine = function () {
         var placeholder = document.createElement("canvas");
         placeholder.innerHTML = "当前浏览器不支持Canvas,请升级浏览器";
         this.engine = new EBoardEngine(placeholder, {
@@ -39,7 +46,7 @@ var BaseFrame = /** @class */ (function () {
         }, this);
         this.dom = this.engine.eBoardCanvas.getContainer();
     };
-    BaseFrame.prototype.calc = function () {
+    GenericBaseFrame.prototype.calc = function () {
         var parentElement = this.container;
         var size = {
             width: parentElement.offsetWidth,
@@ -83,25 +90,39 @@ var BaseFrame = /** @class */ (function () {
             }
         }
     };
-    BaseFrame.prototype.initLayout = function () {
+    GenericBaseFrame.prototype.initLayout = function () {
         var calcSize = this.calc();
         this.engine.eBoardCanvas.setDimensions({ width: calcSize.width, height: calcSize.height }); // 设置样式大小
         this.engine.eBoardCanvas.setDimensions(calcSize.dimensions, { backstoreOnly: true }); // 设置canvas 画布大小
     };
     ;
-    BaseFrame.prototype.getPlugin = function (pluginName) {
+    GenericBaseFrame.prototype.getPlugin = function (pluginName) {
         return this.engine.getPlugin(pluginName);
     };
-    BaseFrame.prototype.destroy = function () {
+    GenericBaseFrame.prototype.destroy = function () {
         if (this.dom && this.dom.parentElement) {
             this.dom.parentElement.removeChild(this.dom);
         }
         this.engine.eBoardCanvas.clear();
     };
-    BaseFrame = __decorate([
-        registerMessageInterceptor(MessageHandlerInterceptorAdapter)
-    ], BaseFrame);
-    return BaseFrame;
+    GenericBaseFrame.prototype.getParent = function () {
+        return this.parent;
+    };
+    GenericBaseFrame.prototype.isHandleAll = function () {
+        return this.handleAll;
+    };
+    GenericBaseFrame.prototype.getMessageHandle = function () {
+        return this.messageHandle;
+    };
+    return GenericBaseFrame;
 }());
+export { GenericBaseFrame };
+var BaseFrame = /** @class */ (function (_super) {
+    __extends(BaseFrame, _super);
+    function BaseFrame() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return BaseFrame;
+}(GenericBaseFrame));
 export { BaseFrame };
 //# sourceMappingURL=BaseFrame.js.map

@@ -18,14 +18,34 @@ var __extends = (this && this.__extends) || (function () {
  */
 import { AbstractShapePlugin } from '../../AbstractShapePlugin';
 import { EqTriangle } from '../../../../extends/EqTriangle';
+import { MessageTagEnum, } from '../../../../middlewares/MessageMiddleWare';
+import { MessageIdMiddleWare } from '../../../../middlewares/MessageIdMiddleWare';
 var EquilateralTriangle = /** @class */ (function (_super) {
     __extends(EquilateralTriangle, _super);
     function EquilateralTriangle() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.stroke = "rgba(0,0,0,1)";
         _this.strokeWidth = 1;
+        _this.type = "equilateral-triangle";
         return _this;
     }
+    EquilateralTriangle.prototype.newInstance = function (points, start, radius, type) {
+        var instance = new EqTriangle(points, {
+            type: type || this.type + "_" + Date.now(),
+            stroke: this.stroke,
+            strokeWidth: this.getCanvasPixel(this.strokeWidth),
+            strokeDashArray: this.strokeDashArray,
+            fill: this.fill,
+            width: radius,
+            height: radius,
+            left: start.x,
+            top: start.y,
+            originY: "center",
+            originX: "center"
+        });
+        this.eBoardCanvas.add(instance);
+        return instance;
+    };
     EquilateralTriangle.prototype.onMouseMove = function (event) {
         if (void 0 === this.start) {
             return;
@@ -35,34 +55,78 @@ var EquilateralTriangle = /** @class */ (function (_super) {
         var angle = this.calcAngle(this.end);
         var points = EqTriangle.calcPointsByRadius(this.start, radius, angle);
         if (void 0 === this.instance) {
-            this.instance = new EqTriangle(points, {
-                stroke: this.stroke,
-                strokeWidth: this.getCanvasPixel(this.strokeWidth),
-                strokeDashArray: this.strokeDashArray,
-                fill: this.fill,
-                width: radius * 2,
-                height: radius * 2,
-                left: this.start.x,
-                top: this.start.y,
-                originY: "center",
-                originX: "center"
-            });
-            this.eBoardCanvas.add(this.instance);
+            this.instance = this.newInstance(points, this.start, radius * 2);
+            this.throw(MessageTagEnum.Start);
         }
         else {
             this.instance.set({
                 points: points,
                 width: radius * 2,
                 height: radius * 2,
-                left: this.start.x,
-                top: this.start.y,
-                originY: "center",
-                originX: "center"
             }).setCoords();
             this.eBoardCanvas.renderAll();
+            this.throw(MessageTagEnum.Temporary);
         }
     };
     ;
+    EquilateralTriangle.prototype.onMouseUp = function (event) {
+        this.throw(MessageTagEnum.End);
+        _super.prototype.onMouseUp.call(this, event);
+    };
+    EquilateralTriangle.prototype.throw = function (tag) {
+        // 需要生成一个消息的id 及实例的id
+        if (void 0 === this.instance) {
+            return;
+        }
+        _super.prototype.throwMessage.call(this, {
+            type: this.instance.type,
+            messageId: MessageIdMiddleWare.getId(),
+            tag: tag,
+            points: this.instance.points,
+            start: this.start,
+            radius: this.instance.width
+        });
+    };
+    /**
+     * 通过id获取实例
+     * @param {number} id
+     * @returns {"~fabric/fabric-impl".Circle | undefined}
+     */
+    EquilateralTriangle.prototype.getInstanceById = function (type) {
+        return this.eBoardCanvas.getObjects(type)[0];
+    };
+    /**
+     * 接收消息处理
+     * @param {ICircleMessage} message
+     */
+    EquilateralTriangle.prototype.onMessage = function (message) {
+        var type = message.type, tag = message.tag, points = message.points, start = message.start, radius = message.radius;
+        var instance = this.getInstanceById(type);
+        switch (tag) {
+            case MessageTagEnum.Start:
+                if (void 0 === instance) {
+                    instance = this.newInstance(points, start, radius, type);
+                }
+                break;
+            case MessageTagEnum.Temporary:
+            case MessageTagEnum.End:
+                // 如果有则更新，否则创建
+                this.eBoardCanvas.renderOnAddRemove = false;
+                if (void 0 === instance) {
+                    instance = this.newInstance(points, start, radius, type);
+                }
+                instance.set({
+                    points: points,
+                    width: radius,
+                    height: radius,
+                }).setCoords();
+                this.eBoardCanvas.renderAll();
+                this.eBoardCanvas.renderOnAddRemove = true;
+                break;
+            default:
+                break;
+        }
+    };
     return EquilateralTriangle;
 }(AbstractShapePlugin));
 export { EquilateralTriangle };

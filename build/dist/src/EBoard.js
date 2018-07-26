@@ -6,9 +6,16 @@
  * @disc:前端应用架构类 设计到窗口概念  frame 可应用为Tab
  * frame 中管理canvas实例，canvas实例中管理绘制object实例  层级化，frame中提供object实例查询 canvas中提供跨实例object实例查询
  * 支持页面中多实例模式，多容器模式，从静态类修改成实体类
+ * 消息代理应该从该对象拦截
  *
  *
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 import { BaseFrame } from './frames/BaseFrame';
 import { HtmlFrame } from './frames/HtmlFrame';
 import { ImageFrame } from './frames/ImageFrame';
@@ -18,6 +25,8 @@ import { ImagesFrame } from './frames/ImagesFrame';
 import "./style/canvas.less";
 import { MessageMiddleWare, MessageTagEnum, } from './middlewares/MessageMiddleWare';
 import { MessageIdMiddleWare } from './middlewares/MessageIdMiddleWare';
+import { MessageHandlerInterceptorAdapter } from './interceptor/MessageHandlerInterceptorAdapter';
+import { registerMessageInterceptor } from './utils/decorators';
 export var FrameType;
 (function (FrameType) {
     FrameType["Empty"] = "empty";
@@ -32,7 +41,7 @@ var EBoard = /** @class */ (function () {
         this.frames = new Map(); // frame管理
         this.container = containerFilter;
     }
-    EBoard.prototype.getConteiner = function () {
+    EBoard.prototype.getContainer = function () {
         return "tagName" in this.container ? this.container : this.container();
     };
     /**
@@ -54,7 +63,7 @@ var EBoard = /** @class */ (function () {
      */
     EBoard.prototype.createFrame = function (options) {
         if (this.hasFrame(options.type)) {
-            return this; // 如果已经存在
+            return this.findFrameById(options.type); // 如果已经存在
         }
         // 判断是操作者创建还是控制,操作者需要创建消息Id
         var _a = this.getFrameTypeAndId(options.type), type = _a.type, id = _a.id;
@@ -68,30 +77,48 @@ var EBoard = /** @class */ (function () {
             }));
         }
         // 消息中不需要传递container
-        var container = this.getConteiner();
+        var container = this.getContainer();
         switch (type) {
             case FrameType.HTML:
-                frame = new HtmlFrame(options, container);
+                frame = new HtmlFrame(options, container, this);
                 break;
             case FrameType.Image:
-                frame = new ImageFrame(options, container);
+                frame = new ImageFrame(options, container, this);
                 break;
             case FrameType.Canvas:
-                frame = new CanvasFrame(options, container);
+                frame = new CanvasFrame(options, container, this);
                 break;
             case FrameType.Pdf:
-                frame = new PdfFrame(options, container);
+                frame = new PdfFrame(options, container, this);
                 break;
             case FrameType.Images:
-                frame = new ImagesFrame(options);
+                frame = new ImagesFrame(options, container, this);
                 break;
             case FrameType.Empty:
             default:
-                frame = new BaseFrame(options, container);
+                frame = new BaseFrame(options, container, this);
                 break;
         }
         this.frames.set(options.type, frame);
         return frame;
+    };
+    EBoard.prototype.createBaseFrame = function (options) {
+        return this.createFrame(options);
+    };
+    EBoard.prototype.createHtmlFrame = function (options) {
+        return this.createFrame(options);
+    };
+    EBoard.prototype.createImageFrame = function (options) {
+        return this.createFrame(options);
+    };
+    EBoard.prototype.createCanvasFrame = function (options) {
+        return this.createFrame(options);
+    };
+    EBoard.prototype.createPdfFrame = function (options) {
+        return this.createFrame(options);
+    };
+    EBoard.prototype.createImagesFrame = function (options) {
+        return this.createFrame(options);
     };
     /**
      * 切换到需要显示的frame 需要改frame存在，如果不存在则不执行任何操作
@@ -152,6 +179,9 @@ var EBoard = /** @class */ (function () {
         }
         return this;
     };
+    EBoard = __decorate([
+        registerMessageInterceptor(MessageHandlerInterceptorAdapter)
+    ], EBoard);
     return EBoard;
 }());
 export { EBoard };

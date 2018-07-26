@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
  * @disc:图片Frame 单独的图片Frame 不允许出现滚动条，翻页中只支持滚动条，允许配置
  *      滚动条支持：perfect-scrollbar
  */
-import { HtmlFrame } from './HtmlFrame';
+import { GenericHtmlFrame } from './HtmlFrame';
 var ImageFrame = /** @class */ (function (_super) {
     __extends(ImageFrame, _super);
     function ImageFrame() {
@@ -30,6 +30,6 @@ var ImageFrame = /** @class */ (function (_super) {
         return "<img src=\"" + this.src + "\" style=\"width:100%\"/>";
     };
     return ImageFrame;
-}(HtmlFrame));
+}(GenericHtmlFrame));
 export { ImageFrame };
 //# sourceMappingURL=ImageFrame.js.map

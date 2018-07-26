@@ -12,7 +12,7 @@ var MessageHandlerInterceptorAdapter = /** @class */ (function () {
     MessageHandlerInterceptorAdapter.messageHandle = function (message) {
         // 判断是否有上层拦截器
         // 如果有上层Frame则需要添加frame信息
-        if ("parentFrame" in this) {
+        if (this["parentFrame"]) {
             // 有frame则需要将frame信息添加到消息中
             // 判断一个是group还是frame
             if (this["parentFrame"].group) {
@@ -22,7 +22,7 @@ var MessageHandlerInterceptorAdapter = /** @class */ (function () {
             else {
                 message.frameOptions = this["parentFrame"].options;
             }
-            if ("messageHandle" in this["parentFrame"]) {
+            if (this["parentFrame"]["messageHandle"]) {
                 this["parentFrame"].messageHandle(message);
             }
             else {

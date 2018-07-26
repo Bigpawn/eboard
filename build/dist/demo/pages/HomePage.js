@@ -12,7 +12,8 @@ import * as React from "react";
 import { Card } from "antd";
 import { CursorTypeName } from '../../src/plugins/tool/cursor/CursorType';
 import { Plugins } from '../../src/plugins';
-import { EBoard, FrameType } from '../../src/EBoard';
+import { FrameType } from '../../src/EBoard';
+import { EBoardInstance } from './EBoardInstance';
 var ToolBar = /** @class */ (function (_super) {
     __extends(ToolBar, _super);
     function ToolBar(props) {
@@ -47,7 +48,7 @@ var ToolBar = /** @class */ (function (_super) {
         };
         _this.startPencilLine = function () {
             var PencilLine = _this.Canvas.getPlugin(Plugins.Pencil);
-            PencilLine.setColor('rgba(0,0,0,1)').setWidth(1).setEnable(true);
+            PencilLine.setEnable(true);
         };
         _this.openHtml = function () {
             var HTML = _this.Canvas.getPlugin(Plugins.HTML);
@@ -135,16 +136,17 @@ var ToolBar = /** @class */ (function (_super) {
     return ToolBar;
 }(React.Component));
 export { ToolBar };
-var eBoard = new EBoard(function () { return document.getElementById("eboardContainer"); });
+var eBoard = EBoardInstance.getInstance();
 var HomePage = /** @class */ (function (_super) {
     __extends(HomePage, _super);
     function HomePage() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     HomePage.prototype.componentDidMount = function () {
-        var frame = eBoard.clearCache().createFrame({
+        var frame = eBoard.clearCache().createBaseFrame({
             type: FrameType.Empty,
-            ratio: "16:9"
+            ratio: "16:9",
+            messageId: 0
         });
         eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
