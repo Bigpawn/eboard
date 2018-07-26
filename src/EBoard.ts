@@ -28,7 +28,7 @@ import {
     MessageTagEnum,
 } from './middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from './middlewares/MessageIdMiddleWare';
-import {MessageHandlerInterceptorAdapter} from './interceptor/MessageHandlerInterceptorAdapter';
+import {MessageAdapter} from './interceptor/MessageAdapter';
 import {registerMessageInterceptor} from './utils/decorators';
 import {IImagesFrameOptions, IPdfFrameOptions} from './frames/IFrameGroup';
 
@@ -37,7 +37,7 @@ export enum FrameType{
 }
 
 
-@registerMessageInterceptor(MessageHandlerInterceptorAdapter)
+@registerMessageInterceptor(MessageAdapter)
 class EBoard{
     private frames:Map<string,IFrame>=new Map();// frame管理
     private activeFrame:string;

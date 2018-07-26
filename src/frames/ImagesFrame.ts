@@ -42,7 +42,7 @@ class ImagesFrame implements IImagesFrame{
         this.parent=parent;
         if(parent){
             this.handleAll=parent["handleAll"];
-            this.messageHandle=parent["messageHandle"].bind(this);
+            this.messageHandle=parent["messageHandle"];
         }
         this.onGo=this.onGo.bind(this);
         this.fixContainer();

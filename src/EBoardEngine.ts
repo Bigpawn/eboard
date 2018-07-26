@@ -8,12 +8,11 @@
  */
 import {EBoardCanvas} from './EBoardCanvas';
 import {ICanvasOptions} from '~fabric/fabric-impl';
-import {mixinPlugins, registerMessageInterceptor} from './utils/decorators';
+import {mixinPlugins} from './utils/decorators';
 
 
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins, Plugins} from './plugins';
-import {MessageHandlerInterceptorAdapter} from './interceptor/MessageHandlerInterceptorAdapter';
 import {IFrame} from './frames/IFrame';
 
 
@@ -24,7 +23,6 @@ declare interface IPlugin{
 
 
 @mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear,Plugins.Arrow])
-@registerMessageInterceptor(MessageHandlerInterceptorAdapter)
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
     private pluginList:IPlugin[];
@@ -32,10 +30,16 @@ class EBoardEngine{
     private bgColor:string="rgba(0,0,0,1)";// 带透明度
     private pixelRatio:number=1;
     private activePlugin?:AbstractPlugin;
-    protected parentFrame?:IFrame;
-    constructor(element: HTMLCanvasElement | string, options?: ICanvasOptions,frame?:IFrame){
+    public parent?:IFrame;
+    private handleAll?:boolean;
+    public messageHandle?:Function;
+    constructor(element: HTMLCanvasElement | string, options?: ICanvasOptions,parent?:IFrame){
         this.eBoardCanvas = new EBoardCanvas(element,options);
-        this.parentFrame=frame;
+        if(parent){
+            this.parent=parent;
+            this.handleAll=parent["handleAll"];
+            this.messageHandle=parent["messageHandle"];
+        }
         // plugins 实例化
         this.pluginList.forEach((plugin)=>{
             this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
@@ -58,6 +62,12 @@ class EBoardEngine{
     }
     public getPixelRatio(){
         return this.pixelRatio;
+    }
+    public isHandleAll(){
+        return this.handleAll;
+    }
+    public getMessageHandle(){
+        return this.messageHandle;
     }
 }
 

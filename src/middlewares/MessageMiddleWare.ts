@@ -29,8 +29,8 @@ export declare interface IMessage{
     point?:{x:number;y:number};
     radius?:number;
     type:string;// 实例类型及Id组合
-    frameOptions?:IFrameOptions,// frame 创建属性
-    frameGroupOptions?:IFrameOptions// frame组创建属性
+    frame?:IFrameOptions,// frame 创建属性
+    frameGroup?:IFrameOptions// frame组创建属性
     rx?:number;
     ry?:number;
     start?:{x:number;y:number};
@@ -47,6 +47,7 @@ export declare interface IMessage{
 export declare interface IReceiveMessage extends IMessage{
     id:number;
 }
+
 
 class MessageMiddleWare{
     private static compress:boolean=true;
