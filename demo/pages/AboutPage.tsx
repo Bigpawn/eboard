@@ -2,22 +2,23 @@ import * as React from "react";
 import HomePage, {ToolBar} from './HomePage';
 import { Card } from "antd";
 import {BaseFrame} from '../../src/frames/BaseFrame';
-import {EBoard, FrameType} from '../../src/EBoard';
+import {FrameType} from '../../src/EBoard';
 import {ScrollbarType} from '../../src/frames/HtmlFrame';
+import {EBoardInstance} from './EBoardInstance';
+
+const eBoard =EBoardInstance.getInstance();
 
 class AboutPage extends HomePage {
     componentDidMount(){
         // this.Toolbar.setCanvas(this.canvas);
-        EBoard.clearCache().createFrame({
-            container:document.getElementById("eboardContainer") as HTMLDivElement,
+        const frame = eBoard.clearCache().createImageFrame({
             type:FrameType.Image,
-            id:3,
-            messageId:4,
             ratio:"16:9",
             src:"https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2622681255,3418216244&fm=173&app=25&f=JPEG?w=639&h=381&s=7084E2BB4A501CC0543717BC0300700E",
             scrollbar:ScrollbarType.vertical,
-        }).switchToFrame(3);
-        const frame = EBoard.findFrameById(3) as BaseFrame;
+            messageId:0
+        }) as BaseFrame;
+        eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
     }
     public render(): JSX.Element {

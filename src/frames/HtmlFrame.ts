@@ -5,10 +5,10 @@
  * * @Last Modified time: 2018/7/20 14:42
  * @disc:HTMLFrame HTMLFrame 支持配置是否显示滚动条 属于单层Frame，不会出现子Frame
  */
-import {BaseFrame} from './BaseFrame';
+import {GenericBaseFrame} from './BaseFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import PerfectScrollbar from 'perfect-scrollbar';
-import {IHTMLFrame, IHTMLFrameOptions, IImageFrameOptions} from './IFrame';
+import {IFrame, IFrameOptions, IHTMLFrame, IHTMLFrameOptions} from './IFrame';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import "../style/scrollbar.less";
 
@@ -19,17 +19,15 @@ export enum ScrollbarType{
     none
 }
 
-
-
-class HtmlFrame extends BaseFrame implements IHTMLFrame{
+class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> implements IFrame{
     private supportScrollbar:ScrollbarType=ScrollbarType.none;
     private scrollbar:PerfectScrollbar;
     private htmlFragment:string|HTMLElement;
     private htmlWrap:HTMLDivElement;
-    protected initialize(options:IHTMLFrameOptions|IImageFrameOptions){
+    protected initialize(options:T){
         super.initialize(options);
-        this.supportScrollbar=options.scrollbar||ScrollbarType.none;
-        this.htmlFragment=options["htmlFragment"]||"";
+        this.supportScrollbar=(options as any).scrollbar||ScrollbarType.none;
+        this.htmlFragment=(options as any).htmlFragment||"";
     }
     protected getChildren():string|HTMLElement{
         return this.htmlFragment;
@@ -59,7 +57,7 @@ class HtmlFrame extends BaseFrame implements IHTMLFrame{
             selection:false,
             skipTargetFind:true,
             containerClass:"eboard-canvas"
-        });
+        },this);
         // scrollbar 设置
         switch (this.supportScrollbar){
             case ScrollbarType.horizontal:
@@ -120,4 +118,10 @@ class HtmlFrame extends BaseFrame implements IHTMLFrame{
     }
 }
 
-export {HtmlFrame};
+
+class HtmlFrame extends GenericHtmlFrame<IHTMLFrameOptions> implements IHTMLFrame{
+
+}
+
+
+export {HtmlFrame,GenericHtmlFrame};

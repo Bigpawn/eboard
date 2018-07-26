@@ -5,17 +5,19 @@
  * * @Last Modified time: 2018/7/23 13:53
  * @disc:图片轮播Frame
  */
-import {IFrame, IFrameOptions} from './IFrame';
 import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
 import {pipMode, setAnimationName} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
+import {EBoard} from '../EBoard';
+import {IImagesFrame, IImagesFrameOptions} from './IFrameGroup';
 
 
 @setAnimationName('eboard-pager')
-class ImagesFrame implements IFrame{
+class ImagesFrame implements IImagesFrame{
+    public type:string;
+    public group:true=true;
     public container:HTMLDivElement;
-    public id:number;
     public messageId:number;
     public ratio:string;
     public dom:HTMLDivElement;
@@ -23,17 +25,25 @@ class ImagesFrame implements IFrame{
     public pageNum:number;
     public totalPages:number;
     public child:Map<number,ImageFrame>=new Map();
-    private options:IFrameOptions;
+    public options:IImagesFrameOptions;
     private pageFrame:ImageFrame;
     private pagination:Pagination;
     private animationCssPrefix:string;
-    private images:string[];
-    constructor(options:IFrameOptions){
+    public images:string[];
+    private parent?:EBoard;
+    private handleAll?:boolean;
+    private messageHandle?:Function;
+    constructor(options:IImagesFrameOptions,container:HTMLDivElement,parent?:EBoard){
         this.options=options;
-        this.container=options.container;
-        this.id=options.id;
+        this.type=options.type;
+        this.container=container;
         this.messageId=options.messageId;
         this.ratio=options.ratio||"4:3";
+        this.parent=parent;
+        if(parent){
+            this.handleAll=parent["handleAll"];
+            this.messageHandle=parent["messageHandle"].bind(this);
+        }
         this.onGo=this.onGo.bind(this);
         this.fixContainer();
         this.initLayout();
@@ -69,13 +79,12 @@ class ImagesFrame implements IFrame{
         }
         if(this.images.length>0){
             const pageFrame = new ImageFrame({
-                container:options.container,
-                id:this.pageNum,
-                messageId:options.childMessageId as number,
+                type:this.pageNum+"",
+                messageId:options.messageId,
                 ratio:options.ratio,
                 src:this.urlPrefix+this.images[this.pageNum],
                 scrollbar:ScrollbarType.vertical,
-            });
+            },this.container,this);
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
             this.dom.appendChild(this.pageFrame.dom);
@@ -147,13 +156,12 @@ class ImagesFrame implements IFrame{
         if(void 0 === nextPageFrame){
             // 创建
             nextPageFrame = new ImageFrame({
-                container:this.options.container,
-                id:pageNum,
+                type:pageNum+"",
                 messageId:messageId,
                 src:this.urlPrefix+this.images[pageNum],
                 ratio:this.options.ratio,
                 scrollbar:ScrollbarType.vertical,
-            });
+            },this.container,this);
             this.child.set(pageNum,nextPageFrame);
         }
         return new Promise<this>((resolve)=>{
@@ -190,6 +198,15 @@ class ImagesFrame implements IFrame{
             });
             this.child.clear();
         }
+    }
+    public getParent(){
+        return this.parent;
+    }
+    public isHandleAll(){
+        return this.handleAll;
+    }
+    public getMessageHandle(){
+        return this.messageHandle;
     }
 }
 

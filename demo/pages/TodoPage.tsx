@@ -1,18 +1,17 @@
 import * as React from "react";
 import { Card } from "antd";
 import HomePage, {ToolBar} from './HomePage';
-import {BaseFrame} from '../../src/frames/BaseFrame';
-import {EBoard, FrameType} from '../../src/EBoard';
+import {FrameType} from '../../src/EBoard';
 import {ScrollbarType} from '../../src/frames/HtmlFrame';
+import {EBoardInstance} from './EBoardInstance';
+
+const eBoard =EBoardInstance.getInstance();
 
 class HTMLPage extends HomePage{
     componentDidMount(){
         // this.Toolbar.setCanvas(this.canvas);
-        EBoard.clearCache().createFrame({
-            container:document.getElementById("eboardContainer") as HTMLDivElement,
+        const frame =eBoard.clearCache().createHtmlFrame({
             type:FrameType.HTML,
-            id:2,
-            messageId:3,
             ratio:"16:9",
             scrollbar:ScrollbarType.vertical,
             htmlFragment:'html内容dsaaaaaaaaaaaaaaaadas\n' +
@@ -106,9 +105,10 @@ class HTMLPage extends HomePage{
             '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
             '                        <br/>\n' +
             '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>'
-        }).switchToFrame(2);
-        const frame = EBoard.findFrameById(2) as BaseFrame;
+            '                        <br/>',
+            messageId:0
+        });
+        eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
     }
     public render(): JSX.Element {
