@@ -90,8 +90,17 @@ class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> impl
         this.dom.style.height=calcSize.height+"px";
         
         
-        // 需要根据html内容的高度设置画布的高度
-        const height = Math.max(this.htmlWrap.offsetHeight,calcSize.height);
+        
+        // 需要等待图片加载
+        
+        
+        // 还没有append则不能计算出高度  ========== fix
+        this.dom.style.visibility="hidden";
+        this.container.appendChild(this.dom);
+        console.log(this.htmlWrap.offsetHeight);
+        const height = Math.max(this.htmlWrap.offsetHeight,calcSize.height);// 没显示
+        this.container.removeChild(this.dom);
+        this.dom.style.visibility="visible";
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 根据实际分辨率设置大小
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height},{backstoreOnly:true});// 设置canvas 画布大小
     }
