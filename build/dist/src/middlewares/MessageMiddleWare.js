@@ -15,7 +15,6 @@
  */
 import { MessageIdMiddleWare } from './MessageIdMiddleWare';
 import * as LZString from "lz-string";
-import { MessageReceiver } from "./MessageReceiver";
 export var MessageTagEnum;
 (function (MessageTagEnum) {
     MessageTagEnum[MessageTagEnum["Start"] = 0] = "Start";
@@ -44,8 +43,7 @@ var MessageMiddleWare = /** @class */ (function () {
         // 自动生成id并返回id
         var id = void 0 === message.messageId ? MessageIdMiddleWare.getId() : message.messageId;
         var outMessage = Object.assign({}, message, { messageId: id });
-        // console.log(outMessage);
-        MessageReceiver.receiver(outMessage);
+        console.log(outMessage);
         // 发送该消息
         this.messageListener && this.messageListener.call(this, this.compress ? LZString.compress(JSON.stringify(outMessage)) : JSON.stringify(outMessage));
         return id;
