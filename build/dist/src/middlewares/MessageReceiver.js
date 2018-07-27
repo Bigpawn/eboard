@@ -4,15 +4,19 @@
  * @Last Modified by: Bigpawn
  * @Last Modified time: 2018/7/26 14:35
  */
-import { DisplayType } from "../plugins/tool/suspension/enum/displayType";
 var MessageReceiver = /** @class */ (function () {
-    function MessageReceiver() {
+    function MessageReceiver(eBoard) {
+        this.stroke = [];
+        this.buffer = [];
+        this.messageId = 0;
+        this.isOutput = true;
+        this.eBoard = eBoard;
     }
     /**
      * 接收到的消息
      * @param {IMessage} message
      */
-    MessageReceiver.receiver = function (message) {
+    MessageReceiver.prototype.receiver = function (message) {
         if (this.isOutput) {
             this.buffer.length > 0 ? this.stroke.concat(this.buffer) : null;
             this.stroke.push(message);
@@ -33,7 +37,7 @@ var MessageReceiver = /** @class */ (function () {
     /**
      * 消息处理
      */
-    MessageReceiver.update = function () {
+    MessageReceiver.prototype.update = function () {
         var _this = this;
         if (this.stroke.length > 0 && this.isOutput) {
             this.stroke.sort(function (item1, item2) {
@@ -62,19 +66,18 @@ var MessageReceiver = /** @class */ (function () {
             }
         }
     };
-    MessageReceiver.distribute = function (message) {
-        var type = message.type;
-        if (type.indexOf(DisplayType.Line) >= 0) {
-            // Line.onMessage(message as any);
-        }
-        else if (type.indexOf(DisplayType.Arrow)) {
-        }
-        console.log(message, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    /**
+     * 分派收到的消息
+     * @param {IMessage} message
+     */
+    MessageReceiver.prototype.distribute = function (message) {
+        var pluginName = message.type.split('_')[0];
+        var type = message.frame && message.frame.type;
+        var eboard = this.eBoard.findFrameById(type || '');
+        pluginName = pluginName.substring(0, 1).toUpperCase() + pluginName.substring(1);
+        var plugin = eboard.getPlugin(pluginName);
+        plugin.onMessage(message);
     };
-    MessageReceiver.stroke = [];
-    MessageReceiver.buffer = [];
-    MessageReceiver.messageId = 0;
-    MessageReceiver.isOutput = true;
     return MessageReceiver;
 }());
 export { MessageReceiver };

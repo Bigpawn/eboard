@@ -24,6 +24,7 @@ import {ImagesFrame} from './frames/ImagesFrame';
 
 import "./style/canvas.less";
 import {
+    IMessage,
     MessageMiddleWare,
     MessageTagEnum,
 } from './middlewares/MessageMiddleWare';
@@ -31,6 +32,7 @@ import {MessageIdMiddleWare} from './middlewares/MessageIdMiddleWare';
 import {MessageAdapter} from './interceptor/MessageAdapter';
 import {registerMessageInterceptor} from './utils/decorators';
 import {IImagesFrameOptions, IPdfFrameOptions} from './frames/IFrameGroup';
+import {MessageReceiver} from "./middlewares/MessageReceiver";
 
 export enum FrameType{
     Empty="empty",Image="image",HTML="html",Canvas="canvas",Pdf="pdf",Images="images"
@@ -42,7 +44,7 @@ class EBoard{
     private frames:Map<string,IFrame>=new Map();// frame管理
     private activeFrame:string;
     private container:HTMLDivElement|(()=>HTMLDivElement);
-    
+    private messageReceiver:MessageReceiver=new MessageReceiver(this);
     private getContainer(){
         return "tagName" in this.container?this.container:this.container();
     }
@@ -193,6 +195,14 @@ class EBoard{
             this.frames.clear();
         }
         return this;
+    }
+
+    /**
+     * 接收消息
+     * @param {IMessage} message
+     */
+    public messageInput(message:IMessage){
+        this.messageReceiver.receiver(message);
     }
 }
 

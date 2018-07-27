@@ -25,8 +25,9 @@ import { ImagesFrame } from './frames/ImagesFrame';
 import "./style/canvas.less";
 import { MessageMiddleWare, MessageTagEnum, } from './middlewares/MessageMiddleWare';
 import { MessageIdMiddleWare } from './middlewares/MessageIdMiddleWare';
-import { MessageHandlerInterceptorAdapter } from './interceptor/MessageHandlerInterceptorAdapter';
+import { MessageAdapter } from './interceptor/MessageAdapter';
 import { registerMessageInterceptor } from './utils/decorators';
+import { MessageReceiver } from "./middlewares/MessageReceiver";
 export var FrameType;
 (function (FrameType) {
     FrameType["Empty"] = "empty";
@@ -39,6 +40,7 @@ export var FrameType;
 var EBoard = /** @class */ (function () {
     function EBoard(containerFilter) {
         this.frames = new Map(); // frame管理
+        this.messageReceiver = new MessageReceiver(this);
         this.container = containerFilter;
     }
     EBoard.prototype.getContainer = function () {
@@ -179,8 +181,15 @@ var EBoard = /** @class */ (function () {
         }
         return this;
     };
+    /**
+     * 接收消息
+     * @param {IMessage} message
+     */
+    EBoard.prototype.messageInput = function (message) {
+        this.messageReceiver.receiver(message);
+    };
     EBoard = __decorate([
-        registerMessageInterceptor(MessageHandlerInterceptorAdapter)
+        registerMessageInterceptor(MessageAdapter)
     ], EBoard);
     return EBoard;
 }());

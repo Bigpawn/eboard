@@ -16,7 +16,7 @@
 import {MessageIdMiddleWare} from './MessageIdMiddleWare';
 import * as LZString from "lz-string";
 import {IFrameOptions} from '../frames/IFrame';
-import {MessageReceiver} from "./MessageReceiver";
+import {MessageReceiver} from './MessageReceiver';
 
 export enum MessageTagEnum{
     Start,Temporary,Process,End,Action

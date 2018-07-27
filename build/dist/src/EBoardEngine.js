@@ -13,17 +13,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
  * 1. 添加消息拦截器，拦截器自动检测是否有上层Frame，如果有则向上抛i，如果没有则直接输出,拦截器配置全部拦截还是优化拦截，全部拦截，子项所有操作都会进行消息传递，优化拦截子项传递关键操作
  */
 import { EBoardCanvas } from './EBoardCanvas';
-import { mixinPlugins, registerMessageInterceptor } from './utils/decorators';
+import { mixinPlugins } from './utils/decorators';
 import { Plugins } from './plugins';
-import { MessageHandlerInterceptorAdapter } from './interceptor/MessageHandlerInterceptorAdapter';
 var EBoardEngine = /** @class */ (function () {
-    function EBoardEngine(element, options, frame) {
+    function EBoardEngine(element, options, parent) {
         var _this = this;
         this.pluginInstanceMap = new Map();
         this.bgColor = "rgba(0,0,0,1)"; // 带透明度
         this.pixelRatio = 1;
         this.eBoardCanvas = new EBoardCanvas(element, options);
-        this.parentFrame = frame;
+        if (parent) {
+            this.parent = parent;
+            this.handleAll = parent["handleAll"];
+            this.messageHandle = parent["messageHandle"];
+        }
         // plugins 实例化
         this.pluginList.forEach(function (plugin) {
             _this.pluginInstanceMap.set(plugin.pluginName, new plugin.pluginReflectClass(_this.eBoardCanvas, _this)); // 该参数统一传递,插件构造函数统一入参EBoardCanvas
@@ -47,9 +50,14 @@ var EBoardEngine = /** @class */ (function () {
     EBoardEngine.prototype.getPixelRatio = function () {
         return this.pixelRatio;
     };
+    EBoardEngine.prototype.isHandleAll = function () {
+        return this.handleAll;
+    };
+    EBoardEngine.prototype.getMessageHandle = function () {
+        return this.messageHandle;
+    };
     EBoardEngine = __decorate([
-        mixinPlugins([Plugins.Cursor, Plugins.Line, Plugins.Text, Plugins.Selection, Plugins.HTML, Plugins.Pencil, Plugins.Circle, Plugins.Ellipse, Plugins.Rectangle, Plugins.Square, Plugins.Triangle, Plugins.EquilateralTriangle, Plugins.OrthogonalTriangle, Plugins.Polygon, Plugins.Star, Plugins.Pentagon, Plugins.Hexagon, Plugins.Clear, Plugins.Arrow]),
-        registerMessageInterceptor(MessageHandlerInterceptorAdapter)
+        mixinPlugins([Plugins.Cursor, Plugins.Line, Plugins.Text, Plugins.Selection, Plugins.HTML, Plugins.Pencil, Plugins.Circle, Plugins.Ellipse, Plugins.Rectangle, Plugins.Square, Plugins.Triangle, Plugins.EquilateralTriangle, Plugins.OrthogonalTriangle, Plugins.Polygon, Plugins.Star, Plugins.Pentagon, Plugins.Hexagon, Plugins.Clear, Plugins.Arrow])
     ], EBoardEngine);
     return EBoardEngine;
 }());
