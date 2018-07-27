@@ -6,7 +6,6 @@
  * @disc:箭头
  */
 
-import {fabric} from "fabric";
 import {setCursor} from '../../../../utils/decorators';
 import {CursorTypeName} from '../../../tool/cursor/CursorType';
 import {IEvent} from '~fabric/fabric-impl';
@@ -17,6 +16,7 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
+import {Arrow as FabricArrow} from '../../../../extends/Arrow';
 
 export enum ArrowMode{
     PREV,
@@ -37,39 +37,34 @@ export declare interface IArrowMessage extends IMessage{
 
 @setCursor(CursorTypeName.Pencil)
 class Arrow extends AbstractShapePlugin{
-    protected instance:fabric.Path;
-    private type="arrow";
+    protected instance:FabricArrow;
     private color="rgba(0,0,0,1)";
     private lineWidth:number=1;
     private arrowFactory:ArrowFactory=ArrowFactory.HOLLOW;
     private arrowMode:ArrowMode=ArrowMode.ALL;
-    private newInstance(start:{x:number;y:number},end:{x:number;y:number},type?:string){
+    private calcOptions(start:{x:number;y:number},end:{x:number;y:number}){
         const arrowFactory = require(`./factory/${this.arrowFactory}`).default as typeof DefaultFactory;
         const headlen = Math.max(this.lineWidth * 2 +10,10);
         const {path,fill} = arrowFactory.calcPath(start,end,30,headlen,this.arrowMode,this.color);
-        const instance = new fabric.Path(path,{
-            type:type?type:`${this.type}_${Date.now()}`,
-            stroke: this.color,
-            strokeWidth:this.lineWidth,
-            fill:fill
-        });
-        this.eBoardCanvas.add(instance);
-        return instance;
+        return {path,fill};
     }
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
         }
         super.onMouseMove(event);
+        const {path,fill} = this.calcOptions(this.start,this.end);
         if(void 0 === this.instance){
-            this.instance=this.newInstance(this.start,this.end);
+            this.instance=new FabricArrow(path,{
+                stroke: this.color,
+                strokeWidth:this.lineWidth,
+                fill
+            });
+            this.eBoardCanvas.add(this.instance);
             this.throw(MessageTagEnum.Start);
         }else{
-            this.eBoardCanvas.renderOnAddRemove=false;
-            this.eBoardCanvas.remove(this.instance);
-            this.instance=this.newInstance(this.start,this.end,this.instance.type);
+            this.instance.update(path);
             this.eBoardCanvas.renderAll();
-            this.eBoardCanvas.renderOnAddRemove=true;
             this.throw(MessageTagEnum.Temporary);
         }
     }
@@ -85,7 +80,7 @@ class Arrow extends AbstractShapePlugin{
             return;
         }
         super.throwMessage({
-            type:this.instance.type as string,
+            id:this.instance.id,
             messageId:MessageIdMiddleWare.getId(),
             tag:tag,
             start:this.start,
@@ -94,41 +89,34 @@ class Arrow extends AbstractShapePlugin{
     }
     
     /**
-     * 通过id获取实例
-     * @returns {"~fabric/fabric-impl".Circle | undefined}
-     * @param type
-     */
-    private getInstanceById(type:string){
-        return this.eBoardCanvas.getObjects(type)[0];
-    }
-    
-    /**
      * 消息处理
      * @param {IArrowMessage} message
      */
     public onMessage(message:IArrowMessage){
-        const {type,start,end,tag} = message;
-        let instance = this.getInstanceById(type) as fabric.Path;
+        const {id,start,end,tag} = message;
+        let instance = this.getInstanceById(id) as FabricArrow;
+        this.eBoardCanvas.renderOnAddRemove=false;
+        const {path,fill} = this.calcOptions(start,end);
+        if(void 0 === instance){
+            instance = new FabricArrow(path,{
+                stroke: this.color,
+                strokeWidth:this.lineWidth,
+                fill
+            }).setId(id);
+            this.eBoardCanvas.add(instance);
+        }
         switch (tag){
             case MessageTagEnum.Start:
-                if(void 0 === instance){
-                    instance=this.newInstance(start,end,type);
-                }
                 break;
             case MessageTagEnum.Temporary:
             case MessageTagEnum.End:
-                // 如果有则更新，否则创建
-                this.eBoardCanvas.renderOnAddRemove=false;
-                if(void 0 !== instance){
-                    this.eBoardCanvas.remove(instance);
-                }
-                instance=this.newInstance(start,end,type);
-                this.eBoardCanvas.renderAll();
-                this.eBoardCanvas.renderOnAddRemove=true;
+                instance.update(path);
                 break;
             default:
                 break;
         }
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     }
     
 }

@@ -7,7 +7,6 @@
  *      instanceId: type
  */
 
-import {fabric} from "fabric";
 import {setCursor} from '../../../../utils/decorators';
 import {CursorTypeName} from '../../../tool/cursor/CursorType';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
@@ -17,9 +16,12 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
+import {Circle as FabricCircle} from "../../../../extends/Circle";
+
+
 
 export declare interface ICircleMessage extends IMessage{
-    point:{x:number;y:number};
+    start:{x:number;y:number};
     radius:number;
 }
 
@@ -30,24 +32,7 @@ class Circle extends AbstractShapePlugin{
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
-    protected instance:fabric.Circle;
-    public type:string="circle";
-    private newInstance(point:{x:number;y:number},radius:number,type?:string){
-        const instance =  new fabric.Circle({
-            type:type||`${this.type}_${Date.now()}`,
-            originX:"center",
-            originY:"center",
-            fill:this.fill,
-            left: point.x,
-            top: point.y,
-            stroke:this.stroke,
-            strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
-            radius:radius,
-        });
-        this.eBoardCanvas.add(instance);
-        return instance;
-    }
+    protected instance:FabricCircle;
     protected onMouseMove(event:IEvent){
         if(void 0 ===this.start){
             return;
@@ -55,14 +40,24 @@ class Circle extends AbstractShapePlugin{
         super.onMouseMove(event);
         const radius=Math.round(Math.sqrt(Math.pow(this.end.x-this.start.x,2)+Math.pow(this.end.y-this.start.y,2)));
         if(this.instance){
-            this.instance.set({
+            this.instance.update({
                 radius:radius,
-            }).setCoords();
+            });
             this.eBoardCanvas.renderAll();
             this.throw(MessageTagEnum.Temporary);// 不需要全部抛出消息
         }else{
-            // 实例Id 支持
-            this.instance=this.newInstance(this.start,radius);
+            this.instance=new FabricCircle({
+                originX:"center",
+                originY:"center",
+                fill:this.fill,
+                left: this.start.x,
+                top: this.start.y,
+                stroke:this.stroke,
+                strokeDashArray:this.strokeDashArray,
+                strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                radius:radius,
+            });
+            this.eBoardCanvas.add(this.instance);
             this.throw(MessageTagEnum.Start);
         }
     };
@@ -76,21 +71,12 @@ class Circle extends AbstractShapePlugin{
             return;
         }
         super.throwMessage({
-            type:this.instance.type as string,
+            id:this.instance.id,
             messageId:MessageIdMiddleWare.getId(),
             tag:tag,
-            point:this.start,
+            start:this.start,
             radius:this.instance.radius,
         });
-    }
-    
-    /**
-     * 通过id获取实例
-     * @param {number} id
-     * @returns {"~fabric/fabric-impl".Circle | undefined}
-     */
-    private getInstanceById(type:string){
-        return this.eBoardCanvas.getObjects(type)[0];
     }
     
     /**
@@ -98,30 +84,37 @@ class Circle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ICircleMessage){
-        const {type,point,radius,tag} = message;
-        let instance = this.getInstanceById(type) as fabric.Circle;
+        const {id,start,radius,tag} = message;
+        let instance = this.getInstanceById(id) as FabricCircle;
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 === instance){
+            instance=new FabricCircle({
+                originX:"center",
+                originY:"center",
+                fill:this.fill,
+                left: start.x,
+                top: start.y,
+                stroke:this.stroke,
+                strokeDashArray:this.strokeDashArray,
+                strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                radius:radius,
+            }).setId(id);
+            this.eBoardCanvas.add(instance);
+        }
         switch (tag){
             case MessageTagEnum.Start:
-                if(void 0 === instance){
-                    instance=this.newInstance(point,radius,type);
-                }
                 break;
             case MessageTagEnum.Temporary:
             case MessageTagEnum.End:
-                // 如果有则更新，否则创建
-                this.eBoardCanvas.renderOnAddRemove=false;
-                if(void 0 === instance){
-                    instance=this.newInstance(point,radius,type);
-                }
-                instance.set({
+                instance.update({
                     radius:radius,
-                }).setCoords();
-                this.eBoardCanvas.renderAll();
-                this.eBoardCanvas.renderOnAddRemove=true;
+                });
                 break;
             default:
                 break;
         }
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     }
 }
 

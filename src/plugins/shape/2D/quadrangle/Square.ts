@@ -6,7 +6,6 @@
  * @disc:Square 正方形 extends Rectangle without Ctrl KeyEvent;
  * 修改成起点为正方形中心点，终点为正方形一个角，自动旋转
  */
-import {fabric} from "fabric";
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
@@ -14,6 +13,7 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
+import {Square as FabricSquare} from "../../../../extends/Square";
 
 export declare interface ISquareMessage extends IMessage{
     start:{x:number;y:number};
@@ -24,31 +24,11 @@ export declare interface ISquareMessage extends IMessage{
 
 
 class Square extends AbstractShapePlugin{
-    protected instance:fabric.Rect;
+    protected instance:FabricSquare;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
-    private type="square";
-    private newInstance(center:{x:number;y:number},length:number,angle:number,type?:string){
-        const instance = new fabric.Rect({
-            type:type||`${this.type}_${Date.now()}`,
-            fill:this.fill,
-            left: center.x,
-            top: center.y,
-            stroke:this.stroke,
-            strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
-            originX:"center",
-            originY:"center",
-            width:length,
-            height:length,
-            angle:angle
-        });
-        this.eBoardCanvas.add(instance);
-        return instance;
-    }
-    
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
@@ -58,16 +38,29 @@ class Square extends AbstractShapePlugin{
         const width=Math.abs(pos.x-this.start.x);
         const height=Math.abs(pos.y-this.start.y);
         const length = Math.sqrt(2) * Math.sqrt(Math.pow(width,2)+Math.pow(height,2));
-        const angle = this.calcAngle(pos);
+        const angle = this.calcAngle(pos) - 45;
         if(void 0 === this.instance){
-            this.instance=this.newInstance(this.start,length,angle-45);
-            this.throw(MessageTagEnum.Start);
-        }else{
-            this.instance.set({
+            this.instance = new FabricSquare({
+                fill:this.fill,
+                left: this.start.x,
+                top: this.start.y,
+                stroke:this.stroke,
+                strokeDashArray:this.strokeDashArray,
+                strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                originX:"center",
+                originY:"center",
                 width:length,
                 height:length,
-                angle:angle-45
-            }).setCoords();
+                angle:angle
+            });
+            this.eBoardCanvas.add(this.instance);
+            this.throw(MessageTagEnum.Start);
+        }else{
+            this.instance.update({
+                width:length,
+                height:length,
+                angle:angle
+            });
             this.eBoardCanvas.renderAll();
             this.throw(MessageTagEnum.Temporary);
         }
@@ -83,7 +76,7 @@ class Square extends AbstractShapePlugin{
             return;
         }
         super.throwMessage({
-            type:this.instance.type as string,
+            id:this.instance.id,
             messageId:MessageIdMiddleWare.getId(),
             tag:tag,
             start:this.start,
@@ -93,45 +86,45 @@ class Square extends AbstractShapePlugin{
     }
     
     /**
-     * 通过id获取实例
-     * @param {number} id
-     * @returns {"~fabric/fabric-impl".Circle | undefined}
-     */
-    private getInstanceById(type:string){
-        return this.eBoardCanvas.getObjects(type)[0];
-    }
-    
-    /**
      * 接收消息处理
      * @param {ICircleMessage} message
      */
     public onMessage(message:ISquareMessage){
-        const {type,start,length,angle,tag} = message;
-        let instance = this.getInstanceById(type) as fabric.Rect;
+        const {id,start,length,angle,tag} = message;
+        let instance = this.getInstanceById(id) as FabricSquare;
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 === instance){
+            instance = new FabricSquare({
+                fill:this.fill,
+                left: start.x,
+                top: start.y,
+                stroke:this.stroke,
+                strokeDashArray:this.strokeDashArray,
+                strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                originX:"center",
+                originY:"center",
+                width:length,
+                height:length,
+                angle:angle
+            }).setId(id);
+            this.eBoardCanvas.add(instance);
+        }
         switch (tag){
             case MessageTagEnum.Start:
-                if(void 0 === instance){
-                    instance=this.newInstance(start,length,angle,type);
-                }
                 break;
             case MessageTagEnum.Temporary:
             case MessageTagEnum.End:
-                // 如果有则更新，否则创建
-                this.eBoardCanvas.renderOnAddRemove=false;
-                if(void 0 === instance){
-                    instance=this.newInstance(start,length,angle,type);
-                }
-                instance.set({
+                instance.update({
                     width:length,
                     height:length,
                     angle:angle
-                }).setCoords();
-                this.eBoardCanvas.renderAll();
-                this.eBoardCanvas.renderOnAddRemove=true;
+                });
                 break;
             default:
                 break;
         }
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     }
 }
 

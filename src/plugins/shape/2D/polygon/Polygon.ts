@@ -9,12 +9,13 @@
 
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {fabric} from "fabric";
-import {IEvent} from '~fabric/fabric-impl';
+import {IEvent, IPolylineOptions} from '~fabric/fabric-impl';
 import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
+import {Polygon as FabricPolygon} from "../../../../extends/Polygon";
 
 
 export declare interface IPolygonMessage extends IMessage{
@@ -32,15 +33,46 @@ class Point extends fabric.Point{
 
 
 class Polygon extends AbstractShapePlugin{
-    protected instance:fabric.Polygon;
-    private points:Point[]=[];
+    protected instance:FabricPolygon;
+    private points:fabric.Point[]=[];
     private fill?:string="#28ff28";
     private stroke?:string="pink";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     private circle:fabric.Circle;// 起始点磁贴效果
-    private type="polygon";
     protected onMouseDown(event:IEvent){
+        // 缓存一个临时点
+        super.onMouseDown(event);
+        this.points.pop();
+        this.points.push(new fabric.Point(this.start.x,this.start.y));
+        this.points.push(new fabric.Point(this.start.x,this.start.y));
+        if(void 0 === this.instance){
+            this.instance = new FabricPolygon(this.points,{
+                stroke:this.stroke,
+                strokeDashArray:this.strokeDashArray,
+                strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                fill:this.fill,
+            });
+            this.eBoardCanvas.add(this.instance);
+        }else{
+            this.instance=this.instance.replace(this.points,this.eBoardCanvas,{
+                stroke:this.stroke,
+                strokeDashArray:this.strokeDashArray,
+                strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                fill:this.fill,
+            });
+            this.eBoardCanvas.renderAll();
+        }
+        // 关闭检测
+        
+        
+        
+        /*
+        
+        
+        
+        
+        
         // 关闭自动渲染
         if(void 0 === this.start){
             // 起点
@@ -58,8 +90,7 @@ class Polygon extends AbstractShapePlugin{
             }else{
                 this.points.push(new Point(finalPoint.x,finalPoint.y,"final"));
             }
-        }
-        // 判断是否是起点，如果是起点则关闭并且在相差区域内默认调整为起点
+        }*/
     }
     private finish(){
         this.eBoardCanvas.renderOnAddRemove=false;// 渲染过程控制
@@ -124,6 +155,28 @@ class Polygon extends AbstractShapePlugin{
         }
         super.onMouseMove(event);
         const pos = this.end;
+        this.points.pop();
+        this.points.push(new fabric.Point(pos.x,pos.y));
+        this.instance=this.instance.replace(this.points,this.eBoardCanvas,{
+            stroke:this.stroke,
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            fill:this.fill,
+        });
+        this.eBoardCanvas.renderAll();
+        
+/*this.eBoardCanvas.remove(this.instance);
+this.instance = new FabricPolygon(this.points,{
+    stroke:this.stroke,
+    strokeDashArray:this.strokeDashArray,
+    strokeWidth:this.getCanvasPixel(this.strokeWidth),
+    fill:this.fill,
+});
+this.eBoardCanvas.add(this.instance);*/
+        
+        
+        /*
+        
         this.eBoardCanvas.renderOnAddRemove=false;// 渲染过程控制
         const lastPoint = this.points.pop() as Point;
         if("final"===lastPoint.state) {
@@ -155,7 +208,7 @@ class Polygon extends AbstractShapePlugin{
             this.throw(MessageTagEnum.Temporary);
         }
         this.eBoardCanvas.renderAll();
-        this.eBoardCanvas.renderOnAddRemove=true;
+        this.eBoardCanvas.renderOnAddRemove=true;*/
     }
     
     /**

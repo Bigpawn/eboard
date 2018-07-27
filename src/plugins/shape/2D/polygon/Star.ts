@@ -5,16 +5,14 @@
  * * @Last Modified time: 2018/7/16 12:55
  * @disc:五角星 extend Polygon
  */
-import {FabricStar} from "../../../../extends/FabricStar";
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from "~fabric/fabric-impl";
-import {fabric} from "fabric";
 import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
-
+import {Star as FabricStar} from "../../../../extends/Star";
 
 
 export declare interface IStarMessage extends IMessage{
@@ -25,29 +23,11 @@ export declare interface IStarMessage extends IMessage{
 
 
 class Star extends AbstractShapePlugin{
-    protected instance:fabric.Polygon;
+    protected instance:FabricStar;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
-    
-    private newInstance(points:any[],radius:number,start:{x:number;y:number},type?:string){
-        const instance = new FabricStar(points,{
-            stroke: this.stroke,
-            strokeWidth: this.getCanvasPixel(this.strokeWidth),
-            strokeDashArray:this.strokeDashArray,
-            fill: this.fill,
-            width:radius,
-            height:radius,
-            left:start.x,
-            top:start.y,
-            originY:"center",
-            originX:"center"
-        });
-        this.eBoardCanvas.add(instance);
-        return instance;
-    }
-    
     
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
@@ -56,18 +36,29 @@ class Star extends AbstractShapePlugin{
         super.onMouseMove(event);
         const radius = Math.sqrt(Math.pow(this.start.x-this.end.x,2)+Math.pow(this.start.y-this.end.y,2));
         const angle = this.calcAngle(this.end);
-        
         const points = FabricStar.calcPointsByRadius(this.start,radius,angle);
+        const length = radius*2;
         if(void 0 ===this.instance){
-            this.instance=this.newInstance(points,radius*2,this.start);
+            this.instance = new FabricStar(points,{
+                stroke: this.stroke,
+                strokeWidth: this.getCanvasPixel(this.strokeWidth),
+                strokeDashArray:this.strokeDashArray,
+                fill: this.fill,
+                width:length,
+                height:length,
+                left:this.start.x,
+                top:this.start.y,
+                originY:"center",
+                originX:"center"
+            });
+            this.eBoardCanvas.add(this.instance);
             this.throw(MessageTagEnum.Start);
         }else{
-            // 不能重新创建实例，需要确保一个实例，保证uuid不变，否则会出现不停创建的消息
-            this.instance.set({
+            this.instance.update({
                 points:points,
-                width:radius *2,
-                height:radius *2,
-            }).setCoords();
+                width:length,
+                height:length,
+            });
             this.eBoardCanvas.renderAll();
             this.throw(MessageTagEnum.Temporary);
         }
@@ -82,7 +73,7 @@ class Star extends AbstractShapePlugin{
             return;
         }
         super.throwMessage({
-            type:this.instance.type as string,
+            id:this.instance.id,
             messageId:MessageIdMiddleWare.getId(),
             tag:tag,
             points:this.instance.points,
@@ -92,45 +83,44 @@ class Star extends AbstractShapePlugin{
     }
     
     /**
-     * 通过id获取实例
-     * @param {number} id
-     * @returns {"~fabric/fabric-impl".Circle | undefined}
-     */
-    private getInstanceById(type:string){
-        return this.eBoardCanvas.getObjects(type)[0];
-    }
-    
-    /**
      * 接收消息处理
      * @param {ICircleMessage} message
      */
     public onMessage(message:IStarMessage){
-        const {type,points,radius,start,tag} = message;
-        let instance = this.getInstanceById(type) as fabric.Polygon;
+        const {id,points,radius,start,tag} = message;
+        let instance = this.getInstanceById(id) as FabricStar;
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 === instance){
+            instance = new FabricStar(points,{
+                stroke: this.stroke,
+                strokeWidth: this.getCanvasPixel(this.strokeWidth),
+                strokeDashArray:this.strokeDashArray,
+                fill: this.fill,
+                width:radius,
+                height:radius,
+                left:start.x,
+                top:start.y,
+                originY:"center",
+                originX:"center"
+            }).setId(id);
+            this.eBoardCanvas.add(instance);
+        }
         switch (tag){
             case MessageTagEnum.Start:
-                if(void 0 === instance){
-                    instance=this.newInstance(points,radius,start,type);
-                }
                 break;
             case MessageTagEnum.Temporary:
             case MessageTagEnum.End:
-                // 如果有则更新，否则创建
-                this.eBoardCanvas.renderOnAddRemove=false;
-                if(void 0 === instance){
-                    instance=this.newInstance(points,radius,start,type);
-                }
-                instance.set({
+                instance.update({
                     points:points,
-                    width:radius *2,
-                    height:radius *2,
-                }).setCoords();
-                this.eBoardCanvas.renderAll();
-                this.eBoardCanvas.renderOnAddRemove=true;
+                    width:radius,
+                    height:radius,
+                });
                 break;
             default:
                 break;
         }
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     }
 }
 

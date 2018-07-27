@@ -8,13 +8,13 @@
 import {setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {CursorTypeName} from '../../../tool/cursor/CursorType';
-import {fabric} from "fabric";
 import {IEvent} from '~fabric/fabric-impl';
 import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
 import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
+import {Line as FabricLine} from "../../../../extends/Line";
 
 export declare interface ILineMessage extends IMessage{
     start:{x:number;y:number};
@@ -24,32 +24,28 @@ export declare interface ILineMessage extends IMessage{
 
 @setCursor(CursorTypeName.Pencil)
 class Line extends AbstractShapePlugin{
-    private type="line";
-    protected instance:fabric.Line;
+    protected instance:FabricLine;
     private color="rgba(0,0,0,1)";
     private lineWidth:number=1;
-    private newInstance(start:{x:number;y:number},end:{x:number;y:number},type?:string){
-        const instance = new fabric.Line([start.x,start.y,end.x,end.y],{
-            type:type||`${this.type}_${Date.now()}`,
-            stroke: this.color,
-            strokeWidth:this.getCanvasPixel(this.lineWidth)
-        });
-        this.eBoardCanvas.add(instance);
-        return instance;
-    }
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
         }
         super.onMouseMove(event);
         if(void 0 === this.instance){
-            this.instance=this.newInstance(this.start,this.end);
+            this.instance=new FabricLine([this.start.x,this.start.y,this.end.x,this.end.y],{
+                stroke: this.color,
+                strokeWidth:this.getCanvasPixel(this.lineWidth)
+            });
+            this.eBoardCanvas.add(this.instance);
             this.throw(MessageTagEnum.Start);
         }else{
-            this.instance.set({
+            this.instance.update({
+                x1:this.start.x,
+                y1:this.start.y,
                 y2:this.end.y,
                 x2:this.end.x,
-            }).setCoords();
+            });
             this.eBoardCanvas.renderAll();
             this.throw(MessageTagEnum.Temporary);
         }
@@ -66,7 +62,7 @@ class Line extends AbstractShapePlugin{
             return;
         }
         super.throwMessage({
-            type:this.instance.type as string,
+            id:this.instance.id,
             messageId:MessageIdMiddleWare.getId(),
             tag:tag,
             start:this.start,
@@ -75,44 +71,38 @@ class Line extends AbstractShapePlugin{
     }
     
     /**
-     * 通过id获取实例
-     * @returns {"~fabric/fabric-impl".Circle | undefined}
-     * @param type
-     */
-    private getInstanceById(type:string){
-        return this.eBoardCanvas.getObjects(type)[0];
-    }
-    
-    /**
      * 消息处理
      * @param {IEllipseMessage} message
      */
     public onMessage(message:ILineMessage){
-        const {type,start,end,tag} = message;
-        let instance = this.getInstanceById(type) as fabric.Line;
+        const {id,start,end,tag} = message;
+        let instance = this.getInstanceById(id) as FabricLine;
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 === instance){
+            instance = new FabricLine([start.x,start.y,end.x,end.y],{
+                stroke: this.color,
+                strokeWidth:this.getCanvasPixel(this.lineWidth)
+            }).setId(id);
+            this.eBoardCanvas.add(instance);
+        }
+        
         switch (tag){
             case MessageTagEnum.Start:
-                if(void 0 === instance){
-                    instance=this.newInstance(start,end,type);
-                }
                 break;
             case MessageTagEnum.Temporary:
             case MessageTagEnum.End:
-                // 如果有则更新，否则创建
-                this.eBoardCanvas.renderOnAddRemove=false;
-                if(void 0 === instance){
-                    instance=this.newInstance(start,end,type);
-                }
-                instance.set({
+                instance.update({
+                    x1:start.x,
+                    y1:start.y,
                     y2:end.y,
                     x2:end.x,
-                }).setCoords();
-                this.eBoardCanvas.renderAll();
-                this.eBoardCanvas.renderOnAddRemove=true;
+                });
                 break;
             default:
                 break;
         }
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     }
 }
 

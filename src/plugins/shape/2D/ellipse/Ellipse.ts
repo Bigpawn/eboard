@@ -8,9 +8,6 @@
  *      1. 坐标取整：2018/07/25
  */
 
-import {EBoardCanvas} from '../../../../EBoardCanvas';
-import {fabric} from "fabric";
-import {EBoardEngine} from '../../../../EBoardEngine';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
@@ -18,40 +15,22 @@ import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
+import {Ellipse as FabricEllipse} from "../../../../extends/Ellipse";
 
 
 export declare interface IEllipseMessage extends IMessage{
-    point:{x:number;y:number};
+    start:{x:number;y:number};
     rx:number;
     ry:number;
 }
 
 class Ellipse extends AbstractShapePlugin{
-    private type="ellipse";
-    protected instance:fabric.Ellipse;
+    protected instance:FabricEllipse;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     private ctrlKey:boolean=false;
-    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
-        super(canvas,eBoardEngine);
-    }
-    private newInstance(point:{x:number;y:number},rx:number,ry:number,type?:string){
-        const instance = new fabric.Ellipse({
-            type:type||`${this.type}_${Date.now()}`,
-            fill:this.fill,
-            left: point.x,
-            top: point.y,
-            rx:rx,
-            ry:ry,
-            stroke:this.stroke,
-            strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth)
-        });
-        this.eBoardCanvas.add(instance);
-        return instance;
-    }
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
         const end = this.end;
@@ -118,17 +97,27 @@ class Ellipse extends AbstractShapePlugin{
         const ry=Math.round(Math.abs(this.end.y-this.start.y)/2);
         const radius = Math.min(rx,ry);
         const startPoint = this.ctrlKey?this.getCtrlStartPoint(radius):this.getStartPoint();
-        if(this.instance){
-            this.instance.set({
+        if(void 0 !== this.instance){
+            this.instance.update({
                 rx:this.ctrlKey?radius:rx,
                 ry:this.ctrlKey?radius:ry,
                 left: startPoint.x,
                 top: startPoint.y,
-            }).setCoords();
+            });
             this.eBoardCanvas.renderAll();
             this.throw(MessageTagEnum.Temporary);// 不需要全部抛出消息
         }else{
-            this.instance=this.newInstance(startPoint,this.ctrlKey?radius:rx,this.ctrlKey?radius:ry);
+            this.instance=new FabricEllipse({
+                fill:this.fill,
+                left: startPoint.x,
+                top: startPoint.y,
+                rx:this.ctrlKey?radius:rx,
+                ry:this.ctrlKey?radius:ry,
+                stroke:this.stroke,
+                strokeDashArray:this.strokeDashArray,
+                strokeWidth:this.getCanvasPixel(this.strokeWidth)
+            });
+            this.eBoardCanvas.add(this.instance);
             this.throw(MessageTagEnum.Start);
         }
     };
@@ -151,12 +140,12 @@ class Ellipse extends AbstractShapePlugin{
             if(radius===this.instance.rx&&radius===this.instance.ry&&startPoint.x===this.start.x&&startPoint.y===this.start.y){
                 return;
             }
-            this.instance.set({
+            this.instance.update({
                 rx:radius,
                 ry:radius,
                 left: startPoint.x,
                 top: startPoint.y,
-            }).setCoords();
+            });
             this.eBoardCanvas.renderAll();
             this.throw(MessageTagEnum.Temporary);// 不需要全部抛出消息
         }
@@ -172,12 +161,12 @@ class Ellipse extends AbstractShapePlugin{
             const rx=Math.round(Math.abs(this.end.x-this.start.x)/2);
             const ry=Math.round(Math.abs(this.end.y-this.start.y)/2);
             const startPoint = this.getStartPoint();
-            this.instance.set({
+            this.instance.update({
                 rx:rx,
                 ry:ry,
                 left: startPoint.x,
                 top: startPoint.y,
-            }).setCoords();
+            });
             this.eBoardCanvas.renderAll();
             this.throw(MessageTagEnum.Temporary);// 不需要全部抛出消息
         }
@@ -189,22 +178,13 @@ class Ellipse extends AbstractShapePlugin{
             return;
         }
         super.throwMessage({
-            type:this.instance.type as string,
+            id:this.instance.id,
             messageId:MessageIdMiddleWare.getId(),
             tag:tag,
-            point:this.start,
+            start:this.start,
             rx:this.instance.rx,
             ry:this.instance.ry,
         });
-    }
-    
-    /**
-     * 通过id获取实例
-     * @param {number} id
-     * @returns {"~fabric/fabric-impl".Circle | undefined}
-     */
-    private getInstanceById(type:string){
-        return this.eBoardCanvas.getObjects(type)[0];
     }
     
     /**
@@ -212,33 +192,39 @@ class Ellipse extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IEllipseMessage){
-        const {type,point,rx,ry,tag} = message;
-        let instance = this.getInstanceById(type) as fabric.Ellipse;
+        const {id,start,rx,ry,tag} = message;
+        let instance = this.getInstanceById(id) as FabricEllipse;
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 === instance){
+            instance = new FabricEllipse({
+                fill:this.fill,
+                left: start.x,
+                top: start.y,
+                rx:rx,
+                ry:ry,
+                stroke:this.stroke,
+                strokeDashArray:this.strokeDashArray,
+                strokeWidth:this.getCanvasPixel(this.strokeWidth)
+            }).setId(id);
+            this.eBoardCanvas.add(instance);
+        }
         switch (tag){
             case MessageTagEnum.Start:
-                if(void 0 === instance){
-                    instance=this.newInstance(point,rx,ry,type);
-                }
                 break;
             case MessageTagEnum.Temporary:
             case MessageTagEnum.End:
-                // 如果有则更新，否则创建
-                this.eBoardCanvas.renderOnAddRemove=false;
-                if(void 0 === instance){
-                    instance=this.newInstance(point,rx,ry,type);
-                }
-                instance.set({
+                instance.update({
                     rx:rx,
                     ry:ry,
-                    left: point.x,
-                    top: point.y,
-                }).setCoords();
-                this.eBoardCanvas.renderAll();
-                this.eBoardCanvas.renderOnAddRemove=true;
+                    left: start.x,
+                    top: start.y,
+                });
                 break;
             default:
                 break;
         }
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     }
     
 }

@@ -28,7 +28,7 @@ export declare interface IMessage{
     messageId?:number;
     point?:{x:number;y:number};
     radius?:number;
-    type:string;// 实例类型及Id组合
+    id:string;// 实例类型及Id组合
     frame?:IFrameOptions,// frame 创建属性
     frameGroup?:IFrameOptions// frame组创建属性
     rx?:number;
@@ -69,7 +69,7 @@ class MessageMiddleWare{
         // 自动生成id并返回id
         const id = void 0 === message.messageId?MessageIdMiddleWare.getId():message.messageId;
         const outMessage = Object.assign({},message,{messageId:id});
-        // console.log(outMessage);
+        console.log(outMessage);
         MessageReceiver.receiver(outMessage);
         // 发送该消息
         this.messageListener&&this.messageListener.call(this,this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage));
