@@ -94,7 +94,8 @@ var ScreenComponent = /** @class */ (function (_super) {
                 || typeArray.indexOf(DisplayType.Circle) >= 0
                 || typeArray.indexOf(DisplayType.Rect) >= 0
                 || typeArray.indexOf(DisplayType.Path) >= 0
-                || typeArray.indexOf(DisplayType.ArrowLine) >= 0 ? [
+                || typeArray.indexOf(DisplayType.Arrow) >= 0
+                || typeArray.indexOf(DisplayType.Line) ? [
                 React.createElement(ColorPicker, { className: "eboard-screen-button-layout", type: OperationType.边框颜色, key: "bordercolor", defaultValue: initStyleArray && initStyleArray.stroke ? initStyleArray.stroke : '', onChange: function (value) {
                         var color = new fabric.Color(value).toRgba();
                         _this.handleClick(OperationType.边框颜色, color);

@@ -66,6 +66,10 @@ var MessageReceiver = /** @class */ (function () {
             }
         }
     };
+    /**
+     * 分派收到的消息
+     * @param {IMessage} message
+     */
     MessageReceiver.prototype.distribute = function (message) {
         var pluginName = message.type.split('_')[0];
         var type = message.frame && message.frame.type;
