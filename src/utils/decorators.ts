@@ -6,7 +6,7 @@
  * @disc:装饰器
  */
 import {CursorTypeName} from '../plugins/tool/cursor/CursorType';
-import {MessageHandlerInterceptorAdapter} from '../interceptor/MessageHandlerInterceptorAdapter';
+import {MessageAdapter} from '../interceptor/MessageAdapter';
 
 function mixinPlugin(pluginName:string):ClassDecorator{
     return (target:any)=>{
@@ -90,6 +90,18 @@ function ctrlKeyEnable(enable:boolean):ClassDecorator{
 }
 
 /**
+ * Esc 热键支持
+ * @param {boolean} enable
+ * @returns {ClassDecorator}
+ */
+function escKeyEnable(enable:boolean):ClassDecorator{
+    return (target:any)=>{
+        Object.assign(target.prototype, {
+            escKeyEnable:enable,
+        });
+    }
+}
+/**
  * pip 管道模式注解
  * @param target
  * @param {string} name
@@ -111,10 +123,10 @@ function pipMode(target:any, name:string, descriptor:PropertyDescriptor){
 
 /**
  * 消息输出拦截器
- * @param {typeof MessageHandlerInterceptorAdapter} interceptor
+ * @param {typeof MessageAdapter} interceptor
  * @returns {(target: any) => void}
  */
-function registerMessageInterceptor(interceptor:typeof MessageHandlerInterceptorAdapter){
+function registerMessageInterceptor(interceptor:typeof MessageAdapter){
     return (target:any)=>{
         Object.assign(target.prototype, {
             handleAll:interceptor.handleAll,
@@ -123,4 +135,4 @@ function registerMessageInterceptor(interceptor:typeof MessageHandlerInterceptor
     }
 }
 
-export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,ctrlKeyEnable,registerMessageInterceptor};
+export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,ctrlKeyEnable,registerMessageInterceptor,escKeyEnable};

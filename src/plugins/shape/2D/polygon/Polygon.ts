@@ -185,6 +185,12 @@ class Polygon extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }
+    
+    protected clear(){
+        super.clear();
+        this.circle=undefined as any;
+        this.points=[];
+    }
 }
 
 export {Polygon};

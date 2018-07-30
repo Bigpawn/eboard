@@ -48,6 +48,15 @@ abstract class AbstractPlugin {
             this.ctrlKeyUpHandler=this.ctrlKeyUpHandler.bind(this);
         }
     }
+    
+    /**
+     * 清空缓存数据
+     */
+    protected clear(){
+        this.start = undefined as any;
+        this.end = undefined as any;
+        this.instance = undefined as any;
+    }
     /**
      * 插件启用开关
      * @param {boolean} enable
@@ -100,6 +109,9 @@ abstract class AbstractPlugin {
             if(void 0 !== this.ctrlKeyUpHandler){
                 window.removeEventListener("keyup",this.ctrlKeyUpHandler);
             }
+            
+            // 缓存清除
+            this.clear();
         }
         return this;
         
