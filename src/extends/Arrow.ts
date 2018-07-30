@@ -8,6 +8,11 @@
 import {fabric} from "fabric";
 import {IPathOptions} from '~fabric/fabric-impl';
 
+export declare interface IExtendPathOptions extends IPathOptions{
+    pathOffset?:{x:number;y:number}
+}
+
+
 class Arrow extends fabric.Path{
     public type:string="arrow";
     public id:string;
@@ -15,7 +20,7 @@ class Arrow extends fabric.Path{
     /**
      * 对象生成id
      * @param {string | any[]} path
-     * @param {"~fabric/fabric-impl".IPathOptions} options
+     * @param {IPathOptions} options
      */
     constructor(path?: string | any[], options?: IPathOptions){
         super(path,options);
@@ -34,19 +39,10 @@ class Arrow extends fabric.Path{
     
     /**
      * 更新 path
-     * @param {string | any[]} path
-     * @param {"~fabric/fabric-impl".IPathOptions} options
+     * @param {IExtendPathOptions} options
      */
-    public update(path: string | any[],options?: IPathOptions){
-        const cache = new fabric.Path(path,options);
-        this.set({
-            path:cache.path,
-            top:cache.top,
-            left:cache.left,
-            width:cache.width,
-            height:cache.height,
-            pathOffset:cache.pathOffset
-        } as any).setCoords();
+    public update(options?: IExtendPathOptions){
+        this.set(options as any).setCoords();
         return this;
     }
 }

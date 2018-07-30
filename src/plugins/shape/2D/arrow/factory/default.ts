@@ -16,7 +16,7 @@ class DefaultFactory{
      * @param {number} headlen
      * @param {ArrowMode} mode
      * @param {string} color
-     * @returns {{path: string; fill: string}}
+     * @returns {{path: any[]; fill: string}}
      */
     public static calcPath(start:{x:number;y:number},end:{x:number;y:number},theta:number,headlen:number,mode:ArrowMode,color:string){
         const {x:fromX,y:fromY} = start;
@@ -30,30 +30,33 @@ class DefaultFactory{
             botY = headlen * Math.sin(angle2);
         let arrowX = fromX - topX,
             arrowY = fromY - topY;
-        let path = " M " + fromX + " " + fromY;
-        path += " L " + toX + " " + toY;
+        let path:any[] =[];
+        path.push(["M",fromX,fromY]);
+        path.push(["L",toX,toY]);
+        
+        
         
         // 判断是否有两个
         if(mode === ArrowMode.PREV||mode === ArrowMode.ALL){
             // startArrow
             arrowX = fromX - topX;
             arrowY = fromY - topY;
-            path += " M " + arrowX + " " + arrowY;
-            path += " L " + fromX + " " + fromY;
+            path.push(["M",arrowX,arrowY]);
+            path.push(["L",fromX,fromY]);
             arrowX = fromX - botX;
             arrowY = fromY - botY;
-            path += " L " + arrowX + " " + arrowY;
+            path.push(["L",arrowX,arrowY]);
         }
     
         if(mode === ArrowMode.NEXT||mode === ArrowMode.ALL){
             // endArrow
             arrowX = toX + topX;
             arrowY = toY + topY;
-            path += " M " + arrowX + " " + arrowY;
-            path += " L " + toX + " " + toY;
+            path.push(["M",arrowX,arrowY]);
+            path.push(["L",toX,toY]);
             arrowX = toX + botX;
             arrowY = toY + botY;
-            path += " L " + arrowX + " " + arrowY;
+            path.push(["L",arrowX,arrowY]);
         }
         return {
             path:path,

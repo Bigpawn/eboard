@@ -40,7 +40,7 @@ class Arrow extends AbstractShapePlugin{
     protected instance:FabricArrow;
     private color="rgba(0,0,0,1)";
     private lineWidth:number=1;
-    private arrowFactory:ArrowFactory=ArrowFactory.HOLLOW;
+    private arrowFactory:ArrowFactory=ArrowFactory.FISH;
     private arrowMode:ArrowMode=ArrowMode.ALL;
     private calcOptions(start:{x:number;y:number},end:{x:number;y:number}){
         const arrowFactory = require(`./factory/${this.arrowFactory}`).default as typeof DefaultFactory;
@@ -54,16 +54,31 @@ class Arrow extends AbstractShapePlugin{
         }
         super.onMouseMove(event);
         const {path,fill} = this.calcOptions(this.start,this.end);
+        const center = {
+            x:(this.start.x+this.end.x)/2,
+            y:(this.start.y+this.end.y)/2,
+        };
         if(void 0 === this.instance){
             this.instance=new FabricArrow(path,{
                 stroke: this.color,
                 strokeWidth:this.lineWidth,
-                fill
+                fill,
+                originX:"center",
+                originY:"center"
             });
             this.eBoardCanvas.add(this.instance);
             this.throw(MessageTagEnum.Start);
         }else{
-            this.instance.update(path);
+            this.instance.update({
+                path:path,
+                top:center.y,
+                left:center.x,
+                width:Math.abs(this.start.x-this.end.x),
+                height:Math.abs(this.start.y-this.end.y),
+                pathOffset:center,
+                originX:"center",
+                originY:"center"
+            });
             this.eBoardCanvas.renderAll();
             this.throw(MessageTagEnum.Temporary);
         }
@@ -72,6 +87,7 @@ class Arrow extends AbstractShapePlugin{
     protected onMouseUp(event:IEvent){
         this.throw(MessageTagEnum.End);
         super.onMouseUp(event);
+        console.log(this.eBoardCanvas.getObjects());
     }
     
     private throw(tag:MessageTagEnum){
@@ -84,7 +100,7 @@ class Arrow extends AbstractShapePlugin{
             messageId:MessageIdMiddleWare.getId(),
             tag:tag,
             start:this.start,
-            end:this.end
+            end:this.end,
         });
     }
     
@@ -101,7 +117,9 @@ class Arrow extends AbstractShapePlugin{
             instance = new FabricArrow(path,{
                 stroke: this.color,
                 strokeWidth:this.lineWidth,
-                fill
+                fill,
+                originX:"center",
+                originY:"center"
             }).setId(id);
             this.eBoardCanvas.add(instance);
         }
@@ -110,7 +128,20 @@ class Arrow extends AbstractShapePlugin{
                 break;
             case MessageTagEnum.Temporary:
             case MessageTagEnum.End:
-                instance.update(path);
+                const center = {
+                    x:(this.start.x+this.end.x)/2,
+                    y:(this.start.y+this.end.y)/2,
+                };
+                instance.update({
+                    path:path,
+                    top:center.y,
+                    left:center.x,
+                    width:Math.abs(start.x-end.x),
+                    height:Math.abs(start.y-end.y),
+                    pathOffset:center,
+                    originX:"center",
+                    originY:"center"
+                });
                 break;
             default:
                 break;

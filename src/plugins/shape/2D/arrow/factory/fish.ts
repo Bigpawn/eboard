@@ -29,8 +29,9 @@ class FishFactory extends DefaultFactory{
             topY = headlen * Math.sin(angle1),
             botX = headlen * Math.cos(angle2),
             botY = headlen * Math.sin(angle2);
-        let path = " M " + fromX + " " + fromY;
-        path += " L " + toX + " " + toY;
+        let path:any[] = [];
+        path.push(["M",fromX,fromY]);
+        path.push(["L",toX,toY]);
         
         // 取中间点，然后跟终点1/3 点
         if(mode === ArrowMode.PREV||mode === ArrowMode.ALL){
@@ -50,12 +51,11 @@ class FishFactory extends DefaultFactory{
               x:(fromX-point3.x)/3 + point3.x,
               y:(fromY-point3.y)/3 + point3.y,
             };
-    
-            path += " M " + point1.x + " " + point1.y;
-            path += " L " + fromX + " " + fromY;
-            path += " L " + point2.x + " " + point2.y;
-            path += " L " + point4.x + " " + point4.y;
-            path +=" Z";
+            path.push(["M",point1.x ,point1.y]);
+            path.push(["L",fromX,fromY]);
+            path.push(["L",point2.x,point2.y]);
+            path.push(["L",point4.x,point4.y]);
+            path.push(["Z"]);
         }
         
         if(mode === ArrowMode.NEXT||mode === ArrowMode.ALL){
@@ -76,11 +76,11 @@ class FishFactory extends DefaultFactory{
                 x:(toX-point3.x)/3 + point3.x,
                 y:(toY-point3.y)/3 + point3.y,
             };
-            path += " M " + point1.x + " " + point1.y;
-            path += " L " + toX + " " + toY;
-            path += " L " + point2.x + " " + point2.y;
-            path += " L " + point4.x + " " + point4.y;
-            path +=" Z";
+            path.push(["M",point1.x ,point1.y]);
+            path.push(["L",toX,toY]);
+            path.push(["L",point2.x,point2.y]);
+            path.push(["L",point4.x,point4.y]);
+            path.push(["Z"]);
         }
         return {
             path:path,
