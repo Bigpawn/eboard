@@ -11,7 +11,6 @@ import {EBoardCanvas} from '../EBoardCanvas';
 class Polygon extends fabric.Polyline{
     public type:string="polygon";
     public id:string;
-    private options?:IPolylineOptions;
     /**
      * @override
      * @param points
@@ -19,7 +18,6 @@ class Polygon extends fabric.Polyline{
      */
     constructor(points: Array<{ x: number; y: number }>, options?: IPolylineOptions){
         super(points,options);
-        this.options=options;
         this.id=Date.now().toString();
     }
     
@@ -36,13 +34,14 @@ class Polygon extends fabric.Polyline{
         return this;
     }
     
-    public replace(points:fabric.Point[],eBoardCanvas:EBoardCanvas,options?: IPolylineOptions){
-        eBoardCanvas.renderOnAddRemove=false;
-        eBoardCanvas.remove(this);
-        const replace = new Polygon(points,options).setId(this.id);
-        eBoardCanvas.add(replace);
-        eBoardCanvas.renderOnAddRemove=true;
-        return replace;
+    /**
+     * 调用会卡顿，通过重新创建来修改属性
+     * @param {"~fabric/fabric-impl".IPolylineOptions} options
+     * @returns {this}
+     */
+    public update(options:IPolylineOptions){
+        this.set(options as any).setCoords();
+        return this;
     }
 }
 
