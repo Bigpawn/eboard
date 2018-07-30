@@ -17,7 +17,8 @@ import {OrthogonalTriangle as FabricOrthogonalTriangle} from "../../../../extend
 
 
 export declare interface IOrthogonalTriangleMessage extends IMessage{
-    points:any[]
+    points:any[];
+    start:{x:number;y:number}
 }
 
 class OrthogonalTriangle extends AbstractShapePlugin{
@@ -32,18 +33,37 @@ class OrthogonalTriangle extends AbstractShapePlugin{
         }
         super.onMouseMove(event);
         const points= FabricOrthogonalTriangle.calcPointsByCursorPoint(this.start,this.end);
+        const width = Math.abs(this.end.x-this.start.x);
+        const height = Math.abs(this.end.y-this.start.y);
+        const center = {
+            x:(this.start.x+this.end.x)/2,
+            y:(this.start.y+this.end.y)/2,
+        };
         if(void 0 ===this.instance){
             this.instance = new FabricOrthogonalTriangle(points,{
                 stroke: this.stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
                 fill: this.fill,
+                left:center.x,
+                top:center.y,
+                originY:"center",
+                originX:"center",
+                width:width,
+                height:height,
             });
             this.eBoardCanvas.add(this.instance);
             this.throw(MessageTagEnum.Start);
         }else{
             this.instance.update({
-                points:points
+                points:points,
+                width:width,
+                height:height,
+                left:center.x,
+                top:center.y,
+                originY:"center",
+                originX:"center",
+                pathOffset:center
             });
             this.eBoardCanvas.renderAll();
             this.throw(MessageTagEnum.Temporary);
@@ -52,6 +72,7 @@ class OrthogonalTriangle extends AbstractShapePlugin{
     protected onMouseUp(event:IEvent){
         this.throw(MessageTagEnum.End);
         super.onMouseUp(event);
+        console.log(this.eBoardCanvas.getObjects());
     }
     private throw(tag:MessageTagEnum){
         // 需要生成一个消息的id 及实例的id
@@ -61,8 +82,11 @@ class OrthogonalTriangle extends AbstractShapePlugin{
         super.throwMessage({
             id:this.instance.id,
             messageId:MessageIdMiddleWare.getId(),
+            start:this.instance.pathOffset,
             tag:tag,
-            points:this.instance.points
+            points:this.instance.points,
+            width:this.instance.width,
+            height:this.instance.height
         });
     }
     
@@ -71,7 +95,7 @@ class OrthogonalTriangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IOrthogonalTriangleMessage){
-        const {id,tag,points} = message;
+        const {id,tag,points,start,width,height} = message;
         let instance = this.getInstanceById(id) as FabricOrthogonalTriangle;
         
         this.eBoardCanvas.renderOnAddRemove=false;
@@ -81,6 +105,12 @@ class OrthogonalTriangle extends AbstractShapePlugin{
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
                 fill: this.fill,
+                left:start.x,
+                top:start.y,
+                originY:"center",
+                originX:"center",
+                width:width,
+                height:height,
             }).setId(id);
             this.eBoardCanvas.add(instance);
         }
@@ -90,7 +120,14 @@ class OrthogonalTriangle extends AbstractShapePlugin{
             case MessageTagEnum.Temporary:
             case MessageTagEnum.End:
                 instance.update({
-                    points:points
+                    points:points,
+                    width:width,
+                    height:height,
+                    left:start.x,
+                    top:start.y,
+                    originY:"center",
+                    originX:"center",
+                    pathOffset:start
                 });
                 break;
             default:

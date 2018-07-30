@@ -8,7 +8,15 @@
 import {fabric} from "fabric";
 import {IObjectOptions, IPolygonOptions} from '~fabric/fabric-impl';
 
+
+
+export declare interface IExtendPolygonOptions extends IPolygonOptions{
+    pathOffset?:{x:number;y:number}
+}
+
+
 class OrthogonalTriangle extends fabric.Polygon{
+    public pathOffset:{x:number;y:number};
     public type:string="orthogonal-triangle";
     public id:string;
     constructor(points: Array<{ x: number; y: number }>, options?: IObjectOptions, skipOffset?: boolean){
@@ -22,9 +30,9 @@ class OrthogonalTriangle extends fabric.Polygon{
     
     /**
      * 更新
-     * @param {IPolygonOptions} options
+     * @param {IExtendPolygonOptions} options
      */
-    public update(options?: IPolygonOptions){
+    public update(options?: IExtendPolygonOptions){
         this.set(options as any).setCoords();
         return this;
     }

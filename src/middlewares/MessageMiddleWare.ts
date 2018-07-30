@@ -70,7 +70,7 @@ class MessageMiddleWare{
         const id = void 0 === message.messageId?MessageIdMiddleWare.getId():message.messageId;
         const outMessage = Object.assign({},message,{messageId:id});
         console.log(outMessage);
-        MessageReceiver.receiver(outMessage);
+        // MessageReceiver.receiver(outMessage);
         // 发送该消息
         this.messageListener&&this.messageListener.call(this,this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage));
         return id;
