@@ -1,21 +1,43 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/7/15 14:55
+ * @Date: 2018/7/30 9:04
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/15 14:55
- * @disc:等边三角形 extenns Polygon
+ * * @Last Modified time: 2018/7/30 9:04
+ * @disc:fabric.EquilateralTriangle
  */
 import {fabric} from "fabric";
-
-class EqTriangle extends fabric.Polygon{
-    public type="eq-triangle";
+import {IObjectOptions, IPolygonOptions} from '~fabric/fabric-impl';
+class EquilateralTriangle extends fabric.Polygon{
+    public type:string="equilateral-triangle";
+    public id:string;
+    constructor(points: Array<{ x: number; y: number }>, options?: IObjectOptions, skipOffset?: boolean){
+        super(points,options,skipOffset);
+        this.id=Date.now().toString();
+    }
+    
+    public setId(id:string){
+        this.id=id;
+        return this;
+    }
+    
+    /**
+     * 更新
+     * @param {IPolygonOptions} options
+     */
+    public update(options?: IPolygonOptions){
+        this.set(options as any).setCoords();
+        return this;
+    }
+    
+    
+    
     private static sin120:number=Math.sin(120/180 * Math.PI);
     private static sin240:number=Math.sin(240/180 * Math.PI);
     private static cos120:number=Math.cos(120/180 * Math.PI);
     private static cos240:number=Math.cos(240/180 * Math.PI);
     /**
      * 计算等边三角形三个点
-     * @param {{x: number; y: number}} center
+     * @param center
      * @param {number} radius
      * @param {number} offsetAngle
      * @returns {any[]}
@@ -48,4 +70,4 @@ class EqTriangle extends fabric.Polygon{
     }
 }
 
-export {EqTriangle};
+export {EquilateralTriangle};
