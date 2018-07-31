@@ -15,7 +15,7 @@ import {IImagesFrame, IImagesFrameOptions} from './IFrameGroup';
 
 @setAnimationName('eboard-pager')
 class ImagesFrame implements IImagesFrame{
-    public type:string;
+    public type:string="images-frame";
     public group:true=true;
     public container:HTMLDivElement;
     public messageId:number;
@@ -33,7 +33,9 @@ class ImagesFrame implements IImagesFrame{
     private parent?:EBoard;
     private handleAll?:boolean;
     private messageHandle?:Function;
+    public id:string;
     constructor(options:IImagesFrameOptions,container:HTMLDivElement,parent?:EBoard){
+        this.id = Date.now().toString();
         this.options=options;
         this.type=options.type;
         this.container=container;
@@ -48,6 +50,10 @@ class ImagesFrame implements IImagesFrame{
         this.fixContainer();
         this.initLayout();
         this.initialize();
+    }
+    public setId(id:string){
+        this.id = id;
+        return this;
     }
     private fixContainer(){
         const parentElement = this.container;

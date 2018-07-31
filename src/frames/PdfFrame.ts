@@ -25,7 +25,7 @@ class PdfFrame implements IPdfFrame{
     private animationCssPrefix:string;
     public group:true=true;
     public container:HTMLDivElement;
-    public type:string;
+    public type:string="pdf-frame";
     public messageId:number;
     public ratio:string;
     public dom:HTMLDivElement;
@@ -37,7 +37,9 @@ class PdfFrame implements IPdfFrame{
     private parent?:EBoard;
     private handleAll?:boolean;
     private messageHandle?:Function;
+    public id:string;
     constructor(options:IPdfFrameOptions,container:HTMLDivElement,parent?:EBoard){
+        this.id=Date.now().toString();
         this.options=options;
         this.container=container;
         this.type=options.type;
@@ -52,6 +54,10 @@ class PdfFrame implements IPdfFrame{
        this.fixContainer();
         this.initLayout();
         this.initialize();
+    }
+    public setId(id:string){
+        this.id = id;
+        return this;
     }
     private fixContainer(){
         const parentElement = this.container;
@@ -110,6 +116,7 @@ class PdfFrame implements IPdfFrame{
                     const viewport = page.getViewport(scale);
                     canvas.width=viewport.width;
                     canvas.height=viewport.height;
+                    (pageFrame as CanvasFrame).initLayout();// 需要reLayout
                     const renderContext = {
                         canvasContext: canvas.getContext("2d"),
                         viewport: viewport
@@ -191,6 +198,7 @@ class PdfFrame implements IPdfFrame{
                     const viewport = page.getViewport(scale);
                     canvas.width=viewport.width;
                     canvas.height=viewport.height;
+                    (nextPageFrame as CanvasFrame).initLayout();// 需要reLayout
                     const renderContext = {
                         canvasContext: canvas.getContext("2d"),
                         viewport: viewport

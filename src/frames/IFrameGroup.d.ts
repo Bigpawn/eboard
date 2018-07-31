@@ -17,6 +17,7 @@ export declare interface IFrameGroupOptions{
     ratio?:string;
     scrollbar?:ScrollbarType;
     pageNum:number;// 传1 或者其他
+    id?:string;
 }
 
 export declare interface IFrameGroup{
@@ -27,6 +28,7 @@ export declare interface IFrameGroup{
     ratio:string;
     child:Map<number,IFrame>;
     options:IFrameOptions;
+    id:string;
     getPlugin(pluginName:string):AbstractPlugin|undefined;
     destroy():void;
     switchToFrame?(childId:number,messageId:number):this|Promise<this>;// 切换到子frame

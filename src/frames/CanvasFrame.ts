@@ -9,12 +9,21 @@
 import {GenericHtmlFrame} from './HtmlFrame';
 import {ICanvasFrame, ICanvasFrameOptions} from './IFrame';
 class CanvasFrame extends GenericHtmlFrame<ICanvasFrameOptions> implements ICanvasFrame{
+    public type:string="canvas-frame";
     public canvas:HTMLCanvasElement;
     protected getChildren(){
         const canvas = document.createElement("canvas");
         canvas.style.width="100%";
         this.canvas = canvas;
         return canvas;
+    }
+    
+    /**
+     * @override
+     * set public
+     */
+    public initLayout(){
+        super.initLayout();
     }
 }
 

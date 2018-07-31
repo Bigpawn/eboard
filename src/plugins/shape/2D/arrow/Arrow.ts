@@ -87,7 +87,6 @@ class Arrow extends AbstractShapePlugin{
     protected onMouseUp(event:IEvent){
         this.throw(MessageTagEnum.End);
         super.onMouseUp(event);
-        console.log(this.eBoardCanvas.getObjects());
     }
     
     private throw(tag:MessageTagEnum){

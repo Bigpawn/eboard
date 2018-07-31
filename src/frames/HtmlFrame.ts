@@ -20,6 +20,7 @@ export enum ScrollbarType{
 }
 
 class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> implements IFrame{
+    public type="html-frame";
     private supportScrollbar:ScrollbarType=ScrollbarType.none;
     private scrollbar:PerfectScrollbar;
     private htmlFragment:string|HTMLElement;
@@ -31,6 +32,15 @@ class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> impl
     }
     protected getChildren():string|HTMLElement{
         return this.htmlFragment;
+    }
+    protected getLoadedImage(){
+        const image =document.createElement("img");
+        image.src="";
+        image.style.display="none";
+        image.onerror=()=>{
+            this.initLayout();
+        };
+        return image;
     }
     protected initEngine(){
         const container = document.createElement("div");
@@ -48,7 +58,12 @@ class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> impl
         }else{
             htmlWrap.innerHTML="";
             htmlWrap.appendChild(html);
+            // 如果标签是image标签则不添加异常image元素
+            if(html.tagName!=="IMG"){
+                container.appendChild(this.getLoadedImage());
+            }
         }
+        // 通过image模拟实现监听显示事件
         const placeholder = document.createElement("canvas");
         placeholder.innerHTML="当前浏览器不支持Canvas,请升级浏览器";
         container.appendChild(htmlContainer);
@@ -88,19 +103,8 @@ class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> impl
         // set container size
         this.dom.style.width=calcSize.width+"px";
         this.dom.style.height=calcSize.height+"px";
-        
-        
-        
-        // 需要等待图片加载
-        
-        
         // 还没有append则不能计算出高度  ========== fix
-        this.dom.style.visibility="hidden";
-        this.container.appendChild(this.dom);
-        console.log(this.htmlWrap.offsetHeight);
         const height = Math.max(this.htmlWrap.offsetHeight,calcSize.height);// 没显示
-        this.container.removeChild(this.dom);
-        this.dom.style.visibility="visible";
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 根据实际分辨率设置大小
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height},{backstoreOnly:true});// 设置canvas 画布大小
     }

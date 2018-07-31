@@ -17,9 +17,9 @@ class MessageAdapter{
                 MessageMiddleWare.sendMessage(message);
             }else{
                 if(parent.group){
-                    message.frameGroup=parent.options;
+                    message.frameGroup=Object.assign({},parent.options,{id:parent.id});
                 }else{
-                    message.frame=parent.options;
+                    message.frame=Object.assign({},parent.options,{id:parent.id});
                 }
                 parent.messageHandle.call(parent,message);
             }

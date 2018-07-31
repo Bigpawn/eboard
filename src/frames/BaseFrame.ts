@@ -22,7 +22,9 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
     private parent?:EBoard|IFrameGroup;
     private handleAll?:boolean;
     private messageHandle?:Function;
+    public id:string;
     constructor(options:T,container:HTMLDivElement,parent?:EBoard|IFrameGroup){
+        this.id=Date.now().toString();
         this.container=container;
         this.options=options;
         this.parent=parent;
@@ -34,6 +36,10 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
         this.fixContainer();
         this.initEngine();
         this.initLayout();
+    }
+    public setId(id:string){
+        this.id=id;
+        return this;
     }
     protected initialize(options:T){
         this.type=options.type;
@@ -49,14 +55,17 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
         }
     }
     protected initEngine(){
+        const container = document.createElement("div");
+        container.className="eboard-container";
         const placeholder = document.createElement("canvas");
         placeholder.innerHTML="当前浏览器不支持Canvas,请升级浏览器";
+        container.appendChild(placeholder);
         this.engine = new EBoardEngine(placeholder,{
             selection:false,
             skipTargetFind:true,
             containerClass:"eboard-canvas"
         },this);
-        this.dom = this.engine.eBoardCanvas.getContainer();
+        this.dom = container;
     }
     protected calc(){
         const parentElement = this.container;
@@ -129,7 +138,7 @@ export {GenericBaseFrame};
 
 
 class BaseFrame extends GenericBaseFrame<IBaseFrameOptions> implements IBaseFrame{
-
+    public type:string="empty-frame";
 }
 
 export {BaseFrame};
