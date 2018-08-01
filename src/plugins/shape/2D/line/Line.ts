@@ -5,11 +5,10 @@
  * @Last Modified time: 2018/7/25 9:26
  * @disc:单存线条，与Arrow分开
  */
-import {setCursor} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {CursorTypeName} from '../../../tool/cursor/CursorType';
 import {IEvent} from '~fabric/fabric-impl';
-import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
 import {
     IMessage,
     MessageTagEnum,
@@ -27,6 +26,33 @@ class Line extends AbstractShapePlugin{
     protected instance:FabricLine;
     private color="rgba(0,0,0,1)";
     private lineWidth:number=1;
+    @message
+    private startAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Start,
+            start:this.start,
+            end:this.end
+        }
+    }
+    @message
+    private moveAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Temporary,
+            start:this.start,
+            end:this.end
+        }
+    }
+    @message
+    private endAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.End,
+            start:this.start,
+            end:this.end
+        }
+    }
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
@@ -38,7 +64,7 @@ class Line extends AbstractShapePlugin{
                 strokeWidth:this.getCanvasPixel(this.lineWidth)
             });
             this.eBoardCanvas.add(this.instance);
-            this.throw(MessageTagEnum.Start);
+            this.startAction();
         }else{
             this.instance.update({
                 x1:this.start.x,
@@ -47,27 +73,13 @@ class Line extends AbstractShapePlugin{
                 x2:this.end.x,
             });
             this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
+            this.moveAction();
         }
     }
     
     protected onMouseUp(event:IEvent){
-        this.throw(MessageTagEnum.End);
+        this.endAction();
         super.onMouseUp(event);
-    }
-    
-    private throw(tag:MessageTagEnum){
-        // 需要生成一个消息的id 及实例的id
-        if(void 0 === this.instance){
-            return;
-        }
-        super.throwMessage({
-            id:this.instance.id,
-            messageId:MessageIdMiddleWare.getId(),
-            tag:tag,
-            start:this.start,
-            end:this.end
-        });
     }
     
     /**

@@ -10,12 +10,12 @@
 
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
 import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Ellipse as FabricEllipse} from "../../../../extends/Ellipse";
+import {message} from '../../../../utils/decorators';
 
 
 export declare interface IEllipseMessage extends IMessage{
@@ -25,12 +25,12 @@ export declare interface IEllipseMessage extends IMessage{
 }
 
 class Ellipse extends AbstractShapePlugin{
-    protected instance:FabricEllipse;
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     private ctrlKey:boolean=false;
+    protected instance:FabricEllipse;
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
         const end = this.end;
@@ -88,6 +88,36 @@ class Ellipse extends AbstractShapePlugin{
                 };
         }
     };
+    @message
+    private startAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Start,
+            start:this.start,
+            rx:this.instance.rx,
+            ry:this.instance.ry,
+        }
+    }
+    @message
+    private moveAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Temporary,
+            start:this.start,
+            rx:this.instance.rx,
+            ry:this.instance.ry,
+        }
+    }
+    @message
+    private endAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.End,
+            start:this.start,
+            rx:this.instance.rx,
+            ry:this.instance.ry,
+        }
+    }
     protected onMouseMove(event:IEvent){
         if(void 0 ===this.start){
             return;
@@ -105,7 +135,7 @@ class Ellipse extends AbstractShapePlugin{
                 top: startPoint.y,
             });
             this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);// 不需要全部抛出消息
+            this.moveAction();
         }else{
             this.instance=new FabricEllipse({
                 fill:this.fill,
@@ -118,11 +148,11 @@ class Ellipse extends AbstractShapePlugin{
                 strokeWidth:this.getCanvasPixel(this.strokeWidth)
             });
             this.eBoardCanvas.add(this.instance);
-            this.throw(MessageTagEnum.Start);
+            this.startAction();
         }
     };
     protected onMouseUp(event:IEvent){
-        this.throw(MessageTagEnum.End);
+        this.endAction();
         super.onMouseUp(event);
     }
     protected ctrlKeyDownHandler(e:KeyboardEvent){
@@ -147,7 +177,7 @@ class Ellipse extends AbstractShapePlugin{
                 top: startPoint.y,
             });
             this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);// 不需要全部抛出消息
+            this.moveAction();
         }
     }
     protected ctrlKeyUpHandler(e:KeyboardEvent){
@@ -168,24 +198,10 @@ class Ellipse extends AbstractShapePlugin{
                 top: startPoint.y,
             });
             this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);// 不需要全部抛出消息
+            this.moveAction();
         }
     }
     
-    private throw(tag:MessageTagEnum){
-        // 需要生成一个消息的id 及实例的id
-        if(void 0 === this.instance){
-            return;
-        }
-        super.throwMessage({
-            id:this.instance.id,
-            messageId:MessageIdMiddleWare.getId(),
-            tag:tag,
-            start:this.start,
-            rx:this.instance.rx,
-            ry:this.instance.ry,
-        });
-    }
     
     /**
      * 接收消息处理

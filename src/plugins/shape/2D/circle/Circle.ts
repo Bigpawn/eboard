@@ -7,7 +7,7 @@
  *      instanceId: type
  */
 
-import {setCursor} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeName} from '../../../tool/cursor/CursorType';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from "~fabric/fabric-impl";
@@ -15,7 +15,6 @@ import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
-import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
 import {Circle as FabricCircle} from "../../../../extends/Circle";
 
 
@@ -33,6 +32,33 @@ class Circle extends AbstractShapePlugin{
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     protected instance:FabricCircle;
+    @message
+    private startAction(){
+        return {
+            tag:MessageTagEnum.Start,
+            id:this.instance.id,
+            start:this.start,
+            radius:this.instance.radius,
+        }
+    }
+    @message
+    private moveAction(){
+        return {
+            tag:MessageTagEnum.Temporary,
+            id:this.instance.id,
+            start:this.start,
+            radius:this.instance.radius,
+        }
+    }
+    @message
+    private endAction(){
+        return {
+            tag:MessageTagEnum.End,
+            id:this.instance.id,
+            start:this.start,
+            radius:this.instance.radius,
+        }
+    }
     protected onMouseMove(event:IEvent){
         if(void 0 ===this.start){
             return;
@@ -44,7 +70,7 @@ class Circle extends AbstractShapePlugin{
                 radius:radius,
             });
             this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);// 不需要全部抛出消息
+            this.moveAction();
         }else{
             this.instance=new FabricCircle({
                 originX:"center",
@@ -58,25 +84,12 @@ class Circle extends AbstractShapePlugin{
                 radius:radius,
             });
             this.eBoardCanvas.add(this.instance);
-            this.throw(MessageTagEnum.Start);
+            this.startAction();
         }
     };
     protected onMouseUp(event:IEvent){
-        this.throw(MessageTagEnum.End);
+        this.endAction()
         super.onMouseUp(event);
-    }
-    private throw(tag:MessageTagEnum){
-        // 需要生成一个消息的id 及实例的id
-        if(void 0 === this.instance){
-            return;
-        }
-        super.throwMessage({
-            id:this.instance.id,
-            messageId:MessageIdMiddleWare.getId(),
-            tag:tag,
-            start:this.start,
-            radius:this.instance.radius,
-        });
     }
     
     /**
