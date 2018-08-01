@@ -14,7 +14,7 @@ class AboutPage extends HomePage {
         const frame = eBoard.clearCache().createImageFrame({
             type:FrameType.Image,
             ratio:"16:9",
-            src:"https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2622681255,3418216244&fm=173&app=25&f=JPEG?w=639&h=381&s=7084E2BB4A501CC0543717BC0300700E",
+            content:"https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2622681255,3418216244&fm=173&app=25&f=JPEG?w=639&h=381&s=7084E2BB4A501CC0543717BC0300700E",
             scrollbar:ScrollbarType.vertical,
             messageId:0
         }) as BaseFrame;

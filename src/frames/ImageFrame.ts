@@ -6,6 +6,7 @@
  * @disc:图片Frame 单独的图片Frame 不允许出现滚动条，翻页中只支持滚动条，允许配置
  *      滚动条支持：perfect-scrollbar
  *      高度需要等待图片加载完成后才能确定
+ *      无滚动条时需要设置图片大小为填充模式
  */
 import {GenericHtmlFrame} from './HtmlFrame';
 import {IImageFrame, IImageFrameOptions} from './IFrame';
@@ -13,16 +14,14 @@ import {IImageFrame, IImageFrameOptions} from './IFrame';
 class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageFrame{
     public type="image-frame";
     public src:string;
-    public options:IImageFrameOptions|any;
-    protected initialize(options:IImageFrameOptions){
-        super.initialize(options);
-        this.src=options.src||"";
-    }
     protected getChildren(){
         const image = document.createElement("img");
-        image.src=this.src;
+        image.src=this.options.content||"";
         image.style.width="100%";
         image.onload=()=>{
+            this.initLayout();
+        };
+        image.onerror=()=>{
             this.initLayout();
         };
         return image;

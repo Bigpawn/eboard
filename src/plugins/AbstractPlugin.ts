@@ -13,7 +13,7 @@ import {EBoardEngine} from '../EBoardEngine';
 import {CursorTypeName} from './tool/cursor/CursorType';
 import {IEvent} from '~fabric/fabric-impl';
 import {fabric} from "fabric";
-import {IMessage, MessageMiddleWare} from '../middlewares/MessageMiddleWare';
+import {IMessage} from '../middlewares/MessageMiddleWare';
 
 abstract class AbstractPlugin {
     protected eBoardCanvas:EBoardCanvas;
@@ -159,7 +159,9 @@ abstract class AbstractPlugin {
         if(void 0!== this.eBoardEngine.messageHandle){
             this.eBoardEngine.messageHandle.call(this.eBoardEngine,message);
         }else{
-            MessageMiddleWare.sendMessage(message);
+            if(this["messageMiddleWare"]){
+                this["messageMiddleWare"].sendMessage(message);
+            }
         }
     }
 }

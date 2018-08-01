@@ -8,6 +8,7 @@
 import {EBoardEngine} from '../EBoardEngine';
 import {AbstractPlugin} from '../plugins/AbstractPlugin';
 import {ScrollbarType} from './HtmlFrame';
+import {IMessage} from '../middlewares/MessageMiddleWare';
 
 
 export declare interface IFrame{
@@ -16,19 +17,18 @@ export declare interface IFrame{
     type:string;
     messageId:number;
     dom:HTMLElement;
-    ratio:string;
     engine?:EBoardEngine;
     id:string;
     getPlugin(pluginName:string):AbstractPlugin|undefined;
-    destroy():void;
-    setId(id:string):this;
+    destroy(silent?:boolean):void;
+    throwMessage(message:IMessage|undefined):void
 }
 
 export declare interface IFrameOptions{
-    type:string;// frame 的类型及id标识
-    messageId:number;// frame 创建的消息Id
+    messageId?:number;// frame 创建的消息Id
     ratio?:string;
     id?:string;
+    type?:string;
 }
 
 
@@ -44,7 +44,7 @@ export declare interface IBaseFrame extends IFrame{
 
 export declare interface IHTMLFrameOptions extends IFrameOptions{
     scrollbar?:ScrollbarType;
-    htmlFragment:string|HTMLElement;
+    content?:string|HTMLElement;
 }
 
 export declare interface IHTMLFrame extends IBaseFrame{
@@ -55,7 +55,7 @@ export declare interface IHTMLFrame extends IBaseFrame{
 
 export declare interface IImageFrameOptions extends IFrameOptions{
     scrollbar?:ScrollbarType;
-    src:string;
+    content?:string;
 }
 
 export declare interface IImageFrame extends IBaseFrame{
@@ -66,6 +66,7 @@ export declare interface IImageFrame extends IBaseFrame{
 
 export declare interface ICanvasFrameOptions extends IFrameOptions{
     scrollbar?:ScrollbarType;
+    content?:string;
 }
 export declare interface ICanvasFrame extends IBaseFrame{
     canvas:HTMLCanvasElement;

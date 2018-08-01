@@ -14,7 +14,7 @@ class HTMLPage extends HomePage{
             type:FrameType.HTML,
             ratio:"16:9",
             scrollbar:ScrollbarType.vertical,
-            htmlFragment:'html内容dsaaaaaaaaaaaaaaaadas\n' +
+            content:'html内容dsaaaaaaaaaaaaaaaadas\n' +
             '                        <br/>\n' +
             '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
             '                        <br/>\n' +

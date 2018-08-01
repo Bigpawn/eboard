@@ -35,13 +35,13 @@ class Pagination{
     private onPrev(){
         if(this.onGoListener){
             // TODO 需要调用Api生成消息Id
-            this.onGoListener.call(this,this.pageNum-1,10);
+            this.onGoListener.call(this,this.pageNum-1);
         }
     }
     private onNext(){
         if(this.onGoListener){
             // TODO 需要调用Api生成消息Id
-            this.onGoListener.call(this,this.pageNum+1,10);
+            this.onGoListener.call(this,this.pageNum+1);
         }
     }
     private initLayout(){
@@ -81,7 +81,7 @@ class Pagination{
             this.pageNum = number;
             if(this.onGoListener){
                 // TODO 需要调用Api生成消息Id
-                this.onGoListener.call(this,number,10);
+                this.onGoListener.call(this,number);
             }
         }
     }
@@ -149,7 +149,7 @@ class Pagination{
      * 翻页事件监听
      * @param {(pageNum: number, messageId: number) => void} onGoListener
      */
-    public addGoListener(onGoListener:(pageNum:number,messageId:number)=>void){
+    public addGoListener(onGoListener:(pageNum:number)=>void){
         this.onGoListener=onGoListener;
     }
 }

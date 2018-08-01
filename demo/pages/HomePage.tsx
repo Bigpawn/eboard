@@ -20,6 +20,7 @@ import {Pencil} from "../../src/plugins";
 import {FrameType} from '../../src/EBoard';
 import {IFrame} from '../../src/frames/IFrame';
 import {EBoardInstance} from './EBoardInstance';
+import {MessageMiddleWare} from '../../src/middlewares/MessageMiddleWare';
 
 
 export class ToolBar extends React.Component{
@@ -146,6 +147,11 @@ export class ToolBar extends React.Component{
 }
 
 const eBoard =EBoardInstance.getInstance();
+const receiveEBoard = EBoardInstance.getReceiveInstance();
+eBoard.attachMessageMiddleWare((message)=>{
+    console.log(message);
+    receiveEBoard.onMessage(message);
+});
 
 class HomePage extends React.Component<{}, {}> {
     protected Toolbar:ToolBar;
@@ -155,16 +161,20 @@ class HomePage extends React.Component<{}, {}> {
         const frame = eBoard.clearCache().createBaseFrame({
             type:FrameType.Empty,
             ratio:"16:9",
-            messageId:0
         });
         eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
+        // receive
+        
     }
     public render(): JSX.Element {
         return (
             <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
                 <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220}}>
+                    {/*<BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>*/}
+                </div>
+                <div id={"eboardContainerReceive"} style={{position:"relative",height:document.body.offsetHeight-220}}>
                     {/*<BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>*/}
                 </div>
             </Card>

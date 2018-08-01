@@ -9,55 +9,73 @@ import {PDFDocumentProxy, PDFJSStatic, PDFPromise, PDFRenderParams} from 'pdfjs-
 import {CanvasFrame} from './CanvasFrame';
 import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
-import {pipMode, setAnimationName} from '../utils/decorators';
+import {message, pipMode, setAnimationName} from '../utils/decorators';
 import {IPdfFrame, IPdfFrameOptions} from './IFrameGroup';
 import {EBoard} from '../EBoard';
+import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
+import {
+    MessageTagEnum,
+} from '../middlewares/MessageMiddleWare';
+import {IFrameGroupMessageInterface} from '../IMessageInterface';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
 
 
 @setAnimationName('eboard-pager')
-class PdfFrame implements IPdfFrame{
+class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
     private pageFrame:CanvasFrame;
     private pagination:Pagination;
     private pdf:PDFPromise<PDFDocumentProxy>;
     private animationCssPrefix:string;
-    public group:true=true;
     public container:HTMLDivElement;
     public type:string="pdf-frame";
     public messageId:number;
-    public ratio:string;
     public dom:HTMLDivElement;
     public url:string;
     public pageNum:number;
     public totalPages:number;
     public child:Map<number,CanvasFrame>=new Map();
     public options:IPdfFrameOptions;
-    private parent?:EBoard;
-    private handleAll?:boolean;
-    private messageHandle?:Function;
+    public parent?:EBoard;
     public id:string;
-    constructor(options:IPdfFrameOptions,container:HTMLDivElement,parent?:EBoard){
-        this.id=Date.now().toString();
+    constructor(options:IPdfFrameOptions,container:HTMLDivElement,parent?:EBoard,id?:string){
+        this.id=id||Date.now().toString();
         this.options=options;
         this.container=container;
-        this.type=options.type;
-        this.messageId=options.messageId;
-        this.ratio=options.ratio||"4:3";
+        this.messageId=options.messageId||MessageIdMiddleWare.getId();
         this.parent=parent;
-        if(parent){
-            this.handleAll=parent["handleAll"];
-            this.messageHandle=parent["messageHandle"];
-        }
         this.onGo=this.onGo.bind(this);
-       this.fixContainer();
+        this.initializeAction();// 创建子元素之前调用
+        this.fixContainer();
         this.initLayout();
         this.initialize();
     }
-    public setId(id:string){
-        this.id = id;
-        return this;
+    @message
+    public initializeAction(){
+        return {
+            ...this.options,
+            id:this.id,
+            messageId:this.messageId,
+            tag:MessageTagEnum.CreateFrameGroup
+        }
+    };
+    
+    @message
+    public destroyAction(){
+        return {
+            tag:MessageTagEnum.DestroyFrameGroup,
+            id:this.id
+        }
+    }
+    
+    @message
+    public switchFrameAction(pageNum:number){
+        return {
+            tag:MessageTagEnum.SwitchToFrame,
+            id:this.id,
+            pageNum:pageNum
+        }
     }
     private fixContainer(){
         const parentElement = this.container;
@@ -92,12 +110,12 @@ class PdfFrame implements IPdfFrame{
             this.pdf.then(pdf=>{
                 this.setTotalPages(pdf.numPages);
             });
+            // 判断是否有id options.id;// 没有标识操作端
             const pageFrame = new CanvasFrame({
-                type:this.pageNum+"",
                 messageId:options.messageId,
                 ratio:options.ratio,
                 scrollbar:ScrollbarType.vertical,
-            },this.container,this);
+            },this.container,this,this.pageNum.toString(),true);// 页码设置为id
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
             this.dom.appendChild(this.pageFrame.dom);
@@ -126,9 +144,9 @@ class PdfFrame implements IPdfFrame{
             })
         }
     }
-    private onGo(pageNum:number,messageId:number){
-        // TODO ID需要提前生成
+    private onGo(pageNum:number,messageId?:number){
         this.switchToFrame(pageNum,messageId);// 消息id，需要先生成消息id然后才能调用api
+        this.switchFrameAction(pageNum);
     }
 
     /**
@@ -175,19 +193,18 @@ class PdfFrame implements IPdfFrame{
      * @returns {any}
      */
     @pipMode
-    public switchToFrame(pageNum:number,messageId:number){
-        if(this.pageNum === pageNum||void 0 === pageNum||void 0 === messageId){
+    public switchToFrame(pageNum:number,messageId?:number){
+        if(this.pageNum === pageNum||void 0 === pageNum){
             return this;
         }
         let nextPageFrame = this.child.get(pageNum);
         if(void 0 === nextPageFrame){
             // 创建
             nextPageFrame = new CanvasFrame({
-                type:pageNum+"",
                 messageId:messageId,
                 ratio:this.options.ratio,
                 scrollbar:ScrollbarType.vertical,
-            },this.container,this);
+            },this.container,this,pageNum.toString(),true);
             this.child.set(pageNum,nextPageFrame);
             // 需要getPage
             this.pdf.then(pdf=>{
@@ -237,19 +254,11 @@ class PdfFrame implements IPdfFrame{
         if(this.child.size>0){
             // 清空子项
             this.child.forEach(frame=>{
-                frame.destroy();
+                frame.destroy(true);// 不想发出消息,仅发出本身消息即可
             });
             this.child.clear();
         }
-    }
-    public getParent(){
-        return this.parent;
-    }
-    public isHandleAll(){
-        return this.handleAll;
-    }
-    public getMessageHandle(){
-        return this.messageHandle;
+        this.destroyAction();
     }
 }
 

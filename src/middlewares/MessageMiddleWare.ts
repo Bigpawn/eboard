@@ -16,10 +16,9 @@
 import {MessageIdMiddleWare} from './MessageIdMiddleWare';
 import * as LZString from "lz-string";
 import {IFrameOptions} from '../frames/IFrame';
-import {MessageReceiver} from './MessageReceiver';
 
 export enum MessageTagEnum{
-    Start,Temporary,Process,End,Action
+    Start,Temporary,Process,End,CreateFrame,DestroyFrame,CreateFrameGroup,DestroyFrameGroup,SwitchToFrame
 }
 
 
@@ -44,20 +43,12 @@ export declare interface IMessage{
     flipY?:boolean;
 }
 
-export declare interface IReceiveMessage extends IMessage{
-    id:number;
-}
-
 
 class MessageMiddleWare{
-    private static compress:boolean=true;
-    private static messageListener:(message:string)=>void;// 消息监听
-    public static onMessage(messageListener:(message:string)=>void){
-        if(void 0 === this.messageListener){
-            this.messageListener = messageListener;
-        }else{
-            throw new Error("接收服务暂不支持多任务注册！");
-        }
+    private compress:boolean=false;
+    private messageListener:(message:string)=>void;// 消息监听
+    public setOutputListener(messageListener:(message:string)=>void){
+        this.messageListener = messageListener;
     }
     
     /**
@@ -65,11 +56,13 @@ class MessageMiddleWare{
      * @param {IMessage} message
      * @returns {number}
      */
-    static sendMessage(message:IMessage){
+    public sendMessage(message:IMessage){
+        if(void 0 === this.messageListener){
+            return null;
+        }
         // 自动生成id并返回id
         const id = void 0 === message.messageId?MessageIdMiddleWare.getId():message.messageId;
         const outMessage = Object.assign({},message,{messageId:id});
-        console.log(outMessage);
         // MessageReceiver.receiver(outMessage);
         // 发送该消息
         this.messageListener&&this.messageListener.call(this,this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage));

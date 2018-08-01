@@ -15,6 +15,14 @@ class EBoardInstance{
         }
         return this.instance;
     }
+    
+    private static receiveInstance:EBoard;
+    public static getReceiveInstance(){
+        if(!this.receiveInstance){
+            this.receiveInstance=new EBoard(()=>document.getElementById("eboardContainerReceive") as HTMLDivElement);
+        }
+        return this.receiveInstance;
+    }
 }
 
 export {EBoardInstance};

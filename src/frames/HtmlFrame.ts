@@ -2,15 +2,17 @@
  * @Author: yanxinaliang (rainyxlxl@163.com)
  * @Date: 2018/7/20 14:42
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/20 14:42
+ * @Last Modified time: 2018/7/20 14:42
  * @disc:HTMLFrame HTMLFrame 支持配置是否显示滚动条 属于单层Frame，不会出现子Frame
+ * HtmlFrame 必然会存在滚动条，滚动条配置不起作用，仅在Image时生效
  */
 import {GenericBaseFrame} from './BaseFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import PerfectScrollbar from 'perfect-scrollbar';
-import {IFrame, IFrameOptions, IHTMLFrame, IHTMLFrameOptions} from './IFrame';
+import {IFrame,IHTMLFrame, IHTMLFrameOptions} from './IFrame';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import "../style/scrollbar.less";
+import {IFrameMessageInterface} from '../IMessageInterface';
 
 export enum ScrollbarType{
     horizontal,
@@ -19,19 +21,12 @@ export enum ScrollbarType{
     none
 }
 
-class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> implements IFrame{
-    public type="html-frame";
-    private supportScrollbar:ScrollbarType=ScrollbarType.none;
-    private scrollbar:PerfectScrollbar;
-    private htmlFragment:string|HTMLElement;
+class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> implements IFrame,IFrameMessageInterface{
     private htmlWrap:HTMLDivElement;
-    protected initialize(options:T){
-        super.initialize(options);
-        this.supportScrollbar=(options as any).scrollbar||ScrollbarType.none;
-        this.htmlFragment=(options as any).htmlFragment||"";
-    }
-    protected getChildren():string|HTMLElement{
-        return this.htmlFragment;
+    public type="html-frame";
+    public scrollbar:PerfectScrollbar;
+    protected getChildren():string|HTMLElement|undefined{
+        return this.options.content;
     }
     protected getLoadedImage(){
         const image =document.createElement("img");
@@ -56,11 +51,13 @@ class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> impl
         if(typeof html === "string"){
             htmlWrap.innerHTML=html;
         }else{
-            htmlWrap.innerHTML="";
-            htmlWrap.appendChild(html);
-            // 如果标签是image标签则不添加异常image元素
-            if(html.tagName!=="IMG"){
-                container.appendChild(this.getLoadedImage());
+            if(void 0 !==html){
+                htmlWrap.innerHTML="";
+                htmlWrap.appendChild(html);
+                // 如果标签是image标签则不添加异常image元素
+                if(html.tagName!=="IMG"){
+                    container.appendChild(this.getLoadedImage());
+                }
             }
         }
         // 通过image模拟实现监听显示事件
@@ -73,8 +70,8 @@ class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> impl
             skipTargetFind:true,
             containerClass:"eboard-canvas"
         },this);
-        // scrollbar 设置
-        switch (this.supportScrollbar){
+        // scrollbar 设置  如果是html,必然存在滚动条
+        switch (this.options.scrollbar){
             case ScrollbarType.horizontal:
                 this.scrollbar= new PerfectScrollbar(container,{
                     wheelSpeed: 2,
@@ -94,6 +91,12 @@ class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> impl
                 break;
             case ScrollbarType.none:
             default:
+                if(this.type==="html-frame"){
+                    this.scrollbar= new PerfectScrollbar(container,{
+                        wheelSpeed: 2,
+                        suppressScrollX:true
+                    });
+                }
                 break;
         }
         this.dom = container;
@@ -104,26 +107,12 @@ class GenericHtmlFrame<T extends IFrameOptions> extends GenericBaseFrame<T> impl
         this.dom.style.width=calcSize.width+"px";
         this.dom.style.height=calcSize.height+"px";
         // 还没有append则不能计算出高度  ========== fix
-        const height = Math.max(this.htmlWrap.offsetHeight,calcSize.height);// 没显示
+        const height = Math.max(this.htmlWrap.offsetHeight,calcSize.height);
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 根据实际分辨率设置大小
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height},{backstoreOnly:true});// 设置canvas 画布大小
     }
-    public getScrollbar(){
-        return this.scrollbar;
-    }
-    
-    /**
-     * 修改html内容
-     * @param {string} htmlFragment
-     */
-    public setHtml(htmlFragment:string){
-        this.htmlWrap.innerHTML=htmlFragment;
-        if(this.scrollbar){
-            this.scrollbar.update();
-        }
-    }
-    public destroy(){
-        super.destroy();
+    public destroy(silent?:boolean){
+        super.destroy(silent);
         if(this.scrollbar){
             this.scrollbar.destroy();
             this.scrollbar=undefined as any;

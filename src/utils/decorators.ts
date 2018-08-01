@@ -7,6 +7,7 @@
  */
 import {CursorTypeName} from '../plugins/tool/cursor/CursorType';
 import {MessageAdapter} from '../interceptor/MessageAdapter';
+import {MessageMiddleWare} from '../middlewares/MessageMiddleWare';
 
 function mixinPlugin(pluginName:string):ClassDecorator{
     return (target:any)=>{
@@ -135,4 +136,34 @@ function registerMessageInterceptor(interceptor:typeof MessageAdapter){
     }
 }
 
-export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,ctrlKeyEnable,registerMessageInterceptor,escKeyEnable};
+/**
+ * 消息中间件注册
+ * @param {typeof MessageMiddleWare} middleWare
+ * @returns {(target: any) => void}
+ */
+function registerMessageMiddleWare(middleWare:typeof MessageMiddleWare){
+    return (target:any)=>{
+        Object.assign(target.prototype, {
+            messageMiddleWare:new middleWare(),
+        });
+    }
+}
+
+/**
+ * 消息装饰器，添加到成员方法上，执行成员方法时会发送消息
+ * @param target
+ * @param {string} name
+ * @param {PropertyDescriptor} descriptor
+ * @returns {PropertyDescriptor}
+ */
+function message(target:any, name:string, descriptor:PropertyDescriptor){
+    const oldValue = descriptor.value;
+    descriptor.value =function(){
+        const message = oldValue.apply(this,arguments);
+        console.log(message);
+        return message;
+    };
+    return descriptor;
+}
+
+export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,ctrlKeyEnable,registerMessageInterceptor,escKeyEnable,registerMessageMiddleWare,message};

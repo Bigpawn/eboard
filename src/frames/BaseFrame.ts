@@ -9,42 +9,51 @@ import {IBaseFrame, IBaseFrameOptions, IFrame, IFrameOptions} from './IFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import {EBoard} from '../EBoard';
 import {IFrameGroup} from './IFrameGroup';
+import {IMessage, MessageTagEnum} from '../middlewares/MessageMiddleWare';
+import {IFrameMessageInterface} from '../IMessageInterface';
+import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
+import {message} from '../utils/decorators';
 
 
-class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
+class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageInterface{
     public container:HTMLDivElement;
     public type:string;
     public messageId:number;
-    public ratio:string;
     public dom:HTMLDivElement;
     public engine:EBoardEngine;
     public options:T;
-    private parent?:EBoard|IFrameGroup;
-    private handleAll?:boolean;
-    private messageHandle?:Function;
+    public parent?:EBoard|IFrameGroup;
     public id:string;
-    constructor(options:T,container:HTMLDivElement,parent?:EBoard|IFrameGroup){
-        this.id=Date.now().toString();
+    constructor(options:T,container:HTMLDivElement,parent?:EBoard|IFrameGroup,id?:string,silent?:boolean){
+        this.id=id||Date.now().toString();
+        this.messageId=options.messageId||MessageIdMiddleWare.getId();// 如果没有则自动创建
         this.container=container;
         this.options=options;
         this.parent=parent;
-        if(parent){
-            this.handleAll=parent["handleAll"];
-            this.messageHandle=parent["messageHandle"];
+        const calc = this.calc();
+        if(!silent){
+            this.initializeAction(calc);// 控制是否发送创建消息
         }
-        this.initialize(options);
         this.fixContainer();
         this.initEngine();
-        this.initLayout();
+        this.initLayout(calc);
     }
-    public setId(id:string){
-        this.id=id;
-        return this;
+    
+    @message
+    public initializeAction(calc:{width:number;height:number;dimensions:{width:number;height:number}}){
+        return Object.assign({},{
+            id:this.id,
+            messageId:this.messageId,
+            tag:MessageTagEnum.CreateFrame
+        },calc,this.options)
     }
-    protected initialize(options:T){
-        this.type=options.type;
-        this.messageId=options.messageId;
-        this.ratio=options.ratio||"4:3";
+    
+    @message
+    public destroyAction(){
+        return {
+            id:this.id,
+            tag:MessageTagEnum.DestroyFrame
+        }
     }
     private fixContainer(){
         const parentElement = this.container;
@@ -73,7 +82,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
             width:parentElement.offsetWidth,
             height:parentElement.offsetHeight
         };
-        const ratio=this.ratio;
+        const ratio=this.options.ratio||"4:3";
         if(!/\d+:\d+/g.test(ratio)){
             throw new Error(`Expected string with compare symbol, got '${ratio}'.`);
         }else{
@@ -109,28 +118,34 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
             }
         }
     }
-    protected initLayout(){
-        const calcSize=this.calc();
+    protected initLayout(calcSize:{width:number;height:number;dimensions:{width:number;height:number}}){
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:calcSize.height});// 设置样式大小
         this.engine.eBoardCanvas.setDimensions(calcSize.dimensions,{backstoreOnly:true});// 设置canvas 画布大小
     };
     public getPlugin(pluginName:string){
         return this.engine.getPlugin(pluginName);
     }
-    public destroy(){
+    public destroy(silent?:boolean){
         if(this.dom&&this.dom.parentElement){
             this.dom.parentElement.removeChild(this.dom);
         }
         this.engine.eBoardCanvas.clear();
+        if(!silent){
+            this.destroyAction();
+        }
     }
-    public getParent(){
-        return this.parent;
-    }
-    public isHandleAll(){
-        return this.handleAll;
-    }
-    public getMessageHandle(){
-        return this.messageHandle;
+    /**
+     * 发送消息
+     * @param {IMessage | undefined} message
+     */
+    public throwMessage(message:IMessage|undefined){
+        if(void 0!== this.engine.messageHandle){
+            this.engine.messageHandle.call(this,message);
+        }else{
+            if(this["messageMiddleWare"]){
+                this["messageMiddleWare"].sendMessage(message);
+            }
+        }
     }
 }
 

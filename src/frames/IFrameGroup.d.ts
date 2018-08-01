@@ -9,23 +9,22 @@
 import {AbstractPlugin} from '../plugins/AbstractPlugin';
 import {IFrame, IFrameOptions} from './IFrame';
 import {ScrollbarType} from './HtmlFrame';
+import {IMessage} from '../middlewares/MessageMiddleWare';
 
 
 export declare interface IFrameGroupOptions{
-    type:string;// frame 的类型及id标识
-    messageId:number;// frame 创建的消息Id
+    messageId?:number;// frame 创建的消息Id
     ratio?:string;
     scrollbar?:ScrollbarType;
     pageNum:number;// 传1 或者其他
     id?:string;
+    type?:string;
 }
 
 export declare interface IFrameGroup{
-    group:true;// 是否组合，强制为true,用于消息拦截器做检测，或者其他做检测
     type:string;// 窗口标识id
     messageId:number;// 窗口创建对应消息
     dom:HTMLElement;// 窗口内容dom
-    ratio:string;
     child:Map<number,IFrame>;
     options:IFrameOptions;
     id:string;

@@ -26,10 +26,12 @@ import "./style/canvas.less";
 import {
     IMessage,
     MessageMiddleWare,
-    MessageTagEnum,
 } from './middlewares/MessageMiddleWare';
 import {MessageAdapter} from './interceptor/MessageAdapter';
-import {registerMessageInterceptor} from './utils/decorators';
+import {
+    registerMessageInterceptor,
+    registerMessageMiddleWare,
+} from './utils/decorators';
 import {IImagesFrameOptions, IPdfFrameOptions} from './frames/IFrameGroup';
 import {MessageReceiver} from "./middlewares/MessageReceiver";
 
@@ -39,6 +41,7 @@ export enum FrameType{
 
 
 @registerMessageInterceptor(MessageAdapter)
+@registerMessageMiddleWare(MessageMiddleWare)
 class EBoard{
     private frames:Map<string,IFrame>=new Map();// frame管理
     private activeFrame:string;
@@ -52,20 +55,22 @@ class EBoard{
     }
     
     /**
-     * 创建frame 如果传入Id表示接收端，仅执行创建逻辑，如果没有id则表示发送端，需要发出消息
-     * @param {IFrameOptions} options
-     * @returns {any}
+     * 创建frame ，创建完成立即显示
+     * @param {IBaseFrameOptions | IHTMLFrameOptions | IImageFrameOptions | ICanvasFrameOptions | IPdfFrameOptions | IImagesFrameOptions} options
+     * @returns {IFrame}
      */
     public createFrame(options:IBaseFrameOptions|IHTMLFrameOptions|IImageFrameOptions|ICanvasFrameOptions|IPdfFrameOptions|IImagesFrameOptions){
         const {id,type} = options;
         let frame:IFrame;
         const container = this.getContainer();
         if(void 0 !== id && this.hasFrame(id)){
-            return this.findFrameById(options.type);// 如果已经存在
+            frame = this.findFrameById(id) as IFrame;
+            this.switchToFrame(frame);
+            return frame;
         }
         switch (type){
             case FrameType.HTML:
-                frame = new HtmlFrame(options as IHTMLFrameOptions,container,this);
+                frame = new HtmlFrame(options as IHTMLFrameOptions,container,this,id);
                 break;
             case FrameType.Image:
                 frame = new ImageFrame(options as IImageFrameOptions,container,this);
@@ -81,21 +86,11 @@ class EBoard{
                 break;
             case FrameType.Empty:
             default:
-                frame = new BaseFrame(options,container,this);
+                frame = new BaseFrame(options,container,this,id);
                 break;
         }
-        
-        if(void 0 === id){
-            // 发送端创建
-            MessageMiddleWare.sendMessage(Object.assign({},options,{
-                tag:MessageTagEnum.Action,
-                id:frame.id
-            }));
-        }else{
-            // 接收端创建
-            frame.setId(id);
-        }
         this.frames.set(frame.id,frame);
+        this.switchToFrame(frame);
         return frame;
     }
     
@@ -125,9 +120,9 @@ class EBoard{
     }
     
     /**
-     * 切换到需要显示的frame 需要改frame存在，如果不存在则不执行任何操作
+     * 显示指定的Frame
+     * @param {string | IFrame} id
      * @returns {undefined | IFrame}
-     * @param id
      */
     public switchToFrame(id:string|IFrame){
         // 支持frameType标识和对象
@@ -192,6 +187,34 @@ class EBoard{
      */
     public messageInput(message:IMessage){
         this.messageReceiver.receiver(message);
+    }
+    
+    /**
+     * 消息分发
+     * @param {IMessage} message
+     */
+    public onMessage(message:string){
+        // 无限循环了
+        /*const messageObj:any = JSON.parse(message);
+        // 判断frame及frameGroup
+        const {tag,id} = messageObj;
+        switch (tag){
+            case MessageTagEnum.CreateFrame:// 创建frame
+                this.createFrame(message as any);
+                break;
+            case MessageTagEnum.SwitchToFrame:
+                this.switchToFrame(id);
+                break;
+            default:
+                break;
+        }*/
+        console.log("onmessage",message);
+    }
+    
+    public attachMessageMiddleWare(listener:(message:string)=>void){
+        if(this["messageMiddleWare"]){
+            this["messageMiddleWare"].setOutputListener(listener);
+        }
     }
 }
 
