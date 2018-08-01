@@ -149,21 +149,6 @@ abstract class AbstractPlugin {
     public getCanvasPixel(pixel:number){
         return pixel * this.eBoardEngine.getPixelRatio();
     }
-    
-    /**
-     * 向上冒泡消息
-     * @param {IMessage} message
-     */
-    public throwMessage(message:IMessage){
-        // 需要添加实例id，消息id
-        if(void 0!== this.eBoardEngine.messageHandle){
-            this.eBoardEngine.messageHandle.call(this.eBoardEngine,message);
-        }else{
-            if(this["messageMiddleWare"]){
-                this["messageMiddleWare"].sendMessage(message);
-            }
-        }
-    }
 }
 
 export {AbstractPlugin};

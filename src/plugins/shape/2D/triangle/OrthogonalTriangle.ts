@@ -11,8 +11,8 @@ import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
-import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
 import {OrthogonalTriangle as FabricOrthogonalTriangle} from "../../../../extends/OrthogonalTriangle";
+import {message} from '../../../../utils/decorators';
 
 
 
@@ -72,22 +72,17 @@ class OrthogonalTriangle extends AbstractShapePlugin{
     protected onMouseUp(event:IEvent){
         this.throw(MessageTagEnum.End);
         super.onMouseUp(event);
-        console.log(this.eBoardCanvas.getObjects());
     }
+    @message
     private throw(tag:MessageTagEnum){
-        // 需要生成一个消息的id 及实例的id
-        if(void 0 === this.instance){
-            return;
-        }
-        super.throwMessage({
+        return {
             id:this.instance.id,
-            messageId:MessageIdMiddleWare.getId(),
             start:this.instance.pathOffset,
             tag:tag,
             points:this.instance.points,
             width:this.instance.width,
             height:this.instance.height
-        });
+        };
     }
     
     /**

@@ -12,8 +12,8 @@ import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
-import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
 import {Square as FabricSquare} from "../../../../extends/Square";
+import {message} from '../../../../utils/decorators';
 
 export declare interface ISquareMessage extends IMessage{
     start:{x:number;y:number};
@@ -29,6 +29,36 @@ class Square extends AbstractShapePlugin{
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
+    @message
+    private startAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Start,
+            start:this.start,
+            length:this.instance.width,
+            angle:this.instance.angle
+        }
+    }
+    @message
+    private moveAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Start,
+            start:this.start,
+            length:this.instance.width,
+            angle:this.instance.angle
+        }
+    }
+    @message
+    private endAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Start,
+            start:this.start,
+            length:this.instance.width,
+            angle:this.instance.angle
+        }
+    }
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
@@ -54,7 +84,7 @@ class Square extends AbstractShapePlugin{
                 angle:angle
             });
             this.eBoardCanvas.add(this.instance);
-            this.throw(MessageTagEnum.Start);
+            this.startAction();
         }else{
             this.instance.update({
                 width:length,
@@ -62,27 +92,12 @@ class Square extends AbstractShapePlugin{
                 angle:angle
             });
             this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
+            this.moveAction();
         }
     };
     protected onMouseUp(event:IEvent){
-        this.throw(MessageTagEnum.End);
+        this.endAction();
         super.onMouseUp(event);
-    }
-    
-    private throw(tag:MessageTagEnum){
-        // 需要生成一个消息的id 及实例的id
-        if(void 0 === this.instance){
-            return;
-        }
-        super.throwMessage({
-            id:this.instance.id,
-            messageId:MessageIdMiddleWare.getId(),
-            tag:tag,
-            start:this.start,
-            length:this.instance.width,
-            angle:this.instance.angle
-        });
     }
     
     /**

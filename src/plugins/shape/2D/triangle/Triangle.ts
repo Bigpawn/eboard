@@ -8,12 +8,11 @@
 
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {ctrlKeyEnable} from '../../../../utils/decorators';
+import {ctrlKeyEnable, message} from '../../../../utils/decorators';
 import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
-import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
 import {Triangle as FabricTriangle} from "../../../../extends/Triangle";
 
 
@@ -196,21 +195,17 @@ class Triangle extends AbstractShapePlugin{
         this.throw(MessageTagEnum.End);
         super.onMouseUp(event);
     }
+    @message
     private throw(tag:MessageTagEnum){
-        // 需要生成一个消息的id 及实例的id
-        if(void 0 === this.instance){
-            return;
-        }
-        super.throwMessage({
+        return {
             id:this.instance.id,
-            messageId:MessageIdMiddleWare.getId(),
             tag:tag,
             start:{x:this.instance.left as number,y:this.instance.top as number},
             flipX:this.instance.flipX,
             flipY:this.instance.flipY,
             width:this.instance.width,
             height:this.instance.height,
-        });
+        }
     }
     
     /**

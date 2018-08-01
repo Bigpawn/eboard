@@ -6,16 +6,13 @@
  * @disc:矩形Plugin  还可以使用Path实现   flipX flipY 不起作用，使用动态计算left top实现四象限
  */
 
-import {EBoardCanvas} from '../../../../EBoardCanvas';
-import {EBoardEngine} from '../../../../EBoardEngine';
-import {ctrlKeyEnable} from '../../../../utils/decorators';
+import {ctrlKeyEnable, message} from '../../../../utils/decorators';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
-import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
 import {Rectangle as FabricRectangle} from "../../../../extends/Rectangle";
 
 export declare interface IRectangleMessage extends IMessage{
@@ -34,9 +31,6 @@ class Rectangle extends AbstractShapePlugin{
     private strokeWidth:number=1;
     protected ctrlKeyEnable:boolean;
     protected ctrlKey:boolean=false;
-    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
-        super(canvas,eBoardEngine);
-    }
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
         const end = this.end;
@@ -93,6 +87,36 @@ class Rectangle extends AbstractShapePlugin{
                 };
         }
     };
+    @message
+    private startAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Start,
+            start:{x:this.instance.left,y:this.instance.top},
+            width:this.instance.width,
+            height:this.instance.height,
+        }
+    }
+    @message
+    private moveAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Start,
+            start:{x:this.instance.left,y:this.instance.top},
+            width:this.instance.width,
+            height:this.instance.height,
+        }
+    }
+    @message
+    private endAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Start,
+            start:{x:this.instance.left,y:this.instance.top},
+            width:this.instance.width,
+            height:this.instance.height,
+        }
+    }
     protected onMouseMove(event:IEvent){
         if(void 0 ===this.start){
             return;
@@ -111,7 +135,7 @@ class Rectangle extends AbstractShapePlugin{
                 top: startPoint.y,
             });
             this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
+            this.moveAction();
         }else{
             this.instance = new FabricRectangle({
                 fill:this.fill,
@@ -124,7 +148,7 @@ class Rectangle extends AbstractShapePlugin{
                 strokeWidth:this.getCanvasPixel(this.strokeWidth)
             });
             this.eBoardCanvas.add(this.instance);
-            this.throw(MessageTagEnum.Start);
+            this.startAction();
         }
     };
     protected ctrlKeyDownHandler(e:KeyboardEvent){
@@ -150,7 +174,7 @@ class Rectangle extends AbstractShapePlugin{
                 top:startPoint.y
             });
             this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
+            this.moveAction();
         }
     }
     protected ctrlKeyUpHandler(e:KeyboardEvent){
@@ -171,26 +195,12 @@ class Rectangle extends AbstractShapePlugin{
                 top:startPoint.y
             });
             this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
+            this.moveAction();
         }
     }
     protected onMouseUp(event:IEvent){
-        this.throw(MessageTagEnum.End);
+        this.endAction();
         super.onMouseUp(event);
-    }
-    private throw(tag:MessageTagEnum){
-        // 需要生成一个消息的id 及实例的id
-        if(void 0 === this.instance){
-            return;
-        }
-        super.throwMessage({
-            id:this.instance.id,
-            messageId:MessageIdMiddleWare.getId(),
-            tag:tag,
-            start:{x:this.instance.left as number,y:this.instance.top as number},
-            width:this.instance.width,
-            height:this.instance.height,
-        });
     }
     /**
      * 接收消息处理
