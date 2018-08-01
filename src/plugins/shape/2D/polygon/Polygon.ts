@@ -14,8 +14,8 @@ import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
-import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
 import {Polygon as FabricPolygon} from "../../../../extends/Polygon";
+import {message} from '../../../../utils/decorators';
 
 
 export declare interface IPolygonMessage extends IMessage{
@@ -58,11 +58,49 @@ class Polygon extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
         if(_close&&finished){
+            this.endAction();
             this.points=[];
             this.start = undefined as any;
             this.instance = undefined as any;
             this.circle = undefined as any;
-            this.throw(MessageTagEnum.End);
+        }else{
+            if(finished){
+                this.downAction();
+            }else{
+                this.moveAction();
+            }
+        }
+    }
+    @message
+    private startAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Start,
+            points:this.instance.points
+        }
+    }
+    @message
+    private moveAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Temporary,
+            points:this.instance.points
+        }
+    }
+    @message
+    private downAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Process,
+            points:this.instance.points
+        }
+    }
+    @message
+    private endAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.End,
+            points:this.instance.points
         }
     }
     protected onMouseDown(event:IEvent){
@@ -86,10 +124,9 @@ class Polygon extends AbstractShapePlugin{
                 fill:this.fill,
             });
             this.eBoardCanvas.add(this.instance);
-            this.throw(MessageTagEnum.Start);
+            this.startAction();
         }else{
             this.replace(true);
-            this.throw(MessageTagEnum.Process);// 可能是结束
         }
     }
     
@@ -137,7 +174,6 @@ class Polygon extends AbstractShapePlugin{
         this.points.pop();
         this.points.push(new fabric.Point(Math.round(pos.x),Math.round(pos.y)));
         this.replace(false);
-        this.throw(MessageTagEnum.Temporary);
     }
     
     /**
@@ -151,18 +187,6 @@ class Polygon extends AbstractShapePlugin{
         // this.start=undefined as any;
     }
     
-    private throw(tag:MessageTagEnum){
-        // 需要生成一个消息的id 及实例的id
-        if(void 0 === this.instance){
-            return;
-        }
-        super.throwMessage({
-            id:this.instance.id,
-            messageId:MessageIdMiddleWare.getId(),
-            tag:tag,
-            points:this.instance.points
-        });
-    }
     
     /**
      * 接收消息处理

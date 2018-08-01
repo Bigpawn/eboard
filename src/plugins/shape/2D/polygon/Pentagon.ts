@@ -8,12 +8,12 @@
 
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {MessageIdMiddleWare} from '../../../../middlewares/MessageIdMiddleWare';
 import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Pentagon as FabricPentagon} from '../../../../extends/Pentagon';
+import {message} from '../../../../utils/decorators';
 
 export declare interface IPentagonMessage extends IMessage{
     start:{x:number;y:number};
@@ -27,6 +27,36 @@ class Pentagon extends AbstractShapePlugin{
     private stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
+    @message
+    private startAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Start,
+            start:this.start,
+            radius:this.instance.width,
+            points:this.instance.points
+        }
+    }
+    @message
+    private moveAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.Temporary,
+            start:this.start,
+            radius:this.instance.width,
+            points:this.instance.points
+        }
+    }
+    @message
+    private endAction(){
+        return {
+            id:this.instance.id,
+            tag:MessageTagEnum.End,
+            start:this.start,
+            radius:this.instance.width,
+            points:this.instance.points
+        }
+    }
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
@@ -49,7 +79,7 @@ class Pentagon extends AbstractShapePlugin{
                 originX:"center"
             });
             this.eBoardCanvas.add(this.instance);
-            this.throw(MessageTagEnum.Start);
+            this.startAction();
         }else{
             this.instance.update({
                 points:points,
@@ -57,27 +87,13 @@ class Pentagon extends AbstractShapePlugin{
                 height:radius *2,
             });
             this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
+            this.moveAction();
         }
     };
     
     protected onMouseUp(event:IEvent){
-        this.throw(MessageTagEnum.End);
+        this.endAction();
         super.onMouseUp(event);
-    }
-    private throw(tag:MessageTagEnum){
-        // 需要生成一个消息的id 及实例的id
-        if(void 0 === this.instance){
-            return;
-        }
-        super.throwMessage({
-            id:this.instance.id,
-            messageId:MessageIdMiddleWare.getId(),
-            tag:tag,
-            start:this.start,
-            radius:this.instance.width,
-            points:this.instance.points
-        });
     }
     
     /**
