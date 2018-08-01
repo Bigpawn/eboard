@@ -35,7 +35,8 @@ class EquilateralTriangle extends AbstractShapePlugin{
             tag:MessageTagEnum.Start,
             points:this.instance.points,
             start:this.start,
-            length:this.instance.width
+            length:this.instance.width,
+            type:this.instance.type
         }
     }
     @message
@@ -45,7 +46,8 @@ class EquilateralTriangle extends AbstractShapePlugin{
             tag:MessageTagEnum.Temporary,
             points:this.instance.points,
             start:this.start,
-            length:this.instance.width
+            length:this.instance.width,
+            type:this.instance.type
         }
     }
     @message
@@ -55,7 +57,8 @@ class EquilateralTriangle extends AbstractShapePlugin{
             tag:MessageTagEnum.End,
             points:this.instance.points,
             start:this.start,
-            length:this.instance.width
+            length:this.instance.width,
+            type:this.instance.type
         }
     }
     protected onMouseMove(event:IEvent){
@@ -117,6 +120,7 @@ class EquilateralTriangle extends AbstractShapePlugin{
                 originY:"center",
                 originX:"center"
             }).setId(id);
+            this.eBoardCanvas.add(instance);
         }
         switch (tag){
             case MessageTagEnum.Start:

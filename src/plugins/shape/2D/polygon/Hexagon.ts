@@ -35,7 +35,8 @@ class Hexagon extends AbstractShapePlugin{
             tag:MessageTagEnum.Start,
             start:this.start,
             radius:this.instance.width,
-            points:this.instance.points
+            points:this.instance.points,
+            type:this.instance.type
         }
     }
     @message
@@ -45,7 +46,8 @@ class Hexagon extends AbstractShapePlugin{
             tag:MessageTagEnum.Temporary,
             start:this.start,
             radius:this.instance.width,
-            points:this.instance.points
+            points:this.instance.points,
+            type:this.instance.type
         }
     }
     @message
@@ -55,7 +57,8 @@ class Hexagon extends AbstractShapePlugin{
             tag:MessageTagEnum.End,
             start:this.start,
             radius:this.instance.width,
-            points:this.instance.points
+            points:this.instance.points,
+            type:this.instance.type
         }
     }
     protected onMouseMove(event:IEvent){

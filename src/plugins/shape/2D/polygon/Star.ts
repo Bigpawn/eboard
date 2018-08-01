@@ -36,6 +36,7 @@ class Star extends AbstractShapePlugin{
             points:this.instance.points,
             start:this.start,
             radius:this.instance.width,
+            type:this.instance.type
         }
     }
     @message
@@ -46,6 +47,7 @@ class Star extends AbstractShapePlugin{
             points:this.instance.points,
             start:this.start,
             radius:this.instance.width,
+            type:this.instance.type
         }
     }
     @message
@@ -56,6 +58,7 @@ class Star extends AbstractShapePlugin{
             points:this.instance.points,
             start:this.start,
             radius:this.instance.width,
+            type:this.instance.type
         }
     }
     protected onMouseMove(event:IEvent){

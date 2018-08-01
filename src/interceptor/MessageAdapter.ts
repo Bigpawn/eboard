@@ -6,29 +6,19 @@
  * @disc:消息输出拦截器
  */
 import {IMessage} from '../middlewares/MessageMiddleWare';
-import {EBoard} from '../EBoard';
 
 class MessageAdapter{
-    public static handleAll:boolean=false;// 抛出所有消息？
-    public static messageHandle(message:IMessage){
-        const parent:any = this["parent"];// 最外层是EBoard ，最外层不处理
-        if(parent){
-            if(parent instanceof EBoard){
-                if(parent["messageMiddleWare"]){
-                    parent["messageMiddleWare"].sendMessage(message);
-                }
-            }else{
-                if(parent.group){
-                    message.frameGroup=Object.assign({},parent.options,{id:parent.id});
-                }else{
-                    message.frame=Object.assign({},parent.options,{id:parent.id});
-                }
-                parent.messageHandle.call(parent,message);
-            }
-        }else{
-            if(this["messageMiddleWare"]){
-                this["messageMiddleWare"].sendMessage(message);
-            }
+    public interceptAll:boolean=false;
+    public target:any;
+    constructor(target:any,interceptAll?:boolean){
+        this.target=target;
+        this.interceptAll = !!interceptAll;
+    }
+    public messageHandle(message:IMessage){
+        // 获取到消息中间件
+        const middleWare = this.target.messageMiddleWare||this.target.prototype.messageMiddleWare;
+        if(void 0 !== middleWare){
+            middleWare.sendMessage(message);
         }
     }
 }

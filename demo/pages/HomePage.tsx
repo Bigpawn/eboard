@@ -146,10 +146,9 @@ export class ToolBar extends React.Component{
     }
 }
 
-const eBoard =EBoardInstance.getInstance();
+const eBoard = EBoardInstance.getInstance();
 const receiveEBoard = EBoardInstance.getReceiveInstance();
 eBoard.attachMessageMiddleWare((message)=>{
-    console.log(message);
     receiveEBoard.onMessage(message);
 });
 

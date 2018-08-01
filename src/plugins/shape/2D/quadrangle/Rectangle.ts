@@ -95,26 +95,29 @@ class Rectangle extends AbstractShapePlugin{
             start:{x:this.instance.left,y:this.instance.top},
             width:this.instance.width,
             height:this.instance.height,
+            type:this.instance.type
         }
     }
     @message
     private moveAction(){
         return {
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
+            tag:MessageTagEnum.Temporary,
             start:{x:this.instance.left,y:this.instance.top},
             width:this.instance.width,
             height:this.instance.height,
+            type:this.instance.type
         }
     }
     @message
     private endAction(){
         return {
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
+            tag:MessageTagEnum.End,
             start:{x:this.instance.left,y:this.instance.top},
             width:this.instance.width,
             height:this.instance.height,
+            type:this.instance.type
         }
     }
     protected onMouseMove(event:IEvent){

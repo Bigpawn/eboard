@@ -36,27 +36,30 @@ class Square extends AbstractShapePlugin{
             tag:MessageTagEnum.Start,
             start:this.start,
             length:this.instance.width,
-            angle:this.instance.angle
+            angle:this.instance.angle,
+            type:this.instance.type
         }
     }
     @message
     private moveAction(){
         return {
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
+            tag:MessageTagEnum.Temporary,
             start:this.start,
             length:this.instance.width,
-            angle:this.instance.angle
+            angle:this.instance.angle,
+            type:this.instance.type
         }
     }
     @message
     private endAction(){
         return {
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
+            tag:MessageTagEnum.End,
             start:this.start,
             length:this.instance.width,
-            angle:this.instance.angle
+            angle:this.instance.angle,
+            type:this.instance.type
         }
     }
     protected onMouseMove(event:IEvent){

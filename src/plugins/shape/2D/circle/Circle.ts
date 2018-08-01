@@ -39,6 +39,7 @@ class Circle extends AbstractShapePlugin{
             id:this.instance.id,
             start:this.start,
             radius:this.instance.radius,
+            type:this.instance.type
         }
     }
     @message
@@ -48,6 +49,7 @@ class Circle extends AbstractShapePlugin{
             id:this.instance.id,
             start:this.start,
             radius:this.instance.radius,
+            type:this.instance.type
         }
     }
     @message
@@ -57,6 +59,7 @@ class Circle extends AbstractShapePlugin{
             id:this.instance.id,
             start:this.start,
             radius:this.instance.radius,
+            type:this.instance.type
         }
     }
     protected onMouseMove(event:IEvent){

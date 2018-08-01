@@ -76,7 +76,8 @@ class Polygon extends AbstractShapePlugin{
         return {
             id:this.instance.id,
             tag:MessageTagEnum.Start,
-            points:this.instance.points
+            points:this.instance.points,
+            type:this.instance.type
         }
     }
     @message
@@ -84,7 +85,8 @@ class Polygon extends AbstractShapePlugin{
         return {
             id:this.instance.id,
             tag:MessageTagEnum.Temporary,
-            points:this.instance.points
+            points:this.instance.points,
+            type:this.instance.type
         }
     }
     @message
@@ -92,7 +94,8 @@ class Polygon extends AbstractShapePlugin{
         return {
             id:this.instance.id,
             tag:MessageTagEnum.Process,
-            points:this.instance.points
+            points:this.instance.points,
+            type:this.instance.type
         }
     }
     @message
@@ -100,7 +103,8 @@ class Polygon extends AbstractShapePlugin{
         return {
             id:this.instance.id,
             tag:MessageTagEnum.End,
-            points:this.instance.points
+            points:this.instance.points,
+            type:this.instance.type
         }
     }
     protected onMouseDown(event:IEvent){

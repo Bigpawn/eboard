@@ -81,7 +81,8 @@ class OrthogonalTriangle extends AbstractShapePlugin{
             tag:tag,
             points:this.instance.points,
             width:this.instance.width,
-            height:this.instance.height
+            height:this.instance.height,
+            type:this.instance.type
         };
     }
     

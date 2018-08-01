@@ -25,28 +25,32 @@ import {ImagesFrame} from './frames/ImagesFrame';
 import "./style/canvas.less";
 import {
     IMessage,
-    MessageMiddleWare,
+    MessageMiddleWare, MessageTagEnum,
 } from './middlewares/MessageMiddleWare';
 import {MessageAdapter} from './interceptor/MessageAdapter';
 import {
-    registerMessageInterceptor,
-    registerMessageMiddleWare,
-} from './utils/decorators';
-import {IImagesFrameOptions, IPdfFrameOptions} from './interface/IFrameGroup';
+    IFrameGroup, IImagesFrameOptions,
+    IPdfFrameOptions,
+} from './interface/IFrameGroup';
 import {MessageReceiver} from "./middlewares/MessageReceiver";
+import {
+    Arrow, Circle, Ellipse, EquilateralTriangle, Hexagon, Line,
+    OrthogonalTriangle, Pentagon,
+    Plugins, Polygon, Rectangle, Square, Star, Triangle,
+} from './plugins';
 
 export enum FrameType{
     Empty="empty-frame",Image="image-frame",HTML="html-frame",Canvas="canvas-frame",Pdf="pdf-frame",Images="images-frame"
 }
 
 
-@registerMessageInterceptor(MessageAdapter)
-@registerMessageMiddleWare(MessageMiddleWare)
 class EBoard{
     private frames:Map<string,IFrame>=new Map();// frame管理
     private activeFrame:string;
     private container:HTMLDivElement|(()=>HTMLDivElement);
     private messageReceiver:MessageReceiver=new MessageReceiver(this);
+    public messageAdapter=new MessageAdapter(this,false);
+    public messageMiddleWare = new MessageMiddleWare();
     private getContainer(){
         return "tagName" in this.container?this.container:this.container();
     }
@@ -73,16 +77,16 @@ class EBoard{
                 frame = new HtmlFrame(options as IHTMLFrameOptions,container,this,id);
                 break;
             case FrameType.Image:
-                frame = new ImageFrame(options as IImageFrameOptions,container,this);
+                frame = new ImageFrame(options as IImageFrameOptions,container,this,id);
                 break;
             case FrameType.Canvas:
-                frame = new CanvasFrame(options as ICanvasFrameOptions,container,this);
+                frame = new CanvasFrame(options as ICanvasFrameOptions,container,this,id);
                 break;
             case FrameType.Pdf:
-                frame = new PdfFrame(options as IPdfFrameOptions,container,this);
+                frame = new PdfFrame(options as IPdfFrameOptions,container,this,id);
                 break;
             case FrameType.Images:
-                frame = new ImagesFrame(options as IImagesFrameOptions,container,this);
+                frame = new ImagesFrame(options as IImagesFrameOptions,container,this,id);
                 break;
             case FrameType.Empty:
             default:
@@ -93,7 +97,6 @@ class EBoard{
         this.switchToFrame(frame);
         return frame;
     }
-    
     
     public createBaseFrame(options:IBaseFrameOptions){
         return this.createFrame(options) as BaseFrame;
@@ -194,27 +197,80 @@ class EBoard{
      * @param {IMessage} message
      */
     public onMessage(message:string){
-        // 无限循环了
-        /*const messageObj:any = JSON.parse(message);
+        const messageObj:any = JSON.parse(message);
         // 判断frame及frameGroup
-        const {tag,id} = messageObj;
+        const {frame,frameGroup,...options} = messageObj;
+        const {tag,type} = options;
+        let frameInstance=undefined,groupInstance:IFrameGroup;
+        
+        if(void 0 !== frameGroup){
+            groupInstance = this.createFrame(frameGroup);
+        }
+        if(void 0 !== frame){
+            if(void 0 !== frameGroup){
+                console.log("分组中需要切换到该frame",frame);
+            }else{
+                frameInstance = this.createFrame(frame);
+            }
+        }
         switch (tag){
             case MessageTagEnum.CreateFrame:// 创建frame
-                this.createFrame(message as any);
-                break;
-            case MessageTagEnum.SwitchToFrame:
-                this.switchToFrame(id);
+                this.createFrame(messageObj);
                 break;
             default:
                 break;
-        }*/
-        console.log("onmessage",message);
+        }
+        console.log(message);
+        
+        if(void 0 !== frameInstance){
+            switch (type){
+                case "line":
+                    (frameInstance.getPlugin(Plugins.Line) as Line).onMessage(options);
+                    break;
+                case "arrow":
+                    (frameInstance.getPlugin(Plugins.Arrow) as Arrow).onMessage(options);
+                    break;
+                case "circle":
+                    (frameInstance.getPlugin(Plugins.Circle) as Circle).onMessage(options);
+                    break;
+                case "ellipse":
+                    (frameInstance.getPlugin(Plugins.Ellipse) as Ellipse).onMessage(options);
+                    break;
+                case "hexagon":
+                    (frameInstance.getPlugin(Plugins.Hexagon) as Hexagon).onMessage(options);
+                    break;
+                case "pentagon":
+                    (frameInstance.getPlugin(Plugins.Pentagon) as Pentagon).onMessage(options);
+                    break;
+                case "polygon":
+                    (frameInstance.getPlugin(Plugins.Polygon) as Polygon).onMessage(options);
+                    break;
+                case "star":
+                    (frameInstance.getPlugin(Plugins.Star) as Star).onMessage(options);
+                    break;
+                case "rectangle":
+                    (frameInstance.getPlugin(Plugins.Rectangle) as Rectangle).onMessage(options);
+                    break;
+                case "square":
+                    (frameInstance.getPlugin(Plugins.Square) as Square).onMessage(options);
+                    break;
+                case "equilateral-triangle":
+                    (frameInstance.getPlugin(Plugins.EquilateralTriangle) as EquilateralTriangle).onMessage(options);
+                    break;
+                case "orthogonal-triangle":
+                    (frameInstance.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle).onMessage(options);
+                    break;
+                case "triangle":
+                    (frameInstance.getPlugin(Plugins.Triangle) as Triangle).onMessage(options);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
     
     public attachMessageMiddleWare(listener:(message:string)=>void){
-        if(this["messageMiddleWare"]){
-            this["messageMiddleWare"].setOutputListener(listener);
-        }
+        this.messageMiddleWare.setOutputListener(listener);
     }
 }
 

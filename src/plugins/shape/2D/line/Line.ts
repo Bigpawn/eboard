@@ -32,7 +32,8 @@ class Line extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTagEnum.Start,
             start:this.start,
-            end:this.end
+            end:this.end,
+            type:this.instance.type
         }
     }
     @message
@@ -41,7 +42,8 @@ class Line extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTagEnum.Temporary,
             start:this.start,
-            end:this.end
+            end:this.end,
+            type:this.instance.type
         }
     }
     @message
@@ -50,7 +52,8 @@ class Line extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTagEnum.End,
             start:this.start,
-            end:this.end
+            end:this.end,
+            type:this.instance.type
         }
     }
     protected onMouseMove(event:IEvent){

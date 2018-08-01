@@ -54,6 +54,7 @@ class Arrow extends AbstractShapePlugin{
             tag:MessageTagEnum.Start,
             start:this.start,
             end:this.end,
+            type:this.instance.type
         }
     }
     @message
@@ -63,6 +64,7 @@ class Arrow extends AbstractShapePlugin{
             tag:MessageTagEnum.Temporary,
             start:this.start,
             end:this.end,
+            type:this.instance.type
         }
     }
     @message
@@ -72,6 +74,7 @@ class Arrow extends AbstractShapePlugin{
             tag:MessageTagEnum.End,
             start:this.start,
             end:this.end,
+            type:this.instance.type
         }
     }
     protected onMouseMove(event:IEvent){
@@ -140,8 +143,8 @@ class Arrow extends AbstractShapePlugin{
             case MessageTagEnum.Temporary:
             case MessageTagEnum.End:
                 const center = {
-                    x:(this.start.x+this.end.x)/2,
-                    y:(this.start.y+this.end.y)/2,
+                    x:(start.x+end.x)/2,
+                    y:(start.y+end.y)/2,
                 };
                 instance.update({
                     path:path,

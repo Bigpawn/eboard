@@ -96,16 +96,18 @@ class Ellipse extends AbstractShapePlugin{
             start:this.start,
             rx:this.instance.rx,
             ry:this.instance.ry,
+            type:this.instance.type
         }
     }
     @message
-    private moveAction(){
+    private moveAction(startPoint:any){
         return {
             id:this.instance.id,
             tag:MessageTagEnum.Temporary,
-            start:this.start,
+            start:startPoint,
             rx:this.instance.rx,
             ry:this.instance.ry,
+            type:this.instance.type
         }
     }
     @message
@@ -116,6 +118,7 @@ class Ellipse extends AbstractShapePlugin{
             start:this.start,
             rx:this.instance.rx,
             ry:this.instance.ry,
+            type:this.instance.type
         }
     }
     protected onMouseMove(event:IEvent){
@@ -135,7 +138,7 @@ class Ellipse extends AbstractShapePlugin{
                 top: startPoint.y,
             });
             this.eBoardCanvas.renderAll();
-            this.moveAction();
+            this.moveAction(startPoint);
         }else{
             this.instance=new FabricEllipse({
                 fill:this.fill,
@@ -177,7 +180,7 @@ class Ellipse extends AbstractShapePlugin{
                 top: startPoint.y,
             });
             this.eBoardCanvas.renderAll();
-            this.moveAction();
+            this.moveAction(startPoint);
         }
     }
     protected ctrlKeyUpHandler(e:KeyboardEvent){
@@ -198,7 +201,7 @@ class Ellipse extends AbstractShapePlugin{
                 top: startPoint.y,
             });
             this.eBoardCanvas.renderAll();
-            this.moveAction();
+            this.moveAction(startPoint);
         }
     }
     

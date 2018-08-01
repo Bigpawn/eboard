@@ -13,7 +13,6 @@ import {EBoardEngine} from '../EBoardEngine';
 import {CursorTypeName} from './tool/cursor/CursorType';
 import {IEvent} from '~fabric/fabric-impl';
 import {fabric} from "fabric";
-import {IMessage} from '../middlewares/MessageMiddleWare';
 
 abstract class AbstractPlugin {
     protected eBoardCanvas:EBoardCanvas;

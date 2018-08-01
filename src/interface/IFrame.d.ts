@@ -21,7 +21,6 @@ export declare interface IFrame{
     id:string;
     getPlugin(pluginName:string):AbstractPlugin|undefined;
     destroy(silent?:boolean):void;
-    throwMessage(message:IMessage|undefined):void
 }
 
 export declare interface IFrameOptions{

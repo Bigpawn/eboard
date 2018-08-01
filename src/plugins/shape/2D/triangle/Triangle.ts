@@ -205,6 +205,7 @@ class Triangle extends AbstractShapePlugin{
             flipY:this.instance.flipY,
             width:this.instance.width,
             height:this.instance.height,
+            type:this.instance.type
         }
     }
     
@@ -216,7 +217,7 @@ class Triangle extends AbstractShapePlugin{
         const {id,start,flipX,flipY,width,height,tag} = message;
         let instance = this.getInstanceById(id) as FabricTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
-        if(instance){
+        if(void 0 === instance){
             instance = new FabricTriangle({
                 fill:this.fill,
                 left: start.x,

@@ -125,13 +125,13 @@ function pipMode(target:any, name:string, descriptor:PropertyDescriptor){
 /**
  * 消息输出拦截器
  * @param {typeof MessageAdapter} interceptor
+ * @param interceptAll
  * @returns {(target: any) => void}
  */
-function registerMessageInterceptor(interceptor:typeof MessageAdapter){
+function registerMessageInterceptor(interceptor:typeof MessageAdapter,interceptAll?:boolean){
     return (target:any)=>{
         Object.assign(target.prototype, {
-            handleAll:interceptor.handleAll,
-            messageHandle:interceptor.messageHandle
+            messageAdapter:new interceptor(target,interceptAll)
         });
     }
 }
@@ -160,7 +160,26 @@ function message(target:any, name:string, descriptor:PropertyDescriptor){
     const oldValue = descriptor.value;
     descriptor.value =function(){
         const message = oldValue.apply(this,arguments);
-        console.log(message);
+        let copyMessage = Object.assign({},message);
+        
+        // 循环向上遍历
+        let parent= this.parent||(this.eBoardEngine?this.eBoardEngine.parent:undefined),adapter=this.messageAdapter;
+        while (void 0 !== parent && parent.constructor.name!=="EBoard"){// eBoard 类，具有属性frames
+            if(parent.child){
+                copyMessage.frameGroup={...parent.options,id:parent.id,messageId:parent.messageId};
+            }else{
+                copyMessage.frame={...parent.options,id:parent.id,messageId:parent.messageId};
+            }
+            adapter = adapter|| parent.messageAdapter;
+            parent = parent.parent||(parent.eBoardEngine?parent.eBoardEngine.parent:undefined)
+        }
+        adapter = adapter|| parent.messageAdapter;
+        
+        // 没有拦截器则不发送
+        if(void 0 !== adapter){
+            (adapter as MessageAdapter).messageHandle(copyMessage);// 拦截器作用是
+        }
+        
         return message;
     };
     return descriptor;
