@@ -7,7 +7,7 @@
  */
 import {EBoardEngine} from '../EBoardEngine';
 import {AbstractPlugin} from '../plugins/AbstractPlugin';
-import {ScrollbarType} from './HtmlFrame';
+import {ScrollbarType} from '../frames/HtmlFrame';
 import {IMessage} from '../middlewares/MessageMiddleWare';
 
 

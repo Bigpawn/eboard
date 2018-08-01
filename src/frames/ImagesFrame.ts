@@ -10,7 +10,7 @@ import {Pagination} from "../components/Pagination";
 import {message, pipMode, setAnimationName} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
 import {EBoard} from '../EBoard';
-import {IImagesFrame, IImagesFrameOptions} from './IFrameGroup';
+import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {IFrameGroupMessageInterface} from '../IMessageInterface';

@@ -8,3 +8,9 @@ export declare interface IFrameGroupMessageInterface{
     destroyAction(destroyParams?:any):any;
     switchFrameAction(switchParams?:any):any;
 }
+
+export declare interface IPluginMessageInterface{
+    startAction(startParams?:any):any;
+    moveAction(moveParams?:any):any;
+    endAction(endParams?:any):any;
+}

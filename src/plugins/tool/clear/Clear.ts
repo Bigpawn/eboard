@@ -6,24 +6,29 @@
  * @disc:清空  仅清空当前白板或者清空所有白板
  */
 import {AbstractPlugin} from '../../AbstractPlugin';
+import {MessageTagEnum} from '../../../middlewares/MessageMiddleWare';
+import {message} from '../../../utils/decorators';
 
 class Clear extends AbstractPlugin{
+    @message
+    private clearBoard(){
+        this.eBoardCanvas.clear();
+        return {
+            tag:MessageTagEnum.Clear,
+            id:this.eBoardEngine.parent.id
+        }
+    }
     public setEnable(enable:boolean){
         return this;
     }
     
     /**
      * 清空当前白板
+     * @returns {this}
      */
     public clear(){
-        this.eBoardCanvas.clear();
-    }
-    
-    /**
-     * 清空所有白板
-     */
-    public clearAll(){
-        // 白板实例需要存放，涉及到数据结构，待定
+        this.clearBoard();
+        return this;
     }
 }
 export {Clear}

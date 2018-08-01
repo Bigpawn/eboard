@@ -8,7 +8,7 @@
 
 import {AbstractPlugin} from '../plugins/AbstractPlugin';
 import {IFrame, IFrameOptions} from './IFrame';
-import {ScrollbarType} from './HtmlFrame';
+import {ScrollbarType} from '../frames/HtmlFrame';
 import {IMessage} from '../middlewares/MessageMiddleWare';
 
 

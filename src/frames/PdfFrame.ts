@@ -10,7 +10,7 @@ import {CanvasFrame} from './CanvasFrame';
 import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
 import {message, pipMode, setAnimationName} from '../utils/decorators';
-import {IPdfFrame, IPdfFrameOptions} from './IFrameGroup';
+import {IPdfFrame, IPdfFrameOptions} from '../interface/IFrameGroup';
 import {EBoard} from '../EBoard';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {

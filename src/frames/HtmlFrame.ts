@@ -9,7 +9,7 @@
 import {GenericBaseFrame} from './BaseFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import PerfectScrollbar from 'perfect-scrollbar';
-import {IFrame,IHTMLFrame, IHTMLFrameOptions} from './IFrame';
+import {IFrame,IHTMLFrame, IHTMLFrameOptions} from '../interface/IFrame';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import "../style/scrollbar.less";
 import {IFrameMessageInterface} from '../IMessageInterface';

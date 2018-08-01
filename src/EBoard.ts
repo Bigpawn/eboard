@@ -14,7 +14,7 @@
 import {
     IBaseFrameOptions, ICanvasFrameOptions, IFrame,
     IHTMLFrameOptions, IImageFrameOptions,
-} from './frames/IFrame';
+} from './interface/IFrame';
 import {BaseFrame} from './frames/BaseFrame';
 import {HtmlFrame} from './frames/HtmlFrame';
 import {ImageFrame} from './frames/ImageFrame';
@@ -32,7 +32,7 @@ import {
     registerMessageInterceptor,
     registerMessageMiddleWare,
 } from './utils/decorators';
-import {IImagesFrameOptions, IPdfFrameOptions} from './frames/IFrameGroup';
+import {IImagesFrameOptions, IPdfFrameOptions} from './interface/IFrameGroup';
 import {MessageReceiver} from "./middlewares/MessageReceiver";
 
 export enum FrameType{

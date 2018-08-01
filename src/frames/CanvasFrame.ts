@@ -7,7 +7,7 @@
  */
 
 import {GenericHtmlFrame} from './HtmlFrame';
-import {ICanvasFrame, ICanvasFrameOptions} from './IFrame';
+import {ICanvasFrame, ICanvasFrameOptions} from '../interface/IFrame';
 class CanvasFrame extends GenericHtmlFrame<ICanvasFrameOptions> implements ICanvasFrame{
     public type:string="canvas-frame";
     public canvas:HTMLCanvasElement;

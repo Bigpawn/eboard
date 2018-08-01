@@ -14,7 +14,7 @@ import {escKeyEnable, mixinPlugins} from './utils/decorators';
 
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins, Plugins} from './plugins';
-import {IFrame} from './frames/IFrame';
+import {IFrame} from './interface/IFrame';
 
 
 declare interface IPlugin{
@@ -32,16 +32,12 @@ class EBoardEngine{
     private bgColor:string="rgba(0,0,0,1)";// 带透明度
     private pixelRatio:number=1;
     private activePlugin?:AbstractPlugin;
-    public parent?:IFrame;
+    public parent:IFrame;
     private handleAll?:boolean;
     public messageHandle?:Function;
-    constructor(element: HTMLCanvasElement | string, options?: ICanvasOptions,parent?:IFrame){
+    constructor(element: HTMLCanvasElement | string, options: ICanvasOptions,parent:IFrame){
         this.eBoardCanvas = new EBoardCanvas(element,options);
-        if(parent){
-            this.parent=parent;
-            this.handleAll=parent["handleAll"];
-            this.messageHandle=parent["messageHandle"];
-        }
+        this.parent=parent;
         // plugins 实例化
         this.pluginList.forEach((plugin)=>{
             this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this));// 该参数统一传递,插件构造函数统一入参EBoardCanvas

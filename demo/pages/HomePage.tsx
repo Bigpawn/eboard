@@ -18,7 +18,7 @@ import {Text} from "../../src/plugins";
 import {Plugins} from '../../src/plugins';
 import {Pencil} from "../../src/plugins";
 import {FrameType} from '../../src/EBoard';
-import {IFrame} from '../../src/frames/IFrame';
+import {IFrame} from '../../src/interface/IFrame';
 import {EBoardInstance} from './EBoardInstance';
 import {MessageMiddleWare} from '../../src/middlewares/MessageMiddleWare';
 

@@ -9,7 +9,7 @@
  *      无滚动条时需要设置图片大小为填充模式
  */
 import {GenericHtmlFrame} from './HtmlFrame';
-import {IImageFrame, IImageFrameOptions} from './IFrame';
+import {IImageFrame, IImageFrameOptions} from '../interface/IFrame';
 
 class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageFrame{
     public type="image-frame";

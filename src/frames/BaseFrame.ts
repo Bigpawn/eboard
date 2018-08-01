@@ -5,10 +5,10 @@
  * * @Last Modified time: 2018/7/20 13:12
  * @disc:基础窗口
  */
-import {IBaseFrame, IBaseFrameOptions, IFrame, IFrameOptions} from './IFrame';
+import {IBaseFrame, IBaseFrameOptions, IFrame, IFrameOptions} from '../interface/IFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import {EBoard} from '../EBoard';
-import {IFrameGroup} from './IFrameGroup';
+import {IFrameGroup} from '../interface/IFrameGroup';
 import {IMessage, MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {IFrameMessageInterface} from '../IMessageInterface';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
