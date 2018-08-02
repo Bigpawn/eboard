@@ -89,33 +89,11 @@ class Ellipse extends AbstractShapePlugin{
         }
     };
     @message
-    private startAction(){
+    private throw(tag:MessageTagEnum){
         return {
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
-            start:this.start,
-            rx:this.instance.rx,
-            ry:this.instance.ry,
-            type:this.instance.type
-        }
-    }
-    @message
-    private moveAction(startPoint:any){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.Temporary,
-            start:startPoint,
-            rx:this.instance.rx,
-            ry:this.instance.ry,
-            type:this.instance.type
-        }
-    }
-    @message
-    private endAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.End,
-            start:this.start,
+            tag:tag,
+            start:{x:this.instance.left,y:this.instance.top},
             rx:this.instance.rx,
             ry:this.instance.ry,
             type:this.instance.type
@@ -138,7 +116,7 @@ class Ellipse extends AbstractShapePlugin{
                 top: startPoint.y,
             });
             this.eBoardCanvas.renderAll();
-            this.moveAction(startPoint);
+            this.throw(MessageTagEnum.Temporary);
         }else{
             this.instance=new FabricEllipse({
                 fill:this.fill,
@@ -151,11 +129,11 @@ class Ellipse extends AbstractShapePlugin{
                 strokeWidth:this.getCanvasPixel(this.strokeWidth)
             });
             this.eBoardCanvas.add(this.instance);
-            this.startAction();
+            this.throw(MessageTagEnum.Start);
         }
     };
     protected onMouseUp(event:IEvent){
-        this.endAction();
+        this.throw(MessageTagEnum.End);
         super.onMouseUp(event);
     }
     protected ctrlKeyDownHandler(e:KeyboardEvent){
@@ -180,7 +158,7 @@ class Ellipse extends AbstractShapePlugin{
                 top: startPoint.y,
             });
             this.eBoardCanvas.renderAll();
-            this.moveAction(startPoint);
+            this.throw(MessageTagEnum.Temporary);
         }
     }
     protected ctrlKeyUpHandler(e:KeyboardEvent){
@@ -201,7 +179,7 @@ class Ellipse extends AbstractShapePlugin{
                 top: startPoint.y,
             });
             this.eBoardCanvas.renderAll();
-            this.moveAction(startPoint);
+            this.throw(MessageTagEnum.Temporary);
         }
     }
     
