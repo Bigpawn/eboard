@@ -241,7 +241,7 @@ class Rectangle extends AbstractShapePlugin{
             default:
                 break;
         }
-        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }
 }

@@ -210,7 +210,7 @@ class Polygon extends AbstractShapePlugin{
             fill:this.fill,
         }).setId(id);
         this.eBoardCanvas.add(instance);
-        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }
     
