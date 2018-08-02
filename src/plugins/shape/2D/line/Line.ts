@@ -116,7 +116,7 @@ class Line extends AbstractShapePlugin{
             default:
                 break;
         }
-        this.eBoardCanvas.requestRenderAll();
+        this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }
 }

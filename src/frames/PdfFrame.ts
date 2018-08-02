@@ -145,8 +145,9 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
         }
     }
     private onGo(pageNum:number,messageId?:number){
-        this.switchToFrame(pageNum,messageId);// 消息id，需要先生成消息id然后才能调用api
-        this.switchFrameAction(pageNum);
+        const pageNumber=Number(pageNum);
+        this.switchToFrame(pageNumber,messageId);// 消息id，需要先生成消息id然后才能调用api
+        this.switchFrameAction(pageNumber);
     }
 
     /**
@@ -187,21 +188,17 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
     }
     
     /**
-     * 切换到指定页 需要加队列控制
-     * @param {number} pageNum
-     * @param {number} messageId
-     * @returns {any}
+     * 创建子frame
+     * @returns {CanvasFrame | undefined}
+     * @param options
      */
-    @pipMode
-    public switchToFrame(pageNum:number,messageId?:number){
-        if(this.pageNum === pageNum||void 0 === pageNum){
-            return this;
-        }
+    public createFrame(options:{pageNum:number,messageId?:number}){
+        const pageNum = Number(options.pageNum);
         let nextPageFrame = this.child.get(pageNum);
         if(void 0 === nextPageFrame){
             // 创建
             nextPageFrame = new CanvasFrame({
-                messageId:messageId,
+                messageId:options.messageId,
                 ratio:this.options.ratio,
                 scrollbar:ScrollbarType.vertical,
             },this.container,this,pageNum.toString(),true);
@@ -224,6 +221,20 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
                 })
             })
         }
+        return nextPageFrame;
+    }
+    /**
+     * 切换到指定页 需要加队列控制
+     * @param {number} pageNum
+     * @param {number} messageId
+     * @returns {any}
+     */
+    @pipMode
+    public switchToFrame(pageNum:number,messageId?:number){
+        if(this.pageNum === pageNum||void 0 === pageNum){
+            return this;
+        }
+        let nextPageFrame = this.createFrame({pageNum,messageId});
         return new Promise<this>((resolve)=>{
             const frameDom = (nextPageFrame as CanvasFrame).dom;
             const currentFrameDom = this.pageFrame.dom;

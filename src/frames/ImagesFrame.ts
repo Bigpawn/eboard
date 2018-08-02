@@ -116,9 +116,9 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
         }
     }
     private onGo(pageNum:number,messageId?:number){
-        // TODO ID需要提前生成
-        this.switchToFrame(pageNum,messageId);
-        this.switchFrameAction(pageNum);
+        const pageNumber=Number(pageNum);
+        this.switchToFrame(pageNumber,messageId);
+        this.switchFrameAction(pageNumber);
     }
     
     /**
@@ -162,6 +162,27 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
     }
     
     /**
+     * 创建子frame
+     * @returns {CanvasFrame | undefined}
+     * @param options
+     */
+    public createFrame(options:{pageNum:number,messageId?:number}){
+        const pageNum = Number(options.pageNum);
+        let nextPageFrame = this.child.get(pageNum);
+        if(void 0 === nextPageFrame){
+            // 创建
+            nextPageFrame = new ImageFrame({
+                messageId:options.messageId,
+                content:this.urlPrefix+this.images[pageNum],
+                ratio:this.options.ratio,
+                scrollbar:ScrollbarType.vertical,
+            },this.container,this,pageNum.toString(),true);
+            this.child.set(pageNum,nextPageFrame);
+        }
+        return nextPageFrame;
+    }
+    
+    /**
      * 切换到指定页 需要加队列控制
      * @param {number} pageNum
      * @param {number} messageId
@@ -172,18 +193,7 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
         if(this.pageNum === pageNum||void 0 === pageNum){
             return this;
         }
-        let nextPageFrame = this.child.get(pageNum);
-        if(void 0 === nextPageFrame){
-            // 创建
-            nextPageFrame = new ImageFrame({
-                type:pageNum+"",
-                messageId:messageId,
-                content:this.urlPrefix+this.images[pageNum],
-                ratio:this.options.ratio,
-                scrollbar:ScrollbarType.vertical,
-            },this.container,this,pageNum.toString(),true);
-            this.child.set(pageNum,nextPageFrame);
-        }
+        let nextPageFrame = this.createFrame({pageNum,messageId});
         return new Promise<this>((resolve)=>{
             const frameDom = (nextPageFrame as ImageFrame).dom;
             const currentFrameDom = this.pageFrame.dom;

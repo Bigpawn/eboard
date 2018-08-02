@@ -30,5 +30,8 @@ class Clear extends AbstractPlugin{
         this.clearBoard();
         return this;
     }
+    public onMessage(){
+        this.eBoardCanvas.clear();
+    }
 }
 export {Clear}

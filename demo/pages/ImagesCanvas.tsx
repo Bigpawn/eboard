@@ -1,14 +1,17 @@
 import * as React from "react";
 import { Card } from "antd";
-import HomePage, {ToolBar} from './HomePage';
+import SimpleCanvas, {ToolBar} from './SimpleCanvas';
 import {FrameType} from '../../src/EBoard';
 import {EBoardInstance} from './EBoardInstance';
 
 
-
 const eBoard =EBoardInstance.getInstance();
+const receiveEBoard = EBoardInstance.getReceiveInstance();
+eBoard.attachMessageMiddleWare((message)=>{
+    receiveEBoard.onMessage(message);
+});
 
-class PaintPage extends HomePage{
+class ImagesCanvas extends SimpleCanvas{
     componentDidMount(){
         // this.Toolbar.setCanvas(this.canvas);
         const dataSet=[];
@@ -23,17 +26,21 @@ class PaintPage extends HomePage{
             images:dataSet,
             messageId:0
         });
-        eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
     }
     public render(): JSX.Element {
         return (
             <Card bordered title="PagerCanvas" style={{ margin: "16px 16px"}}>
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
-                <div id={"eboardContainer"} ref={ref=>this.container=ref} style={{position:"relative",height:document.body.offsetHeight-220}}/>
+                <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}>
+                    {/*<BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>*/}
+                </div>
+                <div id={"eboardContainerReceive"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}>
+                    {/*<BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>*/}
+                </div>
             </Card>
         )
     }
 }
 
-export default PaintPage;
+export default ImagesCanvas;

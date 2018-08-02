@@ -22,6 +22,7 @@ export declare interface IFrameGroupOptions{
 }
 
 export declare interface IFrameGroup{
+    container:HTMLDivElement;
     type:string;// 窗口标识id
     messageId:number;// 窗口创建对应消息
     dom:HTMLElement;// 窗口内容dom

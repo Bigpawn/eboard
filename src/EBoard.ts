@@ -34,7 +34,7 @@ import {
 } from './interface/IFrameGroup';
 import {MessageReceiver} from "./middlewares/MessageReceiver";
 import {
-    Arrow, Circle, Ellipse, EquilateralTriangle, Hexagon, Line,
+    Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
     OrthogonalTriangle, Pentagon,
     Plugins, Polygon, Rectangle, Square, Star, Triangle,
 } from './plugins';
@@ -45,7 +45,7 @@ export enum FrameType{
 
 
 class EBoard{
-    private frames:Map<string,IFrame>=new Map();// frame管理
+    private frames:Map<string,IFrame|IFrameGroup>=new Map();// frame管理
     private activeFrame:string;
     private container:HTMLDivElement|(()=>HTMLDivElement);
     private messageReceiver:MessageReceiver=new MessageReceiver(this);
@@ -61,14 +61,14 @@ class EBoard{
     /**
      * 创建frame ，创建完成立即显示
      * @param {IBaseFrameOptions | IHTMLFrameOptions | IImageFrameOptions | ICanvasFrameOptions | IPdfFrameOptions | IImagesFrameOptions} options
-     * @returns {IFrame}
+     * @returns {IFrame | IFrameGroup}
      */
     public createFrame(options:IBaseFrameOptions|IHTMLFrameOptions|IImageFrameOptions|ICanvasFrameOptions|IPdfFrameOptions|IImagesFrameOptions){
         const {id,type} = options;
-        let frame:IFrame;
+        let frame:IFrame|IFrameGroup;
         const container = this.getContainer();
         if(void 0 !== id && this.hasFrame(id)){
-            frame = this.findFrameById(id) as IFrame;
+            frame = this.findFrameById(id) as IFrame|IFrameGroup;
             this.switchToFrame(frame);
             return frame;
         }
@@ -124,10 +124,10 @@ class EBoard{
     
     /**
      * 显示指定的Frame
-     * @param {string | IFrame} id
-     * @returns {undefined | IFrame}
+     * @param {string | IFrame | IFrameGroup} id
+     * @returns {undefined | IFrame | IFrameGroup}
      */
-    public switchToFrame(id:string|IFrame){
+    public switchToFrame(id:string|IFrame|IFrameGroup){
         // 支持frameType标识和对象
         if(typeof id === 'string'){
             if(id === this.activeFrame||!this.hasFrame(id)){
@@ -154,8 +154,8 @@ class EBoard{
     
     /**
      * 根据id获取frame实例
-     * @returns {IFrame | undefined}
-     * @param id
+     * @param {string} id
+     * @returns {IFrame | IFrameGroup | undefined}
      */
     public findFrameById(id:string){
         return this.frames.get(id);
@@ -198,74 +198,103 @@ class EBoard{
      */
     public onMessage(message:string){
         const messageObj:any = JSON.parse(message);
-        // 判断frame及frameGroup
-        const {frame,frameGroup,...options} = messageObj;
+        // 获取frame实例，之后根据操作处理
+        const {frame:frameOptions,frameGroup:frameGroupOptions,...options} = messageObj;
         const {tag,type} = options;
-        let frameInstance=undefined,groupInstance:IFrameGroup;
         
-        if(void 0 !== frameGroup){
-            groupInstance = this.createFrame(frameGroup);
-        }
-        if(void 0 !== frame){
-            if(void 0 !== frameGroup){
-                console.log("分组中需要切换到该frame",frame);
-            }else{
-                frameInstance = this.createFrame(frame);
+        let frame:IFrame = undefined as any,frameGroup = undefined as any;
+        
+        // 有分组
+        if(void 0 !== frameGroupOptions){
+            frameGroup = this.createFrame(frameGroupOptions) as IFrameGroup;// 创建或查询frameGroup
+            // 子frame
+            if(void 0 !== frameOptions){
+                // 默认第一页的话不需要调用onGp
+                frame = frameGroup.createFrame({
+                    pageNum:Number(frameOptions.id),
+                    messageId:frameOptions.messageId
+                }) as IFrame;
+                // 执行跳转逻辑
+                if(frameOptions.id !== "1"){
+                    frameGroup.onGo(frameOptions.id,frameOptions.messageId);
+                }
+            }
+        }else{
+            if(void 0 !== frameOptions){
+                frame = this.createFrame(frameOptions) as IFrame;
             }
         }
+        
         switch (tag){
             case MessageTagEnum.CreateFrame:// 创建frame
                 this.createFrame(messageObj);
                 break;
-            default:
+            case MessageTagEnum.CreateFrameGroup:
+                this.createFrame(messageObj);
                 break;
-        }
-        console.log(message);
-        
-        if(void 0 !== frameInstance){
-            switch (type){
-                case "line":
-                    (frameInstance.getPlugin(Plugins.Line) as Line).onMessage(options);
-                    break;
-                case "arrow":
-                    (frameInstance.getPlugin(Plugins.Arrow) as Arrow).onMessage(options);
-                    break;
-                case "circle":
-                    (frameInstance.getPlugin(Plugins.Circle) as Circle).onMessage(options);
-                    break;
-                case "ellipse":
-                    (frameInstance.getPlugin(Plugins.Ellipse) as Ellipse).onMessage(options);
-                    break;
-                case "hexagon":
-                    (frameInstance.getPlugin(Plugins.Hexagon) as Hexagon).onMessage(options);
-                    break;
-                case "pentagon":
-                    (frameInstance.getPlugin(Plugins.Pentagon) as Pentagon).onMessage(options);
-                    break;
-                case "polygon":
-                    (frameInstance.getPlugin(Plugins.Polygon) as Polygon).onMessage(options);
-                    break;
-                case "star":
-                    (frameInstance.getPlugin(Plugins.Star) as Star).onMessage(options);
-                    break;
-                case "rectangle":
-                    (frameInstance.getPlugin(Plugins.Rectangle) as Rectangle).onMessage(options);
-                    break;
-                case "square":
-                    (frameInstance.getPlugin(Plugins.Square) as Square).onMessage(options);
-                    break;
-                case "equilateral-triangle":
-                    (frameInstance.getPlugin(Plugins.EquilateralTriangle) as EquilateralTriangle).onMessage(options);
-                    break;
-                case "orthogonal-triangle":
-                    (frameInstance.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle).onMessage(options);
-                    break;
-                case "triangle":
-                    (frameInstance.getPlugin(Plugins.Triangle) as Triangle).onMessage(options);
-                    break;
-                default:
-                    break;
-            }
+            case MessageTagEnum.SwitchToFrame:
+                
+                // 切换分页
+                // 通过id获取frameGroup
+                frameGroup = this.findFrameById(options.id) as IFrameGroup;
+                if(void 0 !== frameGroup){
+                    // group中切换
+                    frameGroup.onGo(options.pageNum,options.messageId);
+                }else{
+                    // 当前切换
+                }
+                break;
+            case MessageTagEnum.Clear:
+                // 清空
+                (frame.getPlugin(Plugins.Clear) as Clear).onMessage();
+                break;
+            default:
+                if(void 0 !== frame){
+                    switch (type){
+                        case "line":
+                            (frame.getPlugin(Plugins.Line) as Line).onMessage(options);
+                            break;
+                        case "arrow":
+                            (frame.getPlugin(Plugins.Arrow) as Arrow).onMessage(options);
+                            break;
+                        case "circle":
+                            (frame.getPlugin(Plugins.Circle) as Circle).onMessage(options);
+                            break;
+                        case "ellipse":
+                            (frame.getPlugin(Plugins.Ellipse) as Ellipse).onMessage(options);
+                            break;
+                        case "hexagon":
+                            (frame.getPlugin(Plugins.Hexagon) as Hexagon).onMessage(options);
+                            break;
+                        case "pentagon":
+                            (frame.getPlugin(Plugins.Pentagon) as Pentagon).onMessage(options);
+                            break;
+                        case "polygon":
+                            (frame.getPlugin(Plugins.Polygon) as Polygon).onMessage(options);
+                            break;
+                        case "star":
+                            (frame.getPlugin(Plugins.Star) as Star).onMessage(options);
+                            break;
+                        case "rectangle":
+                            (frame.getPlugin(Plugins.Rectangle) as Rectangle).onMessage(options);
+                            break;
+                        case "square":
+                            (frame.getPlugin(Plugins.Square) as Square).onMessage(options);
+                            break;
+                        case "equilateral-triangle":
+                            (frame.getPlugin(Plugins.EquilateralTriangle) as EquilateralTriangle).onMessage(options);
+                            break;
+                        case "orthogonal-triangle":
+                            (frame.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle).onMessage(options);
+                            break;
+                        case "triangle":
+                            (frame.getPlugin(Plugins.Triangle) as Triangle).onMessage(options);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                break;
         }
     }
     

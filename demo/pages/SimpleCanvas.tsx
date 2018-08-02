@@ -20,7 +20,6 @@ import {Pencil} from "../../src/plugins";
 import {FrameType} from '../../src/EBoard';
 import {IFrame} from '../../src/interface/IFrame';
 import {EBoardInstance} from './EBoardInstance';
-import {MessageMiddleWare} from '../../src/middlewares/MessageMiddleWare';
 
 
 export class ToolBar extends React.Component{
@@ -152,7 +151,7 @@ eBoard.attachMessageMiddleWare((message)=>{
     receiveEBoard.onMessage(message);
 });
 
-class HomePage extends React.Component<{}, {}> {
+class SimpleCanvas extends React.Component<{}, {}> {
     protected Toolbar:ToolBar;
     protected canvas:any;
     protected container:any;
@@ -161,19 +160,17 @@ class HomePage extends React.Component<{}, {}> {
             type:FrameType.Empty,
             ratio:"16:9",
         });
-        eBoard.switchToFrame(frame);
         this.Toolbar.setCanvas(frame);
         // receive
-        
     }
     public render(): JSX.Element {
         return (
             <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
-                <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220}}>
+                <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}>
                     {/*<BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>*/}
                 </div>
-                <div id={"eboardContainerReceive"} style={{position:"relative",height:document.body.offsetHeight-220}}>
+                <div id={"eboardContainerReceive"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}>
                     {/*<BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>*/}
                 </div>
             </Card>
@@ -181,4 +178,4 @@ class HomePage extends React.Component<{}, {}> {
     }
 }
 
-export default HomePage;
+export default SimpleCanvas;
