@@ -1,20 +1,19 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/7/27 9:15
+ * @Date: 2018/8/2 17:12
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * @Last Modified time: 2018/7/27 9:15
- * @disc:箭头
+ * * @Last Modified time: 2018/8/2 17:12
+ * @disc:fabric.Pencil
  */
 import {fabric} from "fabric";
 import {IPathOptions} from '~fabric/fabric-impl';
 
-export declare interface IExtendArrowOptions extends IPathOptions{
+export declare interface IExtendPencilOptions extends IPathOptions{
     pathOffset?:{x:number;y:number}
 }
 
-
-class Arrow extends fabric.Path{
-    public type:string="arrow";
+class Pencil extends fabric.Path{
+    public type:string="pencil";
     public id:string;
     
     /**
@@ -39,12 +38,12 @@ class Arrow extends fabric.Path{
     
     /**
      * 更新 path
-     * @param {IExtendArrowOptions} options
+     * @param {IExtendPencilOptions} options
      */
-    public update(options?: IExtendArrowOptions){
+    public update(options?: IExtendPencilOptions){
         this.set(options as any).setCoords();
         return this;
     }
 }
 
-export {Arrow};
+export {Pencil};

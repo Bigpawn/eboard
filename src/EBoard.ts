@@ -35,7 +35,7 @@ import {
 import {MessageReceiver} from "./middlewares/MessageReceiver";
 import {
     Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
-    OrthogonalTriangle, Pentagon,
+    OrthogonalTriangle, Pencil, Pentagon,
     Plugins, Polygon, Rectangle, Square, Star, Triangle,
 } from './plugins';
 
@@ -289,6 +289,9 @@ class EBoard{
                             break;
                         case "triangle":
                             (frame.getPlugin(Plugins.Triangle) as Triangle).onMessage(options);
+                            break;
+                        case "pencil":
+                            (frame.getPlugin(Plugins.Pencil) as Pencil).onMessage(options);
                             break;
                         default:
                             break;
