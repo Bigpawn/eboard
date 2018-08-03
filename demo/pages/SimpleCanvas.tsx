@@ -20,6 +20,7 @@ import {Pencil} from "../../src/plugins";
 import {FrameType} from '../../src/EBoard';
 import {IFrame} from '../../src/interface/IFrame';
 import {EBoardInstance} from './EBoardInstance';
+import {Toolbar as AToolbar} from "../../src/components/Toolbar";
 
 
 export class ToolBar extends React.Component{
@@ -28,6 +29,26 @@ export class ToolBar extends React.Component{
         super(props);
         this.setCursor=this.setCursor.bind(this);
         this.setCursorClose=this.setCursorClose.bind(this);
+    }
+    componentDidMount(){
+        let toolbar = new AToolbar(document.getElementById("toolbarContainer") as HTMLDivElement,(item:any)=>{
+            switch (item.key){
+                case "line":
+                    this.startLine();
+                    break;
+                case "arrow-next":
+                    this.startLine1();
+                    break;
+                case "circle":
+                    this.circle();
+                    break;
+                case "ellipse":
+                    this.ellipse();
+                    break;
+                default:
+                    break;
+            }
+        });
     }
     public setCanvas(canvas:IFrame){
         this.Canvas=canvas;
@@ -119,6 +140,9 @@ export class ToolBar extends React.Component{
     render(){
         return (
             <div>
+                <div id={"toolbarContainer"}>
+    
+                </div>
                 <button onClick={this.setCursor}>PaintBrush</button>
                 <button onClick={this.setPencilCursor}>Pencil</button>
                 <button onClick={this.setCursorClose}>Cursor Close</button>
@@ -162,10 +186,13 @@ class SimpleCanvas extends React.Component<{}, {}> {
         });
         this.Toolbar.setCanvas(frame);
         // receive
+        
+       
     }
     public render(): JSX.Element {
         return (
             <Card bordered title="Simple Canvas" style={{ margin: "16px 16px"}}>
+               
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
                 <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}>
                     {/*<BaseCanvas ratio={"16:9"} ref={(ref:BaseCanvas)=>this.canvas=ref}/>*/}

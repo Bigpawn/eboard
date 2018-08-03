@@ -1,0 +1,56 @@
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/8/3 13:48
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * @Last Modified time: 2018/8/3 13:48
+ * @disc:Toolbar
+ */
+@itemWidth:30px;
+@itemHeight:30px;
+@iconSize:20px;
+@expendSize:12px;
+
+.eboard{
+    &-toolbar{
+        position: relative;
+        &-item{
+            position: relative;
+            width: @itemWidth;
+            height: @itemHeight;
+            display: inline-block;
+            line-height: @itemHeight;
+            text-align: center;
+            font-size: @iconSize;
+            color: #000;
+            cursor: pointer;
+            vertical-align: middle;
+            box-sizing: border-box;
+            border: 1px solid transparent;
+            &:hover{
+                border: 1px solid silver;
+                background: #eeeeee;
+            }
+            &.active{
+                box-shadow: inset 0 0 2px 2px #000;
+                background: #333;
+                color: white;
+            }
+        }
+        &-expend{
+            & > .eboard-icon-expend{
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                font-size: @expendSize;
+                width: @expendSize;
+                height: @expendSize;
+                line-height: @expendSize;
+            }
+        }
+        &-category{
+            position: absolute;
+            z-index: 20;
+            background: white;
+        }
+    }
+}
