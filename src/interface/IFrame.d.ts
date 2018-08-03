@@ -9,6 +9,7 @@ import {EBoardEngine} from '../EBoardEngine';
 import {AbstractPlugin} from '../plugins/AbstractPlugin';
 import {ScrollbarType} from '../frames/HtmlFrame';
 import {IMessage} from '../middlewares/MessageMiddleWare';
+import {ScrollBar} from '../components/ScrollBar';
 
 
 export declare interface IFrame{
@@ -19,6 +20,7 @@ export declare interface IFrame{
     dom:HTMLElement;
     engine?:EBoardEngine;
     id:string;
+    scrollbar?:ScrollBar;
     getPlugin(pluginName:string):AbstractPlugin|undefined;
     destroy(silent?:boolean):void;
 }

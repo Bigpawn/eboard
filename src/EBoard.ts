@@ -36,7 +36,7 @@ import {MessageReceiver} from "./middlewares/MessageReceiver";
 import {
     Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
     OrthogonalTriangle, Pencil, Pentagon,
-    Plugins, Polygon, Rectangle, Square, Star, Triangle,
+    Plugins, Polygon, Rectangle, Square, Star, Triangle,Text
 } from './plugins';
 
 export enum FrameType{
@@ -248,6 +248,9 @@ class EBoard{
                 // 清空
                 (frame.getPlugin(Plugins.Clear) as Clear).onMessage();
                 break;
+            case MessageTagEnum.Scroll:
+                frame.scrollbar&&frame.scrollbar.onMessage(options);
+                break;
             default:
                 if(void 0 !== frame){
                     switch (type){
@@ -292,6 +295,9 @@ class EBoard{
                             break;
                         case "pencil":
                             (frame.getPlugin(Plugins.Pencil) as Pencil).onMessage(options);
+                            break;
+                        case "text":
+                            (frame.getPlugin(Plugins.Text) as Text).onMessage(options);
                             break;
                         default:
                             break;

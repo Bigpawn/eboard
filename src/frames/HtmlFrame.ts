@@ -8,11 +8,11 @@
  */
 import {GenericBaseFrame} from './BaseFrame';
 import {EBoardEngine} from '../EBoardEngine';
-import PerfectScrollbar from 'perfect-scrollbar';
 import {IFrame,IHTMLFrame, IHTMLFrameOptions} from '../interface/IFrame';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import "../style/scrollbar.less";
 import {IFrameMessageInterface} from '../IMessageInterface';
+import {ScrollBar} from '../components/ScrollBar';
 
 export enum ScrollbarType{
     horizontal,
@@ -24,7 +24,7 @@ export enum ScrollbarType{
 class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> implements IFrame,IFrameMessageInterface{
     private htmlWrap:HTMLDivElement;
     public type="html-frame";
-    public scrollbar:PerfectScrollbar;
+    public scrollbar:ScrollBar;
     protected getChildren():string|HTMLElement|undefined{
         return this.options.content;
     }
@@ -73,29 +73,29 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
         // scrollbar 设置  如果是html,必然存在滚动条
         switch (this.options.scrollbar){
             case ScrollbarType.horizontal:
-                this.scrollbar= new PerfectScrollbar(container,{
+                this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
                     suppressScrollY:true
-                });
+                },this);
                 break;
             case ScrollbarType.vertical:
-                this.scrollbar= new PerfectScrollbar(container,{
+                this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
                     suppressScrollX:true
-                });
+                },this);
                 break;
             case ScrollbarType.both:
-                this.scrollbar= new PerfectScrollbar(container,{
+                this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
-                });
+                },this);
                 break;
             case ScrollbarType.none:
             default:
                 if(this.type==="html-frame"){
-                    this.scrollbar= new PerfectScrollbar(container,{
+                    this.scrollbar= new ScrollBar(container,{
                         wheelSpeed: 2,
                         suppressScrollX:true
-                    });
+                    },this);
                 }
                 break;
         }

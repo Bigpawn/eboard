@@ -54,7 +54,7 @@ export class ToolBar extends React.Component{
     };
     private startText=()=> {
         const Text = this.Canvas.getPlugin(Plugins.Text) as Text;
-        Text.setFontSize().setColor('blue').setEnable(true);
+        Text.setEnable(true);
     };
     private selection=()=>{
         const Selection = this.Canvas.getPlugin(Plugins.Selection) as Selection;
