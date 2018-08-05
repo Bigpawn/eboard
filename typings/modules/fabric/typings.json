@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/codyysh/DefinitelyTyped/master/types/fabric/index.d.ts",
+    "raw": "github:codyysh/DefinitelyTyped/types/fabric/index.d.ts",
+    "typings": "https://raw.githubusercontent.com/codyysh/DefinitelyTyped/master/types/fabric/index.d.ts"
+  }
+}
