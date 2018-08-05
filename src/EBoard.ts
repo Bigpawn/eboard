@@ -51,6 +51,7 @@ class EBoard{
     private messageReceiver:MessageReceiver=new MessageReceiver(this);
     public messageAdapter=new MessageAdapter(this,false);
     public messageMiddleWare = new MessageMiddleWare();
+    public activePlugin:Plugins;
     private getContainer(){
         return "tagName" in this.container?this.container:this.container();
     }
@@ -309,6 +310,25 @@ class EBoard{
     
     public attachMessageMiddleWare(listener:(message:string)=>void){
         this.messageMiddleWare.setOutputListener(listener);
+    }
+    
+    /**
+     * 设置启用的插件，同步到所有的实例中，并且保证后续实例创建时自动启用
+     */
+    public setActivePlugin(plugin:Plugins){
+        this.activePlugin = plugin;
+        // 遍历所有实例
+        this.frames.forEach((frame)=>{
+            if((frame as IFrameGroup).child){
+                (frame as IFrameGroup).child.forEach((chFrame)=>{
+                    const pluginInstance = chFrame.getPlugin(plugin);
+                    pluginInstance&&pluginInstance.setEnable(true);
+                })
+            }else{
+                const pluginInstance = frame.getPlugin(plugin);
+                pluginInstance&&pluginInstance.setEnable(true);
+            }
+        })
     }
 }
 

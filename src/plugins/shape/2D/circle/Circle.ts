@@ -68,7 +68,7 @@ class Circle extends AbstractShapePlugin{
         }
         super.onMouseMove(event);
         const radius=Math.round(Math.sqrt(Math.pow(this.end.x-this.start.x,2)+Math.pow(this.end.y-this.start.y,2)));
-        if(this.instance){
+        if(void 0 !== this.instance){
             this.instance.update({
                 radius:radius,
             });
@@ -91,7 +91,9 @@ class Circle extends AbstractShapePlugin{
         }
     };
     protected onMouseUp(event:IEvent){
-        this.endAction();
+        if(this.instance){
+            this.endAction();
+        }
         super.onMouseUp(event);
     }
     

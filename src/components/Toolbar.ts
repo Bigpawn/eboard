@@ -3,7 +3,7 @@
  * @Date: 2018/7/31 15:30
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * @Last Modified time: 2018/7/31 15:30
- * @disc:工具栏
+ * @disc:工具栏 当前已激活的不重新触发
  */
 import "../style/toolbar.less";
 import Timer = NodeJS.Timer;
@@ -121,18 +121,19 @@ class ToolbarChildren{
         // 才创建就能收到click事件
         const listener = ()=>{
             this.destroy();
-            window.removeEventListener("mousedown",listener);
+            window.removeEventListener("click",listener);
         };
-        window.addEventListener("mousedown",listener);
+        window.addEventListener("click",listener);
     }
     private initItems(){
-        this.items.forEach((item)=>{
+        this.items.forEach((item,index)=>{
             const itemDom = document.createElement("div");
             itemDom.title=item.name;
             itemDom.className = `eboard-toolbar-item eboard-icon eboard-icon-${item.icon}`;
             this.dom.appendChild(itemDom);
-            itemDom.addEventListener("mousedown",()=>{
+            itemDom.addEventListener("click",()=>{
                 this.listener&&this.listener.call(this,item);
+                this.from.setAttribute("active",index.toString());
                 this.from.className = this.from.className.replace(/eboard-icon-\S+/,"eboard-icon-"+item.icon);
             })
         });
@@ -148,6 +149,7 @@ class Toolbar{
     private dom:HTMLDivElement;
     private listener?:(item:IToolbarItem)=>void;
     private childInstance:ToolbarChildren;
+    private activeKey:string;
     constructor(container:HTMLElement,listener?:(item:IToolbarItem)=>void){
         this.listener=listener;
         this.initWrap();
@@ -169,34 +171,27 @@ class Toolbar{
             const item = members[0];
             itemDom.title=item.name;
             itemDom.className = `eboard-toolbar-item eboard-icon eboard-icon-${item.icon} ${length>1?"eboard-toolbar-expend":""}`;
+            itemDom.setAttribute("active","0");
             if(length>1){
                 itemDom.innerHTML="<i class='eboard-icon eboard-icon-expend'/>";
             }
             this.dom.appendChild(itemDom);
             let timer:Timer;
+            
             itemDom.addEventListener("mousedown",(event:any)=>{
                 event.cancelBubble = true;
                 event.stopPropagation();
-                if(length<2){
-                    this.listener&&this.listener.call(this,item);
-                    const active = itemDom.parentElement?itemDom.parentElement.querySelector(".active"):undefined;
-                    active&&active.classList.remove("active");
-                    itemDom.classList.add("active");// 移除
-                    if(void 0 !== this.childInstance){
-                        this.childInstance.destroy();
-                        this.childInstance = undefined as any;
-                    }
-                }else{
-                    // show childs
-                    // 触发onClick
-                    this.listener&&this.listener.call(this,item);
-                    const active = itemDom.parentElement?itemDom.parentElement.querySelector(".active"):undefined;
-                    active&&active.classList.remove("active");
-                    itemDom.classList.add("active");// 移除
-                    if(void 0 !== this.childInstance){
-                        this.childInstance.destroy();
-                        this.childInstance = undefined as any;
-                    }
+                this.closeChild();
+                const activeItem = Number(itemDom.getAttribute("active"))||0;
+                const key = members[activeItem].key;
+                if(key !== this.activeKey){
+                    this.activeKey= key;
+                    this.listener&&this.listener.call(this,members[activeItem]);// 可能不是该item
+                }
+                const active = itemDom.parentElement?itemDom.parentElement.querySelector(".active"):undefined;
+                active&&active.classList.remove("active");
+                itemDom.classList.add("active");// 移除
+                if(length>1){
                     timer = setTimeout(()=>{
                         clearTimeout(timer);
                         timer = undefined as any;
@@ -205,6 +200,8 @@ class Toolbar{
                 }
             });
             itemDom.addEventListener("click",(event:any)=>{
+                event.cancelBubble = true;
+                event.stopPropagation();
                 if(timer){
                     clearTimeout(timer);
                     timer = undefined as any;
@@ -212,11 +209,21 @@ class Toolbar{
             })
         });
     }
-    private showChild(from:HTMLDivElement,items:IToolbarItem[]) {
+    private closeChild(){
         if(void 0 !== this.childInstance){
             this.childInstance.destroy();
+            this.childInstance=undefined as any;
         }
-        this.childInstance = new ToolbarChildren(from,items,this.listener);
+    }
+    private showChild(from:HTMLDivElement,items:IToolbarItem[]) {
+        this.closeChild();
+        this.childInstance = new ToolbarChildren(from,items,(item)=>{
+            const key = item.key;
+            if(key !== this.activeKey){
+                this.activeKey= key;
+                this.listener&&this.listener.call(this,item);// 可能不是该item
+            }
+        });
     }
 }
 

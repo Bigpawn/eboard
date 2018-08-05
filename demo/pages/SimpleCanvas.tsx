@@ -1,30 +1,18 @@
 import * as React from "react";
 import { Card } from "antd";
 import {
-    Arrow,
-    Circle, Clear, Cursor, Ellipse, EquilateralTriangle, Hexagon,
-    OrthogonalTriangle,
-    Pentagon,
-    Polygon,
-    Rectangle,
-    Square, Star,
-    Triangle,
-} from '../../src/plugins';
-import {CursorTypeName} from '../../src/plugins/tool/cursor/CursorType';
-import {Line} from '../../src/plugins';
-import {Selection} from '../../src/plugins';
-import {HTML} from '../../src/plugins';
-import {Text} from "../../src/plugins";
+    Arrow,} from '../../src/plugins';
 import {Plugins} from '../../src/plugins';
-import {Pencil} from "../../src/plugins";
-import {FrameType} from '../../src/EBoard';
+import {EBoard, FrameType} from '../../src/EBoard';
 import {IFrame} from '../../src/interface/IFrame';
 import {EBoardInstance} from './EBoardInstance';
 import {Toolbar as AToolbar} from "../../src/components/Toolbar";
+import {ArrowMode} from '../../src/plugins/shape/2D/arrow/Arrow';
 
 
 export class ToolBar extends React.Component{
     private Canvas:IFrame;
+    private eBoard:EBoard;
     constructor(props:any){
         super(props);
         this.setCursor=this.setCursor.bind(this);
@@ -32,12 +20,22 @@ export class ToolBar extends React.Component{
     }
     componentDidMount(){
         let toolbar = new AToolbar(document.getElementById("toolbarContainer") as HTMLDivElement,(item:any)=>{
+            console.log(item.key);
             switch (item.key){
                 case "line":
                     this.startLine();
                     break;
                 case "arrow-next":
-                    this.startLine1();
+                    const Arrow1 = this.Canvas.getPlugin(Plugins.Arrow) as Arrow;
+                    Arrow1.setMode(ArrowMode.NEXT).setEnable(true);
+                    break;
+                case "arrow-prev":
+                    const Arrow2 = this.Canvas.getPlugin(Plugins.Arrow) as Arrow;
+                    Arrow2.setMode(ArrowMode.PREV).setEnable(true);
+                    break;
+                case "arrow-both":
+                    const Arrow3 = this.Canvas.getPlugin(Plugins.Arrow) as Arrow;
+                    Arrow3.setMode(ArrowMode.ALL).setEnable(true);
                     break;
                 case "circle":
                     this.circle();
@@ -45,104 +43,118 @@ export class ToolBar extends React.Component{
                 case "ellipse":
                     this.ellipse();
                     break;
+                case "triangle":
+                    this.triangle();
+                    break;
+                case "equilateral-triangle":
+                    this.EquilateralTriangle();
+                    break;
+                case "orthogonal-triangle":
+                    this.OrthogonalTriangle();
+                    break;
+                case "rectangle":
+                    this.rectangle();
+                    break;
+                case "square":
+                    this.square();
+                    break;
+                case "star":
+                    this.Star();
+                    break;
+                case "pentagon":
+                    this.Pentagon();
+                    break;
+                case "hexagon":
+                    this.Hexagon();
+                    break;
+                case "polygon":
+                    this.Polygon();
+                    break;
+                case "text":
+                    this.startText();
+                    break;
+                case "pencil":
+                    this.startPencilLine();
+                    break;
+                case "clear":
+                    this.Clear();
+                    break;
                 default:
                     break;
             }
         });
+        console.log(toolbar);
     }
-    public setCanvas(canvas:IFrame){
-        this.Canvas=canvas;
+    public setEBoard(eBoard:EBoard){
+        this.eBoard=eBoard;
     }
     private setCursor=()=>{
-        const Cursor = this.Canvas.getPlugin(Plugins.Cursor) as Cursor;
-        Cursor.setType(CursorTypeName.PaintBruch).setSize("2rem","2rem").setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Cursor);// 需要共存的插件 ， 采用插件配置的方式进行，enable options
     };
     private setPencilCursor=()=>{
-        const Cursor = this.Canvas.getPlugin(Plugins.Cursor) as Cursor;
-        Cursor.setType(CursorTypeName.Pencil).setSize("2rem","2rem").setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Cursor);// 需要共存的插件 ， 采用插件配置的方式进行，enable options
     };
     private setCursorClose=()=>{
-        const Cursor = this.Canvas.getPlugin(Plugins.Cursor) as Cursor;
-        Cursor.setEnable(false);
+        this.eBoard.setActivePlugin(Plugins.Cursor);// 需要共存的插件 ， 采用插件配置的方式进行，enable options
     };
     private startLine=()=>{
-        const Line = this.Canvas.getPlugin(Plugins.Line) as Line;
-        Line.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Line);
     };
     private startLine1=()=>{
-        const Line = this.Canvas.getPlugin(Plugins.Arrow) as Arrow;
-        Line.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Arrow);
     };
     private startText=()=> {
-        const Text = this.Canvas.getPlugin(Plugins.Text) as Text;
-        Text.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Text);
     };
     private selection=()=>{
-        const Selection = this.Canvas.getPlugin(Plugins.Selection) as Selection;
-        Selection.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Selection);// 需要共存的插件 ， 采用插件配置的方式进行，enable options
     };
     private startPencilLine=()=>{
-        const PencilLine = this.Canvas.getPlugin(Plugins.Pencil) as Pencil;
-        PencilLine.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Pencil);
     };
     private openHtml=()=>{
-        const HTML = this.Canvas.getPlugin(Plugins.HTML) as HTML;
-        HTML.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.HTML);// 需要共存的插件 ， 采用插件配置的方式进行，enable options
     };
     private circle=()=>{
-        const Circle = this.Canvas.getPlugin(Plugins.Circle) as Circle;
-        Circle.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Circle);
     };
     private ellipse=()=>{
-        const Ellipse = this.Canvas.getPlugin(Plugins.Ellipse) as Ellipse;
-        Ellipse.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Ellipse);
     };
     private rectangle=()=>{
-        const Rectangle = this.Canvas.getPlugin(Plugins.Rectangle) as Rectangle;
-        Rectangle.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Rectangle);
     };
     private square=()=>{
-        const Square = this.Canvas.getPlugin(Plugins.Square) as Square;
-        Square.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Square);
     };
     private triangle=()=>{
-        const Triangle = this.Canvas.getPlugin(Plugins.Triangle) as Triangle;
-        Triangle.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Triangle);
     };
     private EquilateralTriangle=()=>{
-        const EquilateralTriangle = this.Canvas.getPlugin(Plugins.EquilateralTriangle) as EquilateralTriangle;
-        EquilateralTriangle.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.EquilateralTriangle);
     };
     private OrthogonalTriangle=()=>{
-        const OrthogonalTriangle = this.Canvas.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle;
-        OrthogonalTriangle.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.OrthogonalTriangle);
     };
     private Polygon=()=>{
-        const Polygon = this.Canvas.getPlugin(Plugins.Polygon) as Polygon;
-        Polygon.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Polygon);
     };
     private Star=()=>{
-        const Star = this.Canvas.getPlugin(Plugins.Star) as Star;
-        Star.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Star);
     };
     private Pentagon=()=>{
-        const Pentagon = this.Canvas.getPlugin(Plugins.Pentagon) as Pentagon;
-        Pentagon.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Pentagon);
     };
     private Hexagon=()=>{
-        const Hexagon = this.Canvas.getPlugin(Plugins.Hexagon) as Hexagon;
-        Hexagon.setEnable(true);
+        this.eBoard.setActivePlugin(Plugins.Hexagon);
     };
     private Clear=()=>{
-        const Clear = this.Canvas.getPlugin(Plugins.Clear) as Clear;
-        Clear.clear();
+        this.eBoard.setActivePlugin(Plugins.Clear);
     };
     render(){
         return (
             <div>
-                <div id={"toolbarContainer"}>
-    
-                </div>
+                <div id={"toolbarContainer"}/>
                 <button onClick={this.setCursor}>PaintBrush</button>
                 <button onClick={this.setPencilCursor}>Pencil</button>
                 <button onClick={this.setCursorClose}>Cursor Close</button>
@@ -169,25 +181,23 @@ export class ToolBar extends React.Component{
     }
 }
 
-const eBoard = EBoardInstance.getInstance();
-const receiveEBoard = EBoardInstance.getReceiveInstance();
-eBoard.attachMessageMiddleWare((message)=>{
-    receiveEBoard.onMessage(message);
-});
+
 
 class SimpleCanvas extends React.Component<{}, {}> {
     protected Toolbar:ToolBar;
     protected canvas:any;
     protected container:any;
     componentDidMount(){
-        const frame = eBoard.clearCache().createBaseFrame({
+        const eBoard = EBoardInstance.getInstance();
+        const receiveEBoard = EBoardInstance.getReceiveInstance();
+        eBoard.attachMessageMiddleWare((message)=>{
+            receiveEBoard.onMessage(message);
+        });
+        eBoard.clearCache().createBaseFrame({
             type:FrameType.Empty,
             ratio:"16:9",
         });
-        this.Toolbar.setCanvas(frame);
-        // receive
-        
-       
+        this.Toolbar.setEBoard(eBoard);
     }
     public render(): JSX.Element {
         return (

@@ -15,6 +15,7 @@ import {escKeyEnable, mixinPlugins} from './utils/decorators';
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins, Plugins} from './plugins';
 import {IFrame} from './interface/IFrame';
+import {EBoard} from './EBoard';
 
 
 declare interface IPlugin{
@@ -38,11 +39,22 @@ class EBoardEngine{
     constructor(element: HTMLCanvasElement | string, options: ICanvasOptions,parent:IFrame){
         this.eBoardCanvas = new EBoardCanvas(element,options);
         this.parent=parent;
+        this.initPlugin();
+        this.escHandler();
+    }
+    private initPlugin(){
         // plugins 实例化
         this.pluginList.forEach((plugin)=>{
             this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
         });
-        this.escHandler();
+        let eBoard:any = this.parent;
+        while (eBoard.parent){
+            eBoard = eBoard.parent;
+        }
+        if((eBoard as EBoard).activePlugin){
+            const plugin = this.getPlugin((eBoard as EBoard).activePlugin);
+            plugin&&plugin.setEnable(true);
+        }
     }
     private escHandler(){
         if(this["escKeyEnable"]){

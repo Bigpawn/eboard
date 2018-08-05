@@ -118,6 +118,10 @@ class Arrow extends AbstractShapePlugin{
         super.onMouseUp(event);
     }
     
+    public setMode(mode:ArrowMode){
+        this.arrowMode = mode;
+        return this;
+    }
     /**
      * 消息处理
      * @param {IArrowMessage} message
