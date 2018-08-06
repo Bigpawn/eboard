@@ -15,7 +15,6 @@ import {escKeyEnable, mixinPlugins} from './utils/decorators';
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins, Plugins} from './plugins';
 import {IFrame} from './interface/IFrame';
-import {EBoard} from './EBoard';
 
 
 declare interface IPlugin{
@@ -24,7 +23,7 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear,Plugins.Arrow,Plugins.ArrowNext,Plugins.ArrowPrev])
+@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear,Plugins.Arrow,Plugins.ArrowNext,Plugins.ArrowPrev,Plugins.Delete])
 @escKeyEnable(true)
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
@@ -47,14 +46,6 @@ class EBoardEngine{
         this.pluginList.forEach((plugin)=>{
             this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
         });
-        let eBoard:any = this.parent;
-        while (eBoard.parent){
-            eBoard = eBoard.parent;
-        }
-        if((eBoard as EBoard).activePlugin){
-            const plugin = this.getPlugin((eBoard as EBoard).activePlugin);
-            plugin&&plugin.setEnable(true);
-        }
     }
     private escHandler(){
         if(this["escKeyEnable"]){

@@ -148,6 +148,25 @@ abstract class AbstractPlugin {
     public getCanvasPixel(pixel:number){
         return pixel * this.eBoardEngine.getPixelRatio();
     }
+    
+    /**
+     * 插件配置数据
+     * @param options
+     * @returns {this}
+     */
+    public setOptions(options:any){
+        return this;
+    }
+    /**
+     * 根据id获取实例
+     * @param {string} id
+     * @returns {Object | undefined}
+     */
+    protected getInstanceById(id:string){
+        return this.eBoardCanvas.getObjects().find((obj:any)=>{
+            return obj.id === id;
+        });
+    }
 }
 
 export {AbstractPlugin};

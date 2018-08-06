@@ -27,9 +27,10 @@ import {Clear} from './tool/clear/Clear';
 import {Arrow} from './shape/2D/arrow/Arrow';
 import {ArrowNext} from './shape/2D/arrow/ArrowNext';
 import {ArrowPrev} from './shape/2D/arrow/ArrowPrev';
+import {Delete} from './tool/del/Delete';
 
-export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon,Star,Pentagon,Hexagon,Clear,Arrow,ArrowNext,ArrowPrev};
-export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon | Star | Pentagon | Hexagon | Clear | Arrow | ArrowNext | ArrowPrev;
+export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon,Star,Pentagon,Hexagon,Clear,Arrow,ArrowNext,ArrowPrev,Delete};
+export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon | Star | Pentagon | Hexagon | Clear | Arrow | ArrowNext | ArrowPrev | Delete;
 export enum Plugins{
     Cursor='Cursor',// 画笔
     Line='Line', // 直线
@@ -50,6 +51,7 @@ export enum Plugins{
     Hexagon='Hexagon',
     Clear='Clear',
     Arrow='Arrow',
-    ArrowNext="ArrowNext",
-    ArrowPrev = "ArrowPrev"
+    ArrowNext='ArrowNext',
+    ArrowPrev = 'ArrowPrev',
+    Delete = "Delete"
 }

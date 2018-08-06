@@ -13,6 +13,7 @@ export declare interface IToolbarItem{
     name:string;
     icon:string;
     key:string;
+    active?:boolean;
 }
 
 
@@ -88,6 +89,7 @@ const items:IToolbarItem[][]=[[{
     name:"清空",
     icon:"clear",
     key:"clear",
+    active:false
 }],[{
     name:"删除",
     icon:"del",
@@ -184,13 +186,16 @@ class Toolbar{
                 this.closeChild();
                 const activeItem = Number(itemDom.getAttribute("active"))||0;
                 const key = members[activeItem].key;
+                const active = members[activeItem].active;
                 if(key !== this.activeKey){
-                    this.activeKey= key;
                     this.listener&&this.listener.call(this,members[activeItem]);// 可能不是该item
                 }
-                const active = itemDom.parentElement?itemDom.parentElement.querySelector(".active"):undefined;
-                active&&active.classList.remove("active");
-                itemDom.classList.add("active");// 移除
+                if(active !== false){
+                    const active = itemDom.parentElement?itemDom.parentElement.querySelector(".active"):undefined;
+                    active&&active.classList.remove("active");
+                    itemDom.classList.add("active");// 移除
+                    this.activeKey= key;
+                }
                 if(length>1){
                     timer = setTimeout(()=>{
                         clearTimeout(timer);

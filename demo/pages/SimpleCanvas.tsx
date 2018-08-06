@@ -71,6 +71,9 @@ export class ToolBar extends React.Component{
                 case "clear":
                     this.Clear();
                     break;
+                case "del":
+                    this.eBoard.setActivePlugin(Plugins.Delete);
+                    break;
                 default:
                     break;
             }
