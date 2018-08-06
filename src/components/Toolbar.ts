@@ -22,7 +22,7 @@ const items:IToolbarItem[][]=[[{
     key:"line",
 }],[{
     name:"左箭头",
-    icon:"arrow-pre",
+    icon:"arrow-prev",
     key:"arrow-prev"
 },{
     name:"右箭头",

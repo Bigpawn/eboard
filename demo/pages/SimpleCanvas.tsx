@@ -1,17 +1,12 @@
 import * as React from "react";
 import { Card } from "antd";
-import {
-    Arrow,} from '../../src/plugins';
 import {Plugins} from '../../src/plugins';
 import {EBoard, FrameType} from '../../src/EBoard';
-import {IFrame} from '../../src/interface/IFrame';
 import {EBoardInstance} from './EBoardInstance';
 import {Toolbar as AToolbar} from "../../src/components/Toolbar";
-import {ArrowMode} from '../../src/plugins/shape/2D/arrow/Arrow';
 
 
 export class ToolBar extends React.Component{
-    private Canvas:IFrame;
     private eBoard:EBoard;
     constructor(props:any){
         super(props);
@@ -26,16 +21,13 @@ export class ToolBar extends React.Component{
                     this.startLine();
                     break;
                 case "arrow-next":
-                    const Arrow1 = this.Canvas.getPlugin(Plugins.Arrow) as Arrow;
-                    Arrow1.setMode(ArrowMode.NEXT).setEnable(true);
+                    this.eBoard.setActivePlugin(Plugins.ArrowNext);
                     break;
                 case "arrow-prev":
-                    const Arrow2 = this.Canvas.getPlugin(Plugins.Arrow) as Arrow;
-                    Arrow2.setMode(ArrowMode.PREV).setEnable(true);
+                    this.eBoard.setActivePlugin(Plugins.ArrowPrev);
                     break;
                 case "arrow-both":
-                    const Arrow3 = this.Canvas.getPlugin(Plugins.Arrow) as Arrow;
-                    Arrow3.setMode(ArrowMode.ALL).setEnable(true);
+                    this.eBoard.setActivePlugin(Plugins.Arrow);
                     break;
                 case "circle":
                     this.circle();
@@ -155,7 +147,7 @@ export class ToolBar extends React.Component{
         return (
             <div>
                 <div id={"toolbarContainer"}/>
-                <button onClick={this.setCursor}>PaintBrush</button>
+             {/*   <button onClick={this.setCursor}>PaintBrush</button>
                 <button onClick={this.setPencilCursor}>Pencil</button>
                 <button onClick={this.setCursorClose}>Cursor Close</button>
                 <button onClick={this.startLine}>Line</button>
@@ -175,7 +167,7 @@ export class ToolBar extends React.Component{
                 <button onClick={this.Star}>Star</button>
                 <button onClick={this.Pentagon}>Pentagon</button>
                 <button onClick={this.Hexagon}>Hexagon</button>
-                <button onClick={this.Clear}>Clear</button>
+                <button onClick={this.Clear}>Clear</button>*/}
             </div>
         )
     }

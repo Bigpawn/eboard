@@ -32,6 +32,7 @@ export enum ArrowFactory{
 export declare interface IArrowMessage extends IMessage{
     start:{x:number;y:number};
     end:{x:number;y:number};
+    mode:ArrowMode
 }
 
 @setCursor(CursorTypeName.Pencil)
@@ -40,11 +41,11 @@ class Arrow extends AbstractShapePlugin{
     private color="rgba(0,0,0,1)";
     private lineWidth:number=1;
     private arrowFactory:ArrowFactory=ArrowFactory.FISH;
-    private arrowMode:ArrowMode=ArrowMode.ALL;
-    private calcOptions(start:{x:number;y:number},end:{x:number;y:number}){
+    protected arrowMode:ArrowMode=ArrowMode.ALL;
+    private calcOptions(start:{x:number;y:number},end:{x:number;y:number},mode:ArrowMode){
         const arrowFactory = require(`./factory/${this.arrowFactory}`).default as typeof DefaultFactory;
         const headlen = Math.max(this.lineWidth * 2 +10,10);
-        const {path,fill} = arrowFactory.calcPath(start,end,30,headlen,this.arrowMode,this.color);
+        const {path,fill} = arrowFactory.calcPath(start,end,30,headlen,mode,this.color);
         return {path,fill};
     }
     @message
@@ -54,7 +55,8 @@ class Arrow extends AbstractShapePlugin{
             tag:MessageTagEnum.Start,
             start:this.start,
             end:this.end,
-            type:this.instance.type
+            type:this.instance.type,
+            mode:this.arrowMode
         }
     }
     @message
@@ -64,7 +66,8 @@ class Arrow extends AbstractShapePlugin{
             tag:MessageTagEnum.Temporary,
             start:this.start,
             end:this.end,
-            type:this.instance.type
+            type:this.instance.type,
+            mode:this.arrowMode
         }
     }
     @message
@@ -74,7 +77,8 @@ class Arrow extends AbstractShapePlugin{
             tag:MessageTagEnum.End,
             start:this.start,
             end:this.end,
-            type:this.instance.type
+            type:this.instance.type,
+            mode:this.arrowMode
         }
     }
     protected onMouseMove(event:IEvent){
@@ -82,7 +86,7 @@ class Arrow extends AbstractShapePlugin{
             return;
         }
         super.onMouseMove(event);
-        const {path,fill} = this.calcOptions(this.start,this.end);
+        const {path,fill} = this.calcOptions(this.start,this.end,this.arrowMode);
         const center = {
             x:(this.start.x+this.end.x)/2,
             y:(this.start.y+this.end.y)/2,
@@ -118,19 +122,15 @@ class Arrow extends AbstractShapePlugin{
         super.onMouseUp(event);
     }
     
-    public setMode(mode:ArrowMode){
-        this.arrowMode = mode;
-        return this;
-    }
     /**
      * 消息处理
      * @param {IArrowMessage} message
      */
     public onMessage(message:IArrowMessage){
-        const {id,start,end,tag} = message;
+        const {id,start,end,tag,mode} = message;
         let instance = this.getInstanceById(id) as FabricArrow;
         this.eBoardCanvas.renderOnAddRemove=false;
-        const {path,fill} = this.calcOptions(start,end);
+        const {path,fill} = this.calcOptions(start,end,mode);
         if(void 0 === instance){
             instance = new FabricArrow(path,{
                 stroke: this.color,
