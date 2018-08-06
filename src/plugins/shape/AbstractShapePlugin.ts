@@ -131,17 +131,6 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
                 return angle;
         }
     }
-    
-    /**
-     * 根据id获取实例
-     * @param {string} id
-     * @returns {Object | undefined}
-     */
-    protected getInstanceById(id:string){
-        return this.eBoardCanvas.getObjects().find((obj:any)=>{
-            return obj.id === id;
-        });
-    }
 }
 
 export {AbstractShapePlugin};

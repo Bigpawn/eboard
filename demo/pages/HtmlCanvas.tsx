@@ -5,16 +5,16 @@ import {FrameType} from '../../src/EBoard';
 import {ScrollbarType} from '../../src/frames/HtmlFrame';
 import {EBoardInstance} from './EBoardInstance';
 
-const eBoard =EBoardInstance.getInstance();
-const receiveEBoard = EBoardInstance.getReceiveInstance();
-eBoard.attachMessageMiddleWare((message)=>{
-    receiveEBoard.onMessage(message);
-});
+
 
 class HtmlCanvas extends SimpleCanvas{
     componentDidMount(){
-        // this.Toolbar.setCanvas(this.canvas);
-        const frame =eBoard.clearCache().createHtmlFrame({
+        const eBoard =EBoardInstance.getInstance();
+        const receiveEBoard = EBoardInstance.getReceiveInstance();
+        eBoard.attachMessageMiddleWare((message)=>{
+            receiveEBoard.onMessage(message);
+        });
+        eBoard.clearCache().createHtmlFrame({
             type:FrameType.HTML,
             ratio:"16:9",
             scrollbar:ScrollbarType.vertical,
@@ -112,7 +112,7 @@ class HtmlCanvas extends SimpleCanvas{
             '                        <br/>',
             messageId:0
         });
-        this.Toolbar.setCanvas(frame);
+        this.Toolbar.setEBoard(eBoard);
     }
     public render(): JSX.Element {
         return (

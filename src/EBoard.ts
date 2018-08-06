@@ -7,6 +7,7 @@
  * frame 中管理canvas实例，canvas实例中管理绘制object实例  层级化，frame中提供object实例查询 canvas中提供跨实例object实例查询
  * 支持页面中多实例模式，多容器模式，从静态类修改成实体类
  * 消息代理应该从该对象拦截
+ * 通过事件传递插件启用状态
  *
  *
  */
@@ -36,25 +37,28 @@ import {MessageReceiver} from "./middlewares/MessageReceiver";
 import {
     Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
     OrthogonalTriangle, Pencil, Pentagon,
-    Plugins, Polygon, Rectangle, Square, Star, Triangle,Text
+    Plugins, Polygon, Rectangle, Square, Star, Triangle, Text, Delete,
 } from './plugins';
+import {EventBus} from './utils/EventBus';
 
 export enum FrameType{
     Empty="empty-frame",Image="image-frame",HTML="html-frame",Canvas="canvas-frame",Pdf="pdf-frame",Images="images-frame"
 }
 
 
-class EBoard{
+class EBoard extends EventBus{
     private frames:Map<string,IFrame|IFrameGroup>=new Map();// frame管理
     private activeFrame:string;
     private container:HTMLDivElement|(()=>HTMLDivElement);
     private messageReceiver:MessageReceiver=new MessageReceiver(this);
     public messageAdapter=new MessageAdapter(this,false);
     public messageMiddleWare = new MessageMiddleWare();
+    public pluginController:Map<Plugins,object>=new Map<Plugins, object>();
     private getContainer(){
         return "tagName" in this.container?this.container:this.container();
     }
     constructor(containerFilter:HTMLDivElement|(()=>HTMLDivElement)){
+        super();
         this.container = containerFilter;
     }
     
@@ -248,6 +252,9 @@ class EBoard{
                 // 清空
                 (frame.getPlugin(Plugins.Clear) as Clear).onMessage();
                 break;
+            case MessageTagEnum.Delete:
+                (frame.getPlugin(Plugins.Delete) as Delete).onMessage(options);
+                break;
             case MessageTagEnum.Scroll:
                 frame.scrollbar&&frame.scrollbar.onMessage(options);
                 break;
@@ -309,6 +316,60 @@ class EBoard{
     
     public attachMessageMiddleWare(listener:(message:string)=>void){
         this.messageMiddleWare.setOutputListener(listener);
+    }
+    
+    /**
+     * 设置启用的插件，同步到所有的实例中，并且保证后续实例创建时自动启用
+     */
+    public setActivePlugin(plugin:Plugins,options?:any){// 插件options
+        switch (plugin){
+            case Plugins.ArrowPrev:
+            case Plugins.Arrow:
+            case Plugins.ArrowNext:
+            case Plugins.Line:
+            case Plugins.Hexagon:
+            case Plugins.Pentagon:
+            case Plugins.Star:
+            case Plugins.Polygon:
+            case Plugins.OrthogonalTriangle:
+            case Plugins.EquilateralTriangle:
+            case Plugins.Triangle:
+            case Plugins.Square:
+            case Plugins.Rectangle:
+            case Plugins.Circle:
+            case Plugins.Pencil:
+            case Plugins.Text:
+            case Plugins.Ellipse:
+            case Plugins.HTML:
+            case Plugins.Selection:
+                // 无法与其他共存
+                this.pluginController.clear();
+                this.pluginController.set(plugin,{
+                    enable:true,
+                    options:options
+                });
+                break;
+            case Plugins.Clear:
+                // 不设置，仅清空当前显示的画布 发送clear消息
+                if(void 0 !== this.activeFrame){
+                    const frame = this.findFrameById(this.activeFrame);
+                    if(void 0 !== frame){
+                        const instance = frame.getPlugin(Plugins.Clear) as Clear;
+                        instance.clear();
+                    }
+                  
+                }
+                return;
+            case Plugins.Cursor:// 可以共用
+                
+                break;
+            default:
+                break;
+        }
+        this.trigger("plugin:active",{
+            plugin:plugin,
+            options:options
+        });
     }
 }
 

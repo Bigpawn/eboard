@@ -5,20 +5,20 @@ import {FrameType} from '../../src/EBoard';
 import {EBoardInstance} from './EBoardInstance';
 
 
-const eBoard =EBoardInstance.getInstance();
-const receiveEBoard = EBoardInstance.getReceiveInstance();
-eBoard.attachMessageMiddleWare((message)=>{
-    receiveEBoard.onMessage(message);
-});
+
 
 class ImagesCanvas extends SimpleCanvas{
     componentDidMount(){
-        // this.Toolbar.setCanvas(this.canvas);
+        const eBoard =EBoardInstance.getInstance();
+        const receiveEBoard = EBoardInstance.getReceiveInstance();
+        eBoard.attachMessageMiddleWare((message)=>{
+            receiveEBoard.onMessage(message);
+        });
         const dataSet=[];
         for (let i=0;i<114;i++){
             dataSet.push(i+".png");
         }
-        const frame = eBoard.clearCache().createImagesFrame({
+        eBoard.clearCache().createImagesFrame({
             type:FrameType.Images,
             ratio:"16:9",
             pageNum:1,
@@ -26,7 +26,7 @@ class ImagesCanvas extends SimpleCanvas{
             images:dataSet,
             messageId:0
         });
-        this.Toolbar.setCanvas(frame);
+        this.Toolbar.setEBoard(eBoard);
     }
     public render(): JSX.Element {
         return (

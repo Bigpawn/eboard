@@ -23,7 +23,7 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear,Plugins.Arrow])
+@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear,Plugins.Arrow,Plugins.ArrowNext,Plugins.ArrowPrev,Plugins.Delete])
 @escKeyEnable(true)
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
@@ -38,11 +38,14 @@ class EBoardEngine{
     constructor(element: HTMLCanvasElement | string, options: ICanvasOptions,parent:IFrame){
         this.eBoardCanvas = new EBoardCanvas(element,options);
         this.parent=parent;
+        this.initPlugin();
+        this.escHandler();
+    }
+    private initPlugin(){
         // plugins 实例化
         this.pluginList.forEach((plugin)=>{
             this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
         });
-        this.escHandler();
     }
     private escHandler(){
         if(this["escKeyEnable"]){

@@ -6,4 +6,5 @@
  * @time：2018/7/4 15:18
  */
 var open = require("open");
-open("http://localhost:8000/examples/eboard-demo.html");
+var port = require("../package.json").config.port;
+open(`http://localhost:${port}/examples/eboard-demo.html`);

@@ -6,16 +6,15 @@ import SimpleCanvas from './SimpleCanvas';
 import {FrameType} from "../../src/EBoard";
 import {EBoardInstance} from './EBoardInstance';
 
-const eBoard =EBoardInstance.getInstance();
-const receiveEBoard = EBoardInstance.getReceiveInstance();
-eBoard.attachMessageMiddleWare((message)=>{
-    receiveEBoard.onMessage(message);
-});
 
 
 class MaterialUIPage extends SimpleCanvas{
     componentDidMount(){
-        // this.Toolbar.setCanvas(this.canvas);
+        const eBoard =EBoardInstance.getInstance();
+        const receiveEBoard = EBoardInstance.getReceiveInstance();
+        eBoard.attachMessageMiddleWare((message)=>{
+            receiveEBoard.onMessage(message);
+        });
         const frame = eBoard.clearCache().createPdfFrame({
             type:FrameType.Pdf,
             ratio:"16:9",
@@ -24,7 +23,7 @@ class MaterialUIPage extends SimpleCanvas{
             messageId:0
         });
         eBoard.switchToFrame(frame);
-        this.Toolbar.setCanvas(frame);
+        this.Toolbar.setEBoard(eBoard);
     }
     public render() {
         return (

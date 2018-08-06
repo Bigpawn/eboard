@@ -10,6 +10,9 @@ import {AbstractPlugin} from '../plugins/AbstractPlugin';
 import {IFrame, IFrameOptions} from './IFrame';
 import {ScrollbarType} from '../frames/HtmlFrame';
 import {IMessage} from '../middlewares/MessageMiddleWare';
+import {EBoard} from '../EBoard';
+import {Plugins} from '../plugins';
+import {IPlugin} from '../EBoardEngine';
 
 
 export declare interface IFrameGroupOptions{
@@ -29,8 +32,9 @@ export declare interface IFrameGroup{
     child:Map<number,IFrame>;
     options:IFrameOptions;
     id:string;
-    getPlugin(pluginName:string):AbstractPlugin|undefined;
+    parent?:EBoard;
     destroy():void;
+    getPlugin(pluginName:string):AbstractPlugin|undefined;
     switchToFrame?(childId:number,messageId:number):this|Promise<this>;// 切换到子frame
 }
 

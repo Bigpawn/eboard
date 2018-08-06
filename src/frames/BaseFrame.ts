@@ -37,6 +37,47 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
         this.fixContainer();
         this.initEngine();
         this.initLayout(calc);
+        this.observePlugin();
+        
+        
+        // 插件启用初始化
+        this.initPlugin();
+    }
+    private initPlugin(){
+        if(void 0 !== this.parent){
+            let eBoard;
+            if(this.parent instanceof EBoard){
+                eBoard = this.parent;
+            }else{
+                eBoard = (this.parent as IFrameGroup).parent;
+            }
+            if(void 0 !== eBoard){
+                const pluginController = eBoard.pluginController;
+                pluginController.forEach((obj:any,plugin)=>{
+                    const {enable,options} = obj;
+                    if(enable){
+                        const instance = this.getPlugin(plugin);
+                        if(void 0 !== instance){
+                            instance.setOptions(options);
+                            instance.setEnable(true);
+                        }
+                    }
+                })
+            }
+        }
+    }
+    private observePlugin(){
+        if(this.parent instanceof EBoard){
+            this.parent.on("plugin:active",(event:any)=>{
+                const data = event.data;
+                const {plugin,options} = data;
+                const instance = this.getPlugin(plugin);
+                if(void 0 !== instance){
+                    instance.setOptions(options);
+                    instance.setEnable(true);
+                }
+            })
+        }
     }
     
     @message

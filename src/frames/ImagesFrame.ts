@@ -14,6 +14,7 @@ import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {IFrameGroupMessageInterface} from '../IMessageInterface';
+import {Plugins} from '../plugins';
 
 
 @setAnimationName('eboard-pager')
@@ -44,6 +45,41 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
         this.fixContainer();
         this.initLayout();
         this.initialize();
+        this.observePlugin();
+        this.initPlugin();
+    }
+    private initPlugin(){
+        if(void 0 !== this.parent){
+            const eBoard = this.parent;
+            const pluginController = eBoard.pluginController;
+            pluginController.forEach((obj:any,plugin)=>{
+                const {enable,options} = obj;
+                if(enable){
+                    this.child.forEach((frame)=>{
+                        const instance = frame.getPlugin(plugin);
+                        if(void 0 !== instance){
+                            instance.setOptions(options);
+                            instance.setEnable(true);
+                        }
+                    })
+                }
+            })
+        }
+    }
+    private observePlugin(){
+        if(this.parent instanceof EBoard){
+            this.parent.on("plugin:active",(event:any)=>{
+                const data = event.data;
+                const {plugin,options} = data;
+                this.child.forEach((frame)=>{
+                    const instance = frame.getPlugin(plugin);
+                    if(void 0 !== instance){
+                        instance.setOptions(options);
+                        instance.setEnable(true);
+                    }
+                })
+            })
+        }
     }
     @message
     public initializeAction(){
@@ -217,7 +253,7 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
             frameDom.addEventListener('animationend',transitionEndListener);
         });
     }
-    public getPlugin(pluginName:string){
+    public getPlugin(pluginName:Plugins){
         return this.pageFrame?this.pageFrame.getPlugin(pluginName):undefined;
     }
     public destroy(){
