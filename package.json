@@ -52,7 +52,7 @@
         "dist"
     ],
     "config": {
-        "port": 8000
+        "port": 8002
     },
     "main": "./lib/Animation",
     "module": "./es/Animation",
@@ -77,7 +77,7 @@
         "core-js": "^2.5.1",
         "jest": "^23.2.0",
         "open": "^0.0.5",
-        "rc-tools": "^8.0.1",
+        "yanxlg-rc-tools":"^8.1.4",
         "react": "^16.4.0",
         "react-dom": "^16.4.0",
         "react-redux": "^5.0.7",
