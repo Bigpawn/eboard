@@ -192,7 +192,9 @@ class Triangle extends AbstractShapePlugin{
     }
     
     protected onMouseUp(event:IEvent){
-        this.throw(MessageTagEnum.End);
+        if(void 0 !== this.instance){
+            this.throw(MessageTagEnum.End);
+        }
         super.onMouseUp(event);
     }
     @message

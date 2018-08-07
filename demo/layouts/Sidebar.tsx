@@ -18,9 +18,10 @@ class Sidebar extends React.Component<{}, ISidebarState> {
     }
 
     public render(): JSX.Element {
+        const defaultSelectedKeys = /^#\/html/.test(location.hash)?"3":/^#\/simple/.test(location.hash)?"2":/^#\/image/.test(location.hash)?"4":/^#\/pdf/.test(location.hash)?"5":/^#\/pager/.test(location.hash)?"1":"2";
         return (
             <Layout.Sider collapsible collapsed={this.state.collapsed} onCollapse={this.toggle}>
-                <Menu theme="dark" mode={this.state.mode} defaultSelectedKeys={["1"]}>
+                <Menu theme="dark" mode={this.state.mode} defaultSelectedKeys={[defaultSelectedKeys]}>
                     <Menu.Item key="1">
                         <Link to="/pager">
                             <Icon type="edit" />

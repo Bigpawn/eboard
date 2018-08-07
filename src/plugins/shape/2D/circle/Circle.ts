@@ -91,7 +91,7 @@ class Circle extends AbstractShapePlugin{
         }
     };
     protected onMouseUp(event:IEvent){
-        if(this.instance){
+        if(void 0 !== this.instance){
             this.endAction();
         }
         super.onMouseUp(event);

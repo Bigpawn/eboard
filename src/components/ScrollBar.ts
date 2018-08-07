@@ -15,6 +15,8 @@ import {IMessage, MessageTagEnum} from '../middlewares/MessageMiddleWare';
 export declare interface IScrollBarMessage extends IMessage{
     scrollTop:number;
     scrollLeft:number;
+    totalHeight:number;
+    totalWidth:number;
 }
 
 
@@ -78,20 +80,21 @@ class ScrollBar extends PerfectScrollbar{
     }
     @message
     private scrollAction(){
+        // 返回总高度
         return {
             tag:MessageTagEnum.Scroll,
             scrollTop:this.container.scrollTop,
-            scrollLeft:this.container.scrollLeft
+            scrollLeft:this.container.scrollLeft,
+            totalHeight:this.container.scrollHeight,
+            totalWidth:this.container.scrollWidth,
         }
     }
     
-    
-    
-    
     public onMessage(message:IScrollBarMessage){
-        const {scrollTop,scrollLeft} = message;
+        const {scrollTop,scrollLeft,totalHeight,totalWidth} = message;
         if(this.container){
-            this.scrollTo(scrollTop,scrollLeft);
+            const {scrollHeight,scrollWidth} = this.container;
+            this.scrollTo(scrollTop * scrollHeight/totalHeight,scrollLeft * scrollWidth / totalWidth);
         }
     }
 }

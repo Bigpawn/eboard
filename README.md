@@ -15,6 +15,9 @@ An blackboard implementation based on html canvas.
 #### Publish:
 1. npm run pub
 
+#### Example:
+1. Online Examples：https://yanxlg.github.io/eboard/build/examples/eboard-demo.html
+
 #### Jest:
 1. npm run test
 

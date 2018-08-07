@@ -11,6 +11,7 @@ import HtmlCanvas from './pages/HtmlCanvas';
 export const routes: RouteConfig[] = [
     {
         path: "/pager",
+        exact: true,
         component: (props: any) => (<ImagesCanvas />),
     },
     {
@@ -19,15 +20,23 @@ export const routes: RouteConfig[] = [
         component: (props: any) => (<SimpleCanvas />),
     },
     {
+        path: "/",
+        exact: true,
+        component: (props: any) => (<SimpleCanvas />),
+    },
+    {
         path: "/html",
+        exact: true,
         component: () => (<HtmlCanvas/>),
     },
     {
         path: "/image",
+        exact: true,
         component: () => (<ImageCanvas />),
     },
     {
         path: "/pdf",
+        exact: true,
         component: () => (<PdfCanvas />),
     },
 ];
