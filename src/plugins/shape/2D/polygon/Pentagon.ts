@@ -95,7 +95,9 @@ class Pentagon extends AbstractShapePlugin{
     };
     
     protected onMouseUp(event:IEvent){
-        this.endAction();
+        if(void 0 !== this.instance){
+            this.endAction();
+        }
         super.onMouseUp(event);
     }
     
