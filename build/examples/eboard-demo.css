@@ -886,6 +886,7 @@ input::-webkit-inner-spin-button {
   -o-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   overflow: hidden;
+  border: 1px solid #09ca51;
 }
 .eboard-pager {
   position: absolute;
@@ -994,7 +995,8 @@ input::-webkit-inner-spin-button {
 }
 .sider-trigger {
   position: absolute;
-  top: 15px;
+  top: 0;
+  z-index: 50;
   right: -25px;
   width: 25px;
   height: 25px;
@@ -1017,15 +1019,6 @@ input::-webkit-inner-spin-button {
 }
 .ant-layout-sider-collapsed .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
   display: none;
-}
-.user-logout {
-  float: right;
-  width: 100px;
-  margin-top: 8px;
-  margin-right: 32px;
-}
-.ant-layout-header {
-  height: 58px!important;
 }
 #app,
 div[data-reactroot] {
