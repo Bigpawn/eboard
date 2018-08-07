@@ -5,6 +5,7 @@
  * @Last Modified time: 2018/7/20 14:42
  * @disc:HTMLFrame HTMLFrame 支持配置是否显示滚动条 属于单层Frame，不会出现子Frame
  * HtmlFrame 必然会存在滚动条，滚动条配置不起作用，仅在Image时生效
+ * 需要判断是接收端还是发送端？
  */
 import {GenericBaseFrame} from './BaseFrame';
 import {EBoardEngine} from '../EBoardEngine';
@@ -25,6 +26,7 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
     private htmlWrap:HTMLDivElement;
     public type="html-frame";
     public scrollbar:ScrollBar;
+    private html:string|HTMLElement|undefined;
     protected getChildren():string|HTMLElement|undefined{
         return this.options.content;
     }
@@ -47,9 +49,10 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
         this.htmlWrap=htmlWrap;
         htmlContainer.appendChild(htmlWrap);
         // 支持dom节点
-        const html=this.getChildren();
+        const html = this.html =this.getChildren();
         if(typeof html === "string"){
             htmlWrap.innerHTML=html;
+            container.appendChild(this.getLoadedImage());
         }else{
             if(void 0 !==html){
                 htmlWrap.innerHTML="";
@@ -57,6 +60,14 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
                 // 如果标签是image标签则不添加异常image元素
                 if(html.tagName!=="IMG"){
                     container.appendChild(this.getLoadedImage());
+                }else{
+                    // 添加onload 或onerror事件支持
+                    html.onload=()=>{
+                        this.initLayout();
+                    };
+                    html.onerror=()=>{
+                        this.initLayout();
+                    };
                 }
             }
         }
@@ -102,14 +113,41 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
         this.dom = container;
     }
     protected initLayout(){
-        const calcSize=this.calc();
+        let calcSize=this.calc();
         // set container size
         this.dom.style.width=calcSize.width+"px";
         this.dom.style.height=calcSize.height+"px";
-        // 还没有append则不能计算出高度  ========== fix
-        const height = Math.max(this.htmlWrap.offsetHeight,calcSize.height);
-        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 根据实际分辨率设置大小
-        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height},{backstoreOnly:true});// 设置canvas 画布大小
+        if(typeof(this.html) === "string" || this.html&&this.html.tagName !== "IMG"&&this.html.tagName !== "CANVAS"){
+            this.htmlWrap.style.width=calcSize.cacheWidth + "px";
+            this.htmlWrap.style.transform=`scale(${calcSize.scale}) translateZ(0)`;
+            const offsetHeight = this.htmlWrap.offsetHeight;
+            const scaleHeight = offsetHeight * calcSize.scale;
+            if(scaleHeight !== 0 && this.htmlWrap.parentElement){// 排除0 影响
+                this.htmlWrap.parentElement.style.height=scaleHeight + "px";
+            }
+            if(void 0 !==this.scrollbar){
+                this.scrollbar.update();
+            }
+            
+            const height = Math.max(scaleHeight,calcSize.height);// css 大小
+            const dimensions = {
+                width:calcSize.dimensions.width,
+                height:calcSize.dimensions.width * height / calcSize.width, // 都需要计算，根据dimensions.width 按照比例计算
+            };
+    
+    
+            this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 样式大小
+            this.engine.eBoardCanvas.setDimensions(dimensions,{backstoreOnly:true});// canvas分辨率
+        }else{
+            // 图片模式不需要进行缩放控制
+            const height = Math.max(this.htmlWrap.offsetHeight,calcSize.height);// css 大小
+            const dimensions = {
+                width:calcSize.dimensions.width,
+                height:calcSize.dimensions.width * height / calcSize.width, // 都需要计算，根据dimensions.width 按照比例计算
+            };
+            this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 样式大小
+            this.engine.eBoardCanvas.setDimensions(dimensions,{backstoreOnly:true});// canvas分辨率
+        }
     }
     public destroy(silent?:boolean){
         super.destroy(silent);
