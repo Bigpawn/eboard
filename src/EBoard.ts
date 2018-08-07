@@ -55,7 +55,10 @@ class EBoard extends EventBus{
     public messageMiddleWare = new MessageMiddleWare();
     public pluginController:Map<Plugins,object>=new Map<Plugins, object>();
     private getContainer(){
-        return "tagName" in this.container?this.container:this.container();
+        const containerElement = "tagName" in this.container?this.container:this.container();
+        containerElement.style.width=containerElement.offsetWidth + "px";
+        containerElement.style.height=containerElement.offsetHeight + "px";
+        return containerElement;
     }
     constructor(containerFilter:HTMLDivElement|(()=>HTMLDivElement)){
         super();
@@ -201,7 +204,6 @@ class EBoard extends EventBus{
      * @param {IMessage} message
      */
     public onMessage(message:string){
-        console.log(message);
         const messageObj:any = JSON.parse(message);
         // 获取frame实例，之后根据操作处理
         const {frame:frameOptions,frameGroup:frameGroupOptions,...options} = messageObj;
