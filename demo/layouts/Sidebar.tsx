@@ -12,7 +12,7 @@ class Sidebar extends React.Component<{}, ISidebarState> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            collapsed: false,
+            collapsed: true,
             mode: "inline",
         };
     }
@@ -20,7 +20,6 @@ class Sidebar extends React.Component<{}, ISidebarState> {
     public render(): JSX.Element {
         return (
             <Layout.Sider collapsible collapsed={this.state.collapsed} onCollapse={this.toggle}>
-                <div className="ant-layout-logo" />
                 <Menu theme="dark" mode={this.state.mode} defaultSelectedKeys={["1"]}>
                     <Menu.Item key="1">
                         <Link to="/pager">
@@ -54,10 +53,10 @@ class Sidebar extends React.Component<{}, ISidebarState> {
                     </Menu.Item>
                 </Menu>
                 <div className="sider-trigger">
-                <Icon
-                    className="trigger"
-                    type={this.state.collapsed ? "menu-unfold" : "menu-fold"}
-                    onClick={this.toggle}/>
+                    <Icon
+                        className="trigger"
+                        type={this.state.collapsed ? "menu-unfold" : "menu-fold"}
+                        onClick={this.toggle}/>
                 </div>
             </Layout.Sider>
         );

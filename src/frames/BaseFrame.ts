@@ -16,6 +16,7 @@ import {message} from '../utils/decorators';
 
 
 class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageInterface{
+    private _options:T;
     public container:HTMLDivElement;
     public type:string;
     public messageId:number;
@@ -28,20 +29,20 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
         this.id=id||Date.now().toString();
         this.messageId=options.messageId||MessageIdMiddleWare.getId();// 如果没有则自动创建
         this.container=container;
+        this._options=Object.assign({},options);
         this.options=options;
         this.parent=parent;
-        const calc = this.calc();
-        if(!silent){
-            this.initializeAction(calc);// 控制是否发送创建消息
-        }
+       
         this.fixContainer();
         this.initEngine();
-        this.initLayout(calc);
+        this.initLayout();
         this.observePlugin();
-        
-        
         // 插件启用初始化
         this.initPlugin();
+    
+        if(!silent){
+            this.initializeAction();// 控制是否发送创建消息, 只要用到宽就好，高度接收端自动根据内容适配
+        }
     }
     private initPlugin(){
         if(void 0 !== this.parent){
@@ -81,12 +82,12 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
     }
     
     @message
-    public initializeAction(calc:{width:number;height:number;dimensions:{width:number;height:number}}){
+    public initializeAction(){
         return Object.assign({},{
             id:this.id,
             messageId:this.messageId,
             tag:MessageTagEnum.CreateFrame
-        },calc,this.options)
+        },this.options)
     }
     
     @message
@@ -123,43 +124,63 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
             width:parentElement.offsetWidth,
             height:parentElement.offsetHeight
         };
-        const ratio=this.options.ratio||"4:3";
+        let ratio=this.options.ratio||"16:9";
         if(!/\d+:\d+/g.test(ratio)){
-            throw new Error(`Expected string with compare symbol, got '${ratio}'.`);
-        }else{
-            const _ratios=ratio.split(":");
-            const _ratioW=Number(_ratios[0]);
-            const _ratioH=Number(_ratios[1]);
-            const ratioNum=_ratioW/_ratioH;
-            // const dimensionRate = Math.ceil(4000/_ratioW);
-            if(size.width/size.height>ratioNum){
-                // 宽度大，按照高度计算
-                return {
+            ratio = "16:9";
+        }
+        const _ratios=ratio.split(":");
+        const _ratioW=Number(_ratios[0]);
+        const _ratioH=Number(_ratios[1]);
+        const ratioNum=_ratioW/_ratioH;
+        let calcSize:any;
+        // const dimensionRate = Math.ceil(4000/_ratioW);
+        if(size.width/size.height>ratioNum){
+            // 宽度大，按照高度计算
+            calcSize={
+                width:size.height * ratioNum,
+                height:size.height,
+                dimensions:{
+                    // width:dimensionRate * _ratioW,
+                    // height:dimensionRate * _ratioH
                     width:size.height * ratioNum,
                     height:size.height,
-                    dimensions:{
-                        // width:dimensionRate * _ratioW,
-                        // height:dimensionRate * _ratioH
-                        width:size.height * ratioNum,
-                        height:size.height,
-                    }
                 }
-            }else{
-                // 高度大，按照宽度计算
-                return {
+            };
+        }else{
+            // 高度大，按照宽度计算
+            calcSize={
+                width:size.width,
+                height:size.width / ratioNum,
+                dimensions:{
+                    // width:dimensionRate * _ratioW,
+                    // height:dimensionRate * _ratioH
                     width:size.width,
                     height:size.width / ratioNum,
-                    dimensions:{
-                        // width:dimensionRate * _ratioW,
-                        // height:dimensionRate * _ratioH
-                        width:size.width,
-                        height:size.width / ratioNum,
-                    }
                 }
-            }
+            };
         }
+        if(this._options.dimensions){
+            calcSize.dimensions = this._options.dimensions;// 需要计算比例，高度不一定适中
+        }
+        calcSize.cacheWidth=this._options.width||calcSize.width;// 缓存发送端的内容宽度
+        calcSize.scale = calcSize.width/ calcSize.cacheWidth;
+        
+        
+        // 需要修改父元素中的options
+        if(this.parent&&"updateOptionsSize" in this.parent){
+            this.parent.updateOptionsSize&&this.parent.updateOptionsSize({
+                width:calcSize.width,
+                height:calcSize.height,
+                dimensions:calcSize.dimensions
+            });
+        }
+        this.options.width = calcSize.width;
+        this.options.height = calcSize.height;
+        this.options.dimensions = calcSize.dimensions;
+        return calcSize;
     }
-    protected initLayout(calcSize:{width:number;height:number;dimensions:{width:number;height:number}}){
+    protected initLayout(){
+        const calcSize = this.calc();
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:calcSize.height});// 设置样式大小
         this.engine.eBoardCanvas.setDimensions(calcSize.dimensions,{backstoreOnly:true});// 设置canvas 画布大小
     };

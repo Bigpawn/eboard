@@ -9,10 +9,7 @@
 import {AbstractPlugin} from '../plugins/AbstractPlugin';
 import {IFrame, IFrameOptions} from './IFrame';
 import {ScrollbarType} from '../frames/HtmlFrame';
-import {IMessage} from '../middlewares/MessageMiddleWare';
 import {EBoard} from '../EBoard';
-import {Plugins} from '../plugins';
-import {IPlugin} from '../EBoardEngine';
 
 
 export declare interface IFrameGroupOptions{
@@ -22,6 +19,9 @@ export declare interface IFrameGroupOptions{
     pageNum:number;// 传1 或者其他
     id?:string;
     type?:string;
+    width?:number;
+    height?:number;
+    dimensions?:{width:number;height:number}
 }
 
 export declare interface IFrameGroup{
@@ -36,6 +36,7 @@ export declare interface IFrameGroup{
     destroy():void;
     getPlugin(pluginName:string):AbstractPlugin|undefined;
     switchToFrame?(childId:number,messageId:number):this|Promise<this>;// 切换到子frame
+    updateOptionsSize?(size:{width:number;height:number;dimensions:{width:number;height:number}}):void;
 }
 
 

@@ -33,6 +33,9 @@ export declare interface IFrameOptions{
     ratio?:string;
     id?:string;
     type?:string;
+    width?:number;
+    height?:number;
+    dimensions?:{width:number;height:number}
 }
 
 

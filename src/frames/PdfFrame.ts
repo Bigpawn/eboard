@@ -28,6 +28,7 @@ const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 
 @setAnimationName('eboard-pager')
 class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
+    private _options:IPdfFrameOptions;
     private pageFrame:CanvasFrame;
     private pagination:Pagination;
     private pdf:PDFPromise<PDFDocumentProxy>;
@@ -46,16 +47,17 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
     constructor(options:IPdfFrameOptions,container:HTMLDivElement,parent?:EBoard,id?:string){
         this.id=id||Date.now().toString();
         this.options=options;
+        this._options = Object.assign({},options);
         this.container=container;
         this.messageId=options.messageId||MessageIdMiddleWare.getId();
         this.parent=parent;
         this.onGo=this.onGo.bind(this);
-        this.initializeAction();// 创建子元素之前调用
         this.fixContainer();
         this.initLayout();
         this.initialize();
         this.observePlugin();
         this.initPlugin();
+        this.initializeAction();// 创建子元素之前调用??
     }
     private initPlugin(){
         if(void 0 !== this.parent){
@@ -132,8 +134,18 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
         pagerContainer.style.height="100%";
         this.dom=pagerContainer;
     };
+    
+    /**
+     * 子frame中修改options值
+     * @param size
+     */
+    public updateOptionsSize(size:{width:number;height:number;dimensions:{width:number;height:number}}){
+        this.options.width=size.width;
+        this.options.height=size.height;
+        this.options.dimensions=size.dimensions;
+    }
     private initialize(){
-        const options = this.options;
+        const options = this._options;
         this.url=options.url||'';
         this.setPageNum(options.pageNum||1);// 默认第一页
         this.setTotalPages(0);// 表示当前未获取到页数
@@ -155,6 +167,9 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
                 messageId:options.messageId,
                 ratio:options.ratio,
                 scrollbar:ScrollbarType.vertical,
+                width:options.width,
+                height:options.height,
+                dimensions:options.dimensions
             },this.container,this,this.pageNum.toString(),true);// 页码设置为id
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
@@ -213,19 +228,6 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
             this.pagination.setPageNum(pageNum);
         }
     }
-    /**
-     * 修改url
-     * @param url
-     * @returns {any}
-     */
-    public setUrl(url:string){
-        if(url === this.url){
-            return;
-        }
-        this.options.url=url;
-        this.initialize();
-        return this;
-    }
     
     /**
      * 创建子frame
@@ -239,8 +241,11 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
             // 创建
             nextPageFrame = new CanvasFrame({
                 messageId:options.messageId,
-                ratio:this.options.ratio,
+                ratio:this._options.ratio,
                 scrollbar:ScrollbarType.vertical,
+                width:this._options.width,
+                height:this._options.height,
+                dimensions:this._options.dimensions
             },this.container,this,pageNum.toString(),true);
             this.child.set(pageNum,nextPageFrame);
             // 需要getPage

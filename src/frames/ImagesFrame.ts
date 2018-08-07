@@ -28,6 +28,7 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
     public totalPages:number;
     public child:Map<number,ImageFrame>=new Map();
     public options:IImagesFrameOptions;
+    private _options:IImagesFrameOptions;
     private pageFrame:ImageFrame;
     private pagination:Pagination;
     private animationCssPrefix:string;
@@ -37,16 +38,17 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
     constructor(options:IImagesFrameOptions,container:HTMLDivElement,parent?:EBoard,id?:string){
         this.id = id||Date.now().toString();
         this.options=options;
+        this._options=Object.assign({},options);
         this.container=container;
         this.messageId=options.messageId||MessageIdMiddleWare.getId();
         this.parent=parent;
         this.onGo=this.onGo.bind(this);
-        this.initializeAction();
         this.fixContainer();
         this.initLayout();
         this.initialize();
         this.observePlugin();
         this.initPlugin();
+        this.initializeAction();
     }
     private initPlugin(){
         if(void 0 !== this.parent){
@@ -120,8 +122,17 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
         pagerContainer.style.height="100%";
         this.dom=pagerContainer;
     };
+    /**
+     * 子frame中修改options值
+     * @param size
+     */
+    public updateOptionsSize(size:{width:number;height:number;dimensions:{width:number;height:number}}){
+        this.options.width=size.width;
+        this.options.height=size.height;
+        this.options.dimensions=size.dimensions;
+    }
     private initialize(){
-        const options = this.options;
+        const options = this._options;
         this.urlPrefix=options.urlPrefix||"";
         this.images=options.images||[];
         this.setPageNum(options.pageNum||1);// 默认第一页
@@ -140,6 +151,9 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
                 ratio:options.ratio,
                 content:this.urlPrefix+this.images[this.pageNum],
                 scrollbar:ScrollbarType.vertical,
+                width:options.width,
+                height:options.height,
+                dimensions:options.dimensions
             },this.container,this,this.pageNum.toString(),true);
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
@@ -181,21 +195,6 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
         }
     }
     
-    /**
-     * 修改images地址
-     * @param {string} urlPrefix
-     * @param {string[]} images
-     * @returns {this}
-     */
-    public setImages(urlPrefix:string,images:string[]){
-        if(this.urlPrefix === urlPrefix && JSON.stringify(this.images)===JSON.stringify(images)){
-            return;
-        }
-        this.options.urlPrefix = urlPrefix;
-        this.options.images = images;
-        this.initialize();
-        return this;
-    }
     
     /**
      * 创建子frame
@@ -210,8 +209,11 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
             nextPageFrame = new ImageFrame({
                 messageId:options.messageId,
                 content:this.urlPrefix+this.images[pageNum],
-                ratio:this.options.ratio,
+                ratio:this._options.ratio,
                 scrollbar:ScrollbarType.vertical,
+                width:this._options.width,
+                height:this._options.height,
+                dimensions:this._options.dimensions
             },this.container,this,pageNum.toString(),true);
             this.child.set(pageNum,nextPageFrame);
         }

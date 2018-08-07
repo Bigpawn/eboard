@@ -16,14 +16,8 @@ class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageF
     public src:string;
     protected getChildren(){
         const image = document.createElement("img");
-        image.src=this.options.content||"";
+        this.src = image.src=this.options.content||"";
         image.style.width="100%";
-        image.onload=()=>{
-            this.initLayout();
-        };
-        image.onerror=()=>{
-            this.initLayout();
-        };
         return image;
     }
 }

@@ -201,6 +201,7 @@ class EBoard extends EventBus{
      * @param {IMessage} message
      */
     public onMessage(message:string){
+        console.log(message);
         const messageObj:any = JSON.parse(message);
         // 获取frame实例，之后根据操作处理
         const {frame:frameOptions,frameGroup:frameGroupOptions,...options} = messageObj;
