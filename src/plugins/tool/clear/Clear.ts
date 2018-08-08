@@ -18,7 +18,7 @@ class Clear extends AbstractPlugin{
             id:this.eBoardEngine.parent.id
         }
     }
-    public setEnable(enable:boolean){
+    public setEnable(enable:boolean,background?:boolean){
         return this;
     }
     

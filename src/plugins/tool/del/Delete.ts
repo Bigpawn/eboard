@@ -11,14 +11,15 @@ import {EBoardCanvas} from '../../../EBoardCanvas';
 import {EBoardEngine} from '../../../EBoardEngine';
 import {message} from '../../../utils/decorators';
 import {IMessage, MessageTagEnum} from '../../../middlewares/MessageMiddleWare';
+import {EventBus} from '../../../utils/EventBus';
 
 export declare interface IDeleteMessage extends IMessage{
     ids:string[];
 }
 
 class Delete extends AbstractPlugin{
-    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
-        super(canvas,eBoardEngine);
+    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine,eventBus:EventBus){
+        super(canvas,eBoardEngine,eventBus);
         this.deleteSelection=this.deleteSelection.bind(this);
     }
     @message
@@ -34,8 +35,8 @@ class Delete extends AbstractPlugin{
             tag:MessageTagEnum.Delete
         }
     }
-    public setEnable(enable:boolean){
-        super.setEnable(enable);
+    public setEnable(enable:boolean,background?:boolean){
+        super.setEnable(enable,background);
         if(enable){
             this.eBoardCanvas.on("selection:created",this.deleteSelection);
             this.eBoardCanvas.selection = true;

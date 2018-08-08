@@ -7,21 +7,20 @@
  */
 import {message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
-import {CursorTypeName} from '../../../tool/cursor/CursorType';
 import {IEvent} from '~fabric/fabric-impl';
 import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Line as FabricLine} from "../../../../extends/Line";
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 export declare interface ILineMessage extends IMessage{
     start:{x:number;y:number};
     end:{x:number;y:number};
 }
 
-
-@setCursor(CursorTypeName.Pencil)
+@setCursor(CursorTypeEnum.Cross)
 class Line extends AbstractShapePlugin{
     protected instance:FabricLine;
     private color="rgba(0,0,0,1)";

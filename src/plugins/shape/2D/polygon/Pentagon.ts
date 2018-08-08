@@ -13,7 +13,8 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Pentagon as FabricPentagon} from '../../../../extends/Pentagon';
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 export declare interface IPentagonMessage extends IMessage{
     start:{x:number;y:number};
@@ -21,6 +22,7 @@ export declare interface IPentagonMessage extends IMessage{
     points:any[]
 }
 
+@setCursor(CursorTypeEnum.Cross)
 class Pentagon extends AbstractShapePlugin{
     protected instance:FabricPentagon;
     private fill?:string;

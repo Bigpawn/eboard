@@ -94,6 +94,14 @@ const items:IToolbarItem[][]=[[{
     name:"删除",
     icon:"del",
     key:"del",
+}],[{
+    name:"选择",
+    icon:"select",
+    key:"select"
+}],[{
+    name:"教鞭",
+    icon:"ferule",
+    key:"ferule"
 }]];
 
 

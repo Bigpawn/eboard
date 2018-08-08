@@ -15,7 +15,8 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Polygon as FabricPolygon} from "../../../../extends/Polygon";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 export declare interface IPolygonMessage extends IMessage{
@@ -23,7 +24,7 @@ export declare interface IPolygonMessage extends IMessage{
 }
 
 
-
+@setCursor(CursorTypeEnum.Cross)
 class Polygon extends AbstractShapePlugin{
     protected instance:FabricPolygon;
     private points:fabric.Point[]=[];

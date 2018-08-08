@@ -12,7 +12,8 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Star as FabricStar} from "../../../../extends/Star";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 export declare interface IStarMessage extends IMessage{
@@ -21,7 +22,7 @@ export declare interface IStarMessage extends IMessage{
     start:{x:number;y:number};
 }
 
-
+@setCursor(CursorTypeEnum.Cross)
 class Star extends AbstractShapePlugin{
     protected instance:FabricStar;
     private fill?:string;

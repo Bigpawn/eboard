@@ -13,7 +13,8 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {EquilateralTriangle as FabricEquilateralTriangle} from "../../../../extends/EquilateralTriangle";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 export declare interface IEquilateralTriangleMessage extends IMessage{
@@ -21,7 +22,7 @@ export declare interface IEquilateralTriangleMessage extends IMessage{
     radius:number;
     start:{x:number,y:number}
 }
-
+@setCursor(CursorTypeEnum.Cross)
 class EquilateralTriangle extends AbstractShapePlugin{
     protected instance:FabricEquilateralTriangle;
     private fill?:string;

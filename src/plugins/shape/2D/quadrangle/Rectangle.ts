@@ -6,7 +6,7 @@
  * @disc:矩形Plugin  还可以使用Path实现   flipX flipY 不起作用，使用动态计算left top实现四象限
  */
 
-import {ctrlKeyEnable, message} from '../../../../utils/decorators';
+import {ctrlKeyEnable, message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
@@ -14,6 +14,7 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Rectangle as FabricRectangle} from "../../../../extends/Rectangle";
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 export declare interface IRectangleMessage extends IMessage{
     start:{x:number;y:number};
@@ -23,6 +24,7 @@ export declare interface IRectangleMessage extends IMessage{
 
 
 @ctrlKeyEnable(true)
+@setCursor(CursorTypeEnum.Cross)
 class Rectangle extends AbstractShapePlugin{
     protected instance:FabricRectangle;
     private fill?:string;

@@ -8,7 +8,6 @@
  */
 
 import {message, setCursor} from '../../../../utils/decorators';
-import {CursorTypeName} from '../../../tool/cursor/CursorType';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from "~fabric/fabric-impl";
 import {
@@ -16,6 +15,7 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Circle as FabricCircle} from "../../../../extends/Circle";
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 
@@ -24,8 +24,7 @@ export declare interface ICircleMessage extends IMessage{
     radius:number;
 }
 
-
-@setCursor(CursorTypeName.Compass)
+@setCursor(CursorTypeEnum.Cross)
 class Circle extends AbstractShapePlugin{
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";

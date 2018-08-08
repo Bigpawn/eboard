@@ -24,8 +24,8 @@ class HTML extends AbstractPlugin{
             id:this.eBoardEngine.parent.id
         }
     }
-    public setEnable(enable:boolean){
-        super.setEnable(enable);
+    public setEnable(enable:boolean,background?:boolean){
+        super.setEnable(enable,background);
         const parentElement = this.eBoardCanvas.getContainer();
         if(enable){
             if(/eboard-html-canvas/.test(parentElement.className)){

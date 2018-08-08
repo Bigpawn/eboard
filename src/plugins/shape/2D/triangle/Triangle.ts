@@ -8,12 +8,13 @@
 
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {ctrlKeyEnable, message} from '../../../../utils/decorators';
+import {ctrlKeyEnable, message, setCursor} from '../../../../utils/decorators';
 import {
     IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Triangle as FabricTriangle} from "../../../../extends/Triangle";
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 export declare interface ITriangleMessage extends IMessage{
@@ -27,6 +28,7 @@ export declare interface ITriangleMessage extends IMessage{
 
 
 @ctrlKeyEnable(true)
+@setCursor(CursorTypeEnum.Cross)
 class Triangle extends AbstractShapePlugin{
     protected instance:FabricTriangle;
     private fill?:string;

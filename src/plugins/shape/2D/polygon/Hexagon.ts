@@ -13,7 +13,8 @@ import {
 } from '../../../../middlewares/MessageMiddleWare';
 
 import {Hexagon as FabricHexagon} from "../../../../extends/Hexagon";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 export declare interface IHexagonMessage extends IMessage{
@@ -22,6 +23,7 @@ export declare interface IHexagonMessage extends IMessage{
     points:any[]
 }
 
+@setCursor(CursorTypeEnum.Cross)
 class Hexagon extends AbstractShapePlugin{
     protected instance:FabricHexagon;
     private fill?:string;

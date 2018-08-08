@@ -8,7 +8,6 @@
 
 import {Line} from './shape/2D/line/Line';
 import {HTML} from './tool/html/HTML';
-import {Cursor} from './tool/cursor/Cursor';
 import {Selection} from './tool/selection/Selection';
 import {Text} from './shape/2D/text/Text';
 import {Pencil} from './shape/2D/pencil/Pencil';
@@ -28,11 +27,11 @@ import {Arrow} from './shape/2D/arrow/Arrow';
 import {ArrowNext} from './shape/2D/arrow/ArrowNext';
 import {ArrowPrev} from './shape/2D/arrow/ArrowPrev';
 import {Delete} from './tool/del/Delete';
+import {Ferule} from './shape/2D/ferule/Ferule';
 
-export {Line,Text,Cursor,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon,Star,Pentagon,Hexagon,Clear,Arrow,ArrowNext,ArrowPrev,Delete};
-export type IPlugins =Line| Text | Cursor | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon | Star | Pentagon | Hexagon | Clear | Arrow | ArrowNext | ArrowPrev | Delete;
+export {Line,Text,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon,Star,Pentagon,Hexagon,Clear,Arrow,ArrowNext,ArrowPrev,Delete,Ferule};
+export type IPlugins =Line| Text | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon | Star | Pentagon | Hexagon | Clear | Arrow | ArrowNext | ArrowPrev | Delete | Ferule;
 export enum Plugins{
-    Cursor='Cursor',// 画笔
     Line='Line', // 直线
     Text='Text',// 文字输入
     Selection='Selection',// 选择
@@ -53,5 +52,6 @@ export enum Plugins{
     Arrow='Arrow',
     ArrowNext='ArrowNext',
     ArrowPrev = 'ArrowPrev',
-    Delete = "Delete"
+    Delete = 'Delete',
+    Ferule="Ferule"
 }

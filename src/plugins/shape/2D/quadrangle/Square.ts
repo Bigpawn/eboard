@@ -13,7 +13,8 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Square as FabricSquare} from "../../../../extends/Square";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 export declare interface ISquareMessage extends IMessage{
     start:{x:number;y:number};
@@ -22,7 +23,7 @@ export declare interface ISquareMessage extends IMessage{
 }
 
 
-
+@setCursor(CursorTypeEnum.Cross)
 class Square extends AbstractShapePlugin{
     protected instance:FabricSquare;
     private fill?:string;

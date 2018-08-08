@@ -7,7 +7,6 @@
  */
 
 import {message, setCursor} from '../../../../utils/decorators';
-import {CursorTypeName} from '../../../tool/cursor/CursorType';
 import {IEvent} from '~fabric/fabric-impl';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import DefaultFactory from './factory/default';
@@ -16,6 +15,7 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Arrow as FabricArrow} from '../../../../extends/Arrow';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 export enum ArrowMode{
     PREV,
@@ -35,7 +35,7 @@ export declare interface IArrowMessage extends IMessage{
     mode:ArrowMode
 }
 
-@setCursor(CursorTypeName.Pencil)
+@setCursor(CursorTypeEnum.Cross)
 class Arrow extends AbstractShapePlugin{
     protected instance:FabricArrow;
     private color="rgba(0,0,0,1)";

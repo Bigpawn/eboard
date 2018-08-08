@@ -7,8 +7,6 @@
  */
 import {AbstractPlugin} from '../AbstractPlugin';
 import {IEvent} from "~fabric/fabric-impl";
-import {EBoardCanvas} from '../../EBoardCanvas';
-import {EBoardEngine} from '../../EBoardEngine';
 
 
 export enum Quadrant{
@@ -19,10 +17,6 @@ export enum Quadrant{
 }
 
 abstract class AbstractShapePlugin extends AbstractPlugin{
-    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
-        super(canvas,eBoardEngine);
-    }
-    
     /**
      * default mouseDown Event
      * @param {"~fabric/fabric-impl".IEvent} event

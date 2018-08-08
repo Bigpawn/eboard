@@ -15,7 +15,8 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Ellipse as FabricEllipse} from "../../../../extends/Ellipse";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 export declare interface IEllipseMessage extends IMessage{
@@ -24,6 +25,7 @@ export declare interface IEllipseMessage extends IMessage{
     ry:number;
 }
 
+@setCursor(CursorTypeEnum.Cross)
 class Ellipse extends AbstractShapePlugin{
     private fill?:string;
     private stroke?:string="rgba(0,0,0,1)";

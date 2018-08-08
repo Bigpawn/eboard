@@ -3,20 +3,13 @@
  * @Date: 2018/7/11 13:31
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * * @Last Modified time: 2018/7/11 13:31
- * @disc:选择 Selection状态下应该恢复默认的鼠标或者使用自定义系统鼠标
+ * @disc:选择 Selection状态下应该恢复默认的鼠标或者使用自定义系统鼠标  需要扩展删除功能和移动放大功能，添加事件支持
  */
-import {setCursor} from '../../../utils/decorators';
-import {CursorTypeName} from '../cursor/CursorType';
-import {EBoardCanvas} from "../../../EBoardCanvas";
-import {EBoardEngine} from "../../../EBoardEngine";
 import {AbstractPlugin} from '../../AbstractPlugin';
 import {SuspensionShell} from "../suspension/SuspensionShell";
-@setCursor(CursorTypeName.None)
+
 class Selection extends AbstractPlugin{
     private suspensionShell:any;
-    constructor(canvas:EBoardCanvas,eboardEngine:EBoardEngine){
-        super(canvas,eboardEngine);
-    }
     public onMouseUp(o:any){
         if(this.eBoardCanvas.getActiveObject()) {
             if(!this.suspensionShell) {
@@ -47,8 +40,8 @@ class Selection extends AbstractPlugin{
         }
     };
 
-    public setEnable(enable:boolean){
-        super.setEnable(enable);
+    public setEnable(enable:boolean,background?:boolean){
+        super.setEnable(enable,background);
         if(enable){
             this.eBoardCanvas.selection=true;
             this.eBoardCanvas.skipTargetFind=false;

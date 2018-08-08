@@ -18,6 +18,15 @@
     &-canvas{
         //@center();
     }
+    &-cursor{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left:0;
+        top:0;
+        pointer-events: none;
+        cursor:none;
+    }
     &-container{
         @center();
         border: 1px solid #09ca51;
@@ -30,17 +39,6 @@
             -ms-transform: translate(-150%, -50%);
             -o-transform: translate(-150%, -50%);
             transform: translate(-150%, -50%);
-        }
-    }
-    &-cursor{
-        cursor:none;
-        position: absolute;
-        transition: top 4ms ease,left 4ms ease;
-        pointer-events: none;
-        & > svg{
-            position: absolute;
-            top: 0;
-            left: 0;
         }
     }
     &-html{

@@ -12,7 +12,8 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {OrthogonalTriangle as FabricOrthogonalTriangle} from "../../../../extends/OrthogonalTriangle";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 
@@ -21,6 +22,7 @@ export declare interface IOrthogonalTriangleMessage extends IMessage{
     start:{x:number;y:number}
 }
 
+@setCursor(CursorTypeEnum.Cross)
 class OrthogonalTriangle extends AbstractShapePlugin{
     protected instance:FabricOrthogonalTriangle;
     private fill?:string;
