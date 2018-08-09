@@ -7,8 +7,9 @@
  */
 import {fabric} from "fabric";
 import {ITriangleOptions} from '~fabric/fabric-impl';
+import {IObject} from '../interface/IObject';
 
-class Triangle extends fabric.Triangle{
+class Triangle extends fabric.Triangle implements IObject{
     public type="triangle";
     public id:string;
     constructor(options?: ITriangleOptions){

@@ -7,8 +7,9 @@
  */
 import {fabric} from "fabric";
 import {IObjectOptions, IPolygonOptions} from '~fabric/fabric-impl';
+import {IObject} from '../interface/IObject';
 
-class Pentagon extends fabric.Polygon{
+class Pentagon extends fabric.Polygon implements IObject{
     public type:string="pentagon";
     public id:string;
     

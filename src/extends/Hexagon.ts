@@ -11,8 +11,9 @@ import {
      IObjectOptions,
     IPolygonOptions,
 } from '~fabric/fabric-impl';
+import {IObject} from '../interface/IObject';
 
-class Hexagon extends fabric.Polygon{
+class Hexagon extends fabric.Polygon implements IObject{
     public type:string="hexagon";
     public id:string;
     

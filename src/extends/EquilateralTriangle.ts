@@ -7,7 +7,8 @@
  */
 import {fabric} from "fabric";
 import {IObjectOptions, IPolygonOptions} from '~fabric/fabric-impl';
-class EquilateralTriangle extends fabric.Polygon{
+import {IObject} from '../interface/IObject';
+class EquilateralTriangle extends fabric.Polygon implements IObject{
     public type:string="equilateral-triangle";
     public id:string;
     constructor(points: Array<{ x: number; y: number }>, options?: IObjectOptions, skipOffset?: boolean){

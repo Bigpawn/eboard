@@ -37,7 +37,7 @@ import {MessageReceiver} from "./middlewares/MessageReceiver";
 import {
     Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
     OrthogonalTriangle, Pencil, Pentagon,
-    Plugins, Polygon, Rectangle, Square, Star, Triangle, Text, Delete,
+    Plugins, Polygon, Rectangle, Square, Star, Triangle, Text, Delete,Selection
 } from './plugins';
 import {EventBus, IPluginConfigOptions} from './utils/EventBus';
 
@@ -319,6 +319,15 @@ class EBoard{
                 break;
             case MessageTagEnum.Cursor:
                 frame.engine&&frame.engine.eBoardCanvas.onMessage(options);
+                break;
+            case MessageTagEnum.SelectionMove:
+                (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                break;
+            case MessageTagEnum.SelectionScale:
+                (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                break;
+            case MessageTagEnum.SelectionRotate:
+                (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
                 break;
             default:
                 if(void 0 !== frame){

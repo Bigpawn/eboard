@@ -2,8 +2,9 @@
  * @Author: yanxinaliang (rainyxlxl@163.com)
  * @Date: 2018/8/6 11:40
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/8/6 11:40
+ * @Last Modified time: 2018/8/6 11:40
  * @disc:fabric.Delete
+ * 需要天然支持Del热键
  */
 
 import {AbstractPlugin} from '../../AbstractPlugin';
@@ -21,7 +22,19 @@ class Delete extends AbstractPlugin{
     constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine,eventBus:EventBus){
         super(canvas,eBoardEngine,eventBus);
         this.deleteSelection=this.deleteSelection.bind(this);
+        this.initDelKeyListener();// TODO 是否支持提供配置
     }
+    
+    private initDelKeyListener(){
+        window.addEventListener("keydown",(e:KeyboardEvent)=>{
+            const code = e.keyCode;
+            if(code === 46){
+                this.deleteSelection();
+            }
+        })
+    }
+    
+    
     @message
     private deleteSelection(){
         const objects = this.eBoardCanvas.getActiveObjects();
@@ -29,7 +42,6 @@ class Delete extends AbstractPlugin{
             this.eBoardCanvas.remove(object);
         });
         this.eBoardCanvas.discardActiveObject();
-        console.log(objects.map((object:any)=>object.id));
         return {
             ids:objects.map((object:any)=>object.id),
             tag:MessageTagEnum.Delete

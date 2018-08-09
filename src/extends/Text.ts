@@ -7,8 +7,9 @@
  */
 import {fabric} from "fabric";
 import {IITextOptions} from '~fabric/fabric-impl';
+import {IObject} from '../interface/IObject';
 
-class Text extends fabric.IText{
+class Text extends fabric.IText implements IObject{
     public type:string="text";
     public id:string;
     constructor(text: string, options?: IITextOptions){

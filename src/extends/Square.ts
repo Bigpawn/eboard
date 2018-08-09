@@ -7,8 +7,9 @@
  */
 import {fabric} from "fabric";
 import {IRectOptions} from "~fabric/fabric-impl";
+import {IObject} from '../interface/IObject';
 
-class Square extends fabric.Rect{
+class Square extends fabric.Rect implements IObject{
     public type:string="square";
     public id:string;
     constructor(options?: IRectOptions){
