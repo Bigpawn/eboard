@@ -22,12 +22,14 @@ import {CursorTypeEnum} from '../../../../cursor/Enum';
 export declare interface ICircleMessage extends IMessage{
     start:{x:number;y:number};
     radius:number;
+    stroke:string;
+    fill:string;
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class Circle extends AbstractShapePlugin{
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill:string;
+    protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     protected instance:FabricCircle;
@@ -38,7 +40,9 @@ class Circle extends AbstractShapePlugin{
             id:this.instance.id,
             start:this.start,
             radius:this.instance.radius,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke,
+            fill:this.instance.fill
         }
     }
     @message
@@ -48,7 +52,9 @@ class Circle extends AbstractShapePlugin{
             id:this.instance.id,
             start:this.start,
             radius:this.instance.radius,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke,
+            fill:this.instance.fill
         }
     }
     @message
@@ -58,7 +64,9 @@ class Circle extends AbstractShapePlugin{
             id:this.instance.id,
             start:this.start,
             radius:this.instance.radius,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke,
+            fill:this.instance.fill
         }
     }
     protected onMouseMove(event:IEvent){
@@ -77,10 +85,10 @@ class Circle extends AbstractShapePlugin{
             this.instance=new FabricCircle({
                 originX:"center",
                 originY:"center",
-                fill:this.fill,
+                fill:this.getFillColor(),
                 left: this.start.x,
                 top: this.start.y,
-                stroke:this.stroke,
+                stroke:this.getStrokeColor(),
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
                 radius:radius,
@@ -101,17 +109,17 @@ class Circle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ICircleMessage){
-        const {id,start,radius,tag} = message;
+        const {id,start,radius,tag,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricCircle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 === instance){
             instance=new FabricCircle({
                 originX:"center",
                 originY:"center",
-                fill:this.fill,
+                fill:fill,
                 left: start.x,
                 top: start.y,
-                stroke:this.stroke,
+                stroke:stroke,
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
                 radius:radius,

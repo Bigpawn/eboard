@@ -17,6 +17,8 @@ export enum Quadrant{
 }
 
 abstract class AbstractShapePlugin extends AbstractPlugin{
+    protected stroke?:string;
+    protected fill?:string;
     /**
      * default mouseDown Event
      * @param {"~fabric/fabric-impl".IEvent} event
@@ -124,6 +126,13 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
             default:
                 return angle;
         }
+    }
+    
+    protected getStrokeColor(){
+        return this.eventBus.sharedData.stroke||this.stroke;
+    }
+    protected getFillColor(){
+        return this.eventBus.sharedData.fill||this.fill;
     }
 }
 

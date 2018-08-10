@@ -15,7 +15,9 @@ export declare interface IPluginConfigOptions{
 }
 
 export declare interface IPluginConfig{
-    plugins:Map<Plugins,IPluginConfigOptions>
+    plugins:Map<Plugins,IPluginConfigOptions>;
+    stroke?:string;
+    fill?:string;
 }
 
 export declare interface IShareDate extends IPluginConfig{}

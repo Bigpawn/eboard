@@ -23,12 +23,14 @@ export declare interface IEllipseMessage extends IMessage{
     start:{x:number;y:number};
     rx:number;
     ry:number;
+    fill:string;
+    stroke:string;
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class Ellipse extends AbstractShapePlugin{
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill?:string;
+    protected stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     private ctrlKey:boolean=false;
@@ -98,7 +100,9 @@ class Ellipse extends AbstractShapePlugin{
             start:{x:this.instance.left,y:this.instance.top},
             rx:this.instance.rx,
             ry:this.instance.ry,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     protected onMouseMove(event:IEvent){
@@ -121,12 +125,12 @@ class Ellipse extends AbstractShapePlugin{
             this.throw(MessageTagEnum.Temporary);
         }else{
             this.instance=new FabricEllipse({
-                fill:this.fill,
+                fill:this.getFillColor(),
                 left: startPoint.x,
                 top: startPoint.y,
                 rx:this.ctrlKey?radius:rx,
                 ry:this.ctrlKey?radius:ry,
-                stroke:this.stroke,
+                stroke:this.getStrokeColor(),
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth)
             });
@@ -193,17 +197,17 @@ class Ellipse extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IEllipseMessage){
-        const {id,start,rx,ry,tag} = message;
+        const {id,start,rx,ry,tag,fill,stroke} = message;
         let instance = this.getInstanceById(id) as FabricEllipse;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 === instance){
             instance = new FabricEllipse({
-                fill:this.fill,
+                fill:fill,
                 left: start.x,
                 top: start.y,
                 rx:rx,
                 ry:ry,
-                stroke:this.stroke,
+                stroke:stroke,
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth)
             }).setId(id);

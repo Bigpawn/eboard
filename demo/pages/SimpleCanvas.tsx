@@ -15,7 +15,6 @@ export class ToolBar extends React.Component{
     }
     componentDidMount(){
         let toolbar = new AToolbar(document.getElementById("toolbarContainer") as HTMLDivElement,(item:any)=>{
-            console.log(item.key);
             switch (item.key){
                 case "line":
                     this.startLine();
@@ -80,11 +79,16 @@ export class ToolBar extends React.Component{
                 case "ferule":
                     this.eBoard.setActivePlugin(Plugins.Ferule);
                     break;
+                case "stroke":
+                    this.eBoard.setStrokeColor(item.color);
+                    break;
+                case "fill":
+                    this.eBoard.setFillColor(item.color);
+                    break;
                 default:
                     break;
             }
         });
-        console.log(toolbar);
     }
     public setEBoard(eBoard:EBoard){
         this.eBoard=eBoard;

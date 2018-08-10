@@ -400,6 +400,26 @@ class EBoard{
             options:options||{}
         });
     }
+    
+    /**
+     * 设置strokeColor
+     * @param {string} color
+     * @returns {this}
+     */
+    public setStrokeColor(color:string){
+        this.eventBus.sharedData.stroke=color;
+        return this;
+    }
+    
+    /**
+     * 设置fillColor
+     * @param {string} color
+     * @returns {this}
+     */
+    public setFillColor(color:string){
+        this.eventBus.sharedData.fill=color;
+        return this;
+    }
 }
 
 export {EBoard};
