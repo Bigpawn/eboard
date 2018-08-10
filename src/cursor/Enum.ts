@@ -9,5 +9,6 @@
 export enum CursorTypeEnum{
     None="None",
     Default="Default",
-    Cross="Cross"
+    Cross="Cross",
+    Rubber="Rubber",
 }
