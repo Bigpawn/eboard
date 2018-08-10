@@ -19,14 +19,16 @@ import {CursorTypeEnum} from '../../../../cursor/Enum';
 export declare interface IPentagonMessage extends IMessage{
     start:{x:number;y:number};
     radius:number;
-    points:any[]
+    points:any[];
+    stroke:string;
+    fill:string;
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class Pentagon extends AbstractShapePlugin{
     protected instance:FabricPentagon;
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill?:string;
+    protected stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     @message
@@ -37,7 +39,9 @@ class Pentagon extends AbstractShapePlugin{
             start:this.start,
             radius:this.instance.width,
             points:this.instance.points,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -48,7 +52,9 @@ class Pentagon extends AbstractShapePlugin{
             start:this.start,
             radius:this.instance.width,
             points:this.instance.points,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -59,7 +65,9 @@ class Pentagon extends AbstractShapePlugin{
             start:this.start,
             radius:this.instance.width,
             points:this.instance.points,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     protected onMouseMove(event:IEvent){
@@ -72,10 +80,10 @@ class Pentagon extends AbstractShapePlugin{
         const points = FabricPentagon.calcPointsByRadius(this.start,radius,angle);
         if(void 0 ===this.instance){
             this.instance = new FabricPentagon(points,{
-                stroke: this.stroke,
+                stroke: this.getStrokeColor(),
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
+                fill: this.getFillColor(),
                 width:radius,
                 height:radius,
                 left:this.start.x,
@@ -108,16 +116,16 @@ class Pentagon extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IPentagonMessage){
-        const {id,points,start,radius,tag} = message;
+        const {id,points,start,radius,tag,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricPentagon;
     
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 === instance){
             instance = new FabricPentagon(points,{
-                stroke: this.stroke,
+                stroke: stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
+                fill: fill,
                 width:radius,
                 height:radius,
                 left:start.x,

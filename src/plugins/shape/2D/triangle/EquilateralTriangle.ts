@@ -20,13 +20,15 @@ import {CursorTypeEnum} from '../../../../cursor/Enum';
 export declare interface IEquilateralTriangleMessage extends IMessage{
     points:any[];
     radius:number;
-    start:{x:number,y:number}
+    start:{x:number,y:number},
+    fill:string;
+    stroke:string;
 }
 @setCursor(CursorTypeEnum.Cross)
 class EquilateralTriangle extends AbstractShapePlugin{
     protected instance:FabricEquilateralTriangle;
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill?:string;
+    protected stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     @message
@@ -37,7 +39,9 @@ class EquilateralTriangle extends AbstractShapePlugin{
             points:this.instance.points,
             start:this.start,
             length:this.instance.width,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -48,7 +52,9 @@ class EquilateralTriangle extends AbstractShapePlugin{
             points:this.instance.points,
             start:this.start,
             length:this.instance.width,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -59,7 +65,9 @@ class EquilateralTriangle extends AbstractShapePlugin{
             points:this.instance.points,
             start:this.start,
             length:this.instance.width,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     protected onMouseMove(event:IEvent){
@@ -73,10 +81,10 @@ class EquilateralTriangle extends AbstractShapePlugin{
         const length = radius * 2;
         if(void 0 ===this.instance){
             this.instance = new FabricEquilateralTriangle(points,{
-                stroke: this.stroke,
+                stroke: this.getStrokeColor(),
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
+                fill: this.getFillColor(),
                 width:length,
                 height:length,
                 left:this.start.x,
@@ -107,15 +115,15 @@ class EquilateralTriangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IEquilateralTriangleMessage){
-        const {id,tag,points,start,length} = message;
+        const {id,tag,points,start,length,fill,stroke} = message;
         let instance = this.getInstanceById(id) as FabricEquilateralTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 === instance){
             instance = new FabricEquilateralTriangle(points,{
-                stroke: this.stroke,
+                stroke: stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
+                fill: fill,
                 width:length,
                 height:length,
                 left:start.x,

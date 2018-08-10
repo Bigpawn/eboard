@@ -20,14 +20,16 @@ import {CursorTypeEnum} from '../../../../cursor/Enum';
 export declare interface IHexagonMessage extends IMessage{
     start:{x:number;y:number};
     radius:number;
-    points:any[]
+    points:any[];
+    stroke:string;
+    fill:string;
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class Hexagon extends AbstractShapePlugin{
     protected instance:FabricHexagon;
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill?:string;
+    protected stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     @message
@@ -38,7 +40,9 @@ class Hexagon extends AbstractShapePlugin{
             start:this.start,
             radius:this.instance.width,
             points:this.instance.points,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke,
+            fill:this.instance.fill
         }
     }
     @message
@@ -49,7 +53,9 @@ class Hexagon extends AbstractShapePlugin{
             start:this.start,
             radius:this.instance.width,
             points:this.instance.points,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke,
+            fill:this.instance.fill
         }
     }
     @message
@@ -60,7 +66,9 @@ class Hexagon extends AbstractShapePlugin{
             start:this.start,
             radius:this.instance.width,
             points:this.instance.points,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke,
+            fill:this.instance.fill
         }
     }
     protected onMouseMove(event:IEvent){
@@ -73,10 +81,10 @@ class Hexagon extends AbstractShapePlugin{
         const points = FabricHexagon.calcPointsByRadius(this.start,radius,angle);
         if(void 0 ===this.instance){
             this.instance = new FabricHexagon(points,{
-                stroke: this.stroke,
+                stroke: this.getStrokeColor(),
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
+                fill: this.getFillColor(),
                 width:radius,
                 height:radius,
                 left:this.start.x,
@@ -109,16 +117,16 @@ class Hexagon extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IHexagonMessage){
-        const {id,points,start,radius,tag} = message;
+        const {id,points,start,radius,tag,fill,stroke} = message;
         let instance = this.getInstanceById(id) as FabricHexagon;
         this.eBoardCanvas.renderOnAddRemove=false;
         
         if(void 0 === instance){
             instance = new FabricHexagon(points,{
-                stroke: this.stroke,
+                stroke: stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
+                fill: fill,
                 width:radius,
                 height:radius,
                 left:start.x,

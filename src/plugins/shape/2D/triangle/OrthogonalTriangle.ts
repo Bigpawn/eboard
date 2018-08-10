@@ -19,14 +19,16 @@ import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 export declare interface IOrthogonalTriangleMessage extends IMessage{
     points:any[];
-    start:{x:number;y:number}
+    start:{x:number;y:number};
+    stroke:string;
+    fill:string
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class OrthogonalTriangle extends AbstractShapePlugin{
     protected instance:FabricOrthogonalTriangle;
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill?:string;
+    protected stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     protected onMouseMove(event:IEvent){
@@ -43,10 +45,10 @@ class OrthogonalTriangle extends AbstractShapePlugin{
         };
         if(void 0 ===this.instance){
             this.instance = new FabricOrthogonalTriangle(points,{
-                stroke: this.stroke,
+                stroke: this.getStrokeColor(),
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
+                fill: this.getFillColor(),
                 left:center.x,
                 top:center.y,
                 originY:"center",
@@ -86,7 +88,9 @@ class OrthogonalTriangle extends AbstractShapePlugin{
             points:this.instance.points,
             width:this.instance.width,
             height:this.instance.height,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         };
     }
     
@@ -95,16 +99,16 @@ class OrthogonalTriangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IOrthogonalTriangleMessage){
-        const {id,tag,points,start,width,height} = message;
+        const {id,tag,points,start,width,height,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricOrthogonalTriangle;
         
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 === instance){
             instance = new FabricOrthogonalTriangle(points,{
-                stroke: this.stroke,
+                stroke: stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
+                fill: fill,
                 left:start.x,
                 top:start.y,
                 originY:"center",

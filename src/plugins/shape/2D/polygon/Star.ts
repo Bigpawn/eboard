@@ -20,13 +20,15 @@ export declare interface IStarMessage extends IMessage{
     points:any[];
     radius:number;
     start:{x:number;y:number};
+    stroke:string;
+    fill:string;
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class Star extends AbstractShapePlugin{
     protected instance:FabricStar;
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill?:string;
+    protected stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     @message
@@ -37,7 +39,9 @@ class Star extends AbstractShapePlugin{
             points:this.instance.points,
             start:this.start,
             radius:this.instance.width,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke,
+            fill:this.instance.fill
         }
     }
     @message
@@ -48,7 +52,9 @@ class Star extends AbstractShapePlugin{
             points:this.instance.points,
             start:this.start,
             radius:this.instance.width,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke,
+            fill:this.instance.fill
         }
     }
     @message
@@ -59,7 +65,9 @@ class Star extends AbstractShapePlugin{
             points:this.instance.points,
             start:this.start,
             radius:this.instance.width,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke,
+            fill:this.instance.fill
         }
     }
     protected onMouseMove(event:IEvent){
@@ -73,10 +81,10 @@ class Star extends AbstractShapePlugin{
         const length = radius*2;
         if(void 0 ===this.instance){
             this.instance = new FabricStar(points,{
-                stroke: this.stroke,
+                stroke: this.getStrokeColor(),
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
+                fill: this.getFillColor(),
                 width:length,
                 height:length,
                 left:this.start.x,
@@ -108,15 +116,15 @@ class Star extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IStarMessage){
-        const {id,points,radius,start,tag} = message;
+        const {id,points,radius,start,tag,fill,stroke} = message;
         let instance = this.getInstanceById(id) as FabricStar;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 === instance){
             instance = new FabricStar(points,{
-                stroke: this.stroke,
+                stroke: stroke,
                 strokeWidth: this.getCanvasPixel(this.strokeWidth),
                 strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
+                fill: fill,
                 width:radius,
                 height:radius,
                 left:start.x,

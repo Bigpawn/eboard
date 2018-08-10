@@ -23,6 +23,8 @@ export declare interface ITriangleMessage extends IMessage{
     height:number;
     flipX:boolean;
     flipY:boolean;
+    stroke:string;
+    fill:string;
 }
 
 
@@ -31,11 +33,10 @@ export declare interface ITriangleMessage extends IMessage{
 @setCursor(CursorTypeEnum.Cross)
 class Triangle extends AbstractShapePlugin{
     protected instance:FabricTriangle;
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill?:string;
+    protected stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
-    protected ctrlKeyEnable:boolean;
     protected ctrlKey:boolean=false;
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
@@ -108,10 +109,10 @@ class Triangle extends AbstractShapePlugin{
         const startPoint = this.ctrlKey?this.getCtrlStartPoint(calcSize):this.getStartPoint();
         if(void 0 ===this.instance){
             this.instance = new FabricTriangle({
-                fill:this.fill,
+                fill:this.getFillColor(),
                 left: startPoint.x,
                 top: startPoint.y,
-                stroke:this.stroke,
+                stroke:this.getStrokeColor(),
                 flipX:offsetX<0,
                 flipY:offsetY<0,
                 width:this.ctrlKey?calcSize.width:width,
@@ -209,7 +210,9 @@ class Triangle extends AbstractShapePlugin{
             flipY:this.instance.flipY,
             width:this.instance.width,
             height:this.instance.height,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     
@@ -218,15 +221,15 @@ class Triangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ITriangleMessage){
-        const {id,start,flipX,flipY,width,height,tag} = message;
+        const {id,start,flipX,flipY,width,height,tag,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 === instance){
             instance = new FabricTriangle({
-                fill:this.fill,
+                fill:fill,
                 left: start.x,
                 top: start.y,
-                stroke:this.stroke,
+                stroke:stroke,
                 flipX:flipX,
                 flipY:flipY,
                 width:width,

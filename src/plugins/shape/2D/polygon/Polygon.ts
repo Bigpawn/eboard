@@ -20,7 +20,9 @@ import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 export declare interface IPolygonMessage extends IMessage{
-    points:any[]
+    points:any[];
+    stroke:string;
+    fill:string;
 }
 
 
@@ -28,8 +30,8 @@ export declare interface IPolygonMessage extends IMessage{
 class Polygon extends AbstractShapePlugin{
     protected instance:FabricPolygon;
     private points:fabric.Point[]=[];
-    private fill?:string="#28ff28";
-    private stroke?:string="pink";
+    protected fill:string;
+    protected stroke:string="rgb(0,0,0)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     private circle:fabric.Circle;// 起始点磁贴效果
@@ -50,10 +52,10 @@ class Polygon extends AbstractShapePlugin{
         }
         this.eBoardCanvas.remove(this.instance);
         this.instance=new FabricPolygon(this.points,{
-            stroke:this.stroke,
+            stroke:this.getStrokeColor(),
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.getCanvasPixel(this.strokeWidth),
-            fill:this.fill,
+            fill:this.getFillColor(),
         }).setId(this.instance.id);
         this.eBoardCanvas.add(this.instance);
         this.eBoardCanvas.renderAll();
@@ -78,7 +80,9 @@ class Polygon extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTagEnum.Start,
             points:this.instance.points,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -87,7 +91,9 @@ class Polygon extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTagEnum.Temporary,
             points:this.instance.points,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -96,7 +102,9 @@ class Polygon extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTagEnum.Process,
             points:this.instance.points,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -105,7 +113,9 @@ class Polygon extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTagEnum.End,
             points:this.instance.points,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     protected onMouseDown(event:IEvent){
@@ -123,10 +133,10 @@ class Polygon extends AbstractShapePlugin{
         this.points.push(new fabric.Point(point.x,point.y));// 如果关闭则
         if(void 0 === this.instance){
             this.instance = new FabricPolygon(this.points,{
-                stroke:this.stroke,
+                stroke:this.getStrokeColor(),
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
-                fill:this.fill,
+                fill:this.getFillColor(),
             });
             this.eBoardCanvas.add(this.instance);
             this.startAction();
@@ -198,17 +208,17 @@ class Polygon extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IPolygonMessage){
-        const {id,points} = message;
+        const {id,points,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricPolygon;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
         instance = new FabricPolygon(points,{
-            stroke:this.stroke,
+            stroke:stroke,
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.getCanvasPixel(this.strokeWidth),
-            fill:this.fill,
+            fill:fill,
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

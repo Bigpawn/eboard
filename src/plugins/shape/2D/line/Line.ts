@@ -18,12 +18,13 @@ import {CursorTypeEnum} from '../../../../cursor/Enum';
 export declare interface ILineMessage extends IMessage{
     start:{x:number;y:number};
     end:{x:number;y:number};
+    stroke:string;
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class Line extends AbstractShapePlugin{
     protected instance:FabricLine;
-    private color="rgba(0,0,0,1)";
+    protected stroke="rgba(0,0,0,1)";
     private lineWidth:number=1;
     @message
     private startAction(){
@@ -32,7 +33,8 @@ class Line extends AbstractShapePlugin{
             tag:MessageTagEnum.Start,
             start:this.start,
             end:this.end,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -42,7 +44,8 @@ class Line extends AbstractShapePlugin{
             tag:MessageTagEnum.Temporary,
             start:this.start,
             end:this.end,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -52,7 +55,8 @@ class Line extends AbstractShapePlugin{
             tag:MessageTagEnum.End,
             start:this.start,
             end:this.end,
-            type:this.instance.type
+            type:this.instance.type,
+            stroke:this.instance.stroke
         }
     }
     protected onMouseMove(event:IEvent){
@@ -62,7 +66,7 @@ class Line extends AbstractShapePlugin{
         super.onMouseMove(event);
         if(void 0 === this.instance){
             this.instance=new FabricLine([this.start.x,this.start.y,this.end.x,this.end.y],{
-                stroke: this.color,
+                stroke: this.getStrokeColor(),
                 strokeWidth:this.getCanvasPixel(this.lineWidth)
             });
             this.eBoardCanvas.add(this.instance);
@@ -91,12 +95,12 @@ class Line extends AbstractShapePlugin{
      * @param {IEllipseMessage} message
      */
     public onMessage(message:ILineMessage){
-        const {id,start,end,tag} = message;
+        const {id,start,end,tag,stroke} = message;
         let instance = this.getInstanceById(id) as FabricLine;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 === instance){
             instance = new FabricLine([start.x,start.y,end.x,end.y],{
-                stroke: this.color,
+                stroke: stroke,
                 strokeWidth:this.getCanvasPixel(this.lineWidth)
             }).setId(id);
             this.eBoardCanvas.add(instance);

@@ -20,14 +20,16 @@ export declare interface ISquareMessage extends IMessage{
     start:{x:number;y:number};
     length:number;
     angle:number;
+    fill:string;
+    stroke:string;
 }
 
 
 @setCursor(CursorTypeEnum.Cross)
 class Square extends AbstractShapePlugin{
     protected instance:FabricSquare;
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill?:string;
+    protected stroke?:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     @message
@@ -38,7 +40,9 @@ class Square extends AbstractShapePlugin{
             start:this.start,
             length:this.instance.width,
             angle:this.instance.angle,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -49,7 +53,9 @@ class Square extends AbstractShapePlugin{
             start:this.start,
             length:this.instance.width,
             angle:this.instance.angle,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     @message
@@ -60,7 +66,9 @@ class Square extends AbstractShapePlugin{
             start:this.start,
             length:this.instance.width,
             angle:this.instance.angle,
-            type:this.instance.type
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
         }
     }
     protected onMouseMove(event:IEvent){
@@ -75,10 +83,10 @@ class Square extends AbstractShapePlugin{
         const angle = this.calcAngle(pos) - 45;
         if(void 0 === this.instance){
             this.instance = new FabricSquare({
-                fill:this.fill,
+                fill:this.getFillColor(),
                 left: this.start.x,
                 top: this.start.y,
-                stroke:this.stroke,
+                stroke:this.getStrokeColor(),
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
                 originX:"center",
@@ -111,15 +119,15 @@ class Square extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ISquareMessage){
-        const {id,start,length,angle,tag} = message;
+        const {id,start,length,angle,tag,fill,stroke} = message;
         let instance = this.getInstanceById(id) as FabricSquare;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 === instance){
             instance = new FabricSquare({
-                fill:this.fill,
+                fill:fill,
                 left: start.x,
                 top: start.y,
-                stroke:this.stroke,
+                stroke:stroke,
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
                 originX:"center",
