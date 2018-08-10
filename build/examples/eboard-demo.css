@@ -504,6 +504,20 @@ input::-webkit-inner-spin-button {
   z-index: 20;
   background: white;
 }
+.eboard-toolbar-picker {
+  position: relative;
+  border: 1px solid silver;
+  margin-left: 10px;
+}
+.eboard-toolbar-picker input {
+  visibility: hidden;
+  position: absolute;
+  width: 100%!important;
+  height: 100%!important;
+  left: 0!important;
+  top: 0!important;
+  overflow: hidden;
+}
 .ant-layout-logo {
   height: 32px;
   background: #333;
