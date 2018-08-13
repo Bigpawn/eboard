@@ -147,14 +147,10 @@ class Rectangle extends AbstractShapePlugin{
             if(void 0 === this.start || void 0 === this.instance){
                 return;
             }
-      
             const width=Math.abs(this.end.x-this.start.x);
             const height=Math.abs(this.end.y-this.start.y);
             const length = Math.min(width,height);
             const startPoint = this.getCtrlStartPoint(length);
-            if(width===this.instance.width&&height===this.instance.height&&startPoint.x===this.instance.left&&startPoint.y===this.instance.top){
-                return;
-            }
             this.update(startPoint,length,width,height);
         }
     }

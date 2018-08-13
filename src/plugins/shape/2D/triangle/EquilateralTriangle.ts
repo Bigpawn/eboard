@@ -19,8 +19,6 @@ import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 export declare interface IEquilateralTriangleMessage extends IMessage{
     points:any[];
-    radius:number;
-    start:{x:number,y:number},
     fill:string;
     stroke:string;
 }
@@ -37,8 +35,6 @@ class EquilateralTriangle extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTagEnum.Shape,
             points:this.instance.points,
-            start:this.start,
-            length:this.instance.width,
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke
@@ -52,7 +48,6 @@ class EquilateralTriangle extends AbstractShapePlugin{
         const radius = Math.sqrt(Math.pow(this.start.x-this.end.x,2)+Math.pow(this.start.y-this.end.y,2));
         const angle = this.calcAngle(this.end);
         const points = FabricEquilateralTriangle.calcPointsByRadius(this.start,radius,angle);
-        const length = radius * 2;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== this.instance){
             this.eBoardCanvas.remove(this.instance);
@@ -63,12 +58,6 @@ class EquilateralTriangle extends AbstractShapePlugin{
             strokeWidth: this.getCanvasPixel(this.strokeWidth),
             strokeDashArray:this.strokeDashArray,
             fill: this.getFillColor(),
-            width:length,
-            height:length,
-            left:this.start.x,
-            top:this.start.y,
-            originY:"center",
-            originX:"center"
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -87,38 +76,19 @@ class EquilateralTriangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IEquilateralTriangleMessage){
-        const {id,tag,points,start,length,fill,stroke} = message;
+        const {id,points,fill,stroke} = message;
         let instance = this.getInstanceById(id) as FabricEquilateralTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
-        if(void 0 === instance){
-            instance = new FabricEquilateralTriangle(points,{
-                stroke: stroke,
-                strokeWidth: this.getCanvasPixel(this.strokeWidth),
-                strokeDashArray:this.strokeDashArray,
-                fill: fill,
-                width:length,
-                height:length,
-                left:start.x,
-                top:start.y,
-                originY:"center",
-                originX:"center"
-            }).setId(id);
-            this.eBoardCanvas.add(instance);
+        if(void 0 !== instance){
+            this.eBoardCanvas.remove(instance);
         }
-        switch (tag){
-            case MessageTagEnum.Start:
-                break;
-            case MessageTagEnum.Temporary:
-            case MessageTagEnum.End:
-                instance.update({
-                    points:points,
-                    width:length,
-                    height:length,
-                });
-                break;
-            default:
-                break;
-        }
+        instance = new FabricEquilateralTriangle(points,{
+            stroke: stroke,
+            strokeWidth: this.getCanvasPixel(this.strokeWidth),
+            strokeDashArray:this.strokeDashArray,
+            fill: fill,
+        }).setId(id);
+        this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }
