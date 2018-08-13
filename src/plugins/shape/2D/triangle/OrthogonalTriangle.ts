@@ -19,7 +19,6 @@ import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 export declare interface IOrthogonalTriangleMessage extends IMessage{
     points:any[];
-    start:{x:number;y:number};
     stroke:string;
     fill:string
 }
@@ -37,12 +36,6 @@ class OrthogonalTriangle extends AbstractShapePlugin{
         }
         super.onMouseMove(event);
         const points= FabricOrthogonalTriangle.calcPointsByCursorPoint(this.start,this.end);
-        const width = Math.abs(this.end.x-this.start.x);
-        const height = Math.abs(this.end.y-this.start.y);
-        const center = {
-            x:(this.start.x+this.end.x)/2,
-            y:(this.start.y+this.end.y)/2,
-        };
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== this.instance){
             this.eBoardCanvas.remove(this.instance);
@@ -53,12 +46,6 @@ class OrthogonalTriangle extends AbstractShapePlugin{
             strokeWidth: this.getCanvasPixel(this.strokeWidth),
             strokeDashArray:this.strokeDashArray,
             fill: this.getFillColor(),
-            left:center.x,
-            top:center.y,
-            originY:"center",
-            originX:"center",
-            width:width,
-            height:height,
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -76,11 +63,8 @@ class OrthogonalTriangle extends AbstractShapePlugin{
     private throw(){
         return this.instance?{
             id:this.instance.id,
-            start:this.instance.pathOffset,
             tag:MessageTagEnum.Shape,
             points:this.instance.points,
-            width:this.instance.width,
-            height:this.instance.height,
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke
@@ -92,7 +76,7 @@ class OrthogonalTriangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IOrthogonalTriangleMessage){
-        const {id,points,start,width,height,stroke,fill} = message;
+        const {id,points,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricOrthogonalTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -103,12 +87,6 @@ class OrthogonalTriangle extends AbstractShapePlugin{
             strokeWidth: this.getCanvasPixel(this.strokeWidth),
             strokeDashArray:this.strokeDashArray,
             fill: fill,
-            left:start.x,
-            top:start.y,
-            originY:"center",
-            originX:"center",
-            width:width,
-            height:height,
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
