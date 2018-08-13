@@ -17,8 +17,6 @@ import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 export declare interface IPentagonMessage extends IMessage{
-    start:{x:number;y:number};
-    radius:number;
     points:any[];
     stroke:string;
     fill:string;
@@ -36,8 +34,6 @@ class Pentagon extends AbstractShapePlugin{
         return this.instance?{
             id:this.instance.id,
             tag:MessageTagEnum.Shape,
-            start:this.start,
-            radius:this.instance.width,
             points:this.instance.points,
             type:this.instance.type,
             fill:this.instance.fill,
@@ -63,12 +59,6 @@ class Pentagon extends AbstractShapePlugin{
             strokeWidth: this.getCanvasPixel(this.strokeWidth),
             strokeDashArray:this.strokeDashArray,
             fill: this.getFillColor(),
-            width:radius,
-            height:radius,
-            left:this.start.x,
-            top:this.start.y,
-            originY:"center",
-            originX:"center"
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -89,7 +79,7 @@ class Pentagon extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IPentagonMessage){
-        const {id,points,start,radius,stroke,fill} = message;
+        const {id,points,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricPentagon;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -100,12 +90,6 @@ class Pentagon extends AbstractShapePlugin{
             strokeWidth: this.getCanvasPixel(this.strokeWidth),
             strokeDashArray:this.strokeDashArray,
             fill: fill,
-            width:radius,
-            height:radius,
-            left:start.x,
-            top:start.y,
-            originY:"center",
-            originX:"center"
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
