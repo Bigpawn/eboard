@@ -13,54 +13,37 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Square as FabricSquare} from "../../../../extends/Square";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 export declare interface ISquareMessage extends IMessage{
     start:{x:number;y:number};
     length:number;
     angle:number;
+    fill:string;
+    stroke:string;
 }
 
 
-
+@setCursor(CursorTypeEnum.Cross)
 class Square extends AbstractShapePlugin{
     protected instance:FabricSquare;
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill:string;
+    protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     @message
-    private startAction(){
-        return {
+    private throw(){
+        return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
+            tag:MessageTagEnum.Shape,
             start:this.start,
             length:this.instance.width,
             angle:this.instance.angle,
-            type:this.instance.type
-        }
-    }
-    @message
-    private moveAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.Temporary,
-            start:this.start,
-            length:this.instance.width,
-            angle:this.instance.angle,
-            type:this.instance.type
-        }
-    }
-    @message
-    private endAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.End,
-            start:this.start,
-            length:this.instance.width,
-            angle:this.instance.angle,
-            type:this.instance.type
-        }
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
+        }:undefined
     }
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
@@ -72,36 +55,34 @@ class Square extends AbstractShapePlugin{
         const height=Math.abs(pos.y-this.start.y);
         const length = Math.sqrt(2) * Math.sqrt(Math.pow(width,2)+Math.pow(height,2));
         const angle = this.calcAngle(pos) - 45;
-        if(void 0 === this.instance){
-            this.instance = new FabricSquare({
-                fill:this.fill,
-                left: this.start.x,
-                top: this.start.y,
-                stroke:this.stroke,
-                strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth),
-                originX:"center",
-                originY:"center",
-                width:length,
-                height:length,
-                angle:angle
-            });
-            this.eBoardCanvas.add(this.instance);
-            this.startAction();
-        }else{
-            this.instance.update({
-                width:length,
-                height:length,
-                angle:angle
-            });
-            this.eBoardCanvas.renderAll();
-            this.moveAction();
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 !== this.instance){
+            this.eBoardCanvas.remove(this.instance);
         }
+        const id = this.instance?this.instance.id:undefined;
+        this.instance=new FabricSquare({
+            fill:this.getFillColor(),
+            left: this.start.x,
+            top: this.start.y,
+            stroke:this.getStrokeColor(),
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            originX:"center",
+            originY:"center",
+            width:length,
+            height:length,
+            angle:angle
+        });
+        if(void 0 !== id){
+            this.instance.setId(id);
+        }
+        this.throw();
+        this.eBoardCanvas.add(this.instance);
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     };
     protected onMouseUp(event:IEvent){
-        if(void 0 !== this.instance){
-            this.endAction();
-        }
+        this.throw();
         super.onMouseUp(event);
     }
     
@@ -110,39 +91,26 @@ class Square extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ISquareMessage){
-        const {id,start,length,angle,tag} = message;
+        const {id,start,length,angle,fill,stroke} = message;
         let instance = this.getInstanceById(id) as FabricSquare;
         this.eBoardCanvas.renderOnAddRemove=false;
-        if(void 0 === instance){
-            instance = new FabricSquare({
-                fill:this.fill,
-                left: start.x,
-                top: start.y,
-                stroke:this.stroke,
-                strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth),
-                originX:"center",
-                originY:"center",
-                width:length,
-                height:length,
-                angle:angle
-            }).setId(id);
-            this.eBoardCanvas.add(instance);
+        if(void 0 !== instance){
+            this.eBoardCanvas.remove(instance);
         }
-        switch (tag){
-            case MessageTagEnum.Start:
-                break;
-            case MessageTagEnum.Temporary:
-            case MessageTagEnum.End:
-                instance.update({
-                    width:length,
-                    height:length,
-                    angle:angle
-                });
-                break;
-            default:
-                break;
-        }
+        instance = new FabricSquare({
+            fill:fill,
+            left: start.x,
+            top: start.y,
+            stroke:stroke,
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            originX:"center",
+            originY:"center",
+            width:length,
+            height:length,
+            angle:angle
+        }).setId(id);
+        this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }

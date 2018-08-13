@@ -7,7 +7,8 @@
  */
 import {fabric} from "fabric";
 import {ILineOptions, IObjectOptions} from '~fabric/fabric-impl';
-class Line extends fabric.Line{
+import {IObject} from '../interface/IObject';
+class Line extends fabric.Line implements IObject{
     public type:string="line";
     public id:string;
     

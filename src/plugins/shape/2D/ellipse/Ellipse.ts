@@ -15,18 +15,22 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Ellipse as FabricEllipse} from "../../../../extends/Ellipse";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 export declare interface IEllipseMessage extends IMessage{
     start:{x:number;y:number};
     rx:number;
     ry:number;
+    fill:string;
+    stroke:string;
 }
 
+@setCursor(CursorTypeEnum.Cross)
 class Ellipse extends AbstractShapePlugin{
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill:string;
+    protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     private ctrlKey:boolean=false;
@@ -89,16 +93,44 @@ class Ellipse extends AbstractShapePlugin{
         }
     };
     @message
-    private throw(tag:MessageTagEnum){
-        return {
+    private throw(){
+        return this.instance?{
             id:this.instance.id,
-            tag:tag,
+            tag:MessageTagEnum.Shape,
             start:{x:this.instance.left,y:this.instance.top},
             rx:this.instance.rx,
             ry:this.instance.ry,
-            type:this.instance.type
-        }
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
+        }:undefined
     }
+    
+    private update(startPoint:{x:number;y:number},radius:number,rx:number,ry:number){
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 !== this.instance){
+            this.eBoardCanvas.remove(this.instance);
+        }
+        const id = this.instance?this.instance.id:undefined;
+        this.instance=new FabricEllipse({
+            fill:this.getFillColor(),
+            left: startPoint.x,
+            top: startPoint.y,
+            rx:this.ctrlKey?radius:rx,
+            ry:this.ctrlKey?radius:ry,
+            stroke:this.getStrokeColor(),
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth)
+        });
+        if(void 0 !== id){
+            this.instance.setId(id);
+        }
+        this.throw();
+        this.eBoardCanvas.add(this.instance);
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
+    }
+    
     protected onMouseMove(event:IEvent){
         if(void 0 ===this.start){
             return;
@@ -108,34 +140,10 @@ class Ellipse extends AbstractShapePlugin{
         const ry=Math.round(Math.abs(this.end.y-this.start.y)/2);
         const radius = Math.min(rx,ry);
         const startPoint = this.ctrlKey?this.getCtrlStartPoint(radius):this.getStartPoint();
-        if(void 0 !== this.instance){
-            this.instance.update({
-                rx:this.ctrlKey?radius:rx,
-                ry:this.ctrlKey?radius:ry,
-                left: startPoint.x,
-                top: startPoint.y,
-            });
-            this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
-        }else{
-            this.instance=new FabricEllipse({
-                fill:this.fill,
-                left: startPoint.x,
-                top: startPoint.y,
-                rx:this.ctrlKey?radius:rx,
-                ry:this.ctrlKey?radius:ry,
-                stroke:this.stroke,
-                strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth)
-            });
-            this.eBoardCanvas.add(this.instance);
-            this.throw(MessageTagEnum.Start);
-        }
+        this.update(startPoint,radius,rx,ry);
     };
     protected onMouseUp(event:IEvent){
-        if(void 0 !== this.instance){
-            this.throw(MessageTagEnum.End);
-        }
+        this.throw();
         super.onMouseUp(event);
     }
     protected ctrlKeyDownHandler(e:KeyboardEvent){
@@ -153,14 +161,7 @@ class Ellipse extends AbstractShapePlugin{
             if(radius===this.instance.rx&&radius===this.instance.ry&&startPoint.x===this.start.x&&startPoint.y===this.start.y){
                 return;
             }
-            this.instance.update({
-                rx:radius,
-                ry:radius,
-                left: startPoint.x,
-                top: startPoint.y,
-            });
-            this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
+            this.update(startPoint,radius,rx,ry);
         }
     }
     protected ctrlKeyUpHandler(e:KeyboardEvent){
@@ -174,14 +175,7 @@ class Ellipse extends AbstractShapePlugin{
             const rx=Math.round(Math.abs(this.end.x-this.start.x)/2);
             const ry=Math.round(Math.abs(this.end.y-this.start.y)/2);
             const startPoint = this.getStartPoint();
-            this.instance.update({
-                rx:rx,
-                ry:ry,
-                left: startPoint.x,
-                top: startPoint.y,
-            });
-            this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
+            this.update(startPoint,rx,rx,ry);
         }
     }
     
@@ -191,37 +185,24 @@ class Ellipse extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IEllipseMessage){
-        const {id,start,rx,ry,tag} = message;
+        const {id,start,rx,ry,fill,stroke} = message;
         let instance = this.getInstanceById(id) as FabricEllipse;
         this.eBoardCanvas.renderOnAddRemove=false;
-        if(void 0 === instance){
-            instance = new FabricEllipse({
-                fill:this.fill,
-                left: start.x,
-                top: start.y,
-                rx:rx,
-                ry:ry,
-                stroke:this.stroke,
-                strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth)
-            }).setId(id);
-            this.eBoardCanvas.add(instance);
+    
+        if(void 0 !== instance){
+            this.eBoardCanvas.remove(instance);
         }
-        switch (tag){
-            case MessageTagEnum.Start:
-                break;
-            case MessageTagEnum.Temporary:
-            case MessageTagEnum.End:
-                instance.update({
-                    rx:rx,
-                    ry:ry,
-                    left: start.x,
-                    top: start.y,
-                });
-                break;
-            default:
-                break;
-        }
+        instance = new FabricEllipse({
+            fill:fill,
+            left: start.x,
+            top: start.y,
+            rx:rx,
+            ry:ry,
+            stroke:stroke,
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth)
+        }).setId(id);
+        this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }

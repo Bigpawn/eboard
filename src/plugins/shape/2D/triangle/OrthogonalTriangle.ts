@@ -12,19 +12,23 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {OrthogonalTriangle as FabricOrthogonalTriangle} from "../../../../extends/OrthogonalTriangle";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 
 export declare interface IOrthogonalTriangleMessage extends IMessage{
     points:any[];
-    start:{x:number;y:number}
+    start:{x:number;y:number};
+    stroke:string;
+    fill:string
 }
 
+@setCursor(CursorTypeEnum.Cross)
 class OrthogonalTriangle extends AbstractShapePlugin{
     protected instance:FabricOrthogonalTriangle;
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill:string;
+    protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     protected onMouseMove(event:IEvent){
@@ -39,53 +43,48 @@ class OrthogonalTriangle extends AbstractShapePlugin{
             x:(this.start.x+this.end.x)/2,
             y:(this.start.y+this.end.y)/2,
         };
-        if(void 0 ===this.instance){
-            this.instance = new FabricOrthogonalTriangle(points,{
-                stroke: this.stroke,
-                strokeWidth: this.getCanvasPixel(this.strokeWidth),
-                strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
-                left:center.x,
-                top:center.y,
-                originY:"center",
-                originX:"center",
-                width:width,
-                height:height,
-            });
-            this.eBoardCanvas.add(this.instance);
-            this.throw(MessageTagEnum.Start);
-        }else{
-            this.instance.update({
-                points:points,
-                width:width,
-                height:height,
-                left:center.x,
-                top:center.y,
-                originY:"center",
-                originX:"center",
-                pathOffset:center
-            });
-            this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 !== this.instance){
+            this.eBoardCanvas.remove(this.instance);
         }
+        const id = this.instance?this.instance.id:undefined;
+        this.instance=new FabricOrthogonalTriangle(points,{
+            stroke: this.getStrokeColor(),
+            strokeWidth: this.getCanvasPixel(this.strokeWidth),
+            strokeDashArray:this.strokeDashArray,
+            fill: this.getFillColor(),
+            left:center.x,
+            top:center.y,
+            originY:"center",
+            originX:"center",
+            width:width,
+            height:height,
+        });
+        if(void 0 !== id){
+            this.instance.setId(id);
+        }
+        this.throw();
+        this.eBoardCanvas.add(this.instance);
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     };
     protected onMouseUp(event:IEvent){
-        if(void 0 !== this.instance){
-            this.throw(MessageTagEnum.End);
-        }
+        this.throw();
         super.onMouseUp(event);
     }
     @message
-    private throw(tag:MessageTagEnum){
-        return {
+    private throw(){
+        return this.instance?{
             id:this.instance.id,
             start:this.instance.pathOffset,
-            tag:tag,
+            tag:MessageTagEnum.Shape,
             points:this.instance.points,
             width:this.instance.width,
             height:this.instance.height,
-            type:this.instance.type
-        };
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
+        }:undefined;
     }
     
     /**
@@ -93,44 +92,25 @@ class OrthogonalTriangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IOrthogonalTriangleMessage){
-        const {id,tag,points,start,width,height} = message;
+        const {id,points,start,width,height,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricOrthogonalTriangle;
-        
         this.eBoardCanvas.renderOnAddRemove=false;
-        if(void 0 === instance){
-            instance = new FabricOrthogonalTriangle(points,{
-                stroke: this.stroke,
-                strokeWidth: this.getCanvasPixel(this.strokeWidth),
-                strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
-                left:start.x,
-                top:start.y,
-                originY:"center",
-                originX:"center",
-                width:width,
-                height:height,
-            }).setId(id);
-            this.eBoardCanvas.add(instance);
+        if(void 0 !== instance){
+            this.eBoardCanvas.remove(instance);
         }
-        switch (tag){
-            case MessageTagEnum.Start:
-                break;
-            case MessageTagEnum.Temporary:
-            case MessageTagEnum.End:
-                instance.update({
-                    points:points,
-                    width:width,
-                    height:height,
-                    left:start.x,
-                    top:start.y,
-                    originY:"center",
-                    originX:"center",
-                    pathOffset:start
-                });
-                break;
-            default:
-                break;
-        }
+        instance = new FabricOrthogonalTriangle(points,{
+            stroke: stroke,
+            strokeWidth: this.getCanvasPixel(this.strokeWidth),
+            strokeDashArray:this.strokeDashArray,
+            fill: fill,
+            left:start.x,
+            top:start.y,
+            originY:"center",
+            originX:"center",
+            width:width,
+            height:height,
+        }).setId(id);
+        this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }

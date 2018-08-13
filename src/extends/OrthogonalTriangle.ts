@@ -7,6 +7,7 @@
  */
 import {fabric} from "fabric";
 import {IObjectOptions, IPolygonOptions} from '~fabric/fabric-impl';
+import {IObject} from '../interface/IObject';
 
 
 
@@ -15,7 +16,7 @@ export declare interface IExtendPolygonOptions extends IPolygonOptions{
 }
 
 
-class OrthogonalTriangle extends fabric.Polygon{
+class OrthogonalTriangle extends fabric.Polygon implements IObject{
     public pathOffset:{x:number;y:number};
     public type:string="orthogonal-triangle";
     public id:string;

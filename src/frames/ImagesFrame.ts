@@ -15,6 +15,7 @@ import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {IFrameGroupMessageInterface} from '../IMessageInterface';
 import {Plugins} from '../plugins';
+import {EventBus} from '../utils/EventBus';
 
 
 @setAnimationName('eboard-pager')
@@ -35,8 +36,10 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
     public images:string[];
     public parent?:EBoard;
     public id:string;
-    constructor(options:IImagesFrameOptions,container:HTMLDivElement,parent?:EBoard,id?:string){
+    private eventBus:EventBus;
+    constructor(options:IImagesFrameOptions,container:HTMLDivElement,eventBus:EventBus,parent?:EBoard,id?:string){
         this.id = id||Date.now().toString();
+        this.eventBus=eventBus;
         this.options=options;
         this._options=Object.assign({},options);
         this.container=container;
@@ -46,43 +49,9 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
         this.fixContainer();
         this.initLayout();
         this.initialize();
-        this.observePlugin();
-        this.initPlugin();
         this.initializeAction();
     }
-    private initPlugin(){
-        if(void 0 !== this.parent){
-            const eBoard = this.parent;
-            const pluginController = eBoard.pluginController;
-            pluginController.forEach((obj:any,plugin)=>{
-                const {enable,options} = obj;
-                if(enable){
-                    this.child.forEach((frame)=>{
-                        const instance = frame.getPlugin(plugin);
-                        if(void 0 !== instance){
-                            instance.setOptions(options);
-                            instance.setEnable(true);
-                        }
-                    })
-                }
-            })
-        }
-    }
-    private observePlugin(){
-        if(this.parent instanceof EBoard){
-            this.parent.on("plugin:active",(event:any)=>{
-                const data = event.data;
-                const {plugin,options} = data;
-                this.child.forEach((frame)=>{
-                    const instance = frame.getPlugin(plugin);
-                    if(void 0 !== instance){
-                        instance.setOptions(options);
-                        instance.setEnable(true);
-                    }
-                })
-            })
-        }
-    }
+    
     @message
     public initializeAction(){
         return {
@@ -154,7 +123,7 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
                 width:options.width,
                 height:options.height,
                 dimensions:options.dimensions
-            },this.container,this,this.pageNum.toString(),true);
+            },this.container,this.eventBus,this,this.pageNum.toString(),true);
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
             this.dom.appendChild(this.pageFrame.dom);
@@ -214,7 +183,7 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
                 width:this._options.width,
                 height:this._options.height,
                 dimensions:this._options.dimensions
-            },this.container,this,pageNum.toString(),true);
+            },this.container,this.eventBus,this,pageNum.toString(),true);
             this.child.set(pageNum,nextPageFrame);
         }
         return nextPageFrame;

@@ -7,7 +7,8 @@
  */
 import {fabric} from "fabric";
 import {IObjectOptions, IPolygonOptions} from '~fabric/fabric-impl';
-class Star extends fabric.Polygon{
+import {IObject} from '../interface/IObject';
+class Star extends fabric.Polygon implements IObject{
     public type:string="star";
     public id:string;
     constructor(points: Array<{ x: number; y: number }>, options?: IObjectOptions, skipOffset?: boolean){

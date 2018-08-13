@@ -15,6 +15,7 @@ import {escKeyEnable, mixinPlugins} from './utils/decorators';
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins, Plugins} from './plugins';
 import {IFrame} from './interface/IFrame';
+import {EventBus} from './utils/EventBus';
 
 
 declare interface IPlugin{
@@ -23,7 +24,7 @@ declare interface IPlugin{
 }
 
 
-@mixinPlugins([Plugins.Cursor,Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear,Plugins.Arrow,Plugins.ArrowNext,Plugins.ArrowPrev,Plugins.Delete])
+@mixinPlugins([Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear,Plugins.Arrow,Plugins.ArrowNext,Plugins.ArrowPrev,Plugins.Delete,Plugins.Ferule])
 @escKeyEnable(true)
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
@@ -35,8 +36,10 @@ class EBoardEngine{
     public parent:IFrame;
     private handleAll?:boolean;
     public messageHandle?:Function;
-    constructor(element: HTMLCanvasElement | string, options: ICanvasOptions,parent:IFrame){
-        this.eBoardCanvas = new EBoardCanvas(element,options);
+    private eventBus:EventBus;
+    constructor(element: HTMLCanvasElement, options: ICanvasOptions,parent:IFrame,eventBus:EventBus){
+        this.eventBus=eventBus;
+        this.eBoardCanvas = new EBoardCanvas(element,this.eventBus,options,this);
         this.parent=parent;
         this.initPlugin();
         this.escHandler();
@@ -44,7 +47,7 @@ class EBoardEngine{
     private initPlugin(){
         // plugins 实例化
         this.pluginList.forEach((plugin)=>{
-            this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
+            this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this,this.eventBus));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
         });
     }
     private escHandler(){

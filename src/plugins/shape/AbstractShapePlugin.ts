@@ -7,8 +7,6 @@
  */
 import {AbstractPlugin} from '../AbstractPlugin';
 import {IEvent} from "~fabric/fabric-impl";
-import {EBoardCanvas} from '../../EBoardCanvas';
-import {EBoardEngine} from '../../EBoardEngine';
 
 
 export enum Quadrant{
@@ -19,10 +17,8 @@ export enum Quadrant{
 }
 
 abstract class AbstractShapePlugin extends AbstractPlugin{
-    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
-        super(canvas,eBoardEngine);
-    }
-    
+    protected stroke:string;
+    protected fill:string;
     /**
      * default mouseDown Event
      * @param {"~fabric/fabric-impl".IEvent} event
@@ -130,6 +126,13 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
             default:
                 return angle;
         }
+    }
+    
+    protected getStrokeColor(){
+        return this.eventBus.sharedData.stroke||this.stroke;
+    }
+    protected getFillColor(){
+        return this.eventBus.sharedData.fill||this.fill;
     }
 }
 

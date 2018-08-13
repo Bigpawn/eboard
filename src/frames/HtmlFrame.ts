@@ -30,14 +30,15 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
     protected getChildren():string|HTMLElement|undefined{
         return this.options.content;
     }
-    protected getLoadedImage(){
-        const image =document.createElement("img");
-        image.src="";
-        image.style.display="none";
-        image.onerror=()=>{
+    private attachLoadReLayout(container:HTMLElement){
+        const loadImage = document.createElement("img");
+        loadImage.src="";
+        loadImage.style.display="none";
+        loadImage.onerror=()=>{
+            container.removeChild(loadImage);
             this.initLayout();
         };
-        return image;
+        container.appendChild(loadImage);
     }
     protected initEngine(){
         const container = document.createElement("div");
@@ -52,14 +53,14 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
         const html = this.html =this.getChildren();
         if(typeof html === "string"){
             htmlWrap.innerHTML=html;
-            container.appendChild(this.getLoadedImage());
+            this.attachLoadReLayout(container);
         }else{
             if(void 0 !==html){
                 htmlWrap.innerHTML="";
                 htmlWrap.appendChild(html);
                 // 如果标签是image标签则不添加异常image元素
                 if(html.tagName!=="IMG"){
-                    container.appendChild(this.getLoadedImage());
+                    this.attachLoadReLayout(container);
                 }else{
                     // 添加onload 或onerror事件支持
                     html.onload=()=>{
@@ -80,7 +81,7 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
             selection:false,
             skipTargetFind:true,
             containerClass:"eboard-canvas"
-        },this);
+        },this,this.eventBus);
         // scrollbar 设置  如果是html,必然存在滚动条
         switch (this.options.scrollbar){
             case ScrollbarType.horizontal:

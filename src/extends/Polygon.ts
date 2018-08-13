@@ -8,7 +8,8 @@
 import {fabric} from "fabric";
 import {IPolylineOptions} from "~fabric/fabric-impl";
 import {EBoardCanvas} from '../EBoardCanvas';
-class Polygon extends fabric.Polyline{
+import {IObject} from '../interface/IObject';
+class Polygon extends fabric.Polyline implements IObject{
     public type:string="polygon";
     public id:string;
     /**

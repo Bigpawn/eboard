@@ -7,12 +7,13 @@
  */
 import {fabric} from "fabric";
 import {IPathOptions} from '~fabric/fabric-impl';
+import {IObject} from '../interface/IObject';
 
 export declare interface IExtendPencilOptions extends IPathOptions{
     pathOffset?:{x:number;y:number}
 }
 
-class Pencil extends fabric.Path{
+class Pencil extends fabric.Path implements IObject{
     public type:string="pencil";
     public id:string;
     

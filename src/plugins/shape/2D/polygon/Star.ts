@@ -12,54 +12,37 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Star as FabricStar} from "../../../../extends/Star";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 export declare interface IStarMessage extends IMessage{
     points:any[];
     radius:number;
     start:{x:number;y:number};
+    stroke:string;
+    fill:string;
 }
 
-
+@setCursor(CursorTypeEnum.Cross)
 class Star extends AbstractShapePlugin{
     protected instance:FabricStar;
-    private fill?:string;
-    private stroke?:string="rgba(0,0,0,1)";
+    protected fill:string;
+    protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     @message
-    private startAction(){
-        return {
+    private throw(){
+        return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
+            tag:MessageTagEnum.Shape,
             points:this.instance.points,
             start:this.start,
             radius:this.instance.width,
-            type:this.instance.type
-        }
-    }
-    @message
-    private moveAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.Temporary,
-            points:this.instance.points,
-            start:this.start,
-            radius:this.instance.width,
-            type:this.instance.type
-        }
-    }
-    @message
-    private endAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.End,
-            points:this.instance.points,
-            start:this.start,
-            radius:this.instance.width,
-            type:this.instance.type
-        }
+            type:this.instance.type,
+            stroke:this.instance.stroke,
+            fill:this.instance.fill
+        }:undefined
     }
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
@@ -70,35 +53,34 @@ class Star extends AbstractShapePlugin{
         const angle = this.calcAngle(this.end);
         const points = FabricStar.calcPointsByRadius(this.start,radius,angle);
         const length = radius*2;
-        if(void 0 ===this.instance){
-            this.instance = new FabricStar(points,{
-                stroke: this.stroke,
-                strokeWidth: this.getCanvasPixel(this.strokeWidth),
-                strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
-                width:length,
-                height:length,
-                left:this.start.x,
-                top:this.start.y,
-                originY:"center",
-                originX:"center"
-            });
-            this.eBoardCanvas.add(this.instance);
-            this.startAction();
-        }else{
-            this.instance.update({
-                points:points,
-                width:length,
-                height:length,
-            });
-            this.eBoardCanvas.renderAll();
-            this.moveAction();
+    
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 !== this.instance){
+            this.eBoardCanvas.remove(this.instance);
         }
+        const id = this.instance?this.instance.id:undefined;
+        this.instance=new FabricStar(points,{
+            stroke: this.getStrokeColor(),
+            strokeWidth: this.getCanvasPixel(this.strokeWidth),
+            strokeDashArray:this.strokeDashArray,
+            fill: this.getFillColor(),
+            width:length,
+            height:length,
+            left:this.start.x,
+            top:this.start.y,
+            originY:"center",
+            originX:"center"
+        });
+        if(void 0 !== id){
+            this.instance.setId(id);
+        }
+        this.throw();
+        this.eBoardCanvas.add(this.instance);
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     };
     protected onMouseUp(event:IEvent){
-        if(void 0 !== this.instance){
-            this.endAction();
-        }
+        this.throw();
         super.onMouseUp(event);
     }
     
@@ -107,38 +89,25 @@ class Star extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IStarMessage){
-        const {id,points,radius,start,tag} = message;
+        const {id,points,radius,start,fill,stroke} = message;
         let instance = this.getInstanceById(id) as FabricStar;
         this.eBoardCanvas.renderOnAddRemove=false;
-        if(void 0 === instance){
-            instance = new FabricStar(points,{
-                stroke: this.stroke,
-                strokeWidth: this.getCanvasPixel(this.strokeWidth),
-                strokeDashArray:this.strokeDashArray,
-                fill: this.fill,
-                width:radius,
-                height:radius,
-                left:start.x,
-                top:start.y,
-                originY:"center",
-                originX:"center"
-            }).setId(id);
-            this.eBoardCanvas.add(instance);
+        if(void 0 !== instance){
+            this.eBoardCanvas.remove(instance);
         }
-        switch (tag){
-            case MessageTagEnum.Start:
-                break;
-            case MessageTagEnum.Temporary:
-            case MessageTagEnum.End:
-                instance.update({
-                    points:points,
-                    width:radius,
-                    height:radius,
-                });
-                break;
-            default:
-                break;
-        }
+        instance = new FabricStar(points,{
+            stroke: stroke,
+            strokeWidth: this.getCanvasPixel(this.strokeWidth),
+            strokeDashArray:this.strokeDashArray,
+            fill: fill,
+            width:radius,
+            height:radius,
+            left:start.x,
+            top:start.y,
+            originY:"center",
+            originX:"center"
+        }).setId(id);
+        this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }

@@ -15,20 +15,23 @@ import {
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Polygon as FabricPolygon} from "../../../../extends/Polygon";
-import {message} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
+import {CursorTypeEnum} from '../../../../cursor/Enum';
 
 
 export declare interface IPolygonMessage extends IMessage{
-    points:any[]
+    points:any[];
+    stroke:string;
+    fill:string;
 }
 
 
-
+@setCursor(CursorTypeEnum.Cross)
 class Polygon extends AbstractShapePlugin{
     protected instance:FabricPolygon;
     private points:fabric.Point[]=[];
-    private fill?:string="#28ff28";
-    private stroke?:string="pink";
+    protected fill:string;
+    protected stroke:string="rgb(0,0,0)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     private circle:fabric.Circle;// 起始点磁贴效果
@@ -49,63 +52,32 @@ class Polygon extends AbstractShapePlugin{
         }
         this.eBoardCanvas.remove(this.instance);
         this.instance=new FabricPolygon(this.points,{
-            stroke:this.stroke,
+            stroke:this.getStrokeColor(),
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.getCanvasPixel(this.strokeWidth),
-            fill:this.fill,
+            fill:this.getFillColor(),
         }).setId(this.instance.id);
         this.eBoardCanvas.add(this.instance);
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
+        this.throw();
         if(_close&&finished){
-            this.endAction();
             this.points=[];
             this.start = undefined as any;
             this.instance = undefined as any;
             this.circle = undefined as any;
-        }else{
-            if(finished){
-                this.downAction();
-            }else{
-                this.moveAction();
-            }
         }
     }
     @message
-    private startAction(){
-        return {
+    private throw(){
+        return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
+            tag:MessageTagEnum.Shape,
             points:this.instance.points,
-            type:this.instance.type
-        }
-    }
-    @message
-    private moveAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.Temporary,
-            points:this.instance.points,
-            type:this.instance.type
-        }
-    }
-    @message
-    private downAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.Process,
-            points:this.instance.points,
-            type:this.instance.type
-        }
-    }
-    @message
-    private endAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.End,
-            points:this.instance.points,
-            type:this.instance.type
-        }
+            type:this.instance.type,
+            fill:this.instance.fill,
+            stroke:this.instance.stroke
+        }:undefined
     }
     protected onMouseDown(event:IEvent){
         const point = this.eBoardCanvas.getPointer(event.e);
@@ -122,13 +94,13 @@ class Polygon extends AbstractShapePlugin{
         this.points.push(new fabric.Point(point.x,point.y));// 如果关闭则
         if(void 0 === this.instance){
             this.instance = new FabricPolygon(this.points,{
-                stroke:this.stroke,
+                stroke:this.getStrokeColor(),
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
-                fill:this.fill,
+                fill:this.getFillColor(),
             });
             this.eBoardCanvas.add(this.instance);
-            this.startAction();
+            this.throw();
         }else{
             this.replace(true);
         }
@@ -197,17 +169,17 @@ class Polygon extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IPolygonMessage){
-        const {id,points} = message;
+        const {id,points,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricPolygon;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
         instance = new FabricPolygon(points,{
-            stroke:this.stroke,
+            stroke:stroke,
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.getCanvasPixel(this.strokeWidth),
-            fill:this.fill,
+            fill:fill,
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

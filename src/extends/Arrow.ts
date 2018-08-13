@@ -7,13 +7,14 @@
  */
 import {fabric} from "fabric";
 import {IPathOptions} from '~fabric/fabric-impl';
+import {IObject} from '../interface/IObject';
 
 export declare interface IExtendArrowOptions extends IPathOptions{
     pathOffset?:{x:number;y:number}
 }
 
 
-class Arrow extends fabric.Path{
+class Arrow extends fabric.Path implements IObject{
     public type:string="arrow";
     public id:string;
     

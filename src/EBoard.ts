@@ -8,7 +8,7 @@
  * 支持页面中多实例模式，多容器模式，从静态类修改成实体类
  * 消息代理应该从该对象拦截
  * 通过事件传递插件启用状态
- *
+ * 数据共享机制通过eventBus进行缓存
  *
  */
 
@@ -37,23 +37,23 @@ import {MessageReceiver} from "./middlewares/MessageReceiver";
 import {
     Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
     OrthogonalTriangle, Pencil, Pentagon,
-    Plugins, Polygon, Rectangle, Square, Star, Triangle, Text, Delete,
+    Plugins, Polygon, Rectangle, Square, Star, Triangle, Text, Delete,Selection
 } from './plugins';
-import {EventBus} from './utils/EventBus';
+import {EventBus, IPluginConfigOptions} from './utils/EventBus';
 
 export enum FrameType{
     Empty="empty-frame",Image="image-frame",HTML="html-frame",Canvas="canvas-frame",Pdf="pdf-frame",Images="images-frame"
 }
 
 
-class EBoard extends EventBus{
+class EBoard{
+    private eventBus:EventBus=new EventBus();
     private frames:Map<string,IFrame|IFrameGroup>=new Map();// frame管理
     private activeFrame:string;
     private container:HTMLDivElement|(()=>HTMLDivElement);
     private messageReceiver:MessageReceiver=new MessageReceiver(this);
     public messageAdapter=new MessageAdapter(this,false);
     public messageMiddleWare = new MessageMiddleWare();
-    public pluginController:Map<Plugins,object>=new Map<Plugins, object>();
     private getContainer(){
         const containerElement = "tagName" in this.container?this.container:this.container();
         containerElement.style.width=containerElement.offsetWidth + "px";
@@ -61,8 +61,65 @@ class EBoard extends EventBus{
         return containerElement;
     }
     constructor(containerFilter:HTMLDivElement|(()=>HTMLDivElement)){
-        super();
         this.container = containerFilter;
+        // plugin事件监听
+        this.observePlugins();
+    }
+    private observePlugins(){
+        this.eventBus.on("plugin:active",(event:any)=>{
+            const data = event.data;
+            const {plugin,options} = data;
+            switch (plugin){
+                case Plugins.ArrowPrev:
+                case Plugins.Arrow:
+                case Plugins.ArrowNext:
+                case Plugins.Line:
+                case Plugins.Hexagon:
+                case Plugins.Pentagon:
+                case Plugins.Star:
+                case Plugins.Polygon:
+                case Plugins.OrthogonalTriangle:
+                case Plugins.EquilateralTriangle:
+                case Plugins.Triangle:
+                case Plugins.Square:
+                case Plugins.Rectangle:
+                case Plugins.Circle:
+                case Plugins.Pencil:
+                case Plugins.Text:
+                case Plugins.Ellipse:
+                case Plugins.HTML:
+                case Plugins.Selection:
+                case Plugins.Ferule:
+                    // 数据共享
+                    if(!options.background){
+                        this.eventBus.sharedData.plugins.clear();// clear 什么时候触发
+                    }
+                    this.eventBus.sharedData.plugins.set(plugin,{
+                        ...options,
+                        enable:true,
+                    });
+                    break;
+                case Plugins.Clear:
+                    // 不设置，仅清空当前显示的画布 发送clear消息
+                    if(void 0 !== this.activeFrame){
+                        const frame = this.findFrameById(this.activeFrame);
+                        if(void 0 !== frame){
+                            const instance = frame.getPlugin(Plugins.Clear) as Clear;
+                            instance.clear();
+                        }
+                    }
+                    return;
+                default:
+                    break;
+            }
+        });
+        this.eventBus.on("plugin:disable",(event:any)=>{
+            const data = event.data;
+            const {plugin} = data;
+            if(this.eventBus.sharedData.plugins.has(plugin)){
+                this.eventBus.sharedData.plugins.delete(plugin);
+            }
+        });
     }
     
     /**
@@ -81,23 +138,23 @@ class EBoard extends EventBus{
         }
         switch (type){
             case FrameType.HTML:
-                frame = new HtmlFrame(options as IHTMLFrameOptions,container,this,id);
+                frame = new HtmlFrame(options as IHTMLFrameOptions,container,this.eventBus,this,id,);
                 break;
             case FrameType.Image:
-                frame = new ImageFrame(options as IImageFrameOptions,container,this,id);
+                frame = new ImageFrame(options as IImageFrameOptions,container,this.eventBus,this,id);
                 break;
             case FrameType.Canvas:
-                frame = new CanvasFrame(options as ICanvasFrameOptions,container,this,id);
+                frame = new CanvasFrame(options as ICanvasFrameOptions,container,this.eventBus,this,id);
                 break;
             case FrameType.Pdf:
-                frame = new PdfFrame(options as IPdfFrameOptions,container,this,id);
+                frame = new PdfFrame(options as IPdfFrameOptions,container,this.eventBus,this,id);
                 break;
             case FrameType.Images:
-                frame = new ImagesFrame(options as IImagesFrameOptions,container,this,id);
+                frame = new ImagesFrame(options as IImagesFrameOptions,container,this.eventBus,this,id);
                 break;
             case FrameType.Empty:
             default:
-                frame = new BaseFrame(options,container,this,id);
+                frame = new BaseFrame(options,container,this.eventBus,this,id);
                 break;
         }
         this.frames.set(frame.id,frame);
@@ -240,7 +297,6 @@ class EBoard extends EventBus{
                 this.createFrame(messageObj);
                 break;
             case MessageTagEnum.SwitchToFrame:
-                
                 // 切换分页
                 // 通过id获取frameGroup
                 frameGroup = this.findFrameById(options.id) as IFrameGroup;
@@ -260,6 +316,18 @@ class EBoard extends EventBus{
                 break;
             case MessageTagEnum.Scroll:
                 frame.scrollbar&&frame.scrollbar.onMessage(options);
+                break;
+            case MessageTagEnum.Cursor:
+                frame.engine&&frame.engine.eBoardCanvas.onMessage(options);
+                break;
+            case MessageTagEnum.SelectionMove:
+                (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                break;
+            case MessageTagEnum.SelectionScale:
+                (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                break;
+            case MessageTagEnum.SelectionRotate:
+                (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
                 break;
             default:
                 if(void 0 !== frame){
@@ -322,57 +390,35 @@ class EBoard extends EventBus{
     }
     
     /**
-     * 设置启用的插件，同步到所有的实例中，并且保证后续实例创建时自动启用
+     * 支持后台运行模式启用
+     * @param {Plugins} plugin
+     * @param {IPluginConfigOptions} options
      */
-    public setActivePlugin(plugin:Plugins,options?:any){// 插件options
-        switch (plugin){
-            case Plugins.ArrowPrev:
-            case Plugins.Arrow:
-            case Plugins.ArrowNext:
-            case Plugins.Line:
-            case Plugins.Hexagon:
-            case Plugins.Pentagon:
-            case Plugins.Star:
-            case Plugins.Polygon:
-            case Plugins.OrthogonalTriangle:
-            case Plugins.EquilateralTriangle:
-            case Plugins.Triangle:
-            case Plugins.Square:
-            case Plugins.Rectangle:
-            case Plugins.Circle:
-            case Plugins.Pencil:
-            case Plugins.Text:
-            case Plugins.Ellipse:
-            case Plugins.HTML:
-            case Plugins.Selection:
-                // 无法与其他共存
-                this.pluginController.clear();
-                this.pluginController.set(plugin,{
-                    enable:true,
-                    options:options
-                });
-                break;
-            case Plugins.Clear:
-                // 不设置，仅清空当前显示的画布 发送clear消息
-                if(void 0 !== this.activeFrame){
-                    const frame = this.findFrameById(this.activeFrame);
-                    if(void 0 !== frame){
-                        const instance = frame.getPlugin(Plugins.Clear) as Clear;
-                        instance.clear();
-                    }
-                  
-                }
-                return;
-            case Plugins.Cursor:// 可以共用
-                
-                break;
-            default:
-                break;
-        }
-        this.trigger("plugin:active",{
+    public setActivePlugin(plugin:Plugins,options?:IPluginConfigOptions){
+        this.eventBus.trigger("plugin:active",{
             plugin:plugin,
-            options:options
+            options:options||{}
         });
+    }
+    
+    /**
+     * 设置strokeColor
+     * @param {string} color
+     * @returns {this}
+     */
+    public setStrokeColor(color:string){
+        this.eventBus.sharedData.stroke=color;
+        return this;
+    }
+    
+    /**
+     * 设置fillColor
+     * @param {string} color
+     * @returns {this}
+     */
+    public setFillColor(color:string){
+        this.eventBus.sharedData.fill=color;
+        return this;
     }
 }
 

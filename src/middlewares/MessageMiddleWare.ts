@@ -19,7 +19,8 @@ import {IFrameOptions} from '../interface/IFrame';
 
 export enum MessageTagEnum{
     Start,Temporary,Process,End,CreateFrame,DestroyFrame,CreateFrameGroup,DestroyFrameGroup,SwitchToFrame,Clear,AllowHtmlAction,DisAllowHtmlAction,Scroll,
-    Delete
+    Delete,Cursor,SelectionMove,SelectionScale,SelectionRotate,
+    Shape
 }
 
 

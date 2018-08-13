@@ -5,9 +5,9 @@
  * * @Last Modified time: 2018/7/6 16:10
  * @disc:装饰器
  */
-import {CursorTypeName} from '../plugins/tool/cursor/CursorType';
 import {MessageAdapter} from '../interceptor/MessageAdapter';
 import {MessageMiddleWare} from '../middlewares/MessageMiddleWare';
+import {CursorTypeEnum} from '../cursor/Enum';
 
 function mixinPlugin(pluginName:string):ClassDecorator{
     return (target:any)=>{
@@ -53,7 +53,7 @@ function defaultValue(value: any):PropertyDecorator{
  * 插件引用Cursor
  * @returns {ClassDecorator}
  */
-function setCursor(cursorType:CursorTypeName):ClassDecorator{
+function setCursor(cursorType:CursorTypeEnum):ClassDecorator{
     return (target:any)=>{
         // 附加到插件列表中去
         Object.assign(target.prototype, {
@@ -160,6 +160,9 @@ function message(target:any, name:string, descriptor:PropertyDescriptor){
     const oldValue = descriptor.value;
     descriptor.value =function(){
         const message = oldValue.apply(this,arguments);
+        if(void 0 === message || null === message){
+            return message;
+        }
         let copyMessage = Object.assign({},message);
         
         // 循环向上遍历

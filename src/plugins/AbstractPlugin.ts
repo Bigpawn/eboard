@@ -10,14 +10,15 @@
 
 import {EBoardCanvas} from '../EBoardCanvas';
 import {EBoardEngine} from '../EBoardEngine';
-import {CursorTypeName} from './tool/cursor/CursorType';
 import {IEvent} from '~fabric/fabric-impl';
 import {fabric} from "fabric";
+import {CursorTypeEnum} from '../cursor/Enum';
+import {EventBus} from '../utils/EventBus';
 
 abstract class AbstractPlugin {
     protected eBoardCanvas:EBoardCanvas;
     protected eBoardEngine:EBoardEngine;
-    protected cursorType:CursorTypeName;
+    protected cursorType:CursorTypeEnum;
     protected instance:fabric.Object;
     protected enable:boolean=false;
     protected start:{x:number;y:number};
@@ -27,9 +28,11 @@ abstract class AbstractPlugin {
     protected onMouseUp?(event:IEvent):void;
     protected ctrlKeyDownHandler?(event:KeyboardEvent):void;
     protected ctrlKeyUpHandler?(event:KeyboardEvent):void;
-    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine){
+    protected eventBus:EventBus;
+    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine,eventBus:EventBus){
         this.eBoardCanvas=canvas;
         this.eBoardEngine=eBoardEngine;
+        this.eventBus=eventBus;
         // bind this
         if(void 0 !== this.onMouseDown){
             this.onMouseDown=this.onMouseDown.bind(this);
@@ -56,11 +59,15 @@ abstract class AbstractPlugin {
         this.end = undefined as any;
         this.instance = undefined as any;
     }
+    
     /**
      * 插件启用开关
+     * 支持后台运行模式
      * @param {boolean} enable
+     * @param {boolean} background
+     * @returns {this}
      */
-    public setEnable(enable:boolean){
+    public setEnable(enable:boolean,background?:boolean){
         if(this.enable===enable){
             return;
         }
@@ -70,10 +77,18 @@ abstract class AbstractPlugin {
         const activePlugin=this.eBoardEngine.getActivePlugin();
         if(enable){
             // 关闭当前激活的组件
-            if(activePlugin){
-                activePlugin.setEnable(false);
+            if(!background){
+                if(activePlugin){
+                    activePlugin.setEnable(false);
+                }
+                this.eBoardEngine.setActivePlugin(this);
+                // 激活Cursor
+                if(void 0 !== this.cursorType){
+                    this.eBoardCanvas.setCursorType(this.cursorType);
+                }else{
+                    this.eBoardCanvas.setCursorType(CursorTypeEnum.None);
+                }
             }
-            this.eBoardEngine.setActivePlugin(this);
             if(void 0 !== this.onMouseDown){
                 this.eBoardCanvas.on('mouse:down', this.onMouseDown);
             }
@@ -90,8 +105,12 @@ abstract class AbstractPlugin {
                 window.addEventListener("keyup",this.ctrlKeyUpHandler);
             }
         }else{
-            if(activePlugin && activePlugin instanceof this.constructor){
-                this.eBoardEngine.setActivePlugin(undefined);
+            if(!background){
+                if(activePlugin && activePlugin instanceof this.constructor){
+                    this.eBoardEngine.setActivePlugin(undefined);
+                }
+                // disable Cursor
+                this.eBoardCanvas.setCursorType(CursorTypeEnum.None);
             }
             if(void 0 !== this.onMouseDown){
                 this.eBoardCanvas.off('mouse:down', this.onMouseDown);
@@ -113,31 +132,6 @@ abstract class AbstractPlugin {
             this.clear();
         }
         return this;
-        
-        
-        
-        
-        // 暂时关闭光标
-/*
-        // 光标使用
-        const cursorPlugin = this.eBoardEngine.getPlugin(Plugins.Cursor) as Cursor;
-        if(enable){
-            // Cursor启用
-            if(this.cursorType){
-                if(CursorTypeName.None === this.cursorType){
-                    cursorPlugin&&cursorPlugin.setEnable(false);
-                }else{
-                    cursorPlugin&&cursorPlugin.setType(this.cursorType).setEnable(true);
-                }
-            }else{
-                cursorPlugin&&cursorPlugin.setEnable(false);
-            }
-        }else{
-            // Cursor关闭
-            if(this.cursorType){
-                cursorPlugin&&cursorPlugin.setEnable(false);
-            }
-        }*/
     };
     
     /**

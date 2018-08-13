@@ -13,6 +13,7 @@ import {IMessage, MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {IFrameMessageInterface} from '../IMessageInterface';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {message} from '../utils/decorators';
+import {EventBus, IPluginConfigOptions} from '../utils/EventBus';
 
 
 class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageInterface{
@@ -25,9 +26,11 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
     public options:T;
     public parent?:EBoard|IFrameGroup;
     public id:string;
-    constructor(options:T,container:HTMLDivElement,parent?:EBoard|IFrameGroup,id?:string,silent?:boolean){
+    protected eventBus:EventBus;
+    constructor(options:T,container:HTMLDivElement,eventBus:EventBus,parent?:EBoard|IFrameGroup,id?:string,silent?:boolean){
         this.id=id||Date.now().toString();
         this.messageId=options.messageId||MessageIdMiddleWare.getId();// 如果没有则自动创建
+        this.eventBus=eventBus;
         this.container=container;
         this._options=Object.assign({},options);
         this.options=options;
@@ -45,40 +48,37 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
         }
     }
     private initPlugin(){
-        if(void 0 !== this.parent){
-            let eBoard;
-            if(this.parent instanceof EBoard){
-                eBoard = this.parent;
-            }else{
-                eBoard = (this.parent as IFrameGroup).parent;
-            }
-            if(void 0 !== eBoard){
-                const pluginController = eBoard.pluginController;
-                pluginController.forEach((obj:any,plugin)=>{
-                    const {enable,options} = obj;
-                    if(enable){
-                        const instance = this.getPlugin(plugin);
-                        if(void 0 !== instance){
-                            instance.setOptions(options);
-                            instance.setEnable(true);
-                        }
-                    }
-                })
-            }
-        }
-    }
-    private observePlugin(){
-        if(this.parent instanceof EBoard){
-            this.parent.on("plugin:active",(event:any)=>{
-                const data = event.data;
-                const {plugin,options} = data;
+        // 通过数据共享机制进行实现，eventBus 进行数据缓存
+        const plugins = this.eventBus.sharedData.plugins;
+        plugins.forEach((obj:IPluginConfigOptions,plugin)=>{
+            const {enable,background} = obj;
+            if(enable){
                 const instance = this.getPlugin(plugin);
                 if(void 0 !== instance){
-                    instance.setOptions(options);
-                    instance.setEnable(true);
+                    instance.setEnable(true,background);
                 }
-            })
-        }
+            }
+        })
+    }
+    private observePlugin(){
+        this.eventBus.on("plugin:active",(event:any)=>{
+            const data = event.data;
+            const {plugin,options} = data;
+            const instance = this.getPlugin(plugin);
+            if(void 0 !== instance){
+                const background = options.background;
+                instance.setEnable(true,background);
+            }
+        });
+        this.eventBus.on("plugin:disable",(event:any)=>{
+            const data = event.data;
+            const {plugin,options} = data;
+            const instance = this.getPlugin(plugin);
+            if(void 0 !== instance){
+                const background = options.background;
+                instance.setEnable(false,background);
+            }
+        });
     }
     
     @message
@@ -115,7 +115,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
             selection:false,
             skipTargetFind:true,
             containerClass:"eboard-canvas"
-        },this);
+        },this,this.eventBus);
         this.dom = container;
     }
     protected calc(){

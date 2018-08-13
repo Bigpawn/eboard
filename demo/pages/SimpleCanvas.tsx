@@ -15,7 +15,6 @@ export class ToolBar extends React.Component{
     }
     componentDidMount(){
         let toolbar = new AToolbar(document.getElementById("toolbarContainer") as HTMLDivElement,(item:any)=>{
-            console.log(item.key);
             switch (item.key){
                 case "line":
                     this.startLine();
@@ -74,23 +73,31 @@ export class ToolBar extends React.Component{
                 case "del":
                     this.eBoard.setActivePlugin(Plugins.Delete);
                     break;
+                case "select":
+                    this.eBoard.setActivePlugin(Plugins.Selection);
+                    break;
+                case "ferule":
+                    this.eBoard.setActivePlugin(Plugins.Ferule);
+                    break;
+                case "stroke":
+                    this.eBoard.setStrokeColor(item.color);
+                    break;
+                case "fill":
+                    this.eBoard.setFillColor(item.color);
+                    break;
                 default:
                     break;
             }
         });
-        console.log(toolbar);
     }
     public setEBoard(eBoard:EBoard){
         this.eBoard=eBoard;
     }
     private setCursor=()=>{
-        this.eBoard.setActivePlugin(Plugins.Cursor);// 需要共存的插件 ， 采用插件配置的方式进行，enable options
     };
     private setPencilCursor=()=>{
-        this.eBoard.setActivePlugin(Plugins.Cursor);// 需要共存的插件 ， 采用插件配置的方式进行，enable options
     };
     private setCursorClose=()=>{
-        this.eBoard.setActivePlugin(Plugins.Cursor);// 需要共存的插件 ， 采用插件配置的方式进行，enable options
     };
     private startLine=()=>{
         this.eBoard.setActivePlugin(Plugins.Line);

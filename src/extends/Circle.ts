@@ -7,8 +7,9 @@
  */
 import {fabric} from "fabric";
 import {ICircleOptions} from "~fabric/fabric-impl";
+import {IObject} from '../interface/IObject';
 
-class Circle extends fabric.Circle{
+class Circle extends fabric.Circle implements IObject{
     public type:string="circle";
     public id:string;
     

@@ -7,8 +7,9 @@
  */
 import {fabric} from "fabric";
 import {IEllipseOptions} from "~fabric/fabric-impl";
+import {IObject} from '../interface/IObject';
 
-class Ellipse extends fabric.Ellipse{
+class Ellipse extends fabric.Ellipse implements IObject{
     public type:string="ellipse";
     public id:string;
     
