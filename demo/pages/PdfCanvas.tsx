@@ -29,8 +29,8 @@ class MaterialUIPage extends SimpleCanvas{
         return (
             <Card bordered title="PdfCanvas" style={{ margin: "16px 16px"}}>
                 <ToolBar ref={(ref:ToolBar)=>this.Toolbar=ref}/>
-                <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220,width:"870px",display:"inline-block"}}/>
-                <div id={"eboardContainerReceive"} style={{position:"relative",height:document.body.offsetHeight-220,width:"700px",display:"inline-block",marginLeft:40}}/>
+                <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}/>
+                <div id={"eboardContainerReceive"} style={{position:"relative",height:document.body.offsetHeight-220,width:"40%",display:"inline-block",marginLeft:40}}/>
             </Card>
         );
     }
