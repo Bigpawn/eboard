@@ -27,48 +27,22 @@ export declare interface IEquilateralTriangleMessage extends IMessage{
 @setCursor(CursorTypeEnum.Cross)
 class EquilateralTriangle extends AbstractShapePlugin{
     protected instance:FabricEquilateralTriangle;
-    protected fill?:string;
-    protected stroke?:string="rgba(0,0,0,1)";
+    protected fill:string;
+    protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     @message
-    private startAction(){
-        return {
+    private throw(){
+        return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
+            tag:MessageTagEnum.Shape,
             points:this.instance.points,
             start:this.start,
             length:this.instance.width,
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke
-        }
-    }
-    @message
-    private moveAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.Temporary,
-            points:this.instance.points,
-            start:this.start,
-            length:this.instance.width,
-            type:this.instance.type,
-            fill:this.instance.fill,
-            stroke:this.instance.stroke
-        }
-    }
-    @message
-    private endAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.End,
-            points:this.instance.points,
-            start:this.start,
-            length:this.instance.width,
-            type:this.instance.type,
-            fill:this.instance.fill,
-            stroke:this.instance.stroke
-        }
+        }:undefined
     }
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
@@ -79,35 +53,33 @@ class EquilateralTriangle extends AbstractShapePlugin{
         const angle = this.calcAngle(this.end);
         const points = FabricEquilateralTriangle.calcPointsByRadius(this.start,radius,angle);
         const length = radius * 2;
-        if(void 0 ===this.instance){
-            this.instance = new FabricEquilateralTriangle(points,{
-                stroke: this.getStrokeColor(),
-                strokeWidth: this.getCanvasPixel(this.strokeWidth),
-                strokeDashArray:this.strokeDashArray,
-                fill: this.getFillColor(),
-                width:length,
-                height:length,
-                left:this.start.x,
-                top:this.start.y,
-                originY:"center",
-                originX:"center"
-            });
-            this.eBoardCanvas.add(this.instance);
-            this.startAction();
-        }else{
-            this.instance.update({
-                points:points,
-                width:length,
-                height:length,
-            });
-            this.eBoardCanvas.renderAll();
-            this.moveAction();
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 !== this.instance){
+            this.eBoardCanvas.remove(this.instance);
         }
+        const id = this.instance?this.instance.id:undefined;
+        this.instance=new FabricEquilateralTriangle(points,{
+            stroke: this.getStrokeColor(),
+            strokeWidth: this.getCanvasPixel(this.strokeWidth),
+            strokeDashArray:this.strokeDashArray,
+            fill: this.getFillColor(),
+            width:length,
+            height:length,
+            left:this.start.x,
+            top:this.start.y,
+            originY:"center",
+            originX:"center"
+        });
+        if(void 0 !== id){
+            this.instance.setId(id);
+        }
+        this.throw();
+        this.eBoardCanvas.add(this.instance);
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     };
     protected onMouseUp(event:IEvent){
-        if(void 0 !== this.instance){
-            this.endAction();
-        }
+        this.throw();
         super.onMouseUp(event);
     }
     /**

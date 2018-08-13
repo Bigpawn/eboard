@@ -60,63 +60,24 @@ class Polygon extends AbstractShapePlugin{
         this.eBoardCanvas.add(this.instance);
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
+        this.throw();
         if(_close&&finished){
-            this.endAction();
             this.points=[];
             this.start = undefined as any;
             this.instance = undefined as any;
             this.circle = undefined as any;
-        }else{
-            if(finished){
-                this.downAction();
-            }else{
-                this.moveAction();
-            }
         }
     }
     @message
-    private startAction(){
-        return {
+    private throw(){
+        return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
+            tag:MessageTagEnum.Shape,
             points:this.instance.points,
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke
-        }
-    }
-    @message
-    private moveAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.Temporary,
-            points:this.instance.points,
-            type:this.instance.type,
-            fill:this.instance.fill,
-            stroke:this.instance.stroke
-        }
-    }
-    @message
-    private downAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.Process,
-            points:this.instance.points,
-            type:this.instance.type,
-            fill:this.instance.fill,
-            stroke:this.instance.stroke
-        }
-    }
-    @message
-    private endAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.End,
-            points:this.instance.points,
-            type:this.instance.type,
-            fill:this.instance.fill,
-            stroke:this.instance.stroke
-        }
+        }:undefined
     }
     protected onMouseDown(event:IEvent){
         const point = this.eBoardCanvas.getPointer(event.e);
@@ -139,7 +100,7 @@ class Polygon extends AbstractShapePlugin{
                 fill:this.getFillColor(),
             });
             this.eBoardCanvas.add(this.instance);
-            this.startAction();
+            this.throw();
         }else{
             this.replace(true);
         }

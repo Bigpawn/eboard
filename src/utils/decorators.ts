@@ -160,6 +160,9 @@ function message(target:any, name:string, descriptor:PropertyDescriptor){
     const oldValue = descriptor.value;
     descriptor.value =function(){
         const message = oldValue.apply(this,arguments);
+        if(void 0 === message || null === message){
+            return message;
+        }
         let copyMessage = Object.assign({},message);
         
         // 循环向上遍历

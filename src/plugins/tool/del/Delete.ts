@@ -98,7 +98,6 @@ class Delete extends AbstractPlugin{
     public setEnable(enable:boolean,background?:boolean){
         super.setEnable(enable,background);
         if(enable){
-            // this.eBoardCanvas.on("selection:created",this.deleteSelection);
             this.eBoardCanvas.on("mouse:over",this.onSelected);
             this.eBoardCanvas.on("mouse:out",this.onUnSelected);
             this.eBoardCanvas.on("mouse:down",this.onClick);

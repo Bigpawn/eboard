@@ -33,8 +33,8 @@ export declare interface ITriangleMessage extends IMessage{
 @setCursor(CursorTypeEnum.Cross)
 class Triangle extends AbstractShapePlugin{
     protected instance:FabricTriangle;
-    protected fill?:string;
-    protected stroke?:string="rgba(0,0,0,1)";
+    protected fill:string;
+    protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     protected ctrlKey:boolean=false;
@@ -107,33 +107,31 @@ class Triangle extends AbstractShapePlugin{
         const height=Math.abs(offsetY);
         const calcSize = this.calcEquilate(width,height);
         const startPoint = this.ctrlKey?this.getCtrlStartPoint(calcSize):this.getStartPoint();
-        if(void 0 ===this.instance){
-            this.instance = new FabricTriangle({
-                fill:this.getFillColor(),
-                left: startPoint.x,
-                top: startPoint.y,
-                stroke:this.getStrokeColor(),
-                flipX:offsetX<0,
-                flipY:offsetY<0,
-                width:this.ctrlKey?calcSize.width:width,
-                height:this.ctrlKey?calcSize.height:height,
-                strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth)
-            });
-            this.eBoardCanvas.add(this.instance);
-            this.throw(MessageTagEnum.Start);
-        }else{
-            this.instance.update({
-                width:this.ctrlKey?calcSize.width:width,
-                height:this.ctrlKey?calcSize.height:height,
-                flipX:offsetX<0,
-                flipY:offsetY<0,
-                left: startPoint.x,
-                top: startPoint.y,
-            });
-            this.eBoardCanvas.renderAll();
-            this.throw(MessageTagEnum.Temporary);
+    
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 !== this.instance){
+            this.eBoardCanvas.remove(this.instance);
         }
+        const id = this.instance?this.instance.id:undefined;
+        this.instance= new FabricTriangle({
+            fill:this.getFillColor(),
+            left: startPoint.x,
+            top: startPoint.y,
+            stroke:this.getStrokeColor(),
+            flipX:offsetX<0,
+            flipY:offsetY<0,
+            width:this.ctrlKey?calcSize.width:width,
+            height:this.ctrlKey?calcSize.height:height,
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth)
+        });
+        if(void 0 !== id){
+            this.instance.setId(id);
+        }
+        this.throw();
+        this.eBoardCanvas.add(this.instance);
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     };
     private calcEquilate(width:number,height:number){
         // 根据宽度计算高度  根据高度计算宽度，同时取小值
@@ -156,16 +154,31 @@ class Triangle extends AbstractShapePlugin{
                 const height=Math.abs(offsetY);
                 const calcSize = this.calcEquilate(width,height);
                 const startPoint = this.getCtrlStartPoint(calcSize);
-                this.instance.update({
-                    width:this.ctrlKey?calcSize.width:width,
-                    height:this.ctrlKey?calcSize.height:height,
-                    flipY:offsetY<0,
-                    flipX:offsetX<0,
+    
+                this.eBoardCanvas.renderOnAddRemove=false;
+                if(void 0 !== this.instance){
+                    this.eBoardCanvas.remove(this.instance);
+                }
+                const id = this.instance?this.instance.id:undefined;
+                this.instance= new FabricTriangle({
+                    fill:this.getFillColor(),
                     left: startPoint.x,
                     top: startPoint.y,
+                    stroke:this.getStrokeColor(),
+                    flipX:offsetX<0,
+                    flipY:offsetY<0,
+                    width:calcSize.width,
+                    height:calcSize.height,
+                    strokeDashArray:this.strokeDashArray,
+                    strokeWidth:this.getCanvasPixel(this.strokeWidth)
                 });
+                if(void 0 !== id){
+                    this.instance.setId(id);
+                }
+                this.throw();
+                this.eBoardCanvas.add(this.instance);
                 this.eBoardCanvas.renderAll();
-                this.throw(MessageTagEnum.Temporary);
+                this.eBoardCanvas.renderOnAddRemove=true;
             }
         }
     }
@@ -180,31 +193,43 @@ class Triangle extends AbstractShapePlugin{
                 const offsetX = this.end.x-this.start.x;
                 const offsetY = this.end.y-this.start.y;
                 const startPoint = this.getStartPoint();
-                this.instance.update({
+                this.eBoardCanvas.renderOnAddRemove=false;
+                if(void 0 !== this.instance){
+                    this.eBoardCanvas.remove(this.instance);
+                }
+                const id = this.instance?this.instance.id:undefined;
+                this.instance= new FabricTriangle({
+                    fill:this.getFillColor(),
+                    left: startPoint.x,
+                    top: startPoint.y,
+                    stroke:this.getStrokeColor(),
+                    flipX:offsetX<0,
+                    flipY:offsetY<0,
                     width:width,
                     height:height,
-                    flipY:offsetY<0,
-                    flipX:offsetX<0,
-                    left:startPoint.x,
-                    top:startPoint.y
+                    strokeDashArray:this.strokeDashArray,
+                    strokeWidth:this.getCanvasPixel(this.strokeWidth)
                 });
+                if(void 0 !== id){
+                    this.instance.setId(id);
+                }
+                this.throw();
+                this.eBoardCanvas.add(this.instance);
                 this.eBoardCanvas.renderAll();
-                this.throw(MessageTagEnum.Temporary);
+                this.eBoardCanvas.renderOnAddRemove=true;
             }
         }
     }
     
     protected onMouseUp(event:IEvent){
-        if(void 0 !== this.instance){
-            this.throw(MessageTagEnum.End);
-        }
+        this.throw();
         super.onMouseUp(event);
     }
     @message
-    private throw(tag:MessageTagEnum){
-        return {
+    private throw(){
+        return this.instance?{
             id:this.instance.id,
-            tag:tag,
+            tag:MessageTagEnum.Shape,
             start:{x:this.instance.left as number,y:this.instance.top as number},
             flipX:this.instance.flipX,
             flipY:this.instance.flipY,
@@ -213,7 +238,7 @@ class Triangle extends AbstractShapePlugin{
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke
-        }
+        }:undefined
     }
     
     /**
@@ -221,41 +246,25 @@ class Triangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ITriangleMessage){
-        const {id,start,flipX,flipY,width,height,tag,stroke,fill} = message;
+        const {id,start,flipX,flipY,width,height,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
-        if(void 0 === instance){
-            instance = new FabricTriangle({
-                fill:fill,
-                left: start.x,
-                top: start.y,
-                stroke:stroke,
-                flipX:flipX,
-                flipY:flipY,
-                width:width,
-                height:height,
-                strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth)
-            }).setId(id);
-            this.eBoardCanvas.add(instance);
+        if(void 0 !== instance){
+            this.eBoardCanvas.remove(instance);
         }
-        switch (tag){
-            case MessageTagEnum.Start:
-                break;
-            case MessageTagEnum.Temporary:
-            case MessageTagEnum.End:
-                instance.update({
-                    width:width,
-                    height:height,
-                    flipX:flipX,
-                    flipY:flipY,
-                    left: start.x,
-                    top: start.y,
-                });
-                break;
-            default:
-                break;
-        }
+        instance = new FabricTriangle({
+            fill:fill,
+            left: start.x,
+            top: start.y,
+            stroke:stroke,
+            flipX:flipX,
+            flipY:flipY,
+            width:width,
+            height:height,
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth)
+        }).setId(id);
+        this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }

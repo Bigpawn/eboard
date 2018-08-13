@@ -52,43 +52,17 @@ class Arrow extends AbstractShapePlugin{
         return {path,fill};
     }
     @message
-    private startAction(){
-        return {
+    private throw(){
+        return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Start,
+            tag:MessageTagEnum.Shape,
             start:this.start,
             end:this.end,
             type:this.instance.type,
             mode:this.arrowMode,
             fill:this.instance.fill,
             stroke:this.instance.stroke
-        }
-    }
-    @message
-    private moveAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.Temporary,
-            start:this.start,
-            end:this.end,
-            type:this.instance.type,
-            mode:this.arrowMode,
-            fill:this.instance.fill,
-            stroke:this.instance.stroke
-        }
-    }
-    @message
-    private endAction(){
-        return {
-            id:this.instance.id,
-            tag:MessageTagEnum.End,
-            start:this.start,
-            end:this.end,
-            type:this.instance.type,
-            mode:this.arrowMode,
-            fill:this.instance.fill,
-            stroke:this.instance.stroke
-        }
+        }:undefined;
     }
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
@@ -100,36 +74,31 @@ class Arrow extends AbstractShapePlugin{
             x:(this.start.x+this.end.x)/2,
             y:(this.start.y+this.end.y)/2,
         };
-        if(void 0 === this.instance){
-            this.instance=new FabricArrow(path,{
-                stroke: this.getStrokeColor(),
-                strokeWidth:this.lineWidth,
-                fill,
-                originX:"center",
-                originY:"center"
-            });
-            this.eBoardCanvas.add(this.instance);
-            this.startAction();
-        }else{
-            this.instance.update({
-                path:path,
-                top:center.y,
-                left:center.x,
-                width:Math.abs(this.start.x-this.end.x),
-                height:Math.abs(this.start.y-this.end.y),
-                pathOffset:center,
-                originX:"center",
-                originY:"center"
-            });
-            this.eBoardCanvas.renderAll();
-            this.moveAction();
+        this.eBoardCanvas.renderOnAddRemove=false;
+        if(void 0 !== this.instance){
+            this.eBoardCanvas.remove(this.instance);
         }
+        const id = this.instance?this.instance.id:undefined;
+        this.instance=new FabricArrow(path,{
+            stroke: this.getStrokeColor(),
+            strokeWidth:this.lineWidth,
+            top:center.y,
+            left:center.x,
+            fill,
+            originX:"center",
+            originY:"center"
+        });
+        if(void 0 !== id){
+            this.instance.setId(id);
+        }
+        this.throw();
+        this.eBoardCanvas.add(this.instance);
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     }
     
     protected onMouseUp(event:IEvent){
-        if(void 0 !== this.instance){
-            this.endAction();
-        }
+        this.throw();
         super.onMouseUp(event);
     }
     
@@ -138,43 +107,27 @@ class Arrow extends AbstractShapePlugin{
      * @param {IArrowMessage} message
      */
     public onMessage(message:IArrowMessage){
-        const {id,start,end,tag,mode,stroke,fill} = message;
+        const {id,start,end,mode,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricArrow;
         this.eBoardCanvas.renderOnAddRemove=false;
         const {path} = this.calcOptions(start,end,mode);
-        if(void 0 === instance){
-            instance = new FabricArrow(path,{
-                stroke: stroke,
-                strokeWidth:this.lineWidth,
-                fill,
-                originX:"center",
-                originY:"center"
-            }).setId(id);
-            this.eBoardCanvas.add(instance);
+        if(void 0 !== instance){
+            this.eBoardCanvas.remove(instance);
         }
-        switch (tag){
-            case MessageTagEnum.Start:
-                break;
-            case MessageTagEnum.Temporary:
-            case MessageTagEnum.End:
-                const center = {
-                    x:(start.x+end.x)/2,
-                    y:(start.y+end.y)/2,
-                };
-                instance.update({
-                    path:path,
-                    top:center.y,
-                    left:center.x,
-                    width:Math.abs(start.x-end.x),
-                    height:Math.abs(start.y-end.y),
-                    pathOffset:center,
-                    originX:"center",
-                    originY:"center"
-                });
-                break;
-            default:
-                break;
-        }
+        const center = {
+            x:(start.x+end.x)/2,
+            y:(start.y+end.y)/2,
+        };
+        instance = new FabricArrow(path,{
+            stroke: stroke,
+            strokeWidth:this.lineWidth,
+            fill,
+            originX:"center",
+            originY:"center",
+            top:center.y,
+            left:center.x,
+        }).setId(id);
+        this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }

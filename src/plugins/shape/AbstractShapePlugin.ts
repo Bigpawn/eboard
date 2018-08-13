@@ -17,8 +17,8 @@ export enum Quadrant{
 }
 
 abstract class AbstractShapePlugin extends AbstractPlugin{
-    protected stroke?:string;
-    protected fill?:string;
+    protected stroke:string;
+    protected fill:string;
     /**
      * default mouseDown Event
      * @param {"~fabric/fabric-impl".IEvent} event

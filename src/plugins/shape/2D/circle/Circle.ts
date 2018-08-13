@@ -33,41 +33,18 @@ class Circle extends AbstractShapePlugin{
     private strokeDashArray?:any[];
     private strokeWidth:number=1;
     protected instance:FabricCircle;
+    
     @message
-    private startAction(){
-        return {
-            tag:MessageTagEnum.Start,
+    private throw(){
+        return this.instance?{
+            tag:MessageTagEnum.Shape,
             id:this.instance.id,
             start:this.start,
             radius:this.instance.radius,
             type:this.instance.type,
             stroke:this.instance.stroke,
             fill:this.instance.fill
-        }
-    }
-    @message
-    private moveAction(){
-        return {
-            tag:MessageTagEnum.Temporary,
-            id:this.instance.id,
-            start:this.start,
-            radius:this.instance.radius,
-            type:this.instance.type,
-            stroke:this.instance.stroke,
-            fill:this.instance.fill
-        }
-    }
-    @message
-    private endAction(){
-        return {
-            tag:MessageTagEnum.End,
-            id:this.instance.id,
-            start:this.start,
-            radius:this.instance.radius,
-            type:this.instance.type,
-            stroke:this.instance.stroke,
-            fill:this.instance.fill
-        }
+        }:undefined
     }
     protected onMouseMove(event:IEvent){
         if(void 0 ===this.start){
@@ -75,32 +52,32 @@ class Circle extends AbstractShapePlugin{
         }
         super.onMouseMove(event);
         const radius=Math.round(Math.sqrt(Math.pow(this.end.x-this.start.x,2)+Math.pow(this.end.y-this.start.y,2)));
+        this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== this.instance){
-            this.instance.update({
-                radius:radius,
-            });
-            this.eBoardCanvas.renderAll();
-            this.moveAction();
-        }else{
-            this.instance=new FabricCircle({
-                originX:"center",
-                originY:"center",
-                fill:this.getFillColor(),
-                left: this.start.x,
-                top: this.start.y,
-                stroke:this.getStrokeColor(),
-                strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth),
-                radius:radius,
-            });
-            this.eBoardCanvas.add(this.instance);
-            this.startAction();
+            this.eBoardCanvas.remove(this.instance);
         }
+        const id = this.instance?this.instance.id:undefined;
+        this.instance=new FabricCircle({
+            originX:"center",
+            originY:"center",
+            fill:this.getFillColor(),
+            left: this.start.x,
+            top: this.start.y,
+            stroke:this.getStrokeColor(),
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            radius:radius,
+        });
+        if(void 0 !== id){
+            this.instance.setId(id);
+        }
+        this.throw();
+        this.eBoardCanvas.add(this.instance);
+        this.eBoardCanvas.renderAll();
+        this.eBoardCanvas.renderOnAddRemove=true;
     };
     protected onMouseUp(event:IEvent){
-        if(void 0 !== this.instance){
-            this.endAction();
-        }
+        this.throw();
         super.onMouseUp(event);
     }
     
@@ -109,35 +86,25 @@ class Circle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ICircleMessage){
-        const {id,start,radius,tag,stroke,fill} = message;
+        const {id,start,radius,stroke,fill} = message;
         let instance = this.getInstanceById(id) as FabricCircle;
         this.eBoardCanvas.renderOnAddRemove=false;
-        if(void 0 === instance){
-            instance=new FabricCircle({
-                originX:"center",
-                originY:"center",
-                fill:fill,
-                left: start.x,
-                top: start.y,
-                stroke:stroke,
-                strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth),
-                radius:radius,
-            }).setId(id);
-            this.eBoardCanvas.add(instance);
+        
+        if(void 0 !== instance){
+            this.eBoardCanvas.remove(instance);
         }
-        switch (tag){
-            case MessageTagEnum.Start:
-                break;
-            case MessageTagEnum.Temporary:
-            case MessageTagEnum.End:
-                instance.update({
-                    radius:radius,
-                });
-                break;
-            default:
-                break;
-        }
+        instance=new FabricCircle({
+            originX:"center",
+            originY:"center",
+            fill:fill,
+            left: start.x,
+            top: start.y,
+            stroke:stroke,
+            strokeDashArray:this.strokeDashArray,
+            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            radius:radius,
+        }).setId(id);
+        this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }
