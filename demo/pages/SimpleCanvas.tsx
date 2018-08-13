@@ -10,8 +10,6 @@ export class ToolBar extends React.Component{
     private eBoard:EBoard;
     constructor(props:any){
         super(props);
-        this.setCursor=this.setCursor.bind(this);
-        this.setCursorClose=this.setCursorClose.bind(this);
     }
     componentDidMount(){
         let toolbar = new AToolbar(document.getElementById("toolbarContainer") as HTMLDivElement,(item:any)=>{
@@ -93,29 +91,14 @@ export class ToolBar extends React.Component{
     public setEBoard(eBoard:EBoard){
         this.eBoard=eBoard;
     }
-    private setCursor=()=>{
-    };
-    private setPencilCursor=()=>{
-    };
-    private setCursorClose=()=>{
-    };
     private startLine=()=>{
         this.eBoard.setActivePlugin(Plugins.Line);
-    };
-    private startLine1=()=>{
-        this.eBoard.setActivePlugin(Plugins.Arrow);
     };
     private startText=()=> {
         this.eBoard.setActivePlugin(Plugins.Text);
     };
-    private selection=()=>{
-        this.eBoard.setActivePlugin(Plugins.Selection);// 需要共存的插件 ， 采用插件配置的方式进行，enable options
-    };
     private startPencilLine=()=>{
         this.eBoard.setActivePlugin(Plugins.Pencil);
-    };
-    private openHtml=()=>{
-        this.eBoard.setActivePlugin(Plugins.HTML);// 需要共存的插件 ， 采用插件配置的方式进行，enable options
     };
     private circle=()=>{
         this.eBoard.setActivePlugin(Plugins.Circle);
@@ -157,27 +140,6 @@ export class ToolBar extends React.Component{
         return (
             <div>
                 <div id={"toolbarContainer"}/>
-             {/*   <button onClick={this.setCursor}>PaintBrush</button>
-                <button onClick={this.setPencilCursor}>Pencil</button>
-                <button onClick={this.setCursorClose}>Cursor Close</button>
-                <button onClick={this.startLine}>Line</button>
-                <button onClick={this.startLine1}>Line1</button>
-                <button onClick={this.startText}>Text</button>
-                <button onClick={this.selection}>Selection</button>
-                <button onClick={this.startPencilLine}>Pencil line</button>
-                <button onClick={this.openHtml}>HTML操作</button>
-                <button onClick={this.circle}>Circle</button>
-                <button onClick={this.ellipse}>Ellipse</button>
-                <button onClick={this.rectangle}>Rectangle</button>
-                <button onClick={this.square}>Square</button>
-                <button onClick={this.triangle}>Triangle</button>
-                <button onClick={this.EquilateralTriangle}>EquilateralTriangle</button>
-                <button onClick={this.OrthogonalTriangle}>OrthogonalTriangle</button>
-                <button onClick={this.Polygon}>Polygon</button>
-                <button onClick={this.Star}>Star</button>
-                <button onClick={this.Pentagon}>Pentagon</button>
-                <button onClick={this.Hexagon}>Hexagon</button>
-                <button onClick={this.Clear}>Clear</button>*/}
             </div>
         )
     }
