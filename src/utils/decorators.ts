@@ -163,8 +163,13 @@ function message(target:any, name:string, descriptor:PropertyDescriptor){
         if(void 0 === message || null === message){
             return message;
         }
-        let copyMessage = Object.assign({},message);
-        
+        let copyMessage = Object.assign({},this.extraMessage||{},message);
+        // 消息内容通过创建传递，adapter通过eventBus传递
+        const adapter = this.eDux.adapter;
+        if(void 0 !== adapter){
+            adapter.messageHandle(copyMessage);
+        }
+        /*
         // 循环向上遍历
         let parent= this.parent||(this.eBoardEngine?this.eBoardEngine.parent:undefined),adapter=this.messageAdapter;
         while (void 0 !== parent && parent.constructor.name!=="EBoard"){// eBoard 类，具有属性frames
@@ -182,7 +187,7 @@ function message(target:any, name:string, descriptor:PropertyDescriptor){
         if(void 0 !== adapter){
             (adapter as MessageAdapter).messageHandle(copyMessage);// 拦截器作用是
         }
-        
+        */
         return message;
     };
     return descriptor;

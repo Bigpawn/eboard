@@ -129,10 +129,10 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
     }
     
     protected getStrokeColor(){
-        return this.eventBus.sharedData.stroke||this.stroke;
+        return this.eDux.sharedData.stroke||this.stroke;
     }
     protected getFillColor(){
-        return this.eventBus.sharedData.fill||this.fill;
+        return this.eDux.sharedData.fill||this.fill;
     }
 }
 

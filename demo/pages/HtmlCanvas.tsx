@@ -10,7 +10,7 @@ import {EBoardInstance} from './EBoardInstance';
 class HtmlCanvas extends SimpleCanvas{
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
-        const receiveEBoard = EBoardInstance.getReceiveInstance();
+        const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
         eBoard.attachMessageMiddleWare((message)=>{
             receiveEBoard.onMessage(message);
         });

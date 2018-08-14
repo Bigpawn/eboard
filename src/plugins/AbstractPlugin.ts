@@ -13,7 +13,15 @@ import {EBoardEngine} from '../EBoardEngine';
 import {IEvent} from '~fabric/fabric-impl';
 import {fabric} from "fabric";
 import {CursorTypeEnum} from '../cursor/Enum';
-import {EventBus} from '../utils/EventBus';
+import {EventBus, IEDux} from '../utils/EventBus';
+import {IExtraMessage} from '../interface/IFrame';
+
+export declare interface IPluginOptions{
+    extraMessage:IExtraMessage;
+    eDux:IEDux;
+    eBoardEngine:EBoardEngine;
+}
+
 
 abstract class AbstractPlugin {
     protected eBoardCanvas:EBoardCanvas;
@@ -28,11 +36,13 @@ abstract class AbstractPlugin {
     protected onMouseUp?(event:IEvent):void;
     protected ctrlKeyDownHandler?(event:KeyboardEvent):void;
     protected ctrlKeyUpHandler?(event:KeyboardEvent):void;
-    protected eventBus:EventBus;
-    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine,eventBus:EventBus){
+    protected eDux:EventBus;
+    protected extraMessage:IExtraMessage;
+    constructor(canvas:EBoardCanvas,options:IPluginOptions){
         this.eBoardCanvas=canvas;
-        this.eBoardEngine=eBoardEngine;
-        this.eventBus=eventBus;
+        this.eDux=options.eDux;
+        this.extraMessage = options.extraMessage;
+        this.eBoardEngine = options.eBoardEngine;
         // bind this
         if(void 0 !== this.onMouseDown){
             this.onMouseDown=this.onMouseDown.bind(this);
@@ -143,14 +153,6 @@ abstract class AbstractPlugin {
         return pixel * this.eBoardEngine.getPixelRatio();
     }
     
-    /**
-     * 插件配置数据
-     * @param options
-     * @returns {this}
-     */
-    public setOptions(options:any){
-        return this;
-    }
     /**
      * 根据id获取实例
      * @param {string} id

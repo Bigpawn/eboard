@@ -81,33 +81,44 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
             selection:false,
             skipTargetFind:true,
             containerClass:"eboard-canvas"
-        },this,this.eventBus);
+        },{
+            eDux:this.eDux,
+            extraMessage:this.nextMessage
+        });
         // scrollbar 设置  如果是html,必然存在滚动条
         switch (this.options.scrollbar){
             case ScrollbarType.horizontal:
                 this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
-                    suppressScrollY:true
-                },this);
+                    suppressScrollY:true,
+                    eDux:this.eDux,
+                    extraMessage:this.nextMessage
+                });
                 break;
             case ScrollbarType.vertical:
                 this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
-                    suppressScrollX:true
-                },this);
+                    suppressScrollX:true,
+                    eDux:this.eDux,
+                    extraMessage:this.nextMessage
+                });
                 break;
             case ScrollbarType.both:
                 this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
-                },this);
+                    eDux:this.eDux,
+                    extraMessage:this.nextMessage
+                });
                 break;
             case ScrollbarType.none:
             default:
                 if(this.type==="html-frame"){
                     this.scrollbar= new ScrollBar(container,{
                         wheelSpeed: 2,
-                        suppressScrollX:true
-                    },this);
+                        suppressScrollX:true,
+                        eDux:this.eDux,
+                        extraMessage:this.nextMessage
+                    });
                 }
                 break;
         }

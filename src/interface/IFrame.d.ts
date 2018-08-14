@@ -10,9 +10,14 @@ import {AbstractPlugin} from '../plugins/AbstractPlugin';
 import {ScrollbarType} from '../frames/HtmlFrame';
 import {IMessage} from '../middlewares/MessageMiddleWare';
 import {ScrollBar} from '../components/ScrollBar';
-import {IFrameGroup} from './IFrameGroup';
+import {IFrameGroup, IFrameGroupOptions} from './IFrameGroup';
 import {EBoard} from '../EBoard';
+import {IEDux} from '../utils/EventBus';
 
+export declare interface IExtraMessage{
+    frame?:IFrameOptions;
+    group?:IFrameGroupOptions;
+}
 
 export declare interface IFrame{
     container:HTMLDivElement;
@@ -24,6 +29,9 @@ export declare interface IFrame{
     id:string;
     scrollbar?:ScrollBar;
     parent?:IFrameGroup|EBoard;
+    extraMessage?:IExtraMessage;
+    extraMessageOrigin?:IExtraMessage;
+    eDux?:IEDux;// 数据接口共享模块
     getPlugin(pluginName:string):AbstractPlugin|undefined;
     destroy(silent?:boolean):void;
 }
@@ -35,7 +43,11 @@ export declare interface IFrameOptions{
     type?:string;
     width?:number;
     height?:number;
-    dimensions?:{width:number;height:number}
+    dimensions?:{width:number;height:number};
+    silent?:boolean;
+    extraMessage?:IExtraMessage;
+    container:HTMLDivElement;
+    eDux:IEDux;// 数据接口共享模块
 }
 
 

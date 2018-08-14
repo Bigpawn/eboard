@@ -29,7 +29,6 @@ const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 
 @setAnimationName('eboard-pager')
 class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
-    private _options:IPdfFrameOptions;
     private pageFrame:CanvasFrame;
     private pagination:Pagination;
     private pdf:PDFPromise<PDFDocumentProxy>;
@@ -45,15 +44,24 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
     public options:IPdfFrameOptions;
     public parent?:EBoard;
     public id:string;
-    private eventBus:EventBus;
-    constructor(options:IPdfFrameOptions,container:HTMLDivElement,eventBus:EventBus,parent?:EBoard,id?:string){
-        this.id=id||Date.now().toString();
-        this.eventBus=eventBus;
+    public eDux:EventBus;
+    
+    public nextMessage:any={};
+    private groupMessage:any={};
+    
+    constructor(options:IPdfFrameOptions){
+        this.id=options.id||Date.now().toString();
+        this.eDux=options.eDux;
         this.options=options;
-        this._options = Object.assign({},options);
-        this.container=container;
+        this.container=options.container;
         this.messageId=options.messageId||MessageIdMiddleWare.getId();
-        this.parent=parent;
+        const {eDux,container,...rest} = options;
+        this.groupMessage=Object.assign({},rest,{
+            id:this.id,
+            messageId:this.messageId
+        });
+        this.nextMessage.group=this.groupMessage;
+        
         this.onGo=this.onGo.bind(this);
         this.fixContainer();
         this.initLayout();
@@ -63,12 +71,9 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
     
     @message
     public initializeAction(){
-        return {
-            ...this.options,
-            id:this.id,
-            messageId:this.messageId,
+        return Object.assign({},this.groupMessage,{
             tag:MessageTagEnum.CreateFrameGroup
-        }
+        });
     };
     
     @message
@@ -81,11 +86,12 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
     
     @message
     public switchFrameAction(pageNum:number){
-        return {
+        return Object.assign({},{
+            group:this.groupMessage
+        },{
             tag:MessageTagEnum.SwitchToFrame,
-            id:this.id,
             pageNum:pageNum
-        }
+        });
     }
     private fixContainer(){
         const parentElement = this.container;
@@ -103,17 +109,8 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
         this.dom=pagerContainer;
     };
     
-    /**
-     * 子frame中修改options值
-     * @param size
-     */
-    public updateOptionsSize(size:{width:number;height:number;dimensions:{width:number;height:number}}){
-        this.options.width=size.width;
-        this.options.height=size.height;
-        this.options.dimensions=size.dimensions;
-    }
     private initialize(){
-        const options = this._options;
+        const options = this.options;
         this.url=options.url||'';
         this.setPageNum(options.pageNum||1);// 默认第一页
         this.setTotalPages(0);// 表示当前未获取到页数
@@ -132,13 +129,18 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
             });
             // 判断是否有id options.id;// 没有标识操作端
             const pageFrame = new CanvasFrame({
-                messageId:options.messageId,
+                messageId:this.messageId,
                 ratio:options.ratio,
                 scrollbar:ScrollbarType.vertical,
                 width:options.width,
                 height:options.height,
-                dimensions:options.dimensions
-            },this.container,this.eventBus,this,this.pageNum.toString(),true);// 页码设置为id
+                dimensions:options.dimensions,
+                eDux:this.eDux,
+                extraMessage:this.nextMessage,
+                id:this.pageNum.toString(),
+                silent:true,
+                container:this.container
+            });// 页码设置为id
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
             this.dom.appendChild(this.pageFrame.dom);
@@ -209,12 +211,17 @@ class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
             // 创建
             nextPageFrame = new CanvasFrame({
                 messageId:options.messageId,
-                ratio:this._options.ratio,
+                ratio:this.options.ratio,
                 scrollbar:ScrollbarType.vertical,
-                width:this._options.width,
-                height:this._options.height,
-                dimensions:this._options.dimensions
-            },this.container,this.eventBus,this,pageNum.toString(),true);
+                width:this.options.width,
+                height:this.options.height,
+                dimensions:this.options.dimensions,
+                container:this.container,
+                eDux:this.eDux,
+                id:pageNum.toString(),
+                silent:true,
+                extraMessage:this.nextMessage
+            });
             this.child.set(pageNum,nextPageFrame);
             // 需要getPage
             this.pdf.then(pdf=>{

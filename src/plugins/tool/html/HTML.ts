@@ -14,14 +14,12 @@ class HTML extends AbstractPlugin{
     private allowHTMLAction(){
         return {
             tag:MessageTagEnum.AllowHtmlAction,
-            id:this.eBoardEngine.parent.id
         }
     }
     @message
     private disAllowHTMLAction(){
         return {
             tag:MessageTagEnum.DisAllowHtmlAction,
-            id:this.eBoardEngine.parent.id
         }
     }
     public setEnable(enable:boolean,background?:boolean){

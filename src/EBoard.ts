@@ -10,6 +10,8 @@
  * 通过事件传递插件启用状态
  * 数据共享机制通过eventBus进行缓存
  *
+ * 添加enable控制：disable情况下所有操作均不可用，且误操作不会发送消息
+ *
  */
 
 import {
@@ -64,6 +66,10 @@ class EBoard{
         this.container = containerFilter;
         // plugin事件监听
         this.observePlugins();
+        
+        this.eventBus.adapter = new MessageAdapter(this,false);
+        
+        
     }
     private observePlugins(){
         this.eventBus.on("plugin:active",(event:any)=>{
@@ -130,31 +136,35 @@ class EBoard{
     public createFrame(options:IBaseFrameOptions|IHTMLFrameOptions|IImageFrameOptions|ICanvasFrameOptions|IPdfFrameOptions|IImagesFrameOptions){
         const {id,type} = options;
         let frame:IFrame|IFrameGroup;
-        const container = this.getContainer();
         if(void 0 !== id && this.hasFrame(id)){
             frame = this.findFrameById(id) as IFrame|IFrameGroup;
             this.switchToFrame(frame);
             return frame;
         }
+    
+        const container = this.getContainer();
+        options.container = container;
+        options.eDux = this.eventBus;
+        
         switch (type){
             case FrameType.HTML:
-                frame = new HtmlFrame(options as IHTMLFrameOptions,container,this.eventBus,this,id,);
+                frame = new HtmlFrame(options as IHTMLFrameOptions);
                 break;
             case FrameType.Image:
-                frame = new ImageFrame(options as IImageFrameOptions,container,this.eventBus,this,id);
+                frame = new ImageFrame(options as IImageFrameOptions);
                 break;
             case FrameType.Canvas:
-                frame = new CanvasFrame(options as ICanvasFrameOptions,container,this.eventBus,this,id);
+                frame = new CanvasFrame(options as ICanvasFrameOptions);
                 break;
             case FrameType.Pdf:
-                frame = new PdfFrame(options as IPdfFrameOptions,container,this.eventBus,this,id);
+                frame = new PdfFrame(options as IPdfFrameOptions);
                 break;
             case FrameType.Images:
-                frame = new ImagesFrame(options as IImagesFrameOptions,container,this.eventBus,this,id);
+                frame = new ImagesFrame(options as IImagesFrameOptions);
                 break;
             case FrameType.Empty:
             default:
-                frame = new BaseFrame(options,container,this.eventBus,this,id);
+                frame = new BaseFrame(options as IBaseFrameOptions);
                 break;
         }
         this.frames.set(frame.id,frame);
@@ -262,8 +272,9 @@ class EBoard{
      */
     public onMessage(message:string){
         const messageObj:any = JSON.parse(message);
+        console.log(messageObj)
         // 获取frame实例，之后根据操作处理
-        const {frame:frameOptions,frameGroup:frameGroupOptions,...options} = messageObj;
+        const {frame:frameOptions,group:frameGroupOptions,...options} = messageObj;
         const {tag,type} = options;
         
         let frame:IFrame = undefined as any,frameGroup = undefined as any;
@@ -297,14 +308,8 @@ class EBoard{
                 this.createFrame(messageObj);
                 break;
             case MessageTagEnum.SwitchToFrame:
-                // 切换分页
-                // 通过id获取frameGroup
-                frameGroup = this.findFrameById(options.id) as IFrameGroup;
                 if(void 0 !== frameGroup){
-                    // group中切换
                     frameGroup.onGo(options.pageNum,options.messageId);
-                }else{
-                    // 当前切换
                 }
                 break;
             case MessageTagEnum.Clear:
@@ -418,6 +423,28 @@ class EBoard{
      */
     public setFillColor(color:string){
         this.eventBus.sharedData.fill=color;
+        return this;
+    }
+    
+    /**
+     * 设置不可用
+     * @returns {this}
+     */
+    public setDisable(){
+        const container = this.getContainer();
+        container.classList.add("eboard-disable");
+        this.eventBus.sharedData.enable=false;
+        return this;
+    }
+    
+    /**
+     * 设置可用
+     * @returns {this}
+     */
+    public setEnable(){
+        const container = this.getContainer();
+        container.classList.remove("eboard-disable");
+        this.eventBus.sharedData.enable=true;
         return this;
     }
 }

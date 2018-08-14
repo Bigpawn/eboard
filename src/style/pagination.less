@@ -38,6 +38,7 @@ input::-webkit-inner-spin-button {
             background-clip: border-box;
             cursor: pointer;
             &.disabled{
+                pointer-events: none;
                 opacity:0.3;
                 cursor: not-allowed;
             }
@@ -122,6 +123,23 @@ input::-webkit-inner-spin-button {
         }
     }
 }
+
+.eboard-disable{
+    .eboard-pagination{
+        &-left,&-right{
+            pointer-events: none;
+            opacity:0.3;
+            cursor: not-allowed;
+        }
+        &-bottom{
+            pointer-events: none;
+        }
+    }
+}
+
+
+
+
 @keyframes page-enter-from-right {
     from{
         -webkit-transform: translate(50% ,-50%);

@@ -15,7 +15,6 @@ class Clear extends AbstractPlugin{
         this.eBoardCanvas.clear();
         return {
             tag:MessageTagEnum.Clear,
-            id:this.eBoardEngine.parent.id
         }
     }
     public setEnable(enable:boolean,background?:boolean){

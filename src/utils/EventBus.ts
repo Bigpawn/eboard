@@ -7,6 +7,7 @@
  * 支持数据共享
  */
 import {Plugins} from '../plugins';
+import {MessageAdapter} from '../interceptor/MessageAdapter';
 
 
 export declare interface IPluginConfigOptions{
@@ -18,24 +19,36 @@ export declare interface IPluginConfig{
     plugins:Map<Plugins,IPluginConfigOptions>;
     stroke?:string;
     fill?:string;
+    enable?:boolean
 }
 
 export declare interface IShareDate extends IPluginConfig{}
 
 
-class EventBus{
-    private el:HTMLDivElement=document.createElement("div");
+export declare interface IEDux{
+    _el:HTMLDivElement;
+    adapter:MessageAdapter;
+    on:(type:string,listener:EventListenerOrEventListenerObject)=>void;
+    trigger:(type:string,data?:any)=>void;
+    off:(type:string,listener:EventListenerOrEventListenerObject)=>void;
+    sharedData:IShareDate
+}
+
+
+class EventBus implements IEDux{
+    public _el:HTMLDivElement=document.createElement("div");
+    public adapter:MessageAdapter;
     public on(type:string,listener:EventListenerOrEventListenerObject){
-        this.el.addEventListener(type,listener);
+        this._el.addEventListener(type,listener);
     }
     public trigger(type:string,data?:any){
         let ev:any=document.createEvent("HTMLEvents");
         ev.initEvent(type, true, false);
         ev.data=data;
-        this.el.dispatchEvent(ev);
+        this._el.dispatchEvent(ev);
     }
     public off(type:string,listener:EventListenerOrEventListenerObject){
-        this.el.removeEventListener(type,listener);
+        this._el.removeEventListener(type,listener);
     }
     public sharedData:IShareDate={
         plugins:new Map<Plugins, IPluginConfigOptions>()

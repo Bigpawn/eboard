@@ -14,13 +14,19 @@ import {escKeyEnable, mixinPlugins} from './utils/decorators';
 
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins, Plugins} from './plugins';
-import {IFrame} from './interface/IFrame';
-import {EventBus} from './utils/EventBus';
+import {IExtraMessage} from './interface/IFrame';
+import {EventBus, IEDux} from './utils/EventBus';
 
 
 declare interface IPlugin{
     pluginName:string;
     pluginReflectClass:IPlugins
+}
+
+
+declare interface IExtraOptions{
+    eDux:IEDux;
+    extraMessage:IExtraMessage;
 }
 
 
@@ -33,21 +39,25 @@ class EBoardEngine{
     private bgColor:string="rgba(0,0,0,1)";// 带透明度
     private pixelRatio:number=1;
     private activePlugin?:AbstractPlugin;
-    public parent:IFrame;
     private handleAll?:boolean;
     public messageHandle?:Function;
-    private eventBus:EventBus;
-    constructor(element: HTMLCanvasElement, options: ICanvasOptions,parent:IFrame,eventBus:EventBus){
-        this.eventBus=eventBus;
-        this.eBoardCanvas = new EBoardCanvas(element,this.eventBus,options,this);
-        this.parent=parent;
+    protected extraMessage:IExtraMessage;
+    private eDux:EventBus;
+    constructor(element: HTMLCanvasElement, options: ICanvasOptions,extraOptions:IExtraOptions){
+        this.eDux=extraOptions.eDux;
+        this.extraMessage = extraOptions.extraMessage;
+        this.eBoardCanvas = new EBoardCanvas(element,options,{eDux:this.eDux,extraMessage:extraOptions.extraMessage});
         this.initPlugin();
         this.escHandler();
     }
     private initPlugin(){
         // plugins 实例化
         this.pluginList.forEach((plugin)=>{
-            this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,this,this.eventBus));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
+            this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,{
+                eDux:this.eDux,
+                eBoardEngine:this,
+                extraMessage:this.extraMessage
+            }));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
         });
     }
     private escHandler(){

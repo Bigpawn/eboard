@@ -10,11 +10,9 @@
  *
  * 支持群组删除
  */
-import {AbstractPlugin} from '../../AbstractPlugin';
+import {AbstractPlugin, IPluginOptions} from '../../AbstractPlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {EventBus} from '../../../utils/EventBus';
 import {EBoardCanvas} from '../../../EBoardCanvas';
-import {EBoardEngine} from '../../../EBoardEngine';
 import {IObject} from '../../../interface/IObject';
 import {IMessage, MessageTagEnum} from '../../../middlewares/MessageMiddleWare';
 import {message, pipMode} from '../../../utils/decorators';
@@ -29,6 +27,8 @@ export declare interface ISelectionMessage extends IMessage{
         width:number;
         height:number;
         angle:number;
+        originX:string;
+        originY:string
     }
 }
 
@@ -65,8 +65,8 @@ class Selection extends AbstractPlugin{
         }
     };*/
     private angle:number=0;
-    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine,eventBus:EventBus){
-        super(canvas,eBoardEngine,eventBus);
+    constructor(canvas:EBoardCanvas,options:IPluginOptions){
+        super(canvas,options);
         this.onSelection = this.onSelection.bind(this);
         this.onMoving = this.onMoving.bind(this);
         this.onScaling = this.onScaling.bind(this);
@@ -86,7 +86,7 @@ class Selection extends AbstractPlugin{
             }
             const transform = e["transform"];
             const {target} = transform;
-            this.moving(ids,{top:target.top,left:target.left});
+            this.moving(ids,{top:target.top,left:target.left,originX:target.originX,originY:target.originY});
         }
     }
     private onScaling(e:IEvent){
@@ -101,7 +101,7 @@ class Selection extends AbstractPlugin{
             }
             const transform = e["transform"];
             const {target} = transform;
-            this.scaling(ids,{width:target.width * target.scaleX,height:target.height * target.scaleY,left:target.left,top:target.top});
+            this.scaling(ids,{width:target.width * target.scaleX,height:target.height * target.scaleY,left:target.left,top:target.top,originX:target.originX,originY:target.originY});
         }
     }
     private onRotating(e:IEvent){
@@ -117,7 +117,7 @@ class Selection extends AbstractPlugin{
             const {target} = transform;
             const delAngle = target.angle - this.angle;
             this.angle = target.angle;
-            this.rotating(ids,{angle:delAngle});
+            this.rotating(ids,{angle:delAngle,originX:target.originX,originY:target.originY});
         }
     }
     private onSelection(event:IEvent){
@@ -201,9 +201,12 @@ class Selection extends AbstractPlugin{
         switch (tag){
             case MessageTagEnum.SelectionMove:
                 // 需要计算增量
+                console.log(transform);
                 group.set({
                     left:transform.left,
-                    top:transform.top
+                    top:transform.top,
+                    originX:transform.originX,
+                    originY:transform.originY
                 }).setCoords();
                 group["toActiveSelection"]();// 转成selection
                 this.eBoardCanvas.discardActiveObject();// 拆分成单独的对象
@@ -216,7 +219,9 @@ class Selection extends AbstractPlugin{
                     scaleX:scaleX,
                     scaleY:scaleY,
                     left:transform.left,
-                    top:transform.top
+                    top:transform.top,
+                    originX:transform.originX,
+                    originY:transform.originY
                 }).setCoords();
                 group["toActiveSelection"]();// 转成selection
                 this.eBoardCanvas.discardActiveObject();// 拆分成单独的对象

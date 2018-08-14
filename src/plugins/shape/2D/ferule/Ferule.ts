@@ -33,7 +33,7 @@ class Ferule extends AbstractShapePlugin{
         super.setEnable(enable,backend);
         this.eBoardCanvas.setCursorMessageEnable(enable);
         if(enable){
-            this.eventBus.trigger("plugin:active",{
+            this.eDux.trigger("plugin:active",{
                 plugin:Plugins.Pencil,
                 options:{
                     enable:true,
@@ -41,7 +41,7 @@ class Ferule extends AbstractShapePlugin{
                 }
             });
         }else{
-            this.eventBus.trigger("plugin:disable",{
+            this.eDux.trigger("plugin:disable",{
                 plugin:Plugins.Pencil,
                 options:{
                     enable:false,

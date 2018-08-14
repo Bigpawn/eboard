@@ -7,7 +7,7 @@
  */
 
 class MessageIdMiddleWare{
-    private static id:number=0;
+    private static id:number=1;// 从1开始
     public static getId(){
         return this.id++;
     }

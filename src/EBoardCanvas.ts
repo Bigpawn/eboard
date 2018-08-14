@@ -16,8 +16,8 @@ import {CursorTypeEnum} from './cursor/Enum';
 import {ICursorTypes} from './interface/ICursorTypes';
 import {IMessage, MessageTagEnum} from './middlewares/MessageMiddleWare';
 import {message} from './utils/decorators';
-import {EBoardEngine} from './EBoardEngine';
-import {EventBus} from './utils/EventBus';
+import {EventBus, IEDux} from './utils/EventBus';
+import {IExtraMessage} from './interface/IFrame';
 
 
 declare interface ICursorMessage extends IMessage{
@@ -26,6 +26,10 @@ declare interface ICursorMessage extends IMessage{
     size:number;
 }
 
+declare interface ICanvasExtraOptions{
+    eDux:IEDux;
+    extraMessage:IExtraMessage
+}
 
 
 class EBoardCanvas extends fabric.Canvas{
@@ -35,12 +39,12 @@ class EBoardCanvas extends fabric.Canvas{
     private cursorSize:number=20;
     private cursorTypeName:CursorTypeEnum;
     private cursorMessageEnable:boolean=false;
-    public parent?:EBoardEngine;
-    private eventBus:EventBus;
-    constructor(element: HTMLCanvasElement,eventBus:EventBus, options?: ICanvasOptions,parent?:EBoardEngine){
+    public eDux:EventBus;
+    public extraMessage:IExtraMessage;
+    constructor(element: HTMLCanvasElement,options: ICanvasOptions,extraOptions:ICanvasExtraOptions){
         super(element,options);
-        this.eventBus=eventBus;
-        this.parent=parent;
+        this.eDux=extraOptions.eDux;
+        this.extraMessage=extraOptions.extraMessage;
         const cursorCanvasEl=document.createElement("canvas");
         cursorCanvasEl.className="eboard-cursor";
         element.parentElement&&element.parentElement.appendChild(cursorCanvasEl);

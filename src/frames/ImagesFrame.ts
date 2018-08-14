@@ -9,13 +9,12 @@ import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
 import {message, pipMode, setAnimationName} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
-import {EBoard} from '../EBoard';
 import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {IFrameGroupMessageInterface} from '../IMessageInterface';
 import {Plugins} from '../plugins';
-import {EventBus} from '../utils/EventBus';
+import {IEDux} from '../utils/EventBus';
 
 
 @setAnimationName('eboard-pager')
@@ -29,22 +28,28 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
     public totalPages:number;
     public child:Map<number,ImageFrame>=new Map();
     public options:IImagesFrameOptions;
-    private _options:IImagesFrameOptions;
     private pageFrame:ImageFrame;
     private pagination:Pagination;
     private animationCssPrefix:string;
     public images:string[];
-    public parent?:EBoard;
     public id:string;
-    private eventBus:EventBus;
-    constructor(options:IImagesFrameOptions,container:HTMLDivElement,eventBus:EventBus,parent?:EBoard,id?:string){
-        this.id = id||Date.now().toString();
-        this.eventBus=eventBus;
+    public eDux:IEDux;
+    
+    public nextMessage:any={};
+    private groupMessage:any={};
+    
+    constructor(options:IImagesFrameOptions){
+        this.id = options.id||Date.now().toString();
+        this.eDux=options.eDux;
         this.options=options;
-        this._options=Object.assign({},options);
-        this.container=container;
+        this.container=options.container;
         this.messageId=options.messageId||MessageIdMiddleWare.getId();
-        this.parent=parent;
+        const {eDux,container,...rest} = options;
+        this.groupMessage=Object.assign({},rest,{
+            id:this.id,
+            messageId:this.messageId
+        });
+        this.nextMessage.group=this.groupMessage;
         this.onGo=this.onGo.bind(this);
         this.fixContainer();
         this.initLayout();
@@ -54,12 +59,9 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
     
     @message
     public initializeAction(){
-        return {
-            ...this.options,
-            id:this.id,
-            messageId:this.messageId,
+        return Object.assign({},this.groupMessage,{
             tag:MessageTagEnum.CreateFrameGroup
-        }
+        });
     };
     @message
     public destroyAction(){
@@ -70,11 +72,12 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
     }
     @message
     public switchFrameAction(pageNum:number){
-        return {
+        return Object.assign({},{
+            group:this.groupMessage
+        },{
             tag:MessageTagEnum.SwitchToFrame,
-            id:this.id,
             pageNum:pageNum
-        }
+        });
     }
     private fixContainer(){
         const parentElement = this.container;
@@ -91,17 +94,8 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
         pagerContainer.style.height="100%";
         this.dom=pagerContainer;
     };
-    /**
-     * 子frame中修改options值
-     * @param size
-     */
-    public updateOptionsSize(size:{width:number;height:number;dimensions:{width:number;height:number}}){
-        this.options.width=size.width;
-        this.options.height=size.height;
-        this.options.dimensions=size.dimensions;
-    }
     private initialize(){
-        const options = this._options;
+        const options = this.options;
         this.urlPrefix=options.urlPrefix||"";
         this.images=options.images||[];
         this.setPageNum(options.pageNum||1);// 默认第一页
@@ -115,15 +109,19 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
         }
         if(this.images.length>0){
             const pageFrame = new ImageFrame({
-                type:this.pageNum+"",
-                messageId:options.messageId,
+                messageId:this.messageId,
                 ratio:options.ratio,
                 content:this.urlPrefix+this.images[this.pageNum],
                 scrollbar:ScrollbarType.vertical,
                 width:options.width,
                 height:options.height,
-                dimensions:options.dimensions
-            },this.container,this.eventBus,this,this.pageNum.toString(),true);
+                dimensions:options.dimensions,
+                container:this.container,
+                eDux:this.eDux,
+                id:this.pageNum.toString(),
+                silent:true,
+                extraMessage:this.nextMessage
+            });
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
             this.dom.appendChild(this.pageFrame.dom);
@@ -178,12 +176,17 @@ class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
             nextPageFrame = new ImageFrame({
                 messageId:options.messageId,
                 content:this.urlPrefix+this.images[pageNum],
-                ratio:this._options.ratio,
+                ratio:this.options.ratio,
                 scrollbar:ScrollbarType.vertical,
-                width:this._options.width,
-                height:this._options.height,
-                dimensions:this._options.dimensions
-            },this.container,this.eventBus,this,pageNum.toString(),true);
+                width:this.options.width,
+                height:this.options.height,
+                dimensions:this.options.dimensions,
+                container:this.container,
+                eDux:this.eDux,
+                id:pageNum.toString(),
+                silent:true,
+                extraMessage:this.nextMessage
+            });
             this.child.set(pageNum,nextPageFrame);
         }
         return nextPageFrame;

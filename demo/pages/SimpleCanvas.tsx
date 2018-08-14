@@ -153,7 +153,7 @@ class SimpleCanvas extends React.Component<{}, {}> {
     protected container:any;
     componentDidMount(){
         const eBoard = EBoardInstance.getInstance();
-        const receiveEBoard = EBoardInstance.getReceiveInstance();
+        const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
         eBoard.attachMessageMiddleWare((message)=>{
             receiveEBoard.onMessage(message);
         });

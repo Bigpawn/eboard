@@ -7,12 +7,10 @@
  * 需要天然支持Del热键
  */
 
-import {AbstractPlugin} from '../../AbstractPlugin';
+import {AbstractPlugin, IPluginOptions} from '../../AbstractPlugin';
 import {EBoardCanvas} from '../../../EBoardCanvas';
-import {EBoardEngine} from '../../../EBoardEngine';
 import {message, setCursor} from '../../../utils/decorators';
 import {IMessage, MessageTagEnum} from '../../../middlewares/MessageMiddleWare';
-import {EventBus} from '../../../utils/EventBus';
 import {CursorTypeEnum} from '../../../cursor/Enum';
 import {IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
@@ -23,8 +21,8 @@ export declare interface IDeleteMessage extends IMessage{
 
 @setCursor(CursorTypeEnum.Rubber)
 class Delete extends AbstractPlugin{
-    constructor(canvas:EBoardCanvas,eBoardEngine:EBoardEngine,eventBus:EventBus){
-        super(canvas,eBoardEngine,eventBus);
+    constructor(canvas:EBoardCanvas,options:IPluginOptions){
+        super(canvas,options);
         this.onClick=this.onClick.bind(this);
         this.initDelKeyListener();// TODO 是否支持提供配置
         this.onSelected=this.onSelected.bind(this);

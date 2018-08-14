@@ -4,12 +4,14 @@
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * * @Last Modified time: 2018/7/20 13:12
  * @disc:基础窗口
+ * frame 向下extraMessage为引用关系
  */
-import {IBaseFrame, IBaseFrameOptions, IFrame, IFrameOptions} from '../interface/IFrame';
+import {
+    IBaseFrame, IBaseFrameOptions, IFrame,
+    IFrameOptions,
+} from '../interface/IFrame';
 import {EBoardEngine} from '../EBoardEngine';
-import {EBoard} from '../EBoard';
-import {IFrameGroup} from '../interface/IFrameGroup';
-import {IMessage, MessageTagEnum} from '../middlewares/MessageMiddleWare';
+import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {IFrameMessageInterface} from '../IMessageInterface';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {message} from '../utils/decorators';
@@ -17,39 +19,43 @@ import {EventBus, IPluginConfigOptions} from '../utils/EventBus';
 
 
 class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageInterface{
-    private _options:T;
     public container:HTMLDivElement;
     public type:string;
-    public messageId:number;
     public dom:HTMLDivElement;
     public engine:EBoardEngine;
     public options:T;
-    public parent?:EBoard|IFrameGroup;
     public id:string;
-    protected eventBus:EventBus;
-    constructor(options:T,container:HTMLDivElement,eventBus:EventBus,parent?:EBoard|IFrameGroup,id?:string,silent?:boolean){
-        this.id=id||Date.now().toString();
-        this.messageId=options.messageId||MessageIdMiddleWare.getId();// 如果没有则自动创建
-        this.eventBus=eventBus;
-        this.container=container;
-        this._options=Object.assign({},options);
+    public eDux:EventBus;
+    public messageId:number;
+    public extraMessage:any={};// 存放group属性
+    public nextMessage:any={};
+    public frameMessage:any={};
+    constructor(options:T){
+        this.id=options.id||Date.now().toString();
+        this.messageId = options.messageId||MessageIdMiddleWare.getId();
+        this.eDux=options.eDux;
+        this.container=options.container;
         this.options=options;
-        this.parent=parent;
-       
+        this.extraMessage=this.options.extraMessage||{};
+        if(options.extraMessage&&options.extraMessage.group){
+            this.nextMessage.group = this.extraMessage.group;
+        }
+        const {silent,eDux,extraMessage,container,...rest} = this.options as any;
+        this.frameMessage={...rest,id:this.id,messageId:this.messageId};
+        this.nextMessage.frame=this.frameMessage;
         this.fixContainer();
         this.initEngine();
         this.initLayout();
         this.observePlugin();
         // 插件启用初始化
         this.initPlugin();
-    
-        if(!silent){
+        if(!options.silent){
             this.initializeAction();// 控制是否发送创建消息, 只要用到宽就好，高度接收端自动根据内容适配
         }
     }
     private initPlugin(){
         // 通过数据共享机制进行实现，eventBus 进行数据缓存
-        const plugins = this.eventBus.sharedData.plugins;
+        const plugins = this.eDux.sharedData.plugins;
         plugins.forEach((obj:IPluginConfigOptions,plugin)=>{
             const {enable,background} = obj;
             if(enable){
@@ -61,7 +67,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
         })
     }
     private observePlugin(){
-        this.eventBus.on("plugin:active",(event:any)=>{
+        this.eDux.on("plugin:active",(event:any)=>{
             const data = event.data;
             const {plugin,options} = data;
             const instance = this.getPlugin(plugin);
@@ -70,7 +76,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
                 instance.setEnable(true,background);
             }
         });
-        this.eventBus.on("plugin:disable",(event:any)=>{
+        this.eDux.on("plugin:disable",(event:any)=>{
             const data = event.data;
             const {plugin,options} = data;
             const instance = this.getPlugin(plugin);
@@ -84,10 +90,8 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
     @message
     public initializeAction(){
         return Object.assign({},{
-            id:this.id,
-            messageId:this.messageId,
-            tag:MessageTagEnum.CreateFrame
-        },this.options)
+            tag:MessageTagEnum.CreateFrame,
+        },this.frameMessage);
     }
     
     @message
@@ -115,7 +119,10 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
             selection:false,
             skipTargetFind:true,
             containerClass:"eboard-canvas"
-        },this,this.eventBus);
+        },{
+            eDux:this.eDux,
+            extraMessage:this.nextMessage
+        });
         this.dom = container;
     }
     protected calc(){
@@ -159,24 +166,34 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
                 }
             };
         }
-        if(this._options.dimensions){
-            calcSize.dimensions = this._options.dimensions;// 需要计算比例，高度不一定适中
+        // 接收端接收发送端分辨率
+        if(this.options.dimensions){
+            calcSize.dimensions = this.options.dimensions;// 需要计算比例，高度不一定适中
         }
-        calcSize.cacheWidth=this._options.width||calcSize.width;// 缓存发送端的内容宽度
-        calcSize.scale = calcSize.width/ calcSize.cacheWidth;
         
+        calcSize.cacheWidth=this.options.width||calcSize.width;// 缓存发送端的内容宽度
+        calcSize.scale = calcSize.width / calcSize.cacheWidth;
         
-        // 需要修改父元素中的options
-        if(this.parent&&"updateOptionsSize" in this.parent){
-            this.parent.updateOptionsSize&&this.parent.updateOptionsSize({
+        if(this.extraMessage&&this.extraMessage.group){
+            Object.assign(this.extraMessage.group,{
                 width:calcSize.width,
                 height:calcSize.height,
                 dimensions:calcSize.dimensions
-            });
+            })
         }
-        this.options.width = calcSize.width;
-        this.options.height = calcSize.height;
-        this.options.dimensions = calcSize.dimensions;
+        // 需要修改父元素中的options
+        // if(this.parent&&"updateOptionsSize" in this.parent){
+        //     this.parent.updateOptionsSize&&this.parent.updateOptionsSize({
+        //         width:calcSize.width,
+        //         height:calcSize.height,
+        //         dimensions:calcSize.dimensions
+        //     });
+        // }
+       Object.assign(this.frameMessage,{
+           width:calcSize.width,
+           height:calcSize.height,
+           dimensions:calcSize.dimensions,
+       });
         return calcSize;
     }
     protected initLayout(){
@@ -194,19 +211,6 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
         this.engine.eBoardCanvas.clear();
         if(!silent){
             this.destroyAction();
-        }
-    }
-    /**
-     * 发送消息
-     * @param {IMessage | undefined} message
-     */
-    public throwMessage(message:IMessage|undefined){
-        if(void 0!== this.engine.messageHandle){
-            this.engine.messageHandle.call(this,message);
-        }else{
-            if(this["messageMiddleWare"]){
-                this["messageMiddleWare"].sendMessage(message);
-            }
         }
     }
 }
