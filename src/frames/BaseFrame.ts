@@ -12,13 +12,12 @@ import {
 } from '../interface/IFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
-import {IFrameMessageInterface} from '../IMessageInterface';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {message} from '../utils/decorators';
 import {EventBus, IPluginConfigOptions} from '../utils/EventBus';
 
 
-class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageInterface{
+class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
     public container:HTMLDivElement;
     public type:string;
     public dom:HTMLDivElement;

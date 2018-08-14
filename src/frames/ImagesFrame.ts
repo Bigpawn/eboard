@@ -12,13 +12,12 @@ import {ImageFrame} from './ImageFrame';
 import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
-import {IFrameGroupMessageInterface} from '../IMessageInterface';
 import {Plugins} from '../plugins';
 import {IEDux} from '../utils/EventBus';
 
 
 @setAnimationName('eboard-pager')
-class ImagesFrame implements IImagesFrame,IFrameGroupMessageInterface{
+class ImagesFrame implements IImagesFrame{
     public type:string="images-frame";
     public container:HTMLDivElement;
     public messageId:number;

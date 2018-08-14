@@ -19,7 +19,6 @@ import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {
     MessageTagEnum,
 } from '../middlewares/MessageMiddleWare';
-import {IFrameGroupMessageInterface} from '../IMessageInterface';
 import {Plugins} from '../plugins';
 import {EventBus} from '../utils/EventBus';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
@@ -28,7 +27,7 @@ const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 
 
 @setAnimationName('eboard-pager')
-class PdfFrame implements IPdfFrame,IFrameGroupMessageInterface{
+class PdfFrame implements IPdfFrame{
     private pageFrame:CanvasFrame;
     private pagination:Pagination;
     private pdf:PDFPromise<PDFDocumentProxy>;

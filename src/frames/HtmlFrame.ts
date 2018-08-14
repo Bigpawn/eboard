@@ -12,7 +12,6 @@ import {EBoardEngine} from '../EBoardEngine';
 import {IFrame,IHTMLFrame, IHTMLFrameOptions} from '../interface/IFrame';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import "../style/scrollbar.less";
-import {IFrameMessageInterface} from '../IMessageInterface';
 import {ScrollBar} from '../components/ScrollBar';
 
 export enum ScrollbarType{
@@ -22,7 +21,7 @@ export enum ScrollbarType{
     none
 }
 
-class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> implements IFrame,IFrameMessageInterface{
+class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> implements IFrame{
     private htmlWrap:HTMLDivElement;
     public type="html-frame";
     public scrollbar:ScrollBar;
