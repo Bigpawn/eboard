@@ -181,14 +181,6 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame,IFrameMessageI
                 dimensions:calcSize.dimensions
             })
         }
-        // 需要修改父元素中的options
-        // if(this.parent&&"updateOptionsSize" in this.parent){
-        //     this.parent.updateOptionsSize&&this.parent.updateOptionsSize({
-        //         width:calcSize.width,
-        //         height:calcSize.height,
-        //         dimensions:calcSize.dimensions
-        //     });
-        // }
        Object.assign(this.frameMessage,{
            width:calcSize.width,
            height:calcSize.height,
