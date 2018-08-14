@@ -27,7 +27,6 @@ import {ImagesFrame} from './frames/ImagesFrame';
 
 import "./style/canvas.less";
 import {
-    IMessage,
     MessageMiddleWare, MessageTagEnum,
 } from './middlewares/MessageMiddleWare';
 import {MessageAdapter} from './interceptor/MessageAdapter';
@@ -35,7 +34,6 @@ import {
     IFrameGroup, IImagesFrameOptions,
     IPdfFrameOptions,
 } from './interface/IFrameGroup';
-import {MessageReceiver} from "./middlewares/MessageReceiver";
 import {
     Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
     OrthogonalTriangle, Pencil, Pentagon,
@@ -53,8 +51,6 @@ class EBoard{
     private frames:Map<string,IFrame|IFrameGroup>=new Map();// frame管理
     private activeFrame:string;
     private container:HTMLDivElement|(()=>HTMLDivElement);
-    private messageReceiver:MessageReceiver=new MessageReceiver(this);
-    public messageAdapter=new MessageAdapter(this,false);
     public messageMiddleWare = new MessageMiddleWare();
     private getContainer(){
         const containerElement = "tagName" in this.container?this.container:this.container();
@@ -66,10 +62,7 @@ class EBoard{
         this.container = containerFilter;
         // plugin事件监听
         this.observePlugins();
-        
         this.eventBus.adapter = new MessageAdapter(this,false);
-        
-        
     }
     private observePlugins(){
         this.eventBus.on("plugin:active",(event:any)=>{
@@ -258,14 +251,6 @@ class EBoard{
         return this;
     }
 
-    /**
-     * 接收消息
-     * @param {IMessage} message
-     */
-    public messageInput(message:IMessage){
-        this.messageReceiver.receiver(message);
-    }
-    
     /**
      * 消息分发
      * @param {IMessage} message
