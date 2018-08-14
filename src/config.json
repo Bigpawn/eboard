@@ -1,0 +1,3 @@
+{
+    "plugins":["Line","Text","Selection","HTML","Pencil","Circle","Ellipse","Rectangle","Square","Triangle","EquilateralTriangle","OrthogonalTriangle","Polygon","Star","Pentagon","Hexagon","Clear","Arrow","ArrowNext","ArrowPrev","Delete","Ferule"]
+}

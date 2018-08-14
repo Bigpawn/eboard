@@ -13,9 +13,11 @@ import {escKeyEnable, mixinPlugins} from './utils/decorators';
 
 
 import {AbstractPlugin} from './plugins/AbstractPlugin';
-import {IPlugins, Plugins} from './plugins';
+import {IPlugins} from './plugins';
 import {IExtraMessage} from './interface/IFrame';
 import {EventBus, IEDux} from './utils/EventBus';
+
+const config = require("./config.json");
 
 
 declare interface IPlugin{
@@ -30,7 +32,7 @@ declare interface IExtraOptions{
 }
 
 
-@mixinPlugins([Plugins.Line,Plugins.Text,Plugins.Selection,Plugins.HTML,Plugins.Pencil,Plugins.Circle,Plugins.Ellipse,Plugins.Rectangle,Plugins.Square,Plugins.Triangle,Plugins.EquilateralTriangle,Plugins.OrthogonalTriangle,Plugins.Polygon,Plugins.Star,Plugins.Pentagon,Plugins.Hexagon,Plugins.Clear,Plugins.Arrow,Plugins.ArrowNext,Plugins.ArrowPrev,Plugins.Delete,Plugins.Ferule])
+@mixinPlugins(config.plugins)
 @escKeyEnable(true)
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
