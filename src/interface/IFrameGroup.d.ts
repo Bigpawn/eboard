@@ -10,7 +10,7 @@ import {AbstractPlugin} from '../plugins/AbstractPlugin';
 import {IFrame, IFrameOptions} from './IFrame';
 import {ScrollbarType} from '../frames/HtmlFrame';
 import {EBoard} from '../EBoard';
-import {IEDux} from '../utils/EventBus';
+import {IEDux} from '../utils/EDux';
 
 
 export declare interface IFrameGroupOptions{
@@ -23,8 +23,8 @@ export declare interface IFrameGroupOptions{
     width?:number;
     height?:number;
     dimensions?:{width:number;height:number};
-    container:HTMLDivElement;
-    eDux:IEDux;
+    container?:HTMLDivElement;
+    eDux?:IEDux;
 }
 
 export declare interface IFrameGroup{

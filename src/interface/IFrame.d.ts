@@ -12,7 +12,7 @@ import {IMessage} from '../middlewares/MessageMiddleWare';
 import {ScrollBar} from '../components/ScrollBar';
 import {IFrameGroup, IFrameGroupOptions} from './IFrameGroup';
 import {EBoard} from '../EBoard';
-import {IEDux} from '../utils/EventBus';
+import {IEDux} from '../utils/EDux';
 
 export declare interface IExtraMessage{
     frame?:IFrameOptions;
@@ -46,8 +46,8 @@ export declare interface IFrameOptions{
     dimensions?:{width:number;height:number};
     silent?:boolean;
     extraMessage?:IExtraMessage;
-    container:HTMLDivElement;
-    eDux:IEDux;// 数据接口共享模块
+    container?:HTMLDivElement;
+    eDux?:IEDux;// 数据接口共享模块
 }
 
 

@@ -7,6 +7,7 @@ import ImagesCanvas from "./pages/ImagesCanvas";
 import PdfCanvas from "./pages/PdfCanvas";
 import PageLayout from "./layouts/PageLayout";
 import HtmlCanvas from './pages/HtmlCanvas';
+import MixCanvas from './pages/MixCanvas';
 
 export const routes: RouteConfig[] = [
     {
@@ -39,6 +40,11 @@ export const routes: RouteConfig[] = [
         exact: true,
         component: () => (<PdfCanvas />),
     },
+    {
+        path:"/mix",
+        exact:true,
+        component:()=><MixCanvas/>
+    }
 ];
 
 export const route = (

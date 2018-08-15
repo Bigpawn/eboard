@@ -16,7 +16,7 @@ import {CursorTypeEnum} from './cursor/Enum';
 import {ICursorTypes} from './interface/ICursorTypes';
 import {IMessage, MessageTagEnum} from './middlewares/MessageMiddleWare';
 import {message} from './utils/decorators';
-import {EventBus, IEDux} from './utils/EventBus';
+import {EDux, IEDux} from './utils/EDux';
 import {IExtraMessage} from './interface/IFrame';
 
 
@@ -39,7 +39,7 @@ class EBoardCanvas extends fabric.Canvas{
     private cursorSize:number=20;
     private cursorTypeName:CursorTypeEnum;
     private cursorMessageEnable:boolean=false;
-    public eDux:EventBus;
+    public eDux:EDux;
     public extraMessage:IExtraMessage;
     constructor(element: HTMLCanvasElement,options: ICanvasOptions,extraOptions:ICanvasExtraOptions){
         super(element,options);

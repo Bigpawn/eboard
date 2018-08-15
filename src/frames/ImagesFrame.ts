@@ -13,7 +13,7 @@ import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {Plugins} from '../plugins';
-import {IEDux} from '../utils/EventBus';
+import {IEDux} from '../utils/EDux';
 
 
 @setAnimationName('eboard-pager')
@@ -39,9 +39,9 @@ class ImagesFrame implements IImagesFrame{
     
     constructor(options:IImagesFrameOptions){
         this.id = options.id||Date.now().toString();
-        this.eDux=options.eDux;
+        this.eDux=options.eDux as any;
+        this.container=options.container as any;
         this.options=options;
-        this.container=options.container;
         this.messageId=options.messageId||MessageIdMiddleWare.getId();
         const {eDux,container,...rest} = options;
         this.groupMessage=Object.assign({},rest,{

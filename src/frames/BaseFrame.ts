@@ -14,7 +14,7 @@ import {EBoardEngine} from '../EBoardEngine';
 import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {message} from '../utils/decorators';
-import {EventBus, IPluginConfigOptions} from '../utils/EventBus';
+import {EDux, IPluginConfigOptions} from '../utils/EDux';
 
 
 class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
@@ -24,7 +24,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
     public engine:EBoardEngine;
     public options:T;
     public id:string;
-    public eDux:EventBus;
+    public eDux:EDux;
     public messageId:number;
     public extraMessage:any={};// 存放group属性
     public nextMessage:any={};
@@ -32,8 +32,8 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
     constructor(options:T){
         this.id=options.id||Date.now().toString();
         this.messageId = options.messageId||MessageIdMiddleWare.getId();
-        this.eDux=options.eDux;
-        this.container=options.container;
+        this.eDux=options.eDux as any;
+        this.container=options.container as any;
         this.options=options;
         this.extraMessage=this.options.extraMessage||{};
         if(options.extraMessage&&options.extraMessage.group){

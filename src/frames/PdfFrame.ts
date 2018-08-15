@@ -20,7 +20,7 @@ import {
     MessageTagEnum,
 } from '../middlewares/MessageMiddleWare';
 import {Plugins} from '../plugins';
-import {EventBus} from '../utils/EventBus';
+import {EDux} from '../utils/EDux';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
@@ -43,16 +43,16 @@ class PdfFrame implements IPdfFrame{
     public options:IPdfFrameOptions;
     public parent?:EBoard;
     public id:string;
-    public eDux:EventBus;
+    public eDux:EDux;
     
     public nextMessage:any={};
     private groupMessage:any={};
     
     constructor(options:IPdfFrameOptions){
         this.id=options.id||Date.now().toString();
-        this.eDux=options.eDux;
+        this.eDux=options.eDux as any;
         this.options=options;
-        this.container=options.container;
+        this.container=options.container as any;
         this.messageId=options.messageId||MessageIdMiddleWare.getId();
         const {eDux,container,...rest} = options;
         this.groupMessage=Object.assign({},rest,{

@@ -13,7 +13,7 @@ import {EBoardEngine} from '../EBoardEngine';
 import {IEvent} from '~fabric/fabric-impl';
 import {fabric} from "fabric";
 import {CursorTypeEnum} from '../cursor/Enum';
-import {EventBus, IEDux} from '../utils/EventBus';
+import {EDux, IEDux} from '../utils/EDux';
 import {IExtraMessage} from '../interface/IFrame';
 
 export declare interface IPluginOptions{
@@ -36,7 +36,7 @@ abstract class AbstractPlugin {
     protected onMouseUp?(event:IEvent):void;
     protected ctrlKeyDownHandler?(event:KeyboardEvent):void;
     protected ctrlKeyUpHandler?(event:KeyboardEvent):void;
-    protected eDux:EventBus;
+    protected eDux:EDux;
     protected extraMessage:IExtraMessage;
     constructor(canvas:EBoardCanvas,options:IPluginOptions){
         this.eBoardCanvas=canvas;

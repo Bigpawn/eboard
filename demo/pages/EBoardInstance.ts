@@ -10,17 +10,15 @@ import {EBoard} from '../../src/EBoard';
 class EBoardInstance{
     private static instance:EBoard;
     public static getInstance(){
-        if(!this.instance){
-            this.instance=new EBoard(()=>document.getElementById("eboardContainer") as HTMLDivElement);
-        }
+        const container = document.getElementById("eboardContainer") as HTMLDivElement;
+        this.instance=new EBoard(container);
         return this.instance;
     }
     
     private static receiveInstance:EBoard;
     public static getReceiveInstance(){
-        if(!this.receiveInstance){
-            this.receiveInstance=new EBoard(()=>document.getElementById("eboardContainerReceive") as HTMLDivElement);
-        }
+        const container = document.getElementById("eboardContainerReceive") as HTMLDivElement;
+        this.receiveInstance=new EBoard(container);
         return this.receiveInstance;
     }
 }

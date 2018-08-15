@@ -11,7 +11,18 @@
 @expendSize:12px;
 
 .eboard{
+    &-disable{
+        .eboard-toolbar-wrap{
+            display: none;
+        }
+    }
     &-toolbar{
+        &-wrap{
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
         position: relative;
         &-item{
             position: relative;

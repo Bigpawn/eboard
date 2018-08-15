@@ -15,7 +15,7 @@ import {escKeyEnable, mixinPlugins} from './utils/decorators';
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins} from './plugins';
 import {IExtraMessage} from './interface/IFrame';
-import {EventBus, IEDux} from './utils/EventBus';
+import {EDux, IEDux} from './utils/EDux';
 
 const config = require("./config.json");
 
@@ -44,7 +44,7 @@ class EBoardEngine{
     private handleAll?:boolean;
     public messageHandle?:Function;
     protected extraMessage:IExtraMessage;
-    private eDux:EventBus;
+    private eDux:EDux;
     constructor(element: HTMLCanvasElement, options: ICanvasOptions,extraOptions:IExtraOptions){
         this.eDux=extraOptions.eDux;
         this.extraMessage = extraOptions.extraMessage;

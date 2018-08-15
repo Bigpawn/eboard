@@ -11,7 +11,7 @@ import {IExtraMessage, IFrame} from '../interface/IFrame';
 import Timer = NodeJS.Timer;
 import {message} from '../utils/decorators';
 import {IMessage, MessageTagEnum} from '../middlewares/MessageMiddleWare';
-import {IEDux} from '../utils/EventBus';
+import {IEDux} from '../utils/EDux';
 
 export declare interface IScrollBarMessage extends IMessage{
     scrollTop:number;
@@ -21,8 +21,8 @@ export declare interface IScrollBarMessage extends IMessage{
 }
 
 declare interface IScrollBarOptions extends PerfectScrollbar.Options{
-    extraMessage:IExtraMessage,
-    eDux:IEDux
+    extraMessage?:IExtraMessage,
+    eDux?:IEDux
 }
 
 class ScrollBar extends PerfectScrollbar{
@@ -30,8 +30,8 @@ class ScrollBar extends PerfectScrollbar{
     private container:HTMLElement;
     private delPixel:number=5;
     private scrollInterval:Timer;
-    public eDux:IEDux;
-    public extraMessage:IExtraMessage;
+    public eDux?:IEDux;
+    public extraMessage?:IExtraMessage;
     constructor(element: string | HTMLElement, options: IScrollBarOptions){
         super(element,options);
         this.container = typeof element === 'string'?document.querySelector(element) as HTMLElement:element;
@@ -68,7 +68,7 @@ class ScrollBar extends PerfectScrollbar{
      * @param {number} scrollTop
      * @param {number} scrollLeft
      */
-    private scrollTo(scrollTop:number,scrollLeft:number){
+    public scrollTo(scrollTop:number,scrollLeft:number){
         if(void 0 !== this.scrollInterval){
             // 如果当前在滚动过程中先暂停
             clearInterval(this.scrollInterval);
@@ -89,13 +89,13 @@ class ScrollBar extends PerfectScrollbar{
     @message
     private scrollAction(){
         // 返回总高度
-        return {
+        return this.eDux?{
             tag:MessageTagEnum.Scroll,
             scrollTop:this.container.scrollTop,
             scrollLeft:this.container.scrollLeft,
             totalHeight:this.container.scrollHeight,
             totalWidth:this.container.scrollWidth,
-        }
+        }:undefined
     }
     
     public onMessage(message:IScrollBarMessage){

@@ -39,33 +39,158 @@ import {
     OrthogonalTriangle, Pencil, Pentagon,
     Plugins, Polygon, Rectangle, Square, Star, Triangle, Text, Delete,Selection
 } from './plugins';
-import {EventBus, IPluginConfigOptions} from './utils/EventBus';
+import {EDux, IPluginConfigOptions} from './utils/EDux';
+import {Tab} from './components/Tab';
+import {Toolbar} from './components/Toolbar';
+import {message} from './utils/decorators';
 
 export enum FrameType{
     Empty="empty-frame",Image="image-frame",HTML="html-frame",Canvas="canvas-frame",Pdf="pdf-frame",Images="images-frame"
 }
 
+declare interface IEboardOptions{
+    ratio:string
+}
 
 class EBoard{
-    private eventBus:EventBus=new EventBus();
+    private eDux:EDux=new EDux();
     private frames:Map<string,IFrame|IFrameGroup>=new Map();// frame管理
     private activeFrame:string;
-    private container:HTMLDivElement|(()=>HTMLDivElement);
+    private container:HTMLDivElement;
     public messageMiddleWare = new MessageMiddleWare();
+    private tabContainer:HTMLDivElement;
+    private tab:Tab;
+    private ratio:string;
     private getContainer(){
-        const containerElement = "tagName" in this.container?this.container:this.container();
-        containerElement.style.width=containerElement.offsetWidth + "px";
-        containerElement.style.height=containerElement.offsetHeight + "px";
-        return containerElement;
+        return this.container;
     }
-    constructor(containerFilter:HTMLDivElement|(()=>HTMLDivElement)){
-        this.container = containerFilter;
+    constructor(container:HTMLDivElement,options?:IEboardOptions){
+        this.ratio = options?(options.ratio||"16:9"):"16:9";
+        
+        
         // plugin事件监听
         this.observePlugins();
-        this.eventBus.adapter = new MessageAdapter(this,false);
+        this.eDux.adapter = new MessageAdapter(this,false);
+        
+       this.initTab(container);
+    
+        const body = document.createElement("div");
+        body.className="eboard-body";
+        this.container=body;
+        container.appendChild(body);
+        
+        
+        this.initToolbar(container);
+        
+        
+        
+    }
+    
+    @message
+    private switchMessage(id:string){
+        return {
+            frameId:id,
+            tag:MessageTagEnum.SwitchToFrame
+        }
+    }
+    private initTab(container:HTMLDivElement){
+        const tabContainer = document.createElement("div");
+        tabContainer.className = "eboard-tabs";
+        this.tabContainer=tabContainer;
+        container.appendChild(tabContainer);
+        this.tab=new Tab(tabContainer);
+        this.tab.on("switch",(e: any) => {
+            const tabId = e.data;
+            this.switchToFrame(tabId);// switch事件
+            this.switchMessage(tabId);
+        });
+        this.tab.on("remove",function(e: any) {
+            const tabId = e.data;
+            alert(tabId);
+        });
+    }
+    private initToolbar(container:HTMLDivElement){
+        const wrap = document.createElement("div");
+        wrap.className="eboard-toolbar-wrap";
+        container.appendChild(wrap);
+        let toolbar = new Toolbar(wrap,(item:any)=>{
+            switch (item.key){
+                case "line":
+                    this.setActivePlugin(Plugins.Line);
+                    break;
+                case "arrow-next":
+                    this.setActivePlugin(Plugins.ArrowNext);
+                    break;
+                case "arrow-prev":
+                    this.setActivePlugin(Plugins.ArrowPrev);
+                    break;
+                case "arrow-both":
+                    this.setActivePlugin(Plugins.Arrow);
+                    break;
+                case "circle":
+                    this.setActivePlugin(Plugins.Circle);
+                    break;
+                case "ellipse":
+                    this.setActivePlugin(Plugins.Ellipse);
+                    break;
+                case "triangle":
+                    this.setActivePlugin(Plugins.Triangle);
+                    break;
+                case "equilateral-triangle":
+                    this.setActivePlugin(Plugins.EquilateralTriangle);
+                    break;
+                case "orthogonal-triangle":
+                    this.setActivePlugin(Plugins.OrthogonalTriangle);
+                    break;
+                case "rectangle":
+                    this.setActivePlugin(Plugins.Rectangle);
+                    break;
+                case "square":
+                    this.setActivePlugin(Plugins.Square);
+                    break;
+                case "star":
+                    this.setActivePlugin(Plugins.Star);
+                    break;
+                case "pentagon":
+                    this.setActivePlugin(Plugins.Pentagon);
+                    break;
+                case "hexagon":
+                    this.setActivePlugin(Plugins.Hexagon);
+                    break;
+                case "polygon":
+                    this.setActivePlugin(Plugins.Polygon);
+                    break;
+                case "text":
+                    this.setActivePlugin(Plugins.Text);
+                    break;
+                case "pencil":
+                    this.setActivePlugin(Plugins.Pencil);
+                    break;
+                case "clear":
+                    this.setActivePlugin(Plugins.Clear);
+                    break;
+                case "del":
+                    this.setActivePlugin(Plugins.Delete);
+                    break;
+                case "select":
+                    this.setActivePlugin(Plugins.Selection);
+                    break;
+                case "ferule":
+                    this.setActivePlugin(Plugins.Ferule);
+                    break;
+                case "stroke":
+                    this.setStrokeColor(item.color);
+                    break;
+                case "fill":
+                    this.setFillColor(item.color);
+                    break;
+                default:
+                    break;
+            }
+        });
     }
     private observePlugins(){
-        this.eventBus.on("plugin:active",(event:any)=>{
+        this.eDux.on("plugin:active",(event:any)=>{
             const data = event.data;
             const {plugin,options} = data;
             switch (plugin){
@@ -91,9 +216,9 @@ class EBoard{
                 case Plugins.Ferule:
                     // 数据共享
                     if(!options.background){
-                        this.eventBus.sharedData.plugins.clear();// clear 什么时候触发
+                        this.eDux.sharedData.plugins.clear();// clear 什么时候触发
                     }
-                    this.eventBus.sharedData.plugins.set(plugin,{
+                    this.eDux.sharedData.plugins.set(plugin,{
                         ...options,
                         enable:true,
                     });
@@ -112,11 +237,11 @@ class EBoard{
                     break;
             }
         });
-        this.eventBus.on("plugin:disable",(event:any)=>{
+        this.eDux.on("plugin:disable",(event:any)=>{
             const data = event.data;
             const {plugin} = data;
-            if(this.eventBus.sharedData.plugins.has(plugin)){
-                this.eventBus.sharedData.plugins.delete(plugin);
+            if(this.eDux.sharedData.plugins.has(plugin)){
+                this.eDux.sharedData.plugins.delete(plugin);
             }
         });
     }
@@ -134,11 +259,9 @@ class EBoard{
             this.switchToFrame(frame);
             return frame;
         }
-    
-        const container = this.getContainer();
-        options.container = container;
-        options.eDux = this.eventBus;
-        
+        options.container = this.getContainer();
+        options.eDux = this.eDux;
+        options.ratio = this.ratio;
         switch (type){
             case FrameType.HTML:
                 frame = new HtmlFrame(options as IHTMLFrameOptions);
@@ -162,6 +285,10 @@ class EBoard{
         }
         this.frames.set(frame.id,frame);
         this.switchToFrame(frame);
+        this.tab.addTab({
+            tabId:frame.id,
+            label:frame.id
+        });
         return frame;
     }
     
@@ -216,6 +343,7 @@ class EBoard{
         if(activeFrame&&activeFrame.dom){
             activeFrame.container.appendChild(activeFrame.dom);// 如果是子frame则存在问题
         }
+        this.tab.switchTo(this.activeFrame);
         return activeFrame;
     }
     
@@ -257,7 +385,6 @@ class EBoard{
      */
     public onMessage(message:string){
         const messageObj:any = JSON.parse(message);
-        console.log(messageObj)
         // 获取frame实例，之后根据操作处理
         const {frame:frameOptions,group:frameGroupOptions,...options} = messageObj;
         const {tag,type} = options;
@@ -295,6 +422,8 @@ class EBoard{
             case MessageTagEnum.SwitchToFrame:
                 if(void 0 !== frameGroup){
                     frameGroup.onGo(options.pageNum,options.messageId);
+                }else{
+                    this.switchToFrame(options.frameId);
                 }
                 break;
             case MessageTagEnum.Clear:
@@ -385,7 +514,7 @@ class EBoard{
      * @param {IPluginConfigOptions} options
      */
     public setActivePlugin(plugin:Plugins,options?:IPluginConfigOptions){
-        this.eventBus.trigger("plugin:active",{
+        this.eDux.trigger("plugin:active",{
             plugin:plugin,
             options:options||{}
         });
@@ -397,7 +526,7 @@ class EBoard{
      * @returns {this}
      */
     public setStrokeColor(color:string){
-        this.eventBus.sharedData.stroke=color;
+        this.eDux.sharedData.stroke=color;
         return this;
     }
     
@@ -407,7 +536,7 @@ class EBoard{
      * @returns {this}
      */
     public setFillColor(color:string){
-        this.eventBus.sharedData.fill=color;
+        this.eDux.sharedData.fill=color;
         return this;
     }
     
@@ -417,8 +546,8 @@ class EBoard{
      */
     public setDisable(){
         const container = this.getContainer();
-        container.classList.add("eboard-disable");
-        this.eventBus.sharedData.enable=false;
+        container.parentElement&&container.parentElement.classList.add("eboard-disable");
+        this.eDux.sharedData.enable=false;
         return this;
     }
     
@@ -428,8 +557,8 @@ class EBoard{
      */
     public setEnable(){
         const container = this.getContainer();
-        container.classList.remove("eboard-disable");
-        this.eventBus.sharedData.enable=true;
+        container.parentElement&&container.parentElement.classList.remove("eboard-disable");
+        this.eDux.sharedData.enable=true;
         return this;
     }
 }

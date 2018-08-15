@@ -1,21 +1,38 @@
+/**
+ * @disc:DESC
+ * @type:TYPE
+ * @dependence:DEPENDENCE
+ * @author:yanxinaliang
+ * @time：2018/8/15 14:04
+ */
 import * as React from "react";
-import { Card } from "antd";
 import SimpleCanvas from './SimpleCanvas';
 import {FrameType} from '../../src/EBoard';
-import {ScrollbarType} from '../../src/frames/HtmlFrame';
 import {EBoardInstance} from './EBoardInstance';
+import { Card } from "antd";
+import {ScrollbarType} from '../../src/frames/HtmlFrame';
 
 
-
-class HtmlCanvas extends SimpleCanvas{
+class MixCanvas extends SimpleCanvas{
+    private eBoard:any;
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
         const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
         eBoard.attachMessageMiddleWare((message)=>{
             receiveEBoard.onMessage(message);
         });
-        eBoard.clearCache().createHtmlFrame({
+        eBoard.clearCache().createPdfFrame({
+            type:FrameType.Pdf,
+            url:require("./4.pdf"),
+            pageNum:1,
+            messageId:0
+        });
+        this.eBoard=eBoard;
+    }
+    private createHtmlCanvas=()=>{
+        this.eBoard.createHtmlFrame({
             type:FrameType.HTML,
+            ratio:"16:9",
             scrollbar:ScrollbarType.vertical,
             content:'html内容dsaaaaaaaaaaaaaaaadas\n' +
             '                        <br/>\n' +
@@ -110,15 +127,55 @@ class HtmlCanvas extends SimpleCanvas{
             '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
             '                        <br/>',
         });
-    }
-    public render(): JSX.Element {
+    };
+    private createImageCanvas=()=>{
+        this.eBoard.createImageFrame({
+            type:FrameType.Image,
+            content:"https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2622681255,3418216244&fm=173&app=25&f=JPEG?w=639&h=381&s=7084E2BB4A501CC0543717BC0300700E",
+            scrollbar:ScrollbarType.vertical,
+        });
+    };
+    private createEmptyCanvas=()=>{
+        this.eBoard.createBaseFrame({
+            type:FrameType.Empty,
+        });
+    };
+    private createPdfCanvas=()=>{
+        this.eBoard.createPdfFrame({
+            type:FrameType.Pdf,
+            url:require("./4.pdf"),
+            pageNum:1,
+        });
+    };
+    private createImagesCanvas=()=>{
+        const dataSet=[];
+        for (let i=0;i<114;i++){
+            dataSet.push(i+".png");
+        }
+        this.eBoard.createImagesFrame({
+            type:FrameType.Images,
+            pageNum:1,
+            urlPrefix:"https://res2dev.9itest.com/resource2/1000/document/20180716/56e61d90a7d7435c80a2499621055ceb_png/",
+            images:dataSet,
+        });
+    };
+    public render() {
         return (
-            <Card bordered title="HTML Canvas" style={{ margin: "16px 16px"}}>
-                <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}/>
-                <div id={"eboardContainerReceive"} style={{position:"relative",height:document.body.offsetHeight-220,width:"40%",display:"inline-block",marginLeft:40}}/>
+            <Card bordered title="MixCanvas" style={{ margin: "16px 16px"}}>
+                <div>
+                    <button onClick={this.createHtmlCanvas}>htmlFrame</button>
+                    <button onClick={this.createImageCanvas}>imageFrame</button>
+                    <button onClick={this.createEmptyCanvas}>emptyFrame</button>
+                    <button onClick={this.createPdfCanvas}>pdfFrame</button>
+                    <button onClick={this.createImagesCanvas}>imagesFrame</button>
+                </div>
+                <div style={{width:"200%",height:"100%",position:"relative"}}>
+                    <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}/>
+                    <div id={"eboardContainerReceive"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}/>
+                </div>
             </Card>
-        )
+        );
     }
 }
 
-export default HtmlCanvas;
+export default MixCanvas;
