@@ -36,7 +36,7 @@ export declare interface IFrameGroup{
     options:IFrameOptions;
     id:string;
     parent?:EBoard;
-    destroy():void;
+    destroy(silent?:boolean):void;
     getPlugin(pluginName:string):AbstractPlugin|undefined;
     switchToFrame?(childId:number,messageId:number):this|Promise<this>;// 切换到子frame
     updateOptionsSize?(size:{width:number;height:number;dimensions:{width:number;height:number}}):void;

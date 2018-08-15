@@ -40,7 +40,7 @@ import {
     Plugins, Polygon, Rectangle, Square, Star, Triangle, Text, Delete,Selection
 } from './plugins';
 import {EDux, IPluginConfigOptions} from './utils/EDux';
-import {Tab} from './components/Tab';
+import {Tab, TabEventEnum} from './components/Tab';
 import {Toolbar} from './components/Toolbar';
 import {message} from './utils/decorators';
 
@@ -99,14 +99,14 @@ class EBoard{
         this.tabContainer=tabContainer;
         container.appendChild(tabContainer);
         this.tab=new Tab(tabContainer);
-        this.tab.on("switch",(e: any) => {
+        this.tab.on(TabEventEnum.Switch,(e: any) => {
             const tabId = e.data;
             this.switchToFrame(tabId);// switch事件
             this.switchMessage(tabId);
         });
-        this.tab.on("remove",function(e: any) {
+        this.tab.on(TabEventEnum.Remove,(e: any)=>{
             const tabId = e.data;
-            alert(tabId);
+            this.removeFrame(tabId);
         });
     }
     private initToolbar(container:HTMLDivElement){
@@ -343,8 +343,17 @@ class EBoard{
         if(activeFrame&&activeFrame.dom){
             activeFrame.container.appendChild(activeFrame.dom);// 如果是子frame则存在问题
         }
-        this.tab.switchTo(this.activeFrame);
+        this.tab.switchTo(this.activeFrame,true);
         return activeFrame;
+    }
+    
+    public removeFrame(id:string,silence?:boolean){
+        const frame = this.findFrameById(id);
+        if(void 0 !== frame){
+            frame.destroy(silence);
+            this.frames.delete(id);
+            frame.dom.parentElement&&frame.dom.parentElement.removeChild(frame.dom);
+        }
     }
     
     /**
@@ -447,6 +456,10 @@ class EBoard{
                 break;
             case MessageTagEnum.SelectionRotate:
                 (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                break;
+            case MessageTagEnum.DestroyFrame:
+            case MessageTagEnum.DestroyFrameGroup:
+                this.removeFrame(options.id,true);
                 break;
             default:
                 if(void 0 !== frame){

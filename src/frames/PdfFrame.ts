@@ -280,7 +280,7 @@ class PdfFrame implements IPdfFrame{
     public getPlugin(pluginName:Plugins){
         return this.pageFrame?this.pageFrame.getPlugin(pluginName):undefined;
     }
-    public destroy(){
+    public destroy(silence?:boolean){
         if(this.child.size>0){
             // 清空子项
             this.child.forEach(frame=>{
@@ -288,7 +288,7 @@ class PdfFrame implements IPdfFrame{
             });
             this.child.clear();
         }
-        this.destroyAction();
+        !silence&&this.destroyAction();
     }
 }
 
