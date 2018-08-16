@@ -11,4 +11,5 @@ export enum CursorTypeEnum{
     Default="Default",
     Cross="Cross",
     Rubber="Rubber",
+    SystemCross = "SystemCross",// 系统Cross
 }

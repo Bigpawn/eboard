@@ -150,13 +150,20 @@ class EBoardCanvas extends fabric.Canvas{
                 case CursorTypeEnum.None:
                     this.cursorType=undefined as any;
                     break;
+                case CursorTypeEnum.SystemCross:
+                    this.cursorType=CursorTypeEnum.SystemCross as any;
+                    break;
                 default:
                     this.cursorType=new (require(`./cursor/types/${cursorType}.ts`).default)(this.cursorCanvas);
                     break;
             }
         }
         if(void 0 !== this.cursorType){
-            this.activeCursor();
+            if(CursorTypeEnum.SystemCross as any === this.cursorType){
+                this.defaultCursor="crosshair";// 更新样式进行优化
+            }else{
+                this.activeCursor();
+            }
         }else{
             this.destroyCursor();
         }
