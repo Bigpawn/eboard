@@ -18,8 +18,8 @@ import * as LZString from "lz-string";
 import {IFrameOptions} from '../interface/IFrame';
 
 export enum MessageTagEnum{
-    Start,Temporary,Process,End,CreateFrame,DestroyFrame,CreateFrameGroup,DestroyFrameGroup,SwitchToFrame,Clear,AllowHtmlAction,DisAllowHtmlAction,Scroll,
-    Delete,Cursor,SelectionMove,SelectionScale,SelectionRotate,
+    CreateFrame,CreateFrameGroup,SwitchToFrame,Clear,AllowHtmlAction,DisAllowHtmlAction,Scroll,
+    Delete,Cursor,SelectionMove,SelectionScale,SelectionRotate,RemoveFrame,
     Shape
 }
 

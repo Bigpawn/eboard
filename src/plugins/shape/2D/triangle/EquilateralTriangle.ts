@@ -58,6 +58,7 @@ class EquilateralTriangle extends AbstractShapePlugin{
             strokeWidth: this.getCanvasPixel(this.strokeWidth),
             strokeDashArray:this.strokeDashArray,
             fill: this.getFillColor(),
+            borderScaleFactor:this.getCanvasPixel(1),
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -87,6 +88,7 @@ class EquilateralTriangle extends AbstractShapePlugin{
             strokeWidth: this.getCanvasPixel(this.strokeWidth),
             strokeDashArray:this.strokeDashArray,
             fill: fill,
+            borderScaleFactor:this.getCanvasPixel(1),
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

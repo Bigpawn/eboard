@@ -56,6 +56,7 @@ class Polygon extends AbstractShapePlugin{
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.getCanvasPixel(this.strokeWidth),
             fill:this.getFillColor(),
+            borderScaleFactor:this.getCanvasPixel(1),
         }).setId(this.instance.id);
         this.eBoardCanvas.add(this.instance);
         this.eBoardCanvas.renderAll();
@@ -98,6 +99,7 @@ class Polygon extends AbstractShapePlugin{
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.getCanvasPixel(this.strokeWidth),
                 fill:this.getFillColor(),
+                borderScaleFactor:this.getCanvasPixel(1),
             });
             this.eBoardCanvas.add(this.instance);
             this.throw();
@@ -180,6 +182,7 @@ class Polygon extends AbstractShapePlugin{
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.getCanvasPixel(this.strokeWidth),
             fill:fill,
+            borderScaleFactor:this.getCanvasPixel(1),
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

@@ -14,84 +14,10 @@ class HtmlCanvas extends SimpleCanvas{
         eBoard.attachMessageMiddleWare((message)=>{
             receiveEBoard.onMessage(message);
         });
-        eBoard.clearCache().createHtmlFrame({
+        eBoard.clearCache().addHtmlFrame({
             type:FrameType.HTML,
             scrollbar:ScrollbarType.vertical,
             content:'html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
-            '                        <br/>\n' +
-            '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
             '                        <br/>\n' +
             '                        html内容dsaaaaaaaaaaaaaaaadas\n' +
             '                        <br/>\n' +

@@ -21,16 +21,17 @@ class MixCanvas extends SimpleCanvas{
         eBoard.attachMessageMiddleWare((message)=>{
             receiveEBoard.onMessage(message);
         });
-        eBoard.clearCache().createPdfFrame({
+        eBoard.clearCache().addPdfFrame({
             type:FrameType.Pdf,
             url:require("./4.pdf"),
             pageNum:1,
-            messageId:0
+            name:"pdf"
         });
         this.eBoard=eBoard;
     }
     private createHtmlCanvas=()=>{
-        this.eBoard.createHtmlFrame({
+        this.eBoard.addHtmlFrame({
+            name:"html",
             type:FrameType.HTML,
             ratio:"16:9",
             scrollbar:ScrollbarType.vertical,
@@ -129,22 +130,25 @@ class MixCanvas extends SimpleCanvas{
         });
     };
     private createImageCanvas=()=>{
-        this.eBoard.createImageFrame({
+        this.eBoard.addImageFrame({
             type:FrameType.Image,
             content:"https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=2622681255,3418216244&fm=173&app=25&f=JPEG?w=639&h=381&s=7084E2BB4A501CC0543717BC0300700E",
             scrollbar:ScrollbarType.vertical,
+            name:"image",
         });
     };
     private createEmptyCanvas=()=>{
-        this.eBoard.createBaseFrame({
+        this.eBoard.addEmptyFrame({
             type:FrameType.Empty,
+            name:"empty",
         });
     };
     private createPdfCanvas=()=>{
-        this.eBoard.createPdfFrame({
+        this.eBoard.addPdfFrame({
             type:FrameType.Pdf,
             url:require("./4.pdf"),
             pageNum:1,
+            name:"pdf"
         });
     };
     private createImagesCanvas=()=>{
@@ -152,11 +156,12 @@ class MixCanvas extends SimpleCanvas{
         for (let i=0;i<114;i++){
             dataSet.push(i+".png");
         }
-        this.eBoard.createImagesFrame({
+        this.eBoard.addImagesFrame({
             type:FrameType.Images,
             pageNum:1,
             urlPrefix:"https://res2dev.9itest.com/resource2/1000/document/20180716/56e61d90a7d7435c80a2499621055ceb_png/",
             images:dataSet,
+            name:"images"
         });
     };
     public render() {

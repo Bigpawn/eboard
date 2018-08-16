@@ -13,7 +13,7 @@ class MaterialUIPage extends SimpleCanvas{
         eBoard.attachMessageMiddleWare((message)=>{
             receiveEBoard.onMessage(message);
         });
-        eBoard.clearCache().createPdfFrame({
+        eBoard.clearCache().addPdfFrame({
             type:FrameType.Pdf,
             url:require("./4.pdf"),
             pageNum:1,

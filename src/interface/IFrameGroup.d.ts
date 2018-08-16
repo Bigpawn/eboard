@@ -25,12 +25,14 @@ export declare interface IFrameGroupOptions{
     dimensions?:{width:number;height:number};
     container?:HTMLDivElement;
     eDux?:IEDux;
+    append?:boolean;
+    name?:string;
+    calcSize?:any;
 }
 
 export declare interface IFrameGroup{
     container:HTMLDivElement;
     type:string;// 窗口标识id
-    messageId:number;// 窗口创建对应消息
     dom:HTMLElement;// 窗口内容dom
     child:Map<number,IFrame>;
     options:IFrameOptions;

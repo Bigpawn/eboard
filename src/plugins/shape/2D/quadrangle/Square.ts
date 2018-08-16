@@ -71,7 +71,8 @@ class Square extends AbstractShapePlugin{
             originY:"center",
             width:length,
             height:length,
-            angle:angle
+            angle:angle,
+            borderScaleFactor:this.getCanvasPixel(1),
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -108,7 +109,8 @@ class Square extends AbstractShapePlugin{
             originY:"center",
             width:length,
             height:length,
-            angle:angle
+            angle:angle,
+            borderScaleFactor:this.getCanvasPixel(1),
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

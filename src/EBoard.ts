@@ -3,25 +3,19 @@
  * @Date: 2018/7/20 11:45
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * * @Last Modified time: 2018/7/20 11:45
- * @disc:前端应用架构类 设计到窗口概念  frame 可应用为Tab
- * frame 中管理canvas实例，canvas实例中管理绘制object实例  层级化，frame中提供object实例查询 canvas中提供跨实例object实例查询
- * 支持页面中多实例模式，多容器模式，从静态类修改成实体类
- * 消息代理应该从该对象拦截
- * 通过事件传递插件启用状态
- * 数据共享机制通过eventBus进行缓存
- *
- * 添加enable控制：disable情况下所有操作均不可用，且误操作不会发送消息
+ * @disc:前端应用架构类
+ * changeList:
+ *      画布分辨率固定值设置，不进行差异化处理，像素进行比例处理
  *
  */
 
 import {
-    IBaseFrameOptions, ICanvasFrameOptions, IFrame,
+    IBaseFrameOptions, IFrame,
     IHTMLFrameOptions, IImageFrameOptions,
 } from './interface/IFrame';
 import {BaseFrame} from './frames/BaseFrame';
 import {HtmlFrame} from './frames/HtmlFrame';
 import {ImageFrame} from './frames/ImageFrame';
-import {CanvasFrame} from './frames/CanvasFrame';
 import {PdfFrame} from "./frames/PdfFrame";
 import {ImagesFrame} from './frames/ImagesFrame';
 
@@ -44,6 +38,12 @@ import {Tab, TabEventEnum} from './components/Tab';
 import {Toolbar} from './components/Toolbar';
 import {message} from './utils/decorators';
 
+
+
+const config = require("./config.json");
+
+
+
 export enum FrameType{
     Empty="empty-frame",Image="image-frame",HTML="html-frame",Canvas="canvas-frame",Pdf="pdf-frame",Images="images-frame"
 }
@@ -56,34 +56,32 @@ class EBoard{
     private eDux:EDux=new EDux();
     private frames:Map<string,IFrame|IFrameGroup>=new Map();// frame管理
     private activeFrame:string;
+    private body:HTMLDivElement;
     private container:HTMLDivElement;
     public messageMiddleWare = new MessageMiddleWare();
-    private tabContainer:HTMLDivElement;
     private tab:Tab;
     private ratio:string;
+    private calcSize:any;
     private getContainer(){
-        return this.container;
+        return this.body;
     }
     constructor(container:HTMLDivElement,options?:IEboardOptions){
         this.ratio = options?(options.ratio||"16:9"):"16:9";
-        
-        
+        this.container=container;
+        this.initCanvasLayout();
+        this.initTab();
+        this.initToolbar();
+        this.eDux.adapter = new MessageAdapter(this,false);
         // plugin事件监听
         this.observePlugins();
-        this.eDux.adapter = new MessageAdapter(this,false);
-        
-       this.initTab(container);
+        this.calcSize=this.calc();
+    }
     
+    private initCanvasLayout(){
         const body = document.createElement("div");
         body.className="eboard-body";
-        this.container=body;
-        container.appendChild(body);
-        
-        
-        this.initToolbar(container);
-        
-        
-        
+        this.body=body;
+        this.container.appendChild(body);
     }
     
     @message
@@ -93,26 +91,31 @@ class EBoard{
             tag:MessageTagEnum.SwitchToFrame
         }
     }
-    private initTab(container:HTMLDivElement){
-        const tabContainer = document.createElement("div");
-        tabContainer.className = "eboard-tabs";
-        this.tabContainer=tabContainer;
-        container.appendChild(tabContainer);
-        this.tab=new Tab(tabContainer);
+    private initTab(){
+        if(!config.showTab){
+            return;
+        }
+        this.tab=new Tab(this.container);
+        this.tab.on(TabEventEnum.Add,()=>{
+           // 创建空白的画布
+           this.addEmptyFrame({
+               type:FrameType.Empty,
+               name:"空白"
+           })
+        });
         this.tab.on(TabEventEnum.Switch,(e: any) => {
             const tabId = e.data;
             this.switchToFrame(tabId);// switch事件
-            this.switchMessage(tabId);
         });
         this.tab.on(TabEventEnum.Remove,(e: any)=>{
             const tabId = e.data;
             this.removeFrame(tabId);
         });
     }
-    private initToolbar(container:HTMLDivElement){
+    private initToolbar(){
         const wrap = document.createElement("div");
         wrap.className="eboard-toolbar-wrap";
-        container.appendChild(wrap);
+        this.container.appendChild(wrap);
         let toolbar = new Toolbar(wrap,(item:any)=>{
             switch (item.key){
                 case "line":
@@ -246,82 +249,274 @@ class EBoard{
         });
     }
     
+    
     /**
-     * 创建frame ，创建完成立即显示
-     * @param {IBaseFrameOptions | IHTMLFrameOptions | IImageFrameOptions | ICanvasFrameOptions | IPdfFrameOptions | IImagesFrameOptions} options
-     * @returns {IFrame | IFrameGroup}
+     * 添加空白画布
+     * @param {IBaseFrameOptions} options
+     * @param withoutMessage
+     * @returns {IBaseFrame}
      */
-    public createFrame(options:IBaseFrameOptions|IHTMLFrameOptions|IImageFrameOptions|ICanvasFrameOptions|IPdfFrameOptions|IImagesFrameOptions){
-        const {id,type} = options;
-        let frame:IFrame|IFrameGroup;
+    public addEmptyFrame(options:IBaseFrameOptions,withoutMessage?:boolean){
+        const {id} = options;
+        let frame:BaseFrame;
         if(void 0 !== id && this.hasFrame(id)){
-            frame = this.findFrameById(id) as IFrame|IFrameGroup;
-            this.switchToFrame(frame);
+            frame = this.findFrameById(id) as BaseFrame;
             return frame;
         }
-        options.container = this.getContainer();
+        const message = Object.assign({},options);
+        options.calcSize = options.width?this.calc(options.width):this.calcSize;
+        
+        options.container = this.body;
         options.eDux = this.eDux;
         options.ratio = this.ratio;
-        switch (type){
-            case FrameType.HTML:
-                frame = new HtmlFrame(options as IHTMLFrameOptions);
-                break;
-            case FrameType.Image:
-                frame = new ImageFrame(options as IImageFrameOptions);
-                break;
-            case FrameType.Canvas:
-                frame = new CanvasFrame(options as ICanvasFrameOptions);
-                break;
-            case FrameType.Pdf:
-                frame = new PdfFrame(options as IPdfFrameOptions);
-                break;
-            case FrameType.Images:
-                frame = new ImagesFrame(options as IImagesFrameOptions);
-                break;
-            case FrameType.Empty:
-            default:
-                frame = new BaseFrame(options as IBaseFrameOptions);
-                break;
-        }
+        options.append = true;
+        frame = new BaseFrame(options);
         this.frames.set(frame.id,frame);
-        this.switchToFrame(frame);
-        this.tab.addTab({
-            tabId:frame.id,
-            label:frame.id
-        });
+        if(void 0 !== this.tab){
+            this.tab.addTab({
+                tabId:frame.id,
+                label:options.name||""
+            });
+        }
+        if(!withoutMessage){
+            this.addFrameMessage(Object.assign({
+                id:frame.id,
+                width:this.calcSize.width
+            },message));
+        }
+        this.activeFrame = frame.id;
         return frame;
     }
     
-    public createBaseFrame(options:IBaseFrameOptions){
-        return this.createFrame(options) as BaseFrame;
+    /**
+     * 添加HtmlFrame
+     * @param {IHTMLFrameOptions} options
+     * @param withoutMessage
+     * @returns {IHTMLFrame}
+     */
+    public addHtmlFrame(options:IHTMLFrameOptions,withoutMessage?:boolean){
+        const {id} = options;
+        let frame:HtmlFrame;
+        if(void 0 !== id && this.hasFrame(id)){
+            frame = this.findFrameById(id) as HtmlFrame;
+            return frame;
+        }
+        const message = Object.assign({},options);
+        options.calcSize = options.width?this.calc(options.width):this.calcSize;
+        options.container = this.body;
+        options.eDux = this.eDux;
+        options.ratio = this.ratio;
+        options.append = true;
+        frame = new HtmlFrame(options);
+        this.frames.set(frame.id,frame);
+        this.activeFrame = frame.id;
+        if(void 0 !== this.tab){
+            this.tab.addTab({
+                tabId:frame.id,
+                label:options.name||""
+            });
+        }
+        if(!withoutMessage){
+            this.addFrameMessage(Object.assign({
+                id:frame.id,
+                width:this.calcSize.width
+            },message));
+        }
+        return frame;
     }
     
-    public createHtmlFrame(options:IHTMLFrameOptions){
-        return this.createFrame(options) as HtmlFrame;
+    /**
+     * 添加ImageFrame
+     * @param {IImageFrameOptions} options
+     * @param withoutMessage
+     * @returns {IImageFrame}
+     */
+    public addImageFrame(options:IImageFrameOptions,withoutMessage?:boolean){
+        const {id} = options;
+        let frame:ImageFrame;
+        if(void 0 !== id && this.hasFrame(id)){
+            frame = this.findFrameById(id) as ImageFrame;
+            return frame;
+        }
+        const message = Object.assign({},options);
+        options.calcSize = options.width?this.calc(options.width):this.calcSize;
+        options.container = this.body;
+        options.eDux = this.eDux;
+        options.ratio = this.ratio;
+        options.append = true;
+        frame = new ImageFrame(options);
+        this.frames.set(frame.id,frame);
+        this.activeFrame = frame.id;
+        if(void 0 !== this.tab){
+            this.tab.addTab({
+                tabId:frame.id,
+                label:options.name||""
+            });
+        }
+        if(!withoutMessage){
+            this.addFrameMessage(Object.assign({
+                id:frame.id,
+                width:this.calcSize.width
+            },message));
+        }
+        return frame;
     }
     
-    public createImageFrame(options:IImageFrameOptions){
-        return this.createFrame(options) as ImageFrame;
+    /**
+     * 添加PdfFrame
+     * @param {IPdfFrameOptions} options
+     * @param withoutMessage
+     * @returns {IPdfFrame}
+     */
+    public addPdfFrame(options:IPdfFrameOptions,withoutMessage?:boolean){
+        const {id} = options;
+        let frame:PdfFrame;
+        if(void 0 !== id && this.hasFrame(id)){
+            frame = this.findFrameById(id) as PdfFrame;
+            return frame;
+        }
+        const message = Object.assign({},options);
+        options.calcSize = options.width?this.calc(options.width):this.calcSize;
+        options.container = this.body;
+        options.eDux = this.eDux;
+        options.ratio = this.ratio;
+        options.append = true;
+        frame = new PdfFrame(options);
+        this.frames.set(frame.id,frame);
+        this.activeFrame = frame.id;
+        if(void 0 !== this.tab){
+            this.tab.addTab({
+                tabId:frame.id,
+                label:options.name||""
+            });
+        }
+        if(!withoutMessage){
+            this.addFrameGroupMessage(Object.assign({
+                id:frame.id,
+                width:this.calcSize.width
+            },message));
+        }
+        return frame;
     }
     
-    public createCanvasFrame(options:ICanvasFrameOptions){
-        return this.createFrame(options) as CanvasFrame;
+    /**
+     * 添加ImagesFrame
+     * @param {IImagesFrameOptions} options
+     * @param withoutMessage
+     * @returns {ImagesFrame}
+     */
+    public addImagesFrame(options:IImagesFrameOptions,withoutMessage?:boolean){
+        const {id} = options;
+        let frame:ImagesFrame;
+        if(void 0 !== id && this.hasFrame(id)){
+            frame = this.findFrameById(id) as ImagesFrame;
+            return frame;
+        }
+        const message = Object.assign({},options);
+        options.calcSize = options.width?this.calc(options.width):this.calcSize;
+        options.container = this.body;
+        options.eDux = this.eDux;
+        options.ratio = this.ratio;
+        options.append = true;
+        frame = new ImagesFrame(options);
+        this.frames.set(frame.id,frame);
+        this.activeFrame = frame.id;
+        if(void 0 !== this.tab){
+            this.tab.addTab({
+                tabId:frame.id,
+                label:options.name||""
+            });
+        }
+        if(!withoutMessage){
+            this.addFrameGroupMessage(Object.assign({
+                id:frame.id,
+                width:this.calcSize.width
+            },message));
+        }
+        return frame;
     }
     
-    public createPdfFrame(options:IPdfFrameOptions){
-        return this.createFrame(options) as PdfFrame;
+    @message
+    private addFrameMessage(options:any){
+        return Object.assign({
+            tag:MessageTagEnum.CreateFrame
+        },options);
     }
     
-    public createImagesFrame(options:IImagesFrameOptions){
-        return this.createFrame(options) as ImagesFrame;
+    @message
+    private addFrameGroupMessage(options:any){
+        return Object.assign({
+            tag:MessageTagEnum.CreateFrameGroup
+        },options);
+    }
+    /**
+     * 计算calc add 时需要调用，传递进去，发送消息时需要使用
+     * @param {number} originWidth
+     * @returns {any}
+     */
+    private calc(originWidth?:number){
+        const parentElement = this.body;
+        const {offsetWidth:width,offsetHeight:height} = parentElement;
+        let ratio=this.ratio||"16:9";
+        if(!/\d+:\d+/g.test(ratio)){
+            ratio = "16:9";
+        }
+        const _ratios=ratio.split(":");
+        const _ratioW=Number(_ratios[0]);
+        const _ratioH=Number(_ratios[1]);
+        const ratioNum=_ratioW/_ratioH;
+        let calcSize:any;
+        const defaultDimensionW = config.dimensions.width;
+        let w:number,h:number;
+        if(width/height>ratioNum){
+            w = height * ratioNum;
+            h = height;
+        }else{
+            w = width;
+            h = width / ratioNum;
+        }
+        
+        const originW=originWidth||w;// 缓存发送端的内容宽度
+        calcSize={
+            width:w,
+            height:h,
+            dimensions:{
+                width:defaultDimensionW,
+                height:defaultDimensionW * h/w,
+            },
+            originWidth:originW,
+            scale:w/originW
+        };
+        return calcSize;
+    }
+    
+    /**
+     * 添加FrameGroup
+     * @param {IImagesFrameOptions | IPdfFrameOptions} options
+     * @returns {(ImagesFrame | ImagesFrame) | (PdfFrame | PdfFrame)}
+     */
+    private addFrameGroup(options:IImagesFrameOptions|IPdfFrameOptions){
+        const type = options.type;
+        return type === FrameType.Images?this.addImagesFrame(options as IImagesFrameOptions,true):this.addPdfFrame(options as IPdfFrameOptions,true);
+    }
+    
+    /**
+     * 添加 Frame
+     * @param {IBaseFrameOptions | IImageFrameOptions | IHTMLFrameOptions} options
+     * @returns {(ImageFrame | ImageFrame) | (HtmlFrame | HtmlFrame) | (BaseFrame | BaseFrame)}
+     */
+    private addFrame(options:IBaseFrameOptions|IImageFrameOptions|IHTMLFrameOptions){
+        const type = options.type;
+        return type === FrameType.Image?this.addImageFrame(options as IImageFrameOptions,true):type === FrameType.HTML?this.addHtmlFrame(options as IHTMLFrameOptions,true):this.addEmptyFrame(options as IBaseFrameOptions,true);
     }
     
     /**
      * 显示指定的Frame
      * @param {string | IFrame | IFrameGroup} id
+     * @param withoutMessage
      * @returns {undefined | IFrame | IFrameGroup}
      */
-    public switchToFrame(id:string|IFrame|IFrameGroup){
+    public switchToFrame(id:string|IFrame|IFrameGroup,withoutMessage?:boolean){
         // 支持frameType标识和对象
         if(typeof id === 'string'){
             if(id === this.activeFrame||!this.hasFrame(id)){
@@ -343,17 +538,37 @@ class EBoard{
         if(activeFrame&&activeFrame.dom){
             activeFrame.container.appendChild(activeFrame.dom);// 如果是子frame则存在问题
         }
-        this.tab.switchTo(this.activeFrame,true);
+        if(void 0 !== this.tab){
+            this.tab.switchTo(this.activeFrame);
+        }
+        if(!withoutMessage){
+            this.switchMessage(this.activeFrame);
+        }
         return activeFrame;
     }
     
-    public removeFrame(id:string,silence?:boolean){
+    @message
+    public removeFrame(id:string,withoutMessage?:boolean){
         const frame = this.findFrameById(id);
         if(void 0 !== frame){
-            frame.destroy(silence);
+            frame.destroy();
             this.frames.delete(id);
             frame.dom.parentElement&&frame.dom.parentElement.removeChild(frame.dom);
         }
+        if(void 0 !== this.tab){
+            this.tab.removeTab(id);
+        }
+        if(this.activeFrame === id){
+            const ids = Array.from(this.frames.keys());
+            const id = ids[ids.length-1];
+            if(id){
+                this.switchToFrame(id,true);
+            }
+        }
+        return !withoutMessage?{
+            tag:MessageTagEnum.RemoveFrame,
+            id:id
+        }:undefined
     }
     
     /**
@@ -394,21 +609,19 @@ class EBoard{
      */
     public onMessage(message:string){
         const messageObj:any = JSON.parse(message);
+        console.log(Object.assign({},messageObj));
         // 获取frame实例，之后根据操作处理
         const {frame:frameOptions,group:frameGroupOptions,...options} = messageObj;
         const {tag,type} = options;
-        
         let frame:IFrame = undefined as any,frameGroup = undefined as any;
         
         // 有分组
         if(void 0 !== frameGroupOptions){
-            frameGroup = this.createFrame(frameGroupOptions) as IFrameGroup;// 创建或查询frameGroup
+            frameGroup = this.addFrameGroup(frameGroupOptions);// 创建或查询frameGroup
             // 子frame
             if(void 0 !== frameOptions){
-                // 默认第一页的话不需要调用onGp
                 frame = frameGroup.createFrame({
                     pageNum:Number(frameOptions.id),
-                    messageId:frameOptions.messageId
                 }) as IFrame;
                 // 执行跳转逻辑
                 if(frameOptions.id !== "1"){
@@ -417,22 +630,22 @@ class EBoard{
             }
         }else{
             if(void 0 !== frameOptions){
-                frame = this.createFrame(frameOptions) as IFrame;
+                frame = this.addFrame(frameOptions) as IFrame;
             }
         }
         
         switch (tag){
             case MessageTagEnum.CreateFrame:// 创建frame
-                this.createFrame(messageObj);
+                this.addFrame(messageObj);
                 break;
             case MessageTagEnum.CreateFrameGroup:
-                this.createFrame(messageObj);
+                this.addFrameGroup(messageObj);
                 break;
             case MessageTagEnum.SwitchToFrame:
                 if(void 0 !== frameGroup){
                     frameGroup.onGo(options.pageNum,options.messageId);
                 }else{
-                    this.switchToFrame(options.frameId);
+                    this.switchToFrame(options.frameId,true);
                 }
                 break;
             case MessageTagEnum.Clear:
@@ -457,8 +670,7 @@ class EBoard{
             case MessageTagEnum.SelectionRotate:
                 (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
                 break;
-            case MessageTagEnum.DestroyFrame:
-            case MessageTagEnum.DestroyFrameGroup:
+            case MessageTagEnum.RemoveFrame:
                 this.removeFrame(options.id,true);
                 break;
             default:

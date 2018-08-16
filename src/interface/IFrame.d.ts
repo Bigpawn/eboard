@@ -23,7 +23,6 @@ export declare interface IFrame{
     container:HTMLDivElement;
     options:IFrameOptions;
     type:string;
-    messageId:number;
     dom:HTMLElement;
     engine?:EBoardEngine;
     id:string;
@@ -37,17 +36,17 @@ export declare interface IFrame{
 }
 
 export declare interface IFrameOptions{
-    messageId?:number;// frame 创建的消息Id
     ratio?:string;
     id?:string;
     type?:string;
     width?:number;
     height?:number;
-    dimensions?:{width:number;height:number};
-    silent?:boolean;
     extraMessage?:IExtraMessage;
     container?:HTMLDivElement;
     eDux?:IEDux;// 数据接口共享模块
+    append?:boolean;// 是否直接显示
+    name?:string;
+    calcSize?:any;
 }
 
 

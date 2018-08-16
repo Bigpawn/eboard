@@ -120,7 +120,8 @@ class Ellipse extends AbstractShapePlugin{
             ry:this.ctrlKey?radius:ry,
             stroke:this.getStrokeColor(),
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth)
+            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            borderScaleFactor:this.getCanvasPixel(1),
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -200,7 +201,8 @@ class Ellipse extends AbstractShapePlugin{
             ry:ry,
             stroke:stroke,
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth)
+            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            borderScaleFactor:this.getCanvasPixel(1),
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

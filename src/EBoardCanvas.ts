@@ -41,6 +41,8 @@ class EBoardCanvas extends fabric.Canvas{
     private cursorMessageEnable:boolean=false;
     public eDux:EDux;
     public extraMessage:IExtraMessage;
+    private cssWidth:number=1;
+    private pxWidth:number=1;
     constructor(element: HTMLCanvasElement,options: ICanvasOptions,extraOptions:ICanvasExtraOptions){
         super(element,options);
         this.eDux=extraOptions.eDux;
@@ -52,6 +54,9 @@ class EBoardCanvas extends fabric.Canvas{
             selection:false,
             skipTargetFind:true,
         });
+    }
+    public getSize(width:number){
+        return width * this.pxWidth / this.cssWidth;
     }
     
     /**
@@ -170,6 +175,12 @@ class EBoardCanvas extends fabric.Canvas{
     public setDimensions(dimensions: ICanvasDimensions, options?: ICanvasDimensionsOptions){
         super.setDimensions(dimensions,options);
         this.cursorCanvas.setDimensions(dimensions,options);
+        // 做缓存
+        if(options&&options.backstoreOnly){
+            this.pxWidth = dimensions.width;
+        }else{
+            this.cssWidth = dimensions.width;
+        }
         return this;
     }
     

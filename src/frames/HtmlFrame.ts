@@ -58,10 +58,8 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
                 htmlWrap.innerHTML="";
                 htmlWrap.appendChild(html);
                 // 如果标签是image标签则不添加异常image元素
-                if(html.tagName!=="IMG"){
-                    this.attachLoadReLayout(container);
-                }else{
-                    // 添加onload 或onerror事件支持
+                this.attachLoadReLayout(container);
+                if(html.tagName==="IMG"){
                     html.onload=()=>{
                         this.initLayout();
                     };
@@ -124,44 +122,38 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
         this.dom = container;
     }
     protected initLayout(){
-        let calcSize=this.calc();
-        // set container size
+        let calcSize=this.options.calcSize;
         this.dom.style.width=calcSize.width+"px";
         this.dom.style.height=calcSize.height+"px";
-        if(typeof(this.html) === "string" || this.html&&this.html.tagName !== "IMG"&&this.html.tagName !== "CANVAS"){
-            this.htmlWrap.style.width=calcSize.cacheWidth + "px";
-            this.htmlWrap.style.transform=`scale(${calcSize.scale}) translateZ(0)`;
+        // 如果是图片还是
+        const isHtml =typeof(this.html) === "string" || this.html&&this.html.tagName !== "IMG"&&this.html.tagName !== "CANVAS";
+        let height:number;
+        if(isHtml){
+            this.htmlWrap.style.width=calcSize.originWidth + "px";
+            if(calcSize.scale!==1){
+                this.htmlWrap.style.transform=`scale(${calcSize.scale}) translateZ(0)`;
+            }
             const offsetHeight = this.htmlWrap.offsetHeight;
-            const scaleHeight = offsetHeight * calcSize.scale;
-            if(scaleHeight !== 0 && this.htmlWrap.parentElement){// 排除0 影响
-                this.htmlWrap.parentElement.style.height=scaleHeight + "px";
+            const scrollHeight = offsetHeight * calcSize.scale;
+            if(scrollHeight !== 0 && this.htmlWrap.parentElement){// 排除0 影响
+                this.htmlWrap.parentElement.style.height=scrollHeight + "px";
             }
-            if(void 0 !==this.scrollbar){
-                this.scrollbar.update();
-            }
-            
-            const height = Math.max(scaleHeight,calcSize.height);// css 大小
-            const dimensions = {
-                width:calcSize.dimensions.width,
-                height:calcSize.dimensions.width * height / calcSize.width, // 都需要计算，根据dimensions.width 按照比例计算
-            };
-    
-    
-            this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 样式大小
-            this.engine.eBoardCanvas.setDimensions(dimensions,{backstoreOnly:true});// canvas分辨率
+            height = Math.max(scrollHeight,calcSize.height);// css 大小
         }else{
-            // 图片模式不需要进行缩放控制
-            const height = Math.max(this.htmlWrap.offsetHeight,calcSize.height);// css 大小
-            const dimensions = {
-                width:calcSize.dimensions.width,
-                height:calcSize.dimensions.width * height / calcSize.width, // 都需要计算，根据dimensions.width 按照比例计算
-            };
-            this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 样式大小
-            this.engine.eBoardCanvas.setDimensions(dimensions,{backstoreOnly:true});// canvas分辨率
+            height = Math.max(this.htmlWrap.offsetHeight,calcSize.height);// css 大小
         }
+        if(void 0 !==this.scrollbar){
+            this.scrollbar.update();
+        }
+        const dimensions = {
+            width:calcSize.dimensions.width,
+            height:calcSize.dimensions.width * height / calcSize.width, // 都需要计算，根据dimensions.width 按照比例计算
+        };
+        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 样式大小
+        this.engine.eBoardCanvas.setDimensions(dimensions,{backstoreOnly:true});// canvas分辨率
     }
-    public destroy(silent?:boolean){
-        super.destroy(silent);
+    public destroy(){
+        super.destroy();
         if(this.scrollbar){
             this.scrollbar.destroy();
             this.scrollbar=undefined as any;

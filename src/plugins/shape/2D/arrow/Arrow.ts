@@ -47,7 +47,7 @@ class Arrow extends AbstractShapePlugin{
     protected arrowMode:ArrowMode=ArrowMode.ALL;
     private calcOptions(start:{x:number;y:number},end:{x:number;y:number},mode:ArrowMode){
         const arrowFactory = require(`./factory/${this.arrowFactory}`).default as typeof DefaultFactory;
-        const headlen = Math.max(this.lineWidth * 2 +10,10);
+        const headlen = Math.max(this.eBoardCanvas.getSize(this.lineWidth) * 2 +10,10);
         const {path,fill} = arrowFactory.calcPath(start,end,30,headlen,mode,this.getFillColor());
         return {path,fill};
     }
@@ -81,12 +81,13 @@ class Arrow extends AbstractShapePlugin{
         const id = this.instance?this.instance.id:undefined;
         this.instance=new FabricArrow(path,{
             stroke: this.getStrokeColor(),
-            strokeWidth:this.lineWidth,
+            strokeWidth:this.eBoardCanvas.getSize(this.lineWidth),
             top:center.y,
             left:center.x,
             fill,
             originX:"center",
-            originY:"center"
+            originY:"center",
+            borderScaleFactor:this.eBoardCanvas.getSize(1),
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -120,12 +121,13 @@ class Arrow extends AbstractShapePlugin{
         };
         instance = new FabricArrow(path,{
             stroke: stroke,
-            strokeWidth:this.lineWidth,
+            strokeWidth:this.eBoardCanvas.getSize(this.lineWidth),
             fill,
             originX:"center",
             originY:"center",
             top:center.y,
             left:center.x,
+            borderScaleFactor:this.eBoardCanvas.getSize(1),
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

@@ -150,7 +150,7 @@ abstract class AbstractPlugin {
      * @returns {number}
      */
     public getCanvasPixel(pixel:number){
-        return pixel * this.eBoardEngine.getPixelRatio();
+        return this.eBoardCanvas.getSize(pixel);
     }
     
     /**

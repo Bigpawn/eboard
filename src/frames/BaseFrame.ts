@@ -12,9 +12,9 @@ import {
 } from '../interface/IFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
-import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {message} from '../utils/decorators';
 import {EDux, IPluginConfigOptions} from '../utils/EDux';
+
 
 
 class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
@@ -31,7 +31,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
     public frameMessage:any={};
     constructor(options:T){
         this.id=options.id||Date.now().toString();
-        this.messageId = options.messageId||MessageIdMiddleWare.getId();
+        // this.messageId = options.messageId||MessageIdMiddleWare.getId();
         this.eDux=options.eDux as any;
         this.container=options.container as any;
         this.options=options;
@@ -39,21 +39,22 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
         if(options.extraMessage&&options.extraMessage.group){
             this.nextMessage.group = this.extraMessage.group;
         }
-        const {silent,eDux,extraMessage,container,...rest} = this.options as any;
-        this.frameMessage={...rest,id:this.id,messageId:this.messageId};
+        const {eDux,extraMessage,container,calcSize,ratio,append,...rest} = this.options as any;
+        this.frameMessage={
+            ...rest,
+            id:this.id,
+            width:calcSize.width,
+        };
         this.nextMessage.frame=this.frameMessage;
-        this.fixContainer();
+        
         this.initEngine();
-        this.initLayout();
-        this.observePlugin();
-        // 插件启用初始化
         this.initPlugin();
-        if(!options.silent){
-            this.initializeAction();// 控制是否发送创建消息, 只要用到宽就好，高度接收端自动根据内容适配
+        if(append&&container){
+            container.innerHTML = "";
+            container.appendChild(this.dom);// 立即显示
         }
     }
     private initPlugin(){
-        // 通过数据共享机制进行实现，eventBus 进行数据缓存
         const plugins = this.eDux.sharedData.plugins;
         plugins.forEach((obj:IPluginConfigOptions,plugin)=>{
             const {enable,background} = obj;
@@ -63,9 +64,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
                     instance.setEnable(true,background);
                 }
             }
-        })
-    }
-    private observePlugin(){
+        });
         this.eDux.on("plugin:active",(event:any)=>{
             const data = event.data;
             const {plugin,options} = data;
@@ -92,22 +91,6 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
             tag:MessageTagEnum.CreateFrame,
         },this.frameMessage);
     }
-    
-    @message
-    public destroyAction(){
-        return {
-            id:this.id,
-            tag:MessageTagEnum.DestroyFrame
-        }
-    }
-    private fixContainer(){
-        const parentElement = this.container;
-        // fix parent position
-        const position = window.getComputedStyle(parentElement).position;
-        if("absolute" !== position && "fixed" !== position && "relative" !== position) {
-            parentElement.style.position="relative";
-        }
-    }
     protected initEngine(){
         const container = document.createElement("div");
         container.className="eboard-container";
@@ -122,87 +105,28 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
             eDux:this.eDux,
             extraMessage:this.nextMessage
         });
+        const image = document.createElement("img");
+        image.src="";
+        image.onerror=()=>{
+            this.initLayout();// 仅执行一次
+            container.removeChild(image);
+        };
+        container.appendChild(image);
         this.dom = container;
     }
-    protected calc(){
-        const parentElement = this.container;
-        const size={
-            width:parentElement.offsetWidth,
-            height:parentElement.offsetHeight
-        };
-        let ratio=this.options.ratio||"16:9";
-        if(!/\d+:\d+/g.test(ratio)){
-            ratio = "16:9";
-        }
-        const _ratios=ratio.split(":");
-        const _ratioW=Number(_ratios[0]);
-        const _ratioH=Number(_ratios[1]);
-        const ratioNum=_ratioW/_ratioH;
-        let calcSize:any;
-        // const dimensionRate = Math.ceil(4000/_ratioW);
-        if(size.width/size.height>ratioNum){
-            // 宽度大，按照高度计算
-            calcSize={
-                width:size.height * ratioNum,
-                height:size.height,
-                dimensions:{
-                    // width:dimensionRate * _ratioW,
-                    // height:dimensionRate * _ratioH
-                    width:size.height * ratioNum,
-                    height:size.height,
-                }
-            };
-        }else{
-            // 高度大，按照宽度计算
-            calcSize={
-                width:size.width,
-                height:size.width / ratioNum,
-                dimensions:{
-                    // width:dimensionRate * _ratioW,
-                    // height:dimensionRate * _ratioH
-                    width:size.width,
-                    height:size.width / ratioNum,
-                }
-            };
-        }
-        // 接收端接收发送端分辨率
-        if(this.options.dimensions){
-            calcSize.dimensions = this.options.dimensions;// 需要计算比例，高度不一定适中
-        }
-        
-        calcSize.cacheWidth=this.options.width||calcSize.width;// 缓存发送端的内容宽度
-        calcSize.scale = calcSize.width / calcSize.cacheWidth;
-        
-        if(this.extraMessage&&this.extraMessage.group){
-            Object.assign(this.extraMessage.group,{
-                width:calcSize.width,
-                height:calcSize.height,
-                dimensions:calcSize.dimensions
-            })
-        }
-       Object.assign(this.frameMessage,{
-           width:calcSize.width,
-           height:calcSize.height,
-           dimensions:calcSize.dimensions,
-       });
-        return calcSize;
-    }
     protected initLayout(){
-        const calcSize = this.calc();
+        const calcSize = this.options.calcSize;
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:calcSize.height});// 设置样式大小
         this.engine.eBoardCanvas.setDimensions(calcSize.dimensions,{backstoreOnly:true});// 设置canvas 画布大小
     };
     public getPlugin(pluginName:string){
         return this.engine.getPlugin(pluginName);
     }
-    public destroy(silent?:boolean){
+    public destroy(){
         if(this.dom&&this.dom.parentElement){
             this.dom.parentElement.removeChild(this.dom);
         }
         this.engine.eBoardCanvas.clear();
-        if(!silent){
-            this.destroyAction();
-        }
     }
 }
 

@@ -117,7 +117,8 @@ class Rectangle extends AbstractShapePlugin{
             strokeDashArray:this.strokeDashArray,
             width:this.ctrlKey?length:width,
             height:this.ctrlKey?length:height,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth)
+            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            borderScaleFactor:this.getCanvasPixel(1),
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -192,7 +193,8 @@ class Rectangle extends AbstractShapePlugin{
             strokeDashArray:this.strokeDashArray,
             width:width,
             height:height,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth)
+            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            borderScaleFactor:this.getCanvasPixel(1),
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

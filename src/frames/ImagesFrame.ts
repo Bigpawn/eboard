@@ -11,7 +11,6 @@ import {message, pipMode, setAnimationName} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
 import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
-import {MessageIdMiddleWare} from '../middlewares/MessageIdMiddleWare';
 import {Plugins} from '../plugins';
 import {IEDux} from '../utils/EDux';
 
@@ -20,7 +19,6 @@ import {IEDux} from '../utils/EDux';
 class ImagesFrame implements IImagesFrame{
     public type:string="images-frame";
     public container:HTMLDivElement;
-    public messageId:number;
     public dom:HTMLDivElement;
     public urlPrefix:string;
     public pageNum:number;
@@ -42,31 +40,18 @@ class ImagesFrame implements IImagesFrame{
         this.eDux=options.eDux as any;
         this.container=options.container as any;
         this.options=options;
-        this.messageId=options.messageId||MessageIdMiddleWare.getId();
-        const {eDux,container,...rest} = options;
+        const {eDux,container,append,calcSize,...rest} = options;
         this.groupMessage=Object.assign({},rest,{
             id:this.id,
-            messageId:this.messageId
+            width:calcSize.width
         });
         this.nextMessage.group=this.groupMessage;
         this.onGo=this.onGo.bind(this);
-        this.fixContainer();
         this.initLayout();
         this.initialize();
-        this.initializeAction();
-    }
-    
-    @message
-    public initializeAction(){
-        return Object.assign({},this.groupMessage,{
-            tag:MessageTagEnum.CreateFrameGroup
-        });
-    };
-    @message
-    public destroyAction(){
-        return {
-            tag:MessageTagEnum.DestroyFrameGroup,
-            id:this.id
+        if(append&&container){
+            container.innerHTML = "";
+            container.appendChild(this.dom);// 立即显示
         }
     }
     @message
@@ -77,14 +62,6 @@ class ImagesFrame implements IImagesFrame{
             tag:MessageTagEnum.SwitchToFrame,
             pageNum:pageNum
         });
-    }
-    private fixContainer(){
-        const parentElement = this.container;
-        // fix parent position
-        const position = window.getComputedStyle(parentElement).position;
-        if("absolute" !== position && "fixed" !== position && "relative" !== position) {
-            parentElement.style.position="relative";
-        }
     }
     protected initLayout(){
         const pagerContainer=document.createElement("div");
@@ -108,18 +85,14 @@ class ImagesFrame implements IImagesFrame{
         }
         if(this.images.length>0){
             const pageFrame = new ImageFrame({
-                messageId:this.messageId,
                 ratio:options.ratio,
                 content:this.urlPrefix+this.images[this.pageNum],
                 scrollbar:ScrollbarType.vertical,
-                width:options.width,
-                height:options.height,
-                dimensions:options.dimensions,
                 container:this.container,
                 eDux:this.eDux,
                 id:this.pageNum.toString(),
-                silent:true,
-                extraMessage:this.nextMessage
+                extraMessage:this.nextMessage,
+                calcSize:this.options.calcSize
             });
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
@@ -131,9 +104,9 @@ class ImagesFrame implements IImagesFrame{
             this.child.set(this.pageNum,pageFrame);
         }
     }
-    private onGo(pageNum:number,messageId?:number){
+    private onGo(pageNum:number){
         const pageNumber=Number(pageNum);
-        this.switchToFrame(pageNumber,messageId);
+        this.switchToFrame(pageNumber);
         this.switchFrameAction(pageNumber);
     }
     
@@ -167,24 +140,20 @@ class ImagesFrame implements IImagesFrame{
      * @returns {CanvasFrame | undefined}
      * @param options
      */
-    public createFrame(options:{pageNum:number,messageId?:number}){
+    public createFrame(options:{pageNum:number}){
         const pageNum = Number(options.pageNum);
         let nextPageFrame = this.child.get(pageNum);
         if(void 0 === nextPageFrame){
             // 创建
             nextPageFrame = new ImageFrame({
-                messageId:options.messageId,
                 content:this.urlPrefix+this.images[pageNum],
                 ratio:this.options.ratio,
                 scrollbar:ScrollbarType.vertical,
-                width:this.options.width,
-                height:this.options.height,
-                dimensions:this.options.dimensions,
                 container:this.container,
                 eDux:this.eDux,
                 id:pageNum.toString(),
-                silent:true,
-                extraMessage:this.nextMessage
+                extraMessage:this.nextMessage,
+                calcSize:this.options.calcSize
             });
             this.child.set(pageNum,nextPageFrame);
         }
@@ -194,15 +163,14 @@ class ImagesFrame implements IImagesFrame{
     /**
      * 切换到指定页 需要加队列控制
      * @param {number} pageNum
-     * @param {number} messageId
      * @returns {any}
      */
     @pipMode
-    public switchToFrame(pageNum:number,messageId?:number){
+    public switchToFrame(pageNum:number){
         if(this.pageNum === pageNum||void 0 === pageNum){
             return this;
         }
-        let nextPageFrame = this.createFrame({pageNum,messageId});
+        let nextPageFrame = this.createFrame({pageNum});
         return new Promise<this>((resolve)=>{
             const frameDom = (nextPageFrame as ImageFrame).dom;
             const currentFrameDom = this.pageFrame.dom;
@@ -229,15 +197,14 @@ class ImagesFrame implements IImagesFrame{
     public getPlugin(pluginName:Plugins){
         return this.pageFrame?this.pageFrame.getPlugin(pluginName):undefined;
     }
-    public destroy(silence?:boolean){
+    public destroy(){
         if(this.child.size>0){
             // 清空子项
             this.child.forEach(frame=>{
-                frame.destroy(true);
+                frame.destroy();
             });
             this.child.clear();
         }
-        !silence&&this.destroyAction();
     }
 }
 

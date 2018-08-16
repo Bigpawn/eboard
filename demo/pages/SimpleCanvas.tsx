@@ -13,7 +13,7 @@ class SimpleCanvas extends React.Component<{}, {}> {
             eBoard.attachMessageMiddleWare((message)=>{
                 receiveEBoard.onMessage(message);
             });
-            eBoard.clearCache().createBaseFrame({
+            eBoard.clearCache().addEmptyFrame({
                 type:FrameType.Empty,
             });
         },2000)
