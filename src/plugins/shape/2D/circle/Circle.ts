@@ -26,7 +26,7 @@ export declare interface ICircleMessage extends IMessage{
     fill:string;
 }
 
-@setCursor(CursorTypeEnum.SystemCross)
+@setCursor(CursorTypeEnum.Cross)
 class Circle extends AbstractShapePlugin{
     protected fill:string;
     protected stroke:string="rgba(0,0,0,1)";

@@ -3,29 +3,28 @@
  * @Date: 2018/8/8 9:11
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * @Last Modified time: 2018/8/8 9:11
- * @disc:CrossCursor
+ * @disc:CrossCursor 使用绘制
  */
 
 import {fabric} from "fabric";
 import {ICursorTypes} from '../../interface/ICursorTypes';
+import {EBoardCanvas} from '../../EBoardCanvas';
 
 const crossImage = new Image();
 crossImage.src=`../${require("../png/cross.png")}`;
 
 class CrossCursor implements ICursorTypes{
-    protected canvas:fabric.StaticCanvas;
-    constructor(canvas:fabric.StaticCanvas){
+    protected canvas:EBoardCanvas;
+    constructor(canvas:EBoardCanvas){
         this.canvas=canvas;
     }
     public render(center:{x:number,y:number},size:number){
-        const image = new fabric.Image(crossImage,{
-            left: center.x,
-            top: center.y,
-            originX:"center",
-            originY:"center"
+        const half = size/2;
+        const path = `M ${center.x - half} ${center.y} L ${center.x+half} ${center.y} M ${center.x} ${center.y-half} L ${center.x} ${center.y+half}`;
+        return new fabric.Path(path,{
+            strokeWidth:this.canvas.getSize(2),
+            stroke:"#5EBBE2",
         });
-        image.scaleToWidth(size);
-        return image;
     }
 }
 

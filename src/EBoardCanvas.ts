@@ -6,11 +6,12 @@
  * @disc:EBoardCanvas extend fabric.Canvas
  * 改写，添加一层StaticCanvas 用于光标   后续支持配置，是否扩展光标层
  * 添加animate 进行效果优化
+ * 触摸屏触摸操作屏蔽cursor
  */
 import {fabric} from "fabric";
 import {
     ICanvasDimensions, ICanvasDimensionsOptions,
-    ICanvasOptions, IEvent,
+    ICanvasOptions,
 } from '~fabric/fabric-impl';
 import {CursorTypeEnum} from './cursor/Enum';
 import {ICursorTypes} from './interface/ICursorTypes';
@@ -18,6 +19,7 @@ import {IMessage, MessageTagEnum} from './middlewares/MessageMiddleWare';
 import {message} from './utils/decorators';
 import {EDux, IEDux} from './utils/EDux';
 import {IExtraMessage} from './interface/IFrame';
+import {Plugins} from './plugins';
 
 
 declare interface ICursorMessage extends IMessage{
@@ -36,13 +38,14 @@ class EBoardCanvas extends fabric.Canvas{
     public cursorCanvas:fabric.StaticCanvas;
     private instance:fabric.Object;
     private cursorType:ICursorTypes;
-    private cursorSize:number=20;
+    private cursorSize:number=26;
     private cursorTypeName:CursorTypeEnum;
     private cursorMessageEnable:boolean=false;
     public eDux:EDux;
     public extraMessage:IExtraMessage;
     private cssWidth:number=1;
     private pxWidth:number=1;
+    private touching:boolean=false;// 是否触摸模式
     constructor(element: HTMLCanvasElement,options: ICanvasOptions,extraOptions:ICanvasExtraOptions){
         super(element,options);
         this.eDux=extraOptions.eDux;
@@ -54,7 +57,30 @@ class EBoardCanvas extends fabric.Canvas{
             selection:false,
             skipTargetFind:true,
         });
+        this.fixTouchDevice();
+        this.onMouseMove=this.onMouseMove.bind(this);
+        this.onMouseOut=this.onMouseOut.bind(this);
     }
+    
+    /**
+     * 触摸操作时屏蔽cursor
+     */
+    private fixTouchDevice(){
+        window.addEventListener("touchstart",()=>{
+            this.touching=true;
+            this.onMouseOut();
+        });
+        window.addEventListener("touchend",()=>{
+            this.touching=false;
+            this.onMouseOut();
+        });
+        window.addEventListener("touchcancel",()=>{
+            this.touching=false;
+            this.onMouseOut();
+        });
+    }
+    
+    
     public getSize(width:number){
         return width * this.pxWidth / this.cssWidth;
     }
@@ -62,13 +88,17 @@ class EBoardCanvas extends fabric.Canvas{
     /**
      * 启用光标
      * @returns {this}
+     * 触摸屏兼容教鞭
      */
     private activeCursor(){
         this.defaultCursor="none";// 更新样式进行优化
-        this.onMouseMove=this.onMouseMove.bind(this);
-        this.onMouseOut=this.onMouseOut.bind(this);
         this.on('mouse:move', this.onMouseMove);
         this.on('mouse:out', this.onMouseOut);
+        // 触摸兼容
+        const container = this.getContainer();
+        container.addEventListener("touchmove",this.onMouseMove);
+        container.addEventListener("touchend",this.onMouseOut);
+        container.addEventListener("touchcancel",this.onMouseOut);
         return this;
     }
     
@@ -80,16 +110,31 @@ class EBoardCanvas extends fabric.Canvas{
         this.defaultCursor="default";
         this.off('mouse:move', this.onMouseMove);
         this.off('mouse:out', this.onMouseOut);
+        const container = this.getContainer();
+        container.removeEventListener("touchmove",this.onMouseMove);
+        container.removeEventListener("touchend",this.onMouseOut);
+        container.removeEventListener("touchcancel",this.onMouseOut);
         if(void 0 !==this.instance){
             this.cursorCanvas.remove(this.instance);
         }
         return this;
     }
-    private onMouseMove(event:IEvent){
+    
+    /**
+     * 触摸模式下正常光标不显示，教鞭模式显示
+     * @param event
+     */
+    private onMouseMove(event:any){
         if(void 0 === this.cursorType){
             return;
         }
-        const point = this.getPointer(event.e);
+        const plugins = this.eDux.sharedData.plugins;
+        // touching 模式下不显示
+        const touching = event.type ==="touchmove";
+        if(!plugins.has(Plugins.Ferule)&&this.touching){
+            return;
+        }
+        const point = touching?this.getPointer(event.touches[0]):this.getPointer(event.e);
         this.cursorCanvas.renderOnAddRemove=false;
         if(void 0 !== this.instance){
             this.cursorCanvas.remove(this.instance);
@@ -154,7 +199,7 @@ class EBoardCanvas extends fabric.Canvas{
                     this.cursorType=CursorTypeEnum.SystemCross as any;
                     break;
                 default:
-                    this.cursorType=new (require(`./cursor/types/${cursorType}.ts`).default)(this.cursorCanvas);
+                    this.cursorType=new (require(`./cursor/types/${cursorType}.ts`).default)(this);
                     break;
             }
         }
@@ -210,7 +255,7 @@ class EBoardCanvas extends fabric.Canvas{
         }else{
             this.cursorCanvas.renderOnAddRemove=false;
             instance && this.cursorCanvas.remove(instance);
-            const cursorType=new (require(`./cursor/types/${type}.ts`).default)(this.cursorCanvas);
+            const cursorType=new (require(`./cursor/types/${type}.ts`).default)(this);
             instance = cursorType.render(center,size);
             instance.type="cursor";
             this.cursorCanvas.add(instance);

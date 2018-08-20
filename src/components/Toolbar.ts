@@ -4,6 +4,7 @@
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * @Last Modified time: 2018/7/31 15:30
  * @disc:工具栏 当前已激活的不重新触发
+ * 兼容移动端
  */
 import '../style/toolbar.less';
 import Timer = NodeJS.Timer;
@@ -173,6 +174,30 @@ class Toolbar{
         wrap.className='eboard-toolbar';
         this.dom=wrap;
     }
+    private startEvent(event:any){
+        event.cancelBubble = true;
+        event.stopPropagation();
+        this.closeChild();
+        const activeItem = Number(itemDom.getAttribute('active'))||0;
+        const key = members[activeItem].key;
+        const active = members[activeItem].active;
+        if(key !== this.activeKey){
+            this.listener&&this.listener.call(this,members[activeItem]);// 可能不是该item
+        }
+        if(active !== false){
+            const active = itemDom.parentElement?itemDom.parentElement.querySelector('.active'):undefined;
+            active&&active.classList.remove('active');
+            itemDom.classList.add('active');// 移除
+            this.activeKey= key;
+        }
+        if(length>1){
+            timer = setTimeout(()=>{
+                clearTimeout(timer);
+                timer = undefined as any;
+                this.showChild(itemDom,members);
+            },300);
+        }
+    }
     private initItems(){
         items.forEach((members)=>{
             const itemDom = document.createElement('div');
@@ -186,8 +211,7 @@ class Toolbar{
             }
             this.dom.appendChild(itemDom);
             let timer:Timer;
-            
-            itemDom.addEventListener('mousedown',(event:any)=>{
+            const startEvent=(event:any)=>{
                 event.cancelBubble = true;
                 event.stopPropagation();
                 this.closeChild();
@@ -210,7 +234,9 @@ class Toolbar{
                         this.showChild(itemDom,members);
                     },300);
                 }
-            });
+            };
+            itemDom.addEventListener('touchstart',startEvent);
+            itemDom.addEventListener('mousedown',startEvent);
             itemDom.addEventListener('click',(event:any)=>{
                 event.cancelBubble = true;
                 event.stopPropagation();
