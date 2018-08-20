@@ -50,7 +50,7 @@ class Line extends AbstractShapePlugin{
         this.instance=new FabricLine([this.start.x,this.start.y,this.end.x,this.end.y],{
             stroke: this.getStrokeColor(),
             strokeWidth:this.strokeWidth,
-            borderScaleFactor:this.getCanvasPixel(1),
+            borderScaleFactor:this.borderWidth,
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -81,7 +81,7 @@ class Line extends AbstractShapePlugin{
         instance= new FabricLine([start.x,start.y,end.x,end.y],{
             stroke: stroke,
             strokeWidth:this.strokeWidth,
-            borderScaleFactor:this.getCanvasPixel(1),
+            borderScaleFactor:this.borderWidth,
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

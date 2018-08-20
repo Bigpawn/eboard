@@ -65,7 +65,7 @@ class Circle extends AbstractShapePlugin{
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.strokeWidth,
             radius:radius,
-            borderScaleFactor:this.eBoardCanvas.getSize(1),
+            borderScaleFactor:this.borderWidth,
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -102,7 +102,7 @@ class Circle extends AbstractShapePlugin{
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.strokeWidth,
             radius:radius,
-            borderScaleFactor:this.eBoardCanvas.getSize(1),
+            borderScaleFactor:this.borderWidth,
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

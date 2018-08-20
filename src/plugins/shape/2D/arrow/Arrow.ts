@@ -86,7 +86,7 @@ class Arrow extends AbstractShapePlugin{
             fill,
             originX:"center",
             originY:"center",
-            borderScaleFactor:this.eBoardCanvas.getSize(1),
+            borderScaleFactor:this.borderWidth,
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -126,7 +126,7 @@ class Arrow extends AbstractShapePlugin{
             originY:"center",
             top:center.y,
             left:center.x,
-            borderScaleFactor:this.eBoardCanvas.getSize(1),
+            borderScaleFactor:this.borderWidth,
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

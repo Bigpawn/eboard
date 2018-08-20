@@ -20,6 +20,7 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
     protected stroke:string;
     protected fill:string;
     private _strokeWidth:number=1;// 私有strokeWidth,用于计算
+    private _borderWidth:number=1;
     /**
      * 自动计算比例
      * @returns {number}
@@ -34,6 +35,22 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
      */
     protected set strokeWidth(strokeWidth:number){
         this._strokeWidth = strokeWidth;
+    }
+    
+    /**
+     * border 线条宽度
+     * @returns {number}
+     */
+    protected get borderWidth(){
+        return this.eBoardCanvas.getSize(this._borderWidth);
+    }
+    
+    /**
+     * 设置border 宽度
+     * @param {number} borderWidth
+     */
+    protected set borderWidth(borderWidth:number){
+        this._borderWidth = borderWidth;
     }
     /**
      * default mouseDown Event

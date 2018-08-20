@@ -58,7 +58,7 @@ class Pentagon extends AbstractShapePlugin{
             strokeWidth: this.strokeWidth,
             strokeDashArray:this.strokeDashArray,
             fill: this.getFillColor(),
-            borderScaleFactor:this.getCanvasPixel(1),
+            borderScaleFactor:this.borderWidth,
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -90,7 +90,7 @@ class Pentagon extends AbstractShapePlugin{
             strokeWidth: this.strokeWidth,
             strokeDashArray:this.strokeDashArray,
             fill: fill,
-            borderScaleFactor:this.getCanvasPixel(1),
+            borderScaleFactor:this.borderWidth,
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

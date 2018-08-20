@@ -123,7 +123,7 @@ class Triangle extends AbstractShapePlugin{
             height:this.ctrlKey?calcSize.height:height,
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.strokeWidth,
-            borderScaleFactor:this.getCanvasPixel(1),
+            borderScaleFactor:this.borderWidth,
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -171,7 +171,7 @@ class Triangle extends AbstractShapePlugin{
                     height:calcSize.height,
                     strokeDashArray:this.strokeDashArray,
                     strokeWidth:this.strokeWidth,
-                    borderScaleFactor:this.getCanvasPixel(1),
+                    borderScaleFactor:this.borderWidth,
                 });
                 if(void 0 !== id){
                     this.instance.setId(id);
@@ -210,7 +210,7 @@ class Triangle extends AbstractShapePlugin{
                     height:height,
                     strokeDashArray:this.strokeDashArray,
                     strokeWidth:this.strokeWidth,
-                    borderScaleFactor:this.getCanvasPixel(1),
+                    borderScaleFactor:this.borderWidth,
                 });
                 if(void 0 !== id){
                     this.instance.setId(id);
@@ -265,7 +265,7 @@ class Triangle extends AbstractShapePlugin{
             height:height,
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.strokeWidth,
-            borderScaleFactor:this.getCanvasPixel(1),
+            borderScaleFactor:this.borderWidth,
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
