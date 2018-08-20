@@ -32,7 +32,6 @@ class Ellipse extends AbstractShapePlugin{
     protected fill:string;
     protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
-    private strokeWidth:number=1;
     private ctrlKey:boolean=false;
     protected instance:FabricEllipse;
     private getStartPoint():{x:number;y:number}{
@@ -120,7 +119,7 @@ class Ellipse extends AbstractShapePlugin{
             ry:this.ctrlKey?radius:ry,
             stroke:this.getStrokeColor(),
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             borderScaleFactor:this.getCanvasPixel(1),
         });
         if(void 0 !== id){
@@ -201,7 +200,7 @@ class Ellipse extends AbstractShapePlugin{
             ry:ry,
             stroke:stroke,
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             borderScaleFactor:this.getCanvasPixel(1),
         }).setId(id);
         this.eBoardCanvas.add(instance);

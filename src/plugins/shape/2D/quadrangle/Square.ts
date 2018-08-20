@@ -31,7 +31,6 @@ class Square extends AbstractShapePlugin{
     protected fill:string;
     protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
-    private strokeWidth:number=1;
     @message
     private throw(){
         return this.instance?{
@@ -66,7 +65,7 @@ class Square extends AbstractShapePlugin{
             top: this.start.y,
             stroke:this.getStrokeColor(),
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             originX:"center",
             originY:"center",
             width:length,
@@ -104,7 +103,7 @@ class Square extends AbstractShapePlugin{
             top: start.y,
             stroke:stroke,
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             originX:"center",
             originY:"center",
             width:length,

@@ -19,6 +19,22 @@ export enum Quadrant{
 abstract class AbstractShapePlugin extends AbstractPlugin{
     protected stroke:string;
     protected fill:string;
+    private _strokeWidth:number=1;// 私有strokeWidth,用于计算
+    /**
+     * 自动计算比例
+     * @returns {number}
+     */
+    protected get strokeWidth(){
+        return this.eBoardCanvas.getSize(this._strokeWidth);
+    }
+    
+    /**
+     * 设置线条宽度
+     * @param {number} strokeWidth
+     */
+    protected set strokeWidth(strokeWidth:number){
+        this._strokeWidth = strokeWidth;
+    }
     /**
      * default mouseDown Event
      * @param {"~fabric/fabric-impl".IEvent} event

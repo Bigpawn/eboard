@@ -25,7 +25,6 @@ export declare interface ILineMessage extends IMessage{
 class Line extends AbstractShapePlugin{
     protected instance:FabricLine;
     protected stroke="rgba(0,0,0,1)";
-    private lineWidth:number=1;
     @message
     private throw(){
         return this.instance?{
@@ -50,7 +49,7 @@ class Line extends AbstractShapePlugin{
         const id = this.instance?this.instance.id:undefined;
         this.instance=new FabricLine([this.start.x,this.start.y,this.end.x,this.end.y],{
             stroke: this.getStrokeColor(),
-            strokeWidth:this.getCanvasPixel(this.lineWidth),
+            strokeWidth:this.strokeWidth,
             borderScaleFactor:this.getCanvasPixel(1),
         });
         if(void 0 !== id){
@@ -81,7 +80,7 @@ class Line extends AbstractShapePlugin{
         }
         instance= new FabricLine([start.x,start.y,end.x,end.y],{
             stroke: stroke,
-            strokeWidth:this.getCanvasPixel(this.lineWidth),
+            strokeWidth:this.strokeWidth,
             borderScaleFactor:this.getCanvasPixel(1),
         }).setId(id);
         this.eBoardCanvas.add(instance);

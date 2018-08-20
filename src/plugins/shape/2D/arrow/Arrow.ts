@@ -42,12 +42,11 @@ class Arrow extends AbstractShapePlugin{
     protected instance:FabricArrow;
     protected stroke="rgb(0,0,0)";
     protected fill="rgba(0,0,0,1)";
-    private lineWidth:number=1;
     private arrowFactory:ArrowFactory=ArrowFactory.FISH;
     protected arrowMode:ArrowMode=ArrowMode.ALL;
     private calcOptions(start:{x:number;y:number},end:{x:number;y:number},mode:ArrowMode){
         const arrowFactory = require(`./factory/${this.arrowFactory}`).default as typeof DefaultFactory;
-        const headlen = Math.max(this.eBoardCanvas.getSize(this.lineWidth) * 2 +10,10);
+        const headlen = Math.max(this.strokeWidth * 2 +10,10);
         const {path,fill} = arrowFactory.calcPath(start,end,30,headlen,mode,this.getFillColor());
         return {path,fill};
     }
@@ -81,7 +80,7 @@ class Arrow extends AbstractShapePlugin{
         const id = this.instance?this.instance.id:undefined;
         this.instance=new FabricArrow(path,{
             stroke: this.getStrokeColor(),
-            strokeWidth:this.eBoardCanvas.getSize(this.lineWidth),
+            strokeWidth:this.strokeWidth,
             top:center.y,
             left:center.x,
             fill,
@@ -121,7 +120,7 @@ class Arrow extends AbstractShapePlugin{
         };
         instance = new FabricArrow(path,{
             stroke: stroke,
-            strokeWidth:this.eBoardCanvas.getSize(this.lineWidth),
+            strokeWidth:this.strokeWidth,
             fill,
             originX:"center",
             originY:"center",

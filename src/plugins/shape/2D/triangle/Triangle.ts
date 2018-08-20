@@ -36,7 +36,6 @@ class Triangle extends AbstractShapePlugin{
     protected fill:string;
     protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
-    private strokeWidth:number=1;
     protected ctrlKey:boolean=false;
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
@@ -123,7 +122,7 @@ class Triangle extends AbstractShapePlugin{
             width:this.ctrlKey?calcSize.width:width,
             height:this.ctrlKey?calcSize.height:height,
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             borderScaleFactor:this.getCanvasPixel(1),
         });
         if(void 0 !== id){
@@ -171,7 +170,7 @@ class Triangle extends AbstractShapePlugin{
                     width:calcSize.width,
                     height:calcSize.height,
                     strokeDashArray:this.strokeDashArray,
-                    strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                    strokeWidth:this.strokeWidth,
                     borderScaleFactor:this.getCanvasPixel(1),
                 });
                 if(void 0 !== id){
@@ -210,7 +209,7 @@ class Triangle extends AbstractShapePlugin{
                     width:width,
                     height:height,
                     strokeDashArray:this.strokeDashArray,
-                    strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                    strokeWidth:this.strokeWidth,
                     borderScaleFactor:this.getCanvasPixel(1),
                 });
                 if(void 0 !== id){
@@ -265,7 +264,7 @@ class Triangle extends AbstractShapePlugin{
             width:width,
             height:height,
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             borderScaleFactor:this.getCanvasPixel(1),
         }).setId(id);
         this.eBoardCanvas.add(instance);

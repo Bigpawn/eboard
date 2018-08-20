@@ -31,9 +31,7 @@ class Circle extends AbstractShapePlugin{
     protected fill:string;
     protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
-    private strokeWidth:number=1;
     protected instance:FabricCircle;
-    
     @message
     private throw(){
         return this.instance?{
@@ -65,7 +63,7 @@ class Circle extends AbstractShapePlugin{
             top: this.start.y,
             stroke:this.getStrokeColor(),
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             radius:radius,
             borderScaleFactor:this.eBoardCanvas.getSize(1),
         });
@@ -102,7 +100,7 @@ class Circle extends AbstractShapePlugin{
             top: start.y,
             stroke:stroke,
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             radius:radius,
             borderScaleFactor:this.eBoardCanvas.getSize(1),
         }).setId(id);

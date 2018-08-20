@@ -28,7 +28,6 @@ class EquilateralTriangle extends AbstractShapePlugin{
     protected fill:string;
     protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
-    private strokeWidth:number=1;
     @message
     private throw(){
         return this.instance?{
@@ -55,7 +54,7 @@ class EquilateralTriangle extends AbstractShapePlugin{
         const id = this.instance?this.instance.id:undefined;
         this.instance=new FabricEquilateralTriangle(points,{
             stroke: this.getStrokeColor(),
-            strokeWidth: this.getCanvasPixel(this.strokeWidth),
+            strokeWidth: this.strokeWidth,
             strokeDashArray:this.strokeDashArray,
             fill: this.getFillColor(),
             borderScaleFactor:this.getCanvasPixel(1),
@@ -85,7 +84,7 @@ class EquilateralTriangle extends AbstractShapePlugin{
         }
         instance = new FabricEquilateralTriangle(points,{
             stroke: stroke,
-            strokeWidth: this.getCanvasPixel(this.strokeWidth),
+            strokeWidth: this.strokeWidth,
             strokeDashArray:this.strokeDashArray,
             fill: fill,
             borderScaleFactor:this.getCanvasPixel(1),

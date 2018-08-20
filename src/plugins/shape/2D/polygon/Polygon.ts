@@ -33,7 +33,6 @@ class Polygon extends AbstractShapePlugin{
     protected fill:string;
     protected stroke:string="rgb(0,0,0)";
     private strokeDashArray?:any[];
-    private strokeWidth:number=1;
     private circle:fabric.Circle;// 起始点磁贴效果
     private replace(finished:boolean){// finished 是否自动关闭
         this.eBoardCanvas.renderOnAddRemove=false;
@@ -54,7 +53,7 @@ class Polygon extends AbstractShapePlugin{
         this.instance=new FabricPolygon(this.points,{
             stroke:this.getStrokeColor(),
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             fill:this.getFillColor(),
             borderScaleFactor:this.getCanvasPixel(1),
         }).setId(this.instance.id);
@@ -97,7 +96,7 @@ class Polygon extends AbstractShapePlugin{
             this.instance = new FabricPolygon(this.points,{
                 stroke:this.getStrokeColor(),
                 strokeDashArray:this.strokeDashArray,
-                strokeWidth:this.getCanvasPixel(this.strokeWidth),
+                strokeWidth:this.strokeWidth,
                 fill:this.getFillColor(),
                 borderScaleFactor:this.getCanvasPixel(1),
             });
@@ -180,7 +179,7 @@ class Polygon extends AbstractShapePlugin{
         instance = new FabricPolygon(points,{
             stroke:stroke,
             strokeDashArray:this.strokeDashArray,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             fill:fill,
             borderScaleFactor:this.getCanvasPixel(1),
         }).setId(id);

@@ -32,7 +32,6 @@ class Rectangle extends AbstractShapePlugin{
     protected fill:string;
     protected stroke:string="rgba(0,0,0,1)";
     private strokeDashArray?:any[];
-    private strokeWidth:number=1;
     protected ctrlKey:boolean=false;
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
@@ -117,7 +116,7 @@ class Rectangle extends AbstractShapePlugin{
             strokeDashArray:this.strokeDashArray,
             width:this.ctrlKey?length:width,
             height:this.ctrlKey?length:height,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             borderScaleFactor:this.getCanvasPixel(1),
         });
         if(void 0 !== id){
@@ -193,7 +192,7 @@ class Rectangle extends AbstractShapePlugin{
             strokeDashArray:this.strokeDashArray,
             width:width,
             height:height,
-            strokeWidth:this.getCanvasPixel(this.strokeWidth),
+            strokeWidth:this.strokeWidth,
             borderScaleFactor:this.getCanvasPixel(1),
         }).setId(id);
         this.eBoardCanvas.add(instance);
