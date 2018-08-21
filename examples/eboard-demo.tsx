@@ -13,5 +13,4 @@ ReactDOM.render(
     document.getElementById('__react-content'),
 );
 
-
 export default App;

@@ -174,9 +174,9 @@ class MixCanvas extends SimpleCanvas{
                     <button onClick={this.createPdfCanvas}>pdfFrame</button>
                     <button onClick={this.createImagesCanvas}>imagesFrame</button>
                 </div>
-                <div style={{width:"200%",height:"100%",position:"relative"}}>
-                    <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}/>
-                    <div id={"eboardContainerReceive"} style={{position:"relative",height:document.body.offsetHeight-220,width:"50%",display:"inline-block"}}/>
+                <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"200%",height:"100%",position:"relative"}}>
+                    <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainer"}/>
+                    <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainerReceive"}/>
                 </div>
             </Card>
         );

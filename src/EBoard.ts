@@ -37,12 +37,11 @@ import {EDux, IPluginConfigOptions} from './utils/EDux';
 import {Tab, TabEventEnum} from './components/Tab';
 import {Toolbar} from './components/Toolbar';
 import {message} from './utils/decorators';
+import Config from './utils/Config';
 
 
 
-const config = require("./config.json");
-
-
+const config = Config.getConfig();
 
 export enum FrameType{
     Empty="empty-frame",Image="image-frame",HTML="html-frame",Canvas="canvas-frame",Pdf="pdf-frame",Images="images-frame"
@@ -265,7 +264,6 @@ class EBoard{
         }
         const message = Object.assign({},options);
         options.calcSize = options.width?this.calc(options.width):this.calcSize;
-        
         options.container = this.body;
         options.eDux = this.eDux;
         options.ratio = this.ratio;

@@ -28,8 +28,10 @@ class ImagesCanvas extends SimpleCanvas{
     public render(): JSX.Element {
         return (
             <Card bordered title="PagerCanvas" style={{ margin: "16px 16px"}}>
-                <div ref={ref=>this.container=ref} id={"eboardContainer"} style={{position:"relative",height:document.body.offsetHeight-220,width:"870px",display:"inline-block"}}/>
-                <div id={"eboardContainerReceive"} style={{position:"relative",height:document.body.offsetHeight-220,width:"700px",display:"inline-block",marginLeft:40}}/>
+                <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"200%",height:"100%",position:"relative"}}>
+                    <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainer"}/>
+                    <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainerReceive"}/>
+                </div>
             </Card>
         )
     }

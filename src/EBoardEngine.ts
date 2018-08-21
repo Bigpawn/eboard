@@ -16,8 +16,9 @@ import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins} from './plugins';
 import {IExtraMessage} from './interface/IFrame';
 import {EDux, IEDux} from './utils/EDux';
+import Config from './utils/Config';
 
-const config = require("./config.json");
+const config = Config.getConfig();
 
 
 declare interface IPlugin{
@@ -36,19 +37,16 @@ declare interface IExtraOptions{
 @escKeyEnable(true)
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
-    private pluginList:IPlugin[];
+    protected pluginList:IPlugin[];
     public pluginInstanceMap=new Map<string,IPlugins>();
-    private bgColor:string="rgba(0,0,0,1)";// 带透明度
-    private pixelRatio:number=1;
     private activePlugin?:AbstractPlugin;
-    private handleAll?:boolean;
-    public messageHandle?:Function;
     protected extraMessage:IExtraMessage;
     private eDux:EDux;
-    constructor(element: HTMLCanvasElement, options: ICanvasOptions,extraOptions:IExtraOptions){
-        this.eDux=extraOptions.eDux;
-        this.extraMessage = extraOptions.extraMessage;
-        this.eBoardCanvas = new EBoardCanvas(element,options,{eDux:this.eDux,extraMessage:extraOptions.extraMessage});
+    constructor(element: HTMLCanvasElement, options: ICanvasOptions,props:IExtraOptions){
+        this.eDux=props.eDux;
+        this.extraMessage = props.extraMessage;
+        options.allowTouchScrolling=true;
+        this.eBoardCanvas = new EBoardCanvas(element,options,{eDux:this.eDux,extraMessage:props.extraMessage});
         this.initPlugin();
         this.escHandler();
     }
@@ -81,23 +79,8 @@ class EBoardEngine{
     public getActivePlugin(){
         return this.activePlugin;
     }
-    public getDefaultColor(){
-        return this.bgColor;
-    }
     public getPlugin(pluginName:string){
         return this.pluginInstanceMap.get(pluginName);
-    }
-    public setPixelRatio(pixelRatio:number){
-        this.pixelRatio=pixelRatio;
-    }
-    public getPixelRatio(){
-        return this.pixelRatio;
-    }
-    public isHandleAll(){
-        return this.handleAll;
-    }
-    public getMessageHandle(){
-        return this.messageHandle;
     }
 }
 

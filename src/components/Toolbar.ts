@@ -174,30 +174,6 @@ class Toolbar{
         wrap.className='eboard-toolbar';
         this.dom=wrap;
     }
-    private startEvent(event:any){
-        event.cancelBubble = true;
-        event.stopPropagation();
-        this.closeChild();
-        const activeItem = Number(itemDom.getAttribute('active'))||0;
-        const key = members[activeItem].key;
-        const active = members[activeItem].active;
-        if(key !== this.activeKey){
-            this.listener&&this.listener.call(this,members[activeItem]);// 可能不是该item
-        }
-        if(active !== false){
-            const active = itemDom.parentElement?itemDom.parentElement.querySelector('.active'):undefined;
-            active&&active.classList.remove('active');
-            itemDom.classList.add('active');// 移除
-            this.activeKey= key;
-        }
-        if(length>1){
-            timer = setTimeout(()=>{
-                clearTimeout(timer);
-                timer = undefined as any;
-                this.showChild(itemDom,members);
-            },300);
-        }
-    }
     private initItems(){
         items.forEach((members)=>{
             const itemDom = document.createElement('div');

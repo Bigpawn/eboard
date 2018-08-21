@@ -23,6 +23,7 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
     private _borderWidth:number=1;
     private _stroke:string="rgb(0,0,0)";
     private _strokeDashArray:number[];
+    private _fontSize:number=18;
     
     /**
      * 操作框大小
@@ -110,6 +111,23 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
     protected set strokeDashArray(strokeDashArray:number[]){
         this._strokeDashArray = strokeDashArray;
     }
+    
+    /**
+     * 字体大小
+     * @returns {number}
+     */
+    protected get fontSize(){
+        return this.eBoardCanvas.getSize(this._fontSize);
+    }
+    
+    /**
+     * 设置字体大小
+     * @param {number} fontSize
+     */
+    protected set fontSize(fontSize:number){
+        this._fontSize=fontSize;
+    }
+    
     /**
      * default mouseDown Event
      * @param {"~fabric/fabric-impl".IEvent} event
