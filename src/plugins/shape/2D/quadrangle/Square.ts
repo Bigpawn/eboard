@@ -22,15 +22,13 @@ export declare interface ISquareMessage extends IMessage{
     angle:number;
     fill:string;
     stroke:string;
+    strokeDashArray:number[]
 }
 
 
 @setCursor(CursorTypeEnum.Cross)
 class Square extends AbstractShapePlugin{
     protected instance:FabricSquare;
-    protected fill:string;
-    protected stroke:string="rgba(0,0,0,1)";
-    private strokeDashArray?:any[];
     @message
     private throw(){
         return this.instance?{
@@ -41,7 +39,8 @@ class Square extends AbstractShapePlugin{
             angle:this.instance.angle,
             type:this.instance.type,
             fill:this.instance.fill,
-            stroke:this.instance.stroke
+            stroke:this.instance.stroke,
+            strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
     protected onMouseMove(event:IEvent){
@@ -60,10 +59,10 @@ class Square extends AbstractShapePlugin{
         }
         const id = this.instance?this.instance.id:undefined;
         this.instance=new FabricSquare({
-            fill:this.getFillColor(),
+            fill:this.fill,
             left: this.start.x,
             top: this.start.y,
-            stroke:this.getStrokeColor(),
+            stroke:this.stroke,
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.strokeWidth,
             originX:"center",
@@ -72,6 +71,7 @@ class Square extends AbstractShapePlugin{
             height:length,
             angle:angle,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -91,7 +91,7 @@ class Square extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ISquareMessage){
-        const {id,start,length,angle,fill,stroke} = message;
+        const {id,start,length,angle,fill,stroke,strokeDashArray} = message;
         let instance = this.getInstanceById(id) as FabricSquare;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -102,7 +102,7 @@ class Square extends AbstractShapePlugin{
             left: start.x,
             top: start.y,
             stroke:stroke,
-            strokeDashArray:this.strokeDashArray,
+            strokeDashArray:strokeDashArray,
             strokeWidth:this.strokeWidth,
             originX:"center",
             originY:"center",
@@ -110,6 +110,7 @@ class Square extends AbstractShapePlugin{
             height:length,
             angle:angle,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

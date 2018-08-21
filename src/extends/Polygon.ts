@@ -7,8 +7,9 @@
  */
 import {fabric} from "fabric";
 import {IPolylineOptions} from "~fabric/fabric-impl";
-import {EBoardCanvas} from '../EBoardCanvas';
 import {IObject} from '../interface/IObject';
+import Config from '../utils/Config';
+const config = Config.getShapeConfig();
 class Polygon extends fabric.Polyline implements IObject{
     public type:string="polygon";
     public id:string;
@@ -18,7 +19,7 @@ class Polygon extends fabric.Polyline implements IObject{
      * @param {IPolylineOptions} options
      */
     constructor(points: Array<{ x: number; y: number }>, options?: IPolylineOptions){
-        super(points,options);
+        super(points,Object.assign({},options,config));
         this.id=Date.now().toString();
     }
     

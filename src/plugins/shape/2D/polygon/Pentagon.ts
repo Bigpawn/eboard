@@ -20,14 +20,12 @@ export declare interface IPentagonMessage extends IMessage{
     points:any[];
     stroke:string;
     fill:string;
+    strokeDashArray:number[]
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class Pentagon extends AbstractShapePlugin{
     protected instance:FabricPentagon;
-    protected fill:string;
-    protected stroke:string="rgba(0,0,0,1)";
-    private strokeDashArray?:any[];
     @message
     private throw(){
         return this.instance?{
@@ -36,7 +34,8 @@ class Pentagon extends AbstractShapePlugin{
             points:this.instance.points,
             type:this.instance.type,
             fill:this.instance.fill,
-            stroke:this.instance.stroke
+            stroke:this.instance.stroke,
+            strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
     protected onMouseMove(event:IEvent){
@@ -54,11 +53,12 @@ class Pentagon extends AbstractShapePlugin{
         }
         const id = this.instance?this.instance.id:undefined;
         this.instance=new FabricPentagon(points,{
-            stroke: this.getStrokeColor(),
+            stroke: this.stroke,
             strokeWidth: this.strokeWidth,
             strokeDashArray:this.strokeDashArray,
-            fill: this.getFillColor(),
+            fill: this.fill,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -79,7 +79,7 @@ class Pentagon extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IPentagonMessage){
-        const {id,points,stroke,fill} = message;
+        const {id,points,stroke,fill,strokeDashArray} = message;
         let instance = this.getInstanceById(id) as FabricPentagon;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -88,9 +88,10 @@ class Pentagon extends AbstractShapePlugin{
         instance = new FabricPentagon(points,{
             stroke: stroke,
             strokeWidth: this.strokeWidth,
-            strokeDashArray:this.strokeDashArray,
+            strokeDashArray:strokeDashArray,
             fill: fill,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

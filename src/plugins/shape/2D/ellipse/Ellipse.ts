@@ -25,13 +25,11 @@ export declare interface IEllipseMessage extends IMessage{
     ry:number;
     fill:string;
     stroke:string;
+    strokeDashArray:number[]
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class Ellipse extends AbstractShapePlugin{
-    protected fill:string;
-    protected stroke:string="rgba(0,0,0,1)";
-    private strokeDashArray?:any[];
     private ctrlKey:boolean=false;
     protected instance:FabricEllipse;
     private getStartPoint():{x:number;y:number}{
@@ -101,7 +99,8 @@ class Ellipse extends AbstractShapePlugin{
             ry:this.instance.ry,
             type:this.instance.type,
             fill:this.instance.fill,
-            stroke:this.instance.stroke
+            stroke:this.instance.stroke,
+            strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
     
@@ -112,15 +111,16 @@ class Ellipse extends AbstractShapePlugin{
         }
         const id = this.instance?this.instance.id:undefined;
         this.instance=new FabricEllipse({
-            fill:this.getFillColor(),
+            fill:this.fill,
             left: startPoint.x,
             top: startPoint.y,
             rx:this.ctrlKey?radius:rx,
             ry:this.ctrlKey?radius:ry,
-            stroke:this.getStrokeColor(),
+            stroke:this.stroke,
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.strokeWidth,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -185,7 +185,7 @@ class Ellipse extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IEllipseMessage){
-        const {id,start,rx,ry,fill,stroke} = message;
+        const {id,start,rx,ry,fill,stroke,strokeDashArray} = message;
         let instance = this.getInstanceById(id) as FabricEllipse;
         this.eBoardCanvas.renderOnAddRemove=false;
     
@@ -199,9 +199,10 @@ class Ellipse extends AbstractShapePlugin{
             rx:rx,
             ry:ry,
             stroke:stroke,
-            strokeDashArray:this.strokeDashArray,
+            strokeDashArray:strokeDashArray,
             strokeWidth:this.strokeWidth,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

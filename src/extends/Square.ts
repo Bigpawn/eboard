@@ -8,12 +8,13 @@
 import {fabric} from "fabric";
 import {IRectOptions} from "~fabric/fabric-impl";
 import {IObject} from '../interface/IObject';
-
+import Config from '../utils/Config';
+const config = Config.getShapeConfig();
 class Square extends fabric.Rect implements IObject{
     public type:string="square";
     public id:string;
     constructor(options?: IRectOptions){
-        super(options);
+        super(Object.assign({},options,config));
         this.id=Date.now().toString();
     }
     public setId(id:string){

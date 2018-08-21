@@ -25,6 +25,7 @@ export declare interface ITriangleMessage extends IMessage{
     flipY:boolean;
     stroke:string;
     fill:string;
+    strokeDashArray:number[]
 }
 
 
@@ -33,9 +34,6 @@ export declare interface ITriangleMessage extends IMessage{
 @setCursor(CursorTypeEnum.Cross)
 class Triangle extends AbstractShapePlugin{
     protected instance:FabricTriangle;
-    protected fill:string;
-    protected stroke:string="rgba(0,0,0,1)";
-    private strokeDashArray?:any[];
     protected ctrlKey:boolean=false;
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
@@ -113,10 +111,10 @@ class Triangle extends AbstractShapePlugin{
         }
         const id = this.instance?this.instance.id:undefined;
         this.instance= new FabricTriangle({
-            fill:this.getFillColor(),
+            fill:this.fill,
             left: startPoint.x,
             top: startPoint.y,
-            stroke:this.getStrokeColor(),
+            stroke:this.stroke,
             flipX:offsetX<0,
             flipY:offsetY<0,
             width:this.ctrlKey?calcSize.width:width,
@@ -124,6 +122,7 @@ class Triangle extends AbstractShapePlugin{
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.strokeWidth,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -161,10 +160,10 @@ class Triangle extends AbstractShapePlugin{
                 }
                 const id = this.instance?this.instance.id:undefined;
                 this.instance= new FabricTriangle({
-                    fill:this.getFillColor(),
+                    fill:this.fill,
                     left: startPoint.x,
                     top: startPoint.y,
-                    stroke:this.getStrokeColor(),
+                    stroke:this.stroke,
                     flipX:offsetX<0,
                     flipY:offsetY<0,
                     width:calcSize.width,
@@ -172,6 +171,7 @@ class Triangle extends AbstractShapePlugin{
                     strokeDashArray:this.strokeDashArray,
                     strokeWidth:this.strokeWidth,
                     borderScaleFactor:this.borderWidth,
+                    cornerSize:this.cornerSize
                 });
                 if(void 0 !== id){
                     this.instance.setId(id);
@@ -200,10 +200,10 @@ class Triangle extends AbstractShapePlugin{
                 }
                 const id = this.instance?this.instance.id:undefined;
                 this.instance= new FabricTriangle({
-                    fill:this.getFillColor(),
+                    fill:this.fill,
                     left: startPoint.x,
                     top: startPoint.y,
-                    stroke:this.getStrokeColor(),
+                    stroke:this.stroke,
                     flipX:offsetX<0,
                     flipY:offsetY<0,
                     width:width,
@@ -211,6 +211,7 @@ class Triangle extends AbstractShapePlugin{
                     strokeDashArray:this.strokeDashArray,
                     strokeWidth:this.strokeWidth,
                     borderScaleFactor:this.borderWidth,
+                    cornerSize:this.cornerSize
                 });
                 if(void 0 !== id){
                     this.instance.setId(id);
@@ -239,7 +240,8 @@ class Triangle extends AbstractShapePlugin{
             height:this.instance.height,
             type:this.instance.type,
             fill:this.instance.fill,
-            stroke:this.instance.stroke
+            stroke:this.instance.stroke,
+            strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
     
@@ -248,7 +250,7 @@ class Triangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ITriangleMessage){
-        const {id,start,flipX,flipY,width,height,stroke,fill} = message;
+        const {id,start,flipX,flipY,width,height,stroke,fill,strokeDashArray} = message;
         let instance = this.getInstanceById(id) as FabricTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -263,9 +265,10 @@ class Triangle extends AbstractShapePlugin{
             flipY:flipY,
             width:width,
             height:height,
-            strokeDashArray:this.strokeDashArray,
+            strokeDashArray:strokeDashArray,
             strokeWidth:this.strokeWidth,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

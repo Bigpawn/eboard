@@ -8,6 +8,10 @@
 import {fabric} from "fabric";
 import {IEllipseOptions} from "~fabric/fabric-impl";
 import {IObject} from '../interface/IObject';
+import Config from '../utils/Config';
+
+const config = Config.getShapeConfig()
+
 
 class Ellipse extends fabric.Ellipse implements IObject{
     public type:string="ellipse";
@@ -18,7 +22,7 @@ class Ellipse extends fabric.Ellipse implements IObject{
      * @param {IEllipseOptions} options
      */
     constructor(options?: IEllipseOptions){
-        super(options);
+        super(Object.assign({},options,config));
         this.id=Date.now().toString();
     }
     

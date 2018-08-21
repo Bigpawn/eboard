@@ -8,6 +8,11 @@
 import {fabric} from "fabric";
 import {ILineOptions, IObjectOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
+import Config from '../utils/Config';
+
+const config = Config.getShapeConfig();
+
+
 class Line extends fabric.Line implements IObject{
     public type:string="line";
     public id:string;
@@ -18,7 +23,7 @@ class Line extends fabric.Line implements IObject{
      * @param {IObjectOptions} options
      */
     constructor(points?: number[], options?: IObjectOptions){
-        super(points,options);
+        super(points,Object.assign({},options,config));
         this.id=Date.now().toString();
     }
     

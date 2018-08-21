@@ -8,6 +8,10 @@
 import {fabric} from "fabric";
 import {ICircleOptions} from "~fabric/fabric-impl";
 import {IObject} from '../interface/IObject';
+import Config from '../utils/Config';
+
+const config = Config.getShapeConfig();
+
 
 class Circle extends fabric.Circle implements IObject{
     public type:string="circle";
@@ -18,7 +22,7 @@ class Circle extends fabric.Circle implements IObject{
      * @param {ICircleOptions} options
      */
     constructor(options?: ICircleOptions){
-        super(options);
+        super(Object.assign({},options,config));
         this.id=Date.now().toString();
     }
     

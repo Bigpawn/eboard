@@ -8,12 +8,13 @@
 import {fabric} from "fabric";
 import {IITextOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
-
+import Config from '../utils/Config';
+const config = Config.getShapeConfig();
 class Text extends fabric.IText implements IObject{
     public type:string="text";
     public id:string;
     constructor(text: string, options?: IITextOptions){
-        super(text,options);
+        super(text,Object.assign({},options,config));
         this.id=Date.now().toString();
     }
     public setId(id:string){

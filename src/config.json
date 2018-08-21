@@ -3,5 +3,11 @@
     "showTab":true,
     "dimensions":{
         "width":1200
-    }
+    },
+    "borderColor":"#09ca51",
+    "cornerColor":"#09ca51",
+    "cornerStrokeColor":"#09ca51",
+    "cornerStyle":"rect",
+    "transparentCorners":true,
+    "cornerSize":13
 }

@@ -23,6 +23,7 @@ export declare interface IPolygonMessage extends IMessage{
     points:any[];
     stroke:string;
     fill:string;
+    strokeDashArray:number[]
 }
 
 
@@ -30,9 +31,6 @@ export declare interface IPolygonMessage extends IMessage{
 class Polygon extends AbstractShapePlugin{
     protected instance:FabricPolygon;
     private points:fabric.Point[]=[];
-    protected fill:string;
-    protected stroke:string="rgb(0,0,0)";
-    private strokeDashArray?:any[];
     private circle:fabric.Circle;// 起始点磁贴效果
     private replace(finished:boolean){// finished 是否自动关闭
         this.eBoardCanvas.renderOnAddRemove=false;
@@ -51,11 +49,12 @@ class Polygon extends AbstractShapePlugin{
         }
         this.eBoardCanvas.remove(this.instance);
         this.instance=new FabricPolygon(this.points,{
-            stroke:this.getStrokeColor(),
+            stroke:this.stroke,
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.strokeWidth,
-            fill:this.getFillColor(),
+            fill:this.fill,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         }).setId(this.instance.id);
         this.eBoardCanvas.add(this.instance);
         this.eBoardCanvas.renderAll();
@@ -76,7 +75,8 @@ class Polygon extends AbstractShapePlugin{
             points:this.instance.points,
             type:this.instance.type,
             fill:this.instance.fill,
-            stroke:this.instance.stroke
+            stroke:this.instance.stroke,
+            strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
     protected onMouseDown(event:IEvent){
@@ -94,11 +94,12 @@ class Polygon extends AbstractShapePlugin{
         this.points.push(new fabric.Point(point.x,point.y));// 如果关闭则
         if(void 0 === this.instance){
             this.instance = new FabricPolygon(this.points,{
-                stroke:this.getStrokeColor(),
+                stroke:this.stroke,
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.strokeWidth,
-                fill:this.getFillColor(),
+                fill:this.fill,
                 borderScaleFactor:this.borderWidth,
+                cornerSize:this.cornerSize
             });
             this.eBoardCanvas.add(this.instance);
             this.throw();
@@ -170,7 +171,7 @@ class Polygon extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IPolygonMessage){
-        const {id,points,stroke,fill} = message;
+        const {id,points,stroke,fill,strokeDashArray} = message;
         let instance = this.getInstanceById(id) as FabricPolygon;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -178,10 +179,11 @@ class Polygon extends AbstractShapePlugin{
         }
         instance = new FabricPolygon(points,{
             stroke:stroke,
-            strokeDashArray:this.strokeDashArray,
+            strokeDashArray:strokeDashArray,
             strokeWidth:this.strokeWidth,
             fill:fill,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

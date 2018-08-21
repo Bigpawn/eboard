@@ -8,12 +8,13 @@
 import {fabric} from "fabric";
 import {ITriangleOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
-
+import Config from '../utils/Config';
+const config = Config.getShapeConfig();
 class Triangle extends fabric.Triangle implements IObject{
     public type="triangle";
     public id:string;
     constructor(options?: ITriangleOptions){
-        super(options);
+        super(Object.assign({},options,config));
         this.id=Date.now().toString();
     }
     public setId(id:string){

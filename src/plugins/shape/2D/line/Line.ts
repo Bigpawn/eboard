@@ -19,12 +19,12 @@ export declare interface ILineMessage extends IMessage{
     start:{x:number;y:number};
     end:{x:number;y:number};
     stroke:string;
+    strokeDashArray:number[]
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class Line extends AbstractShapePlugin{
     protected instance:FabricLine;
-    protected stroke="rgba(0,0,0,1)";
     @message
     private throw(){
         return this.instance?{
@@ -33,7 +33,8 @@ class Line extends AbstractShapePlugin{
             start:this.start,
             end:this.end,
             type:this.instance.type,
-            stroke:this.instance.stroke
+            stroke:this.instance.stroke,
+            strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
     protected onMouseMove(event:IEvent){
@@ -48,9 +49,11 @@ class Line extends AbstractShapePlugin{
         }
         const id = this.instance?this.instance.id:undefined;
         this.instance=new FabricLine([this.start.x,this.start.y,this.end.x,this.end.y],{
-            stroke: this.getStrokeColor(),
+            stroke: this.stroke,
             strokeWidth:this.strokeWidth,
             borderScaleFactor:this.borderWidth,
+            strokeDashArray:this.strokeDashArray,
+            cornerSize:this.cornerSize
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -71,7 +74,7 @@ class Line extends AbstractShapePlugin{
      * @param {IEllipseMessage} message
      */
     public onMessage(message:ILineMessage){
-        const {id,start,end,stroke} = message;
+        const {id,start,end,stroke,strokeDashArray} = message;
         let instance = this.getInstanceById(id) as FabricLine;
         this.eBoardCanvas.renderOnAddRemove=false;
     
@@ -82,6 +85,8 @@ class Line extends AbstractShapePlugin{
             stroke: stroke,
             strokeWidth:this.strokeWidth,
             borderScaleFactor:this.borderWidth,
+            strokeDashArray:strokeDashArray,
+            cornerSize:this.cornerSize
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

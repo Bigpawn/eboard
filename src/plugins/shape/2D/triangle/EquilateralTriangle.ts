@@ -21,13 +21,11 @@ export declare interface IEquilateralTriangleMessage extends IMessage{
     points:any[];
     fill:string;
     stroke:string;
+    strokeDashArray:number[]
 }
 @setCursor(CursorTypeEnum.Cross)
 class EquilateralTriangle extends AbstractShapePlugin{
     protected instance:FabricEquilateralTriangle;
-    protected fill:string;
-    protected stroke:string="rgba(0,0,0,1)";
-    private strokeDashArray?:any[];
     @message
     private throw(){
         return this.instance?{
@@ -36,7 +34,8 @@ class EquilateralTriangle extends AbstractShapePlugin{
             points:this.instance.points,
             type:this.instance.type,
             fill:this.instance.fill,
-            stroke:this.instance.stroke
+            stroke:this.instance.stroke,
+            strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
     protected onMouseMove(event:IEvent){
@@ -53,11 +52,12 @@ class EquilateralTriangle extends AbstractShapePlugin{
         }
         const id = this.instance?this.instance.id:undefined;
         this.instance=new FabricEquilateralTriangle(points,{
-            stroke: this.getStrokeColor(),
+            stroke: this.stroke,
             strokeWidth: this.strokeWidth,
             strokeDashArray:this.strokeDashArray,
-            fill: this.getFillColor(),
+            fill: this.fill,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -76,7 +76,7 @@ class EquilateralTriangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IEquilateralTriangleMessage){
-        const {id,points,fill,stroke} = message;
+        const {id,points,fill,stroke,strokeDashArray} = message;
         let instance = this.getInstanceById(id) as FabricEquilateralTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -85,9 +85,10 @@ class EquilateralTriangle extends AbstractShapePlugin{
         instance = new FabricEquilateralTriangle(points,{
             stroke: stroke,
             strokeWidth: this.strokeWidth,
-            strokeDashArray:this.strokeDashArray,
+            strokeDashArray:strokeDashArray,
             fill: fill,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

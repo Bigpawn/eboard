@@ -7,6 +7,7 @@
  */
 import {AbstractPlugin} from '../AbstractPlugin';
 import {IEvent} from "~fabric/fabric-impl";
+import Config from '../../utils/Config';
 
 
 export enum Quadrant{
@@ -17,10 +18,19 @@ export enum Quadrant{
 }
 
 abstract class AbstractShapePlugin extends AbstractPlugin{
-    protected stroke:string;
-    protected fill:string;
+    private _fill:string;
     private _strokeWidth:number=1;// 私有strokeWidth,用于计算
     private _borderWidth:number=1;
+    private _stroke:string="rgb(0,0,0)";
+    private _strokeDashArray:number[];
+    
+    /**
+     * 操作框大小
+     * @returns {number}
+     */
+    protected get cornerSize(){
+        return this.eBoardCanvas.getSize(Config.getCornerSize());
+    }
     /**
      * 自动计算比例
      * @returns {number}
@@ -51,6 +61,54 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
      */
     protected set borderWidth(borderWidth:number){
         this._borderWidth = borderWidth;
+    }
+    
+    /**
+     * 线条颜色
+     * @returns {string}
+     */
+    protected get stroke(){
+        return this.eDux.sharedData.stroke||this._stroke;
+    }
+    
+    /**
+     * 设置线条颜色
+     * @param {string} stroke
+     */
+    protected set stroke(stroke:string){
+        this._stroke=stroke;
+    }
+    
+    /**
+     * 填充色
+     * @returns {string}
+     */
+    protected get fill(){
+        return this.eDux.sharedData.fill||this._fill;
+    }
+    
+    /**
+     * 设置填充色
+     * @param {string} fill
+     */
+    protected set fill(fill:string){
+        this._fill = fill;
+    }
+    
+    /**
+     * 边框虚线点规则
+     * @returns {any[] | undefined}
+     */
+    protected get strokeDashArray(){
+        return this._strokeDashArray;
+    }
+    
+    /**
+     * 设置边框虚线
+     * @param {number[]} strokeDashArray
+     */
+    protected set strokeDashArray(strokeDashArray:number[]){
+        this._strokeDashArray = strokeDashArray;
     }
     /**
      * default mouseDown Event
@@ -159,13 +217,6 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
             default:
                 return angle;
         }
-    }
-    
-    protected getStrokeColor(){
-        return this.eDux.sharedData.stroke||this.stroke;
-    }
-    protected getFillColor(){
-        return this.eDux.sharedData.fill||this.fill;
     }
 }
 

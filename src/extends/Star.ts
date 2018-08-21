@@ -8,11 +8,13 @@
 import {fabric} from "fabric";
 import {IObjectOptions, IPolygonOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
+import Config from '../utils/Config';
+const config = Config.getShapeConfig();
 class Star extends fabric.Polygon implements IObject{
     public type:string="star";
     public id:string;
     constructor(points: Array<{ x: number; y: number }>, options?: IObjectOptions, skipOffset?: boolean){
-        super(points,options,skipOffset);
+        super(points,Object.assign({},options,config),skipOffset);
         this.id=Date.now().toString();
     }
     

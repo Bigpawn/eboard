@@ -35,19 +35,18 @@ export declare interface IArrowMessage extends IMessage{
     mode:ArrowMode;
     fill:string;
     stroke:string;
+    strokeDashArray:number[]
 }
 
 @setCursor(CursorTypeEnum.Cross)
 class Arrow extends AbstractShapePlugin{
     protected instance:FabricArrow;
-    protected stroke="rgb(0,0,0)";
-    protected fill="rgba(0,0,0,1)";
     private arrowFactory:ArrowFactory=ArrowFactory.FISH;
     protected arrowMode:ArrowMode=ArrowMode.ALL;
     private calcOptions(start:{x:number;y:number},end:{x:number;y:number},mode:ArrowMode){
         const arrowFactory = require(`./factory/${this.arrowFactory}`).default as typeof DefaultFactory;
         const headlen = Math.max(this.strokeWidth * 2 +10,10);
-        const {path,fill} = arrowFactory.calcPath(start,end,30,headlen,mode,this.getFillColor());
+        const {path,fill} = arrowFactory.calcPath(start,end,30,headlen,mode,this.fill);
         return {path,fill};
     }
     @message
@@ -60,7 +59,8 @@ class Arrow extends AbstractShapePlugin{
             type:this.instance.type,
             mode:this.arrowMode,
             fill:this.instance.fill,
-            stroke:this.instance.stroke
+            stroke:this.instance.stroke,
+            strokeDashArray:this.instance.strokeDashArray
         }:undefined;
     }
     protected onMouseMove(event:IEvent){
@@ -79,7 +79,7 @@ class Arrow extends AbstractShapePlugin{
         }
         const id = this.instance?this.instance.id:undefined;
         this.instance=new FabricArrow(path,{
-            stroke: this.getStrokeColor(),
+            stroke: this.stroke,
             strokeWidth:this.strokeWidth,
             top:center.y,
             left:center.x,
@@ -87,6 +87,8 @@ class Arrow extends AbstractShapePlugin{
             originX:"center",
             originY:"center",
             borderScaleFactor:this.borderWidth,
+            strokeDashArray:this.strokeDashArray,
+            cornerSize:this.cornerSize
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -107,7 +109,7 @@ class Arrow extends AbstractShapePlugin{
      * @param {IArrowMessage} message
      */
     public onMessage(message:IArrowMessage){
-        const {id,start,end,mode,stroke,fill} = message;
+        const {id,start,end,mode,stroke,fill,strokeDashArray} = message;
         let instance = this.getInstanceById(id) as FabricArrow;
         this.eBoardCanvas.renderOnAddRemove=false;
         const {path} = this.calcOptions(start,end,mode);
@@ -127,6 +129,8 @@ class Arrow extends AbstractShapePlugin{
             top:center.y,
             left:center.x,
             borderScaleFactor:this.borderWidth,
+            strokeDashArray:strokeDashArray,
+            cornerSize:this.cornerSize
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

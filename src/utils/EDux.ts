@@ -3,8 +3,10 @@
  * @Date: 2018/8/6 10:04
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * @Last Modified time: 2018/8/6 10:04
- * @disc:事件通道
- * 支持数据共享
+ * @disc:
+ *      事件通道
+ *      支持配置及API共享
+ *      采用装饰器模式connect到每个类中，不需要每层都进行实例传递，多实例模式怎么判断属于不同的EBoard????
  */
 import {Plugins} from '../plugins';
 import {MessageAdapter} from '../interceptor/MessageAdapter';

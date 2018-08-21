@@ -8,6 +8,9 @@
 import {fabric} from "fabric";
 import {IPathOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
+import Config from '../utils/Config';
+
+const config = Config.getShapeConfig();
 
 export declare interface IExtendPencilOptions extends IPathOptions{
     pathOffset?:{x:number;y:number}
@@ -23,7 +26,7 @@ class Pencil extends fabric.Path implements IObject{
      * @param {IPathOptions} options
      */
     constructor(path?: string | any[], options?: IPathOptions){
-        super(path,options);
+        super(path,Object.assign({},options,config));
         this.id=Date.now().toString();
     }
     

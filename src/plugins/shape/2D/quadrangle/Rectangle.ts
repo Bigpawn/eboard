@@ -22,6 +22,7 @@ export declare interface IRectangleMessage extends IMessage{
     height:number;
     fill:string;
     stroke:string;
+    strokeDashArray:number[]
 }
 
 
@@ -29,9 +30,6 @@ export declare interface IRectangleMessage extends IMessage{
 @setCursor(CursorTypeEnum.Cross)
 class Rectangle extends AbstractShapePlugin{
     protected instance:FabricRectangle;
-    protected fill:string;
-    protected stroke:string="rgba(0,0,0,1)";
-    private strokeDashArray?:any[];
     protected ctrlKey:boolean=false;
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
@@ -99,7 +97,8 @@ class Rectangle extends AbstractShapePlugin{
             height:this.instance.height,
             type:this.instance.type,
             fill:this.instance.fill,
-            stroke:this.instance.stroke
+            stroke:this.instance.stroke,
+            strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
     private update(startPoint:{x:number;y:number},length:number,width:number,height:number){
@@ -109,15 +108,16 @@ class Rectangle extends AbstractShapePlugin{
         }
         const id = this.instance?this.instance.id:undefined;
         this.instance= new FabricRectangle({
-            fill:this.getFillColor(),
+            fill:this.fill,
             left: startPoint.x,
             top: startPoint.y,
-            stroke:this.getStrokeColor(),
+            stroke:this.stroke,
             strokeDashArray:this.strokeDashArray,
             width:this.ctrlKey?length:width,
             height:this.ctrlKey?length:height,
             strokeWidth:this.strokeWidth,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         });
         if(void 0 !== id){
             this.instance.setId(id);
@@ -178,7 +178,7 @@ class Rectangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IRectangleMessage){
-        const {id,start,width,height,fill,stroke} = message;
+        const {id,start,width,height,fill,stroke,strokeDashArray} = message;
         let instance = this.getInstanceById(id) as FabricRectangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -189,11 +189,12 @@ class Rectangle extends AbstractShapePlugin{
             left: start.x,
             top: start.y,
             stroke:stroke,
-            strokeDashArray:this.strokeDashArray,
+            strokeDashArray:strokeDashArray,
             width:width,
             height:height,
             strokeWidth:this.strokeWidth,
             borderScaleFactor:this.borderWidth,
+            cornerSize:this.cornerSize
         }).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
