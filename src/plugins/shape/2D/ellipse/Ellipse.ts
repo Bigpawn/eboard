@@ -119,9 +119,7 @@ class Ellipse extends AbstractShapePlugin{
             stroke:this.stroke,
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.strokeWidth,
-            borderScaleFactor:this.borderWidth,
-            cornerSize:this.cornerSize
-        });
+        },this.eBoardCanvas);
         if(void 0 !== id){
             this.instance.setId(id);
         }
@@ -201,9 +199,7 @@ class Ellipse extends AbstractShapePlugin{
             stroke:stroke,
             strokeDashArray:strokeDashArray,
             strokeWidth:this.strokeWidth,
-            borderScaleFactor:this.borderWidth,
-            cornerSize:this.cornerSize
-        }).setId(id);
+        },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;

@@ -56,9 +56,7 @@ class EquilateralTriangle extends AbstractShapePlugin{
             strokeWidth: this.strokeWidth,
             strokeDashArray:this.strokeDashArray,
             fill: this.fill,
-            borderScaleFactor:this.borderWidth,
-            cornerSize:this.cornerSize
-        });
+        },this.eBoardCanvas);
         if(void 0 !== id){
             this.instance.setId(id);
         }
@@ -87,9 +85,7 @@ class EquilateralTriangle extends AbstractShapePlugin{
             strokeWidth: this.strokeWidth,
             strokeDashArray:strokeDashArray,
             fill: fill,
-            borderScaleFactor:this.borderWidth,
-            cornerSize:this.cornerSize
-        }).setId(id);
+        },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;

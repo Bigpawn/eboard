@@ -6,39 +6,35 @@
  * @disc:fabric.OrthogonalTriangle
  */
 import {fabric} from "fabric";
-import {IObjectOptions, IPolygonOptions} from '~fabric/fabric-impl';
+import {IObjectOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
-import Config from '../utils/Config';
-const config = Config.getShapeConfig();
+import {IDefaultConfig} from '../interface/IConfig';
+import {EDux} from '../utils/EDux';
+import {EBoardCanvas} from '../EBoardCanvas';
 
-
-export declare interface IExtendPolygonOptions extends IPolygonOptions{
-    pathOffset?:{x:number;y:number}
-}
+let _config:IDefaultConfig;
+let _eDux:EDux;
 
 
 class OrthogonalTriangle extends fabric.Polygon implements IObject{
-    public pathOffset:{x:number;y:number};
     public type:string="orthogonal-triangle";
     public id:string;
-    constructor(points: Array<{ x: number; y: number }>, options?: IObjectOptions, skipOffset?: boolean){
-        super(points,Object.assign({},options,config),skipOffset);
+    constructor(points: Array<{ x: number; y: number }>, options: IObjectOptions,eBoardCanvas:EBoardCanvas){
+        super(points,(_eDux=eBoardCanvas.eDux,_config=_eDux.config , Object.assign({
+            borderColor:_config.borderColor,
+            cornerColor:_config.cornerColor,
+            cornerStrokeColor:_config.cornerStrokeColor,
+            cornerStyle:_config.cornerStyle,
+            transparentCorners:_config.transparentCorners,
+            cornerSize:_eDux.transform(_config.cornerSize),
+            borderScaleFactor:_eDux.transform(_config.borderWidth)
+        },options)));
         this.id=Date.now().toString();
     }
     public setId(id:string){
         this.id=id;
         return this;
     }
-    
-    /**
-     * 更新
-     * @param {IExtendPolygonOptions} options
-     */
-    public update(options?: IExtendPolygonOptions){
-        this.set(options as any).setCoords();
-        return this;
-    }
-    
     
     public static calcPointsByCursorPoint(center:{x:number;y:number},point:{x:number;y:number}){
         return [

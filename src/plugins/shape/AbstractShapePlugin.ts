@@ -7,7 +7,6 @@
  */
 import {AbstractPlugin} from '../AbstractPlugin';
 import {IEvent} from "~fabric/fabric-impl";
-import Config from '../../utils/Config';
 
 
 export enum Quadrant{
@@ -19,25 +18,17 @@ export enum Quadrant{
 
 abstract class AbstractShapePlugin extends AbstractPlugin{
     private _fill:string;
-    private _strokeWidth:number=1;// 私有strokeWidth,用于计算
-    private _borderWidth:number=1;
-    private _stroke:string="rgb(0,0,0)";
+    private _strokeWidth:number;// 私有strokeWidth,用于计算
+    private _stroke:string;
     private _strokeDashArray:number[];
-    private _fontSize:number=18;
+    private _fontSize:number;
     
-    /**
-     * 操作框大小
-     * @returns {number}
-     */
-    protected get cornerSize(){
-        return this.eBoardCanvas.getSize(Config.getCornerSize());
-    }
     /**
      * 自动计算比例
      * @returns {number}
      */
     protected get strokeWidth(){
-        return this.eBoardCanvas.getSize(this._strokeWidth);
+        return this.eDux.transform(this._strokeWidth||this.eDux.config.strokeWidth);
     }
     
     /**
@@ -49,27 +40,11 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
     }
     
     /**
-     * border 线条宽度
-     * @returns {number}
-     */
-    protected get borderWidth(){
-        return this.eBoardCanvas.getSize(this._borderWidth);
-    }
-    
-    /**
-     * 设置border 宽度
-     * @param {number} borderWidth
-     */
-    protected set borderWidth(borderWidth:number){
-        this._borderWidth = borderWidth;
-    }
-    
-    /**
      * 线条颜色
      * @returns {string}
      */
     protected get stroke(){
-        return this.eDux.sharedData.stroke||this._stroke;
+        return this._stroke||this.eDux.config.stroke;
     }
     
     /**
@@ -85,7 +60,7 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
      * @returns {string}
      */
     protected get fill(){
-        return this.eDux.sharedData.fill||this._fill;
+        return this._fill||this.eDux.config.fill;
     }
     
     /**
@@ -117,7 +92,7 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
      * @returns {number}
      */
     protected get fontSize(){
-        return this.eBoardCanvas.getSize(this._fontSize);
+        return this.eDux.transform(this._fontSize||this.eDux.config.fontSize);
     }
     
     /**
@@ -210,12 +185,12 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
         }
     }
     
-    /**
+ /*   /!**
      * 根据两点坐标计算角度
      * @param {{x: number; y: number}} pointer1
      * @param {{x: number; y: number}} pointer2
      * @returns {number}
-     */
+     *!/
     protected calcAngleByPoints(pointer1:{x:number;y:number},pointer2:{x:number;y:number}){
         const offsetY = pointer2.y - pointer1.y;
         const offsetX = pointer2.x - pointer1.x;
@@ -235,7 +210,7 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
             default:
                 return angle;
         }
-    }
+    }*/
 }
 
 export {AbstractShapePlugin};

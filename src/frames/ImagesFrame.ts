@@ -12,7 +12,7 @@ import {ImageFrame} from './ImageFrame';
 import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {Plugins} from '../plugins';
-import {IEDux} from '../utils/EDux';
+import {EDux} from '../utils/EDux';
 
 
 @setAnimationName('eboard-pager')
@@ -30,17 +30,17 @@ class ImagesFrame implements IImagesFrame{
     private animationCssPrefix:string;
     public images:string[];
     public id:string;
-    public eDux:IEDux;
+    public eDux:EDux;
     
     public nextMessage:any={};
     private groupMessage:any={};
     
-    constructor(options:IImagesFrameOptions){
+    constructor(options:IImagesFrameOptions,eDux:EDux){
         this.id = options.id||Date.now().toString();
-        this.eDux=options.eDux as any;
+        this.eDux=eDux;
         this.container=options.container as any;
         this.options=options;
-        const {eDux,container,append,calcSize,...rest} = options;
+        const {container,append,calcSize,...rest} = options;
         this.groupMessage=Object.assign({},rest,{
             id:this.id,
             width:calcSize.width
@@ -85,15 +85,13 @@ class ImagesFrame implements IImagesFrame{
         }
         if(this.images.length>0){
             const pageFrame = new ImageFrame({
-                ratio:options.ratio,
                 content:this.urlPrefix+this.images[this.pageNum],
                 scrollbar:ScrollbarType.vertical,
                 container:this.container,
-                eDux:this.eDux,
                 id:this.pageNum.toString(),
                 extraMessage:this.nextMessage,
                 calcSize:this.options.calcSize
-            });
+            },this.eDux);
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
             this.dom.appendChild(this.pageFrame.dom);
@@ -147,14 +145,12 @@ class ImagesFrame implements IImagesFrame{
             // 创建
             nextPageFrame = new ImageFrame({
                 content:this.urlPrefix+this.images[pageNum],
-                ratio:this.options.ratio,
                 scrollbar:ScrollbarType.vertical,
                 container:this.container,
-                eDux:this.eDux,
                 id:pageNum.toString(),
                 extraMessage:this.nextMessage,
                 calcSize:this.options.calcSize
-            });
+            },this.eDux);
             this.child.set(pageNum,nextPageFrame);
         }
         return nextPageFrame;

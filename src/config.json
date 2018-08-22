@@ -9,5 +9,14 @@
     "cornerStrokeColor":"#09ca51",
     "cornerStyle":"rect",
     "transparentCorners":true,
-    "cornerSize":13
+    "cornerSize":13,
+    "ratio":{
+        "w":16,
+        "h":9
+    },
+    "cursorSize":26,
+    "borderWidth":1,
+    "strokeWidth":1,
+    "stroke":"#000",
+    "fontSize":18
 }

@@ -29,17 +29,17 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
     public extraMessage:any={};// 存放group属性
     public nextMessage:any={};
     public frameMessage:any={};
-    constructor(options:T){
+    constructor(options:T,eDux:EDux){
         this.id=options.id||Date.now().toString();
         // this.messageId = options.messageId||MessageIdMiddleWare.getId();
-        this.eDux=options.eDux as any;
+        this.eDux=eDux;
         this.container=options.container as any;
         this.options=options;
         this.extraMessage=this.options.extraMessage||{};
         if(options.extraMessage&&options.extraMessage.group){
             this.nextMessage.group = this.extraMessage.group;
         }
-        const {eDux,extraMessage,container,calcSize,ratio,append,...rest} = this.options as any;
+        const {extraMessage,container,calcSize,append,...rest} = this.options as any;
         this.frameMessage={
             ...rest,
             id:this.id,

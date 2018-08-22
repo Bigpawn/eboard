@@ -36,14 +36,12 @@ export declare interface IFrame{
 }
 
 export declare interface IFrameOptions{
-    ratio?:string;
     id?:string;
     type?:string;
     width?:number;
     height?:number;
     extraMessage?:IExtraMessage;
     container?:HTMLDivElement;
-    eDux?:IEDux;// 数据接口共享模块
     append?:boolean;// 是否直接显示
     name?:string;
     calcSize?:any;

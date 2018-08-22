@@ -6,18 +6,30 @@
  * @disc:fabric.EquilateralTriangle
  */
 import {fabric} from "fabric";
-import {IObjectOptions, IPolygonOptions} from '~fabric/fabric-impl';
+import {IObjectOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
-import Config from '../utils/Config';
+import {IDefaultConfig} from '../interface/IConfig';
+import {EDux} from '../utils/EDux';
+import {EBoardCanvas} from '../EBoardCanvas';
 
-const config = Config.getShapeConfig()
+
+let _config:IDefaultConfig;
+let _eDux:EDux;
 
 
 class EquilateralTriangle extends fabric.Polygon implements IObject{
     public type:string="equilateral-triangle";
     public id:string;
-    constructor(points: Array<{ x: number; y: number }>, options?: IObjectOptions, skipOffset?: boolean){
-        super(points,Object.assign({},options,config),skipOffset);
+    constructor(points: Array<{ x: number; y: number }>, options: IObjectOptions,eBoardCanvas:EBoardCanvas){
+        super(points,(_eDux=eBoardCanvas.eDux,_config=_eDux.config,Object.assign({
+            borderColor:_config.borderColor,
+            cornerColor:_config.cornerColor,
+            cornerStrokeColor:_config.cornerStrokeColor,
+            cornerStyle:_config.cornerStyle,
+            transparentCorners:_config.transparentCorners,
+            cornerSize:_eDux.transform(_config.cornerSize),
+            borderScaleFactor:_eDux.transform(_config.borderWidth)
+        },options)));
         this.id=Date.now().toString();
     }
     
@@ -25,17 +37,6 @@ class EquilateralTriangle extends fabric.Polygon implements IObject{
         this.id=id;
         return this;
     }
-    
-    /**
-     * 更新
-     * @param {IPolygonOptions} options
-     */
-    public update(options?: IPolygonOptions){
-        this.set(options as any).setCoords();
-        return this;
-    }
-    
-    
     
     private static sin120:number=Math.sin(120/180 * Math.PI);
     private static sin240:number=Math.sin(240/180 * Math.PI);

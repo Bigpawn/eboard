@@ -15,7 +15,6 @@ import {IEDux} from '../utils/EDux';
 
 export declare interface IFrameGroupOptions{
     messageId?:number;// frame 创建的消息Id
-    ratio?:string;
     scrollbar?:ScrollbarType;
     pageNum:number;// 传1 或者其他
     id?:string;
@@ -24,7 +23,6 @@ export declare interface IFrameGroupOptions{
     height?:number;
     dimensions?:{width:number;height:number};
     container?:HTMLDivElement;
-    eDux?:IEDux;
     append?:boolean;
     name?:string;
     calcSize?:any;

@@ -9,55 +9,40 @@
  */
 import {EBoardCanvas} from './EBoardCanvas';
 import {ICanvasOptions} from '~fabric/fabric-impl';
-import {escKeyEnable, mixinPlugins} from './utils/decorators';
+import {escKeyEnable} from './utils/decorators';
 
 
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins} from './plugins';
 import {IExtraMessage} from './interface/IFrame';
-import {EDux, IEDux} from './utils/EDux';
-import Config from './utils/Config';
-
-const config = Config.getConfig();
-
-
-declare interface IPlugin{
-    pluginName:string;
-    pluginReflectClass:IPlugins
-}
+import {EDux} from './utils/EDux';
 
 
 declare interface IExtraOptions{
-    eDux:IEDux;
+    eDux:EDux;
     extraMessage:IExtraMessage;
 }
 
 
-@mixinPlugins(config.plugins)
 @escKeyEnable(true)
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
-    protected pluginList:IPlugin[];
     public pluginInstanceMap=new Map<string,IPlugins>();
     private activePlugin?:AbstractPlugin;
-    protected extraMessage:IExtraMessage;
-    private eDux:EDux;
+    public extraMessage:IExtraMessage;
+    public eDux:EDux;
     constructor(element: HTMLCanvasElement, options: ICanvasOptions,props:IExtraOptions){
         this.eDux=props.eDux;
         this.extraMessage = props.extraMessage;
         options.allowTouchScrolling=true;
-        this.eBoardCanvas = new EBoardCanvas(element,options,{eDux:this.eDux,extraMessage:props.extraMessage});
+        this.eBoardCanvas = new EBoardCanvas(element,options,this);
         this.initPlugin();
         this.escHandler();
     }
     private initPlugin(){
         // plugins 实例化
-        this.pluginList.forEach((plugin)=>{
-            this.pluginInstanceMap.set(plugin.pluginName,new (plugin.pluginReflectClass as any)(this.eBoardCanvas,{
-                eDux:this.eDux,
-                eBoardEngine:this,
-                extraMessage:this.extraMessage
-            }));// 该参数统一传递,插件构造函数统一入参EBoardCanvas
+        this.eDux.config.plugins.forEach((pluginName:string)=>{
+            this.pluginInstanceMap.set(pluginName,new (require(`./plugins`)[pluginName] as any)(this));
         });
     }
     private escHandler(){

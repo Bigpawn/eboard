@@ -17,9 +17,10 @@ import {CursorTypeEnum} from './cursor/Enum';
 import {ICursorTypes} from './interface/ICursorTypes';
 import {IMessage, MessageTagEnum} from './middlewares/MessageMiddleWare';
 import {message} from './utils/decorators';
-import {EDux, IEDux} from './utils/EDux';
+import {EDux} from './utils/EDux';
 import {IExtraMessage} from './interface/IFrame';
 import {Plugins} from './plugins';
+import {EBoardEngine} from './EBoardEngine';
 
 
 declare interface ICursorMessage extends IMessage{
@@ -28,28 +29,20 @@ declare interface ICursorMessage extends IMessage{
     size:number;
 }
 
-declare interface ICanvasExtraOptions{
-    eDux:IEDux;
-    extraMessage:IExtraMessage
-}
-
 
 class EBoardCanvas extends fabric.Canvas{
     public cursorCanvas:fabric.StaticCanvas;
     private instance:fabric.Object;
     private cursorType:ICursorTypes;
-    private cursorSize:number=26;
     private cursorTypeName:CursorTypeEnum;
     private cursorMessageEnable:boolean=false;
     public eDux:EDux;
     public extraMessage:IExtraMessage;
-    private cssWidth:number=1;
-    private pxWidth:number=1;
     private touching:boolean=false;// 是否触摸模式
-    constructor(element: HTMLCanvasElement,options: ICanvasOptions,extraOptions:ICanvasExtraOptions){
+    constructor(element: HTMLCanvasElement,options: ICanvasOptions,eBoardEngine:EBoardEngine){
         super(element,options);
-        this.eDux=extraOptions.eDux;
-        this.extraMessage=extraOptions.extraMessage;
+        this.eDux=eBoardEngine.eDux;
+        this.extraMessage=eBoardEngine.extraMessage;
         const cursorCanvasEl=document.createElement("canvas");
         cursorCanvasEl.className="eboard-cursor";
         element.parentElement&&element.parentElement.appendChild(cursorCanvasEl);
@@ -78,11 +71,6 @@ class EBoardCanvas extends fabric.Canvas{
             this.touching=false;
             this.onMouseOut();
         });
-    }
-    
-    
-    public getSize(width:number){
-        return width * this.pxWidth / this.cssWidth;
     }
     
     /**
@@ -139,7 +127,7 @@ class EBoardCanvas extends fabric.Canvas{
         if(void 0 !== this.instance){
             this.cursorCanvas.remove(this.instance);
         }
-        this.instance = this.cursorType.render(point,this.cursorSize);
+        this.instance = this.cursorType.render(point,this.eDux.transform(this.eDux.config.cursorSize));
         this.instance.name=this.cursorTypeName; // 比较类型是否变化
         this.instance.type="cursor";// 设置type，扩展的Canvas可能会做其他操作
         this.cursorCanvas.add(this.instance);
@@ -165,7 +153,7 @@ class EBoardCanvas extends fabric.Canvas{
     private cursorMessage(center?:{x:number;y:number}){
         return {
             tag:MessageTagEnum.Cursor,
-            size:this.cursorSize,
+            size:this.eDux.config.cursorSize,
             type:this.cursorTypeName,
             center:center,
         }
@@ -174,15 +162,6 @@ class EBoardCanvas extends fabric.Canvas{
         return this.cursorCanvas.getObjects("cursor")[0];
     }
     
-    /**
-     * 修改光标大小
-     * @param {number} size
-     * @returns {this}
-     */
-    public setCursorSize(size:number){
-        this.cursorSize = size;
-        return this;
-    }
     /**
      * 设置光标类型
      * @param {CursorTypeEnum} cursorType
@@ -227,12 +206,6 @@ class EBoardCanvas extends fabric.Canvas{
     public setDimensions(dimensions: ICanvasDimensions, options?: ICanvasDimensionsOptions){
         super.setDimensions(dimensions,options);
         this.cursorCanvas.setDimensions(dimensions,options);
-        // 做缓存
-        if(options&&options.backstoreOnly){
-            this.pxWidth = dimensions.width;
-        }else{
-            this.cssWidth = dimensions.width;
-        }
         return this;
     }
     

@@ -22,7 +22,7 @@ class CrossCursor implements ICursorTypes{
         const half = size/2;
         const path = `M ${center.x - half} ${center.y} L ${center.x+half} ${center.y} M ${center.x} ${center.y-half} L ${center.x} ${center.y+half}`;
         return new fabric.Path(path,{
-            strokeWidth:this.canvas.getSize(2),
+            strokeWidth:this.canvas.eDux.transform(2),
             stroke:"#5EBBE2",
         });
     }

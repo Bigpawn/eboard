@@ -53,9 +53,7 @@ class Polygon extends AbstractShapePlugin{
             strokeDashArray:this.strokeDashArray,
             strokeWidth:this.strokeWidth,
             fill:this.fill,
-            borderScaleFactor:this.borderWidth,
-            cornerSize:this.cornerSize
-        }).setId(this.instance.id);
+        },this.eBoardCanvas).setId(this.instance.id);
         this.eBoardCanvas.add(this.instance);
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
@@ -98,9 +96,7 @@ class Polygon extends AbstractShapePlugin{
                 strokeDashArray:this.strokeDashArray,
                 strokeWidth:this.strokeWidth,
                 fill:this.fill,
-                borderScaleFactor:this.borderWidth,
-                cornerSize:this.cornerSize
-            });
+            },this.eBoardCanvas);
             this.eBoardCanvas.add(this.instance);
             this.throw();
         }else{
@@ -182,9 +178,7 @@ class Polygon extends AbstractShapePlugin{
             strokeDashArray:strokeDashArray,
             strokeWidth:this.strokeWidth,
             fill:fill,
-            borderScaleFactor:this.borderWidth,
-            cornerSize:this.cornerSize
-        }).setId(id);
+        },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;

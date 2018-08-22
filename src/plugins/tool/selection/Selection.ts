@@ -10,13 +10,13 @@
  *
  * 支持群组删除
  */
-import {AbstractPlugin, IPluginOptions} from '../../AbstractPlugin';
+import {AbstractPlugin} from '../../AbstractPlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {EBoardCanvas} from '../../../EBoardCanvas';
 import {IObject} from '../../../interface/IObject';
 import {IMessage, MessageTagEnum} from '../../../middlewares/MessageMiddleWare';
 import {message, pipMode} from '../../../utils/decorators';
 import {fabric} from "fabric";
+import {EBoardEngine} from '../../../EBoardEngine';
 
 
 export declare interface ISelectionMessage extends IMessage{
@@ -65,8 +65,8 @@ class Selection extends AbstractPlugin{
         }
     };*/
     private angle:number=0;
-    constructor(canvas:EBoardCanvas,options:IPluginOptions){
-        super(canvas,options);
+    constructor(eBoardEngine:EBoardEngine){
+        super(eBoardEngine);
         this.onSelection = this.onSelection.bind(this);
         this.onMoving = this.onMoving.bind(this);
         this.onScaling = this.onScaling.bind(this);

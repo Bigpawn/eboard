@@ -46,12 +46,12 @@ class PdfFrame implements IPdfFrame{
     public nextMessage:any={};
     private groupMessage:any={};
     
-    constructor(options:IPdfFrameOptions){
+    constructor(options:IPdfFrameOptions,eDux:EDux){
         this.id=options.id||Date.now().toString();
-        this.eDux=options.eDux as any;
+        this.eDux=eDux;
         this.options=options;
         this.container=options.container as any;
-        const {eDux,container,append,calcSize,...rest} = options;
+        const {container,append,calcSize,...rest} = options;
         this.groupMessage=Object.assign({},rest,{
             id:this.id,
             width:calcSize.width,
@@ -104,14 +104,12 @@ class PdfFrame implements IPdfFrame{
             });
             // 判断是否有id options.id;// 没有标识操作端
             const pageFrame = new CanvasFrame({
-                ratio:options.ratio,
                 scrollbar:ScrollbarType.vertical,
-                eDux:this.eDux,
                 extraMessage:this.nextMessage,
                 id:this.pageNum.toString(),
                 container:this.container,
                 calcSize:this.options.calcSize
-            });// 页码设置为id
+            },this.eDux);// 页码设置为id
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
             this.dom.appendChild(this.pageFrame.dom);
@@ -181,14 +179,12 @@ class PdfFrame implements IPdfFrame{
         if(void 0 === nextPageFrame){
             // 创建
             nextPageFrame = new CanvasFrame({
-                ratio:this.options.ratio,
                 scrollbar:ScrollbarType.vertical,
                 container:this.container,
-                eDux:this.eDux,
                 id:pageNum.toString(),
                 extraMessage:this.nextMessage,
                 calcSize:this.options.calcSize
-            });
+            },this.eDux);
             this.child.set(pageNum,nextPageFrame);
             // 需要getPage
             this.pdf.then(pdf=>{

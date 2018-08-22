@@ -13,14 +13,8 @@ import {EBoardEngine} from '../EBoardEngine';
 import {IEvent} from '~fabric/fabric-impl';
 import {fabric} from "fabric";
 import {CursorTypeEnum} from '../cursor/Enum';
-import {EDux, IEDux} from '../utils/EDux';
+import {EDux} from '../utils/EDux';
 import {IExtraMessage} from '../interface/IFrame';
-
-export declare interface IPluginOptions{
-    extraMessage:IExtraMessage;
-    eDux:IEDux;
-    eBoardEngine:EBoardEngine;
-}
 
 
 abstract class AbstractPlugin {
@@ -38,12 +32,11 @@ abstract class AbstractPlugin {
     protected ctrlKeyUpHandler?(event:KeyboardEvent):void;
     protected eDux:EDux;
     protected extraMessage:IExtraMessage;
-    constructor(canvas:EBoardCanvas,options:IPluginOptions){
-        this.eBoardCanvas=canvas;
-        this.eDux=options.eDux;
-        this.extraMessage = options.extraMessage;
-        this.eBoardEngine = options.eBoardEngine;
-        // bind this
+    constructor(eBoardEngine:EBoardEngine){
+        this.eBoardCanvas=eBoardEngine.eBoardCanvas;
+        this.eBoardEngine = eBoardEngine;
+        this.eDux=eBoardEngine.eDux;
+        this.extraMessage = eBoardEngine.extraMessage;
         if(void 0 !== this.onMouseDown){
             this.onMouseDown=this.onMouseDown.bind(this);
         }
@@ -150,7 +143,7 @@ abstract class AbstractPlugin {
      * @returns {number}
      */
     public getCanvasPixel(pixel:number){
-        return this.eBoardCanvas.getSize(pixel);
+        return this.eDux.transform(pixel);
     }
     
     /**

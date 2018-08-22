@@ -8,9 +8,13 @@
 import {fabric} from "fabric";
 import {IEllipseOptions} from "~fabric/fabric-impl";
 import {IObject} from '../interface/IObject';
-import Config from '../utils/Config';
+import {IDefaultConfig} from '../interface/IConfig';
+import {EDux} from '../utils/EDux';
+import {EBoardCanvas} from '../EBoardCanvas';
 
-const config = Config.getShapeConfig()
+
+let _config:IDefaultConfig;
+let _eDux:EDux;
 
 
 class Ellipse extends fabric.Ellipse implements IObject{
@@ -20,9 +24,18 @@ class Ellipse extends fabric.Ellipse implements IObject{
     /**
      * 对象生成id
      * @param {IEllipseOptions} options
+     * @param eBoardCanvas
      */
-    constructor(options?: IEllipseOptions){
-        super(Object.assign({},options,config));
+    constructor(options: IEllipseOptions,eBoardCanvas:EBoardCanvas){
+        super((_eDux=eBoardCanvas.eDux,_config=_eDux.config,Object.assign({
+            borderColor:_config.borderColor,
+            cornerColor:_config.cornerColor,
+            cornerStrokeColor:_config.cornerStrokeColor,
+            cornerStyle:_config.cornerStyle,
+            transparentCorners:_config.transparentCorners,
+            cornerSize:_eDux.transform(_config.cornerSize),
+            borderScaleFactor:_eDux.transform(_config.borderWidth)
+        },options)));
         this.id=Date.now().toString();
     }
     
@@ -34,14 +47,6 @@ class Ellipse extends fabric.Ellipse implements IObject{
     public setId(id:string){
         this.id=id;
         return this;
-    }
-    
-    /**
-     * 更新 圆心和半径
-     * @param {IEllipseOptions} options
-     */
-    public update(options?: IEllipseOptions){
-        this.set(options as any).setCoords();
     }
 }
 

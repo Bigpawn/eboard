@@ -70,9 +70,7 @@ class Square extends AbstractShapePlugin{
             width:length,
             height:length,
             angle:angle,
-            borderScaleFactor:this.borderWidth,
-            cornerSize:this.cornerSize
-        });
+        },this.eBoardCanvas);
         if(void 0 !== id){
             this.instance.setId(id);
         }
@@ -109,9 +107,7 @@ class Square extends AbstractShapePlugin{
             width:length,
             height:length,
             angle:angle,
-            borderScaleFactor:this.borderWidth,
-            cornerSize:this.cornerSize
-        }).setId(id);
+        },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;

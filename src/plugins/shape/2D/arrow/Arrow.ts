@@ -86,10 +86,8 @@ class Arrow extends AbstractShapePlugin{
             fill,
             originX:"center",
             originY:"center",
-            borderScaleFactor:this.borderWidth,
             strokeDashArray:this.strokeDashArray,
-            cornerSize:this.cornerSize
-        });
+        },this.eBoardCanvas);
         if(void 0 !== id){
             this.instance.setId(id);
         }
@@ -128,10 +126,8 @@ class Arrow extends AbstractShapePlugin{
             originY:"center",
             top:center.y,
             left:center.x,
-            borderScaleFactor:this.borderWidth,
             strokeDashArray:strokeDashArray,
-            cornerSize:this.cornerSize
-        }).setId(id);
+        },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;

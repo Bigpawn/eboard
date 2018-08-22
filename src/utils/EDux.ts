@@ -11,6 +11,7 @@
 import {Plugins} from '../plugins';
 import {MessageAdapter} from '../interceptor/MessageAdapter';
 import {EventBus} from './EventBus';
+import {IDefaultConfig} from '../interface/IConfig';
 
 
 export declare interface IPluginConfigOptions{
@@ -34,12 +35,14 @@ export declare interface IEDux{
     on:(type:string,listener:EventListenerOrEventListenerObject)=>void;
     trigger:(type:string,data?:any)=>void;
     off:(type:string,listener:EventListenerOrEventListenerObject)=>void;
-    sharedData:IShareDate
+    sharedData:IShareDate;
 }
 
 
 class EDux extends EventBus implements IEDux{
     public adapter:MessageAdapter;
+    public config:IDefaultConfig;
+    public transform:(size:number)=>number;
     public sharedData:IShareDate={
         plugins:new Map<Plugins, IPluginConfigOptions>()
     };

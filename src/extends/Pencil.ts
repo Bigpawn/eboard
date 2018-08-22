@@ -8,13 +8,13 @@
 import {fabric} from "fabric";
 import {IPathOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
-import Config from '../utils/Config';
+import {IDefaultConfig} from '../interface/IConfig';
+import {EDux} from '../utils/EDux';
+import {EBoardCanvas} from '../EBoardCanvas';
 
-const config = Config.getShapeConfig();
 
-export declare interface IExtendPencilOptions extends IPathOptions{
-    pathOffset?:{x:number;y:number}
-}
+let _config:IDefaultConfig;
+let _eDux:EDux;
 
 class Pencil extends fabric.Path implements IObject{
     public type:string="pencil";
@@ -24,9 +24,18 @@ class Pencil extends fabric.Path implements IObject{
      * 对象生成id
      * @param {string | any[]} path
      * @param {IPathOptions} options
+     * @param eBoardCanvas
      */
-    constructor(path?: string | any[], options?: IPathOptions){
-        super(path,Object.assign({},options,config));
+    constructor(path: string | any[], options: IPathOptions,eBoardCanvas:EBoardCanvas){
+        super(path,(_eDux=eBoardCanvas.eDux,_config=_eDux.config , Object.assign({
+            borderColor:_config.borderColor,
+            cornerColor:_config.cornerColor,
+            cornerStrokeColor:_config.cornerStrokeColor,
+            cornerStyle:_config.cornerStyle,
+            transparentCorners:_config.transparentCorners,
+            cornerSize:_eDux.transform(_config.cornerSize),
+            borderScaleFactor:_eDux.transform(_config.borderWidth)
+        },options)));
         this.id=Date.now().toString();
     }
     
@@ -37,15 +46,6 @@ class Pencil extends fabric.Path implements IObject{
      */
     public setId(id:string){
         this.id=id;
-        return this;
-    }
-    
-    /**
-     * 更新 path
-     * @param {IExtendPencilOptions} options
-     */
-    public update(options?: IExtendPencilOptions){
-        this.set(options as any).setCoords();
         return this;
     }
 }

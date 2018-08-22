@@ -116,9 +116,7 @@ class Rectangle extends AbstractShapePlugin{
             width:this.ctrlKey?length:width,
             height:this.ctrlKey?length:height,
             strokeWidth:this.strokeWidth,
-            borderScaleFactor:this.borderWidth,
-            cornerSize:this.cornerSize
-        });
+        },this.eBoardCanvas);
         if(void 0 !== id){
             this.instance.setId(id);
         }
@@ -193,9 +191,7 @@ class Rectangle extends AbstractShapePlugin{
             width:width,
             height:height,
             strokeWidth:this.strokeWidth,
-            borderScaleFactor:this.borderWidth,
-            cornerSize:this.cornerSize
-        }).setId(id);
+        },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove=true;

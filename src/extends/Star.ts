@@ -6,15 +6,28 @@
  * @disc:fabric.Star
  */
 import {fabric} from "fabric";
-import {IObjectOptions, IPolygonOptions} from '~fabric/fabric-impl';
+import {IObjectOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
-import Config from '../utils/Config';
-const config = Config.getShapeConfig();
+import {IDefaultConfig} from '../interface/IConfig';
+import {EDux} from '../utils/EDux';
+import {EBoardCanvas} from '../EBoardCanvas';
+
+let _config:IDefaultConfig;
+let _eDux:EDux;
+
 class Star extends fabric.Polygon implements IObject{
     public type:string="star";
     public id:string;
-    constructor(points: Array<{ x: number; y: number }>, options?: IObjectOptions, skipOffset?: boolean){
-        super(points,Object.assign({},options,config),skipOffset);
+    constructor(points: Array<{ x: number; y: number }>, options: IObjectOptions, eBoardCanvas:EBoardCanvas){
+        super(points,(_eDux=eBoardCanvas.eDux,_config=_eDux.config , Object.assign({
+            borderColor:_config.borderColor,
+            cornerColor:_config.cornerColor,
+            cornerStrokeColor:_config.cornerStrokeColor,
+            cornerStyle:_config.cornerStyle,
+            transparentCorners:_config.transparentCorners,
+            cornerSize:_eDux.transform(_config.cornerSize),
+            borderScaleFactor:_eDux.transform(_config.borderWidth)
+        },options)));
         this.id=Date.now().toString();
     }
     
@@ -27,17 +40,6 @@ class Star extends fabric.Polygon implements IObject{
         this.id=id;
         return this;
     }
-    
-    /**
-     * 更新
-     * @param {IPolygonOptions} options
-     */
-    public update(options?: IPolygonOptions){
-        this.set(options as any).setCoords();
-        return this;
-    }
-    
-    
     
     private static sin18:number=Math.abs(Math.sin(18/180 * Math.PI));
     private static sin36:number=Math.sin(36/180 * Math.PI);

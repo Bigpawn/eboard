@@ -7,15 +7,15 @@
  */
 
 import {fabric} from "fabric";
-import {
-     IObjectOptions,
-    IPolygonOptions,
-} from '~fabric/fabric-impl';
+import {IObjectOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
-import Config from '../utils/Config';
+import {IDefaultConfig} from '../interface/IConfig';
+import {EDux} from '../utils/EDux';
+import {EBoardCanvas} from '../EBoardCanvas';
 
 
-const config = Config.getShapeConfig()
+let _config:IDefaultConfig;
+let _eDux:EDux;
 
 class Hexagon extends fabric.Polygon implements IObject{
     public type:string="hexagon";
@@ -23,12 +23,20 @@ class Hexagon extends fabric.Polygon implements IObject{
     
     /**
      * @override
-     * @param {Array<{x: number; y: number}>} points
-     * @param {"~fabric/fabric-impl".IObjectOptions} options
-     * @param {boolean} skipOffset
+     * @param points
+     * @param {IObjectOptions} options
+     * @param eBoardCanvas
      */
-    constructor(points: Array<{ x: number; y: number }>, options?: IObjectOptions, skipOffset?: boolean){
-        super(points,Object.assign({},options,config),skipOffset);
+    constructor(points: Array<{ x: number; y: number }>, options: IObjectOptions,eBoardCanvas:EBoardCanvas){
+        super(points,(_eDux=eBoardCanvas.eDux,_config=_eDux.config,Object.assign({
+            borderColor:_config.borderColor,
+            cornerColor:_config.cornerColor,
+            cornerStrokeColor:_config.cornerStrokeColor,
+            cornerStyle:_config.cornerStyle,
+            transparentCorners:_config.transparentCorners,
+            cornerSize:_eDux.transform(_config.cornerSize),
+            borderScaleFactor:_eDux.transform(_config.borderWidth)
+        },options)));
         this.id=Date.now().toString();
     }
     
@@ -42,18 +50,6 @@ class Hexagon extends fabric.Polygon implements IObject{
         return this;
     }
     
-    /**
-     * 更新
-     * @param {IPolygonOptions} options
-     */
-    public update(options?: IPolygonOptions){
-        this.set(options as any).setCoords();
-        return this;
-    }
-    
-    
-    
-    
     
     
     private static sin60:number=Math.sin(60/180 * Math.PI);
@@ -63,7 +59,7 @@ class Hexagon extends fabric.Polygon implements IObject{
     
     /**
      * 计算五边形各定点坐标
-     * @param {{x: number; y: number}} center
+     * @param center
      * @param {number} radius
      * @param {number} offsetAngle
      * @returns {any[]}

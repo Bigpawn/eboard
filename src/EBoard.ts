@@ -6,28 +6,19 @@
  * @disc:前端应用架构类
  * changeList:
  *      画布分辨率固定值设置，不进行差异化处理，像素进行比例处理
- *
+ *      支持多实例模式,EDux初始化时共享，不需要进行层级传递（ClassFactory类维护）
  */
 
-import {
-    IBaseFrameOptions, IFrame,
-    IHTMLFrameOptions, IImageFrameOptions,
-} from './interface/IFrame';
+import "./style/canvas.less";
+import {IBaseFrameOptions, IFrame, IHTMLFrameOptions, IImageFrameOptions} from './interface/IFrame';
 import {BaseFrame} from './frames/BaseFrame';
 import {HtmlFrame} from './frames/HtmlFrame';
 import {ImageFrame} from './frames/ImageFrame';
 import {PdfFrame} from "./frames/PdfFrame";
 import {ImagesFrame} from './frames/ImagesFrame';
-
-import "./style/canvas.less";
-import {
-    MessageMiddleWare, MessageTagEnum,
-} from './middlewares/MessageMiddleWare';
+import {MessageMiddleWare, MessageTagEnum} from './middlewares/MessageMiddleWare';
 import {MessageAdapter} from './interceptor/MessageAdapter';
-import {
-    IFrameGroup, IImagesFrameOptions,
-    IPdfFrameOptions,
-} from './interface/IFrameGroup';
+import {IFrameGroup, IImagesFrameOptions,IPdfFrameOptions} from './interface/IFrameGroup';
 import {
     Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
     OrthogonalTriangle, Pencil, Pentagon,
@@ -37,18 +28,16 @@ import {EDux, IPluginConfigOptions} from './utils/EDux';
 import {Tab, TabEventEnum} from './components/Tab';
 import {Toolbar} from './components/Toolbar';
 import {message} from './utils/decorators';
-import Config from './utils/Config';
+import {IConfig} from './interface/IConfig';
+
+const config = require("./config.json");
+// const extraConfig = require("/config/eboard.json");// 会报错
+const extraConfig = {};// 会报错
 
 
-
-const config = Config.getConfig();
 
 export enum FrameType{
     Empty="empty-frame",Image="image-frame",HTML="html-frame",Canvas="canvas-frame",Pdf="pdf-frame",Images="images-frame"
-}
-
-declare interface IEboardOptions{
-    ratio:string
 }
 
 class EBoard{
@@ -59,24 +48,36 @@ class EBoard{
     private container:HTMLDivElement;
     public messageMiddleWare = new MessageMiddleWare();
     private tab:Tab;
-    private ratio:string;
     private calcSize:any;
-    private getContainer(){
-        return this.body;
-    }
-    constructor(container:HTMLDivElement,options?:IEboardOptions){
-        this.ratio = options?(options.ratio||"16:9"):"16:9";
+    private config?:IConfig;
+    constructor(container:HTMLDivElement,config?:IConfig){
+        this.config=config;
         this.container=container;
-        this.initCanvasLayout();
+        this.initLayout();
+        this.init();
         this.initTab();
         this.initToolbar();
-        this.eDux.adapter = new MessageAdapter(this,false);
         // plugin事件监听
         this.observePlugins();
-        this.calcSize=this.calc();
     }
     
-    private initCanvasLayout(){
+    /**
+     * 初始化config 及事件Emitter 消息adapter
+     */
+    private init(){
+        this.eDux.config=Object.assign({},config,extraConfig||{},this.config||{});
+        this.eDux.adapter = new MessageAdapter(this,false);
+        this.calcSize=this.calc();
+        // 画布分辨率比例计算
+        this.eDux.transform =(size:number)=>{
+            return size * this.calcSize.dimensions.width / this.calcSize.width;
+        }
+        
+        
+        
+    }
+    
+    private initLayout(){
         const body = document.createElement("div");
         body.className="eboard-body";
         this.body=body;
@@ -263,12 +264,13 @@ class EBoard{
             return frame;
         }
         const message = Object.assign({},options);
-        options.calcSize = options.width?this.calc(options.width):this.calcSize;
+        options.calcSize =Object.assign({},this.calcSize,options.width?{
+            originWidth:options.width,
+            scale:this.calcSize.width/options.width
+        }:{});
         options.container = this.body;
-        options.eDux = this.eDux;
-        options.ratio = this.ratio;
         options.append = true;
-        frame = new BaseFrame(options);
+        frame = new BaseFrame(options,this.eDux);
         this.frames.set(frame.id,frame);
         if(void 0 !== this.tab){
             this.tab.addTab({
@@ -300,12 +302,13 @@ class EBoard{
             return frame;
         }
         const message = Object.assign({},options);
-        options.calcSize = options.width?this.calc(options.width):this.calcSize;
+        options.calcSize =Object.assign({},this.calcSize,options.width?{
+            originWidth:options.width,
+            scale:this.calcSize.width/options.width
+        }:{});
         options.container = this.body;
-        options.eDux = this.eDux;
-        options.ratio = this.ratio;
         options.append = true;
-        frame = new HtmlFrame(options);
+        frame = new HtmlFrame(options,this.eDux);
         this.frames.set(frame.id,frame);
         this.activeFrame = frame.id;
         if(void 0 !== this.tab){
@@ -337,12 +340,13 @@ class EBoard{
             return frame;
         }
         const message = Object.assign({},options);
-        options.calcSize = options.width?this.calc(options.width):this.calcSize;
+        options.calcSize =Object.assign({},this.calcSize,options.width?{
+            originWidth:options.width,
+            scale:this.calcSize.width/options.width
+        }:{});
         options.container = this.body;
-        options.eDux = this.eDux;
-        options.ratio = this.ratio;
         options.append = true;
-        frame = new ImageFrame(options);
+        frame = new ImageFrame(options,this.eDux);
         this.frames.set(frame.id,frame);
         this.activeFrame = frame.id;
         if(void 0 !== this.tab){
@@ -374,12 +378,13 @@ class EBoard{
             return frame;
         }
         const message = Object.assign({},options);
-        options.calcSize = options.width?this.calc(options.width):this.calcSize;
+        options.calcSize =Object.assign({},this.calcSize,options.width?{
+            originWidth:options.width,
+            scale:this.calcSize.width/options.width
+        }:{});
         options.container = this.body;
-        options.eDux = this.eDux;
-        options.ratio = this.ratio;
         options.append = true;
-        frame = new PdfFrame(options);
+        frame = new PdfFrame(options,this.eDux);
         this.frames.set(frame.id,frame);
         this.activeFrame = frame.id;
         if(void 0 !== this.tab){
@@ -411,12 +416,13 @@ class EBoard{
             return frame;
         }
         const message = Object.assign({},options);
-        options.calcSize = options.width?this.calc(options.width):this.calcSize;
+        options.calcSize =Object.assign({},this.calcSize,options.width?{
+            originWidth:options.width,
+            scale:this.calcSize.width/options.width
+        }:{});
         options.container = this.body;
-        options.eDux = this.eDux;
-        options.ratio = this.ratio;
         options.append = true;
-        frame = new ImagesFrame(options);
+        frame = new ImagesFrame(options,this.eDux);
         this.frames.set(frame.id,frame);
         this.activeFrame = frame.id;
         if(void 0 !== this.tab){
@@ -451,17 +457,14 @@ class EBoard{
      * 计算calc add 时需要调用，传递进去，发送消息时需要使用
      * @param {number} originWidth
      * @returns {any}
+     * 接收端仅originWidth和scale受影响，其他不变
      */
-    private calc(originWidth?:number){
+    private calc(){
         const parentElement = this.body;
         const {offsetWidth:width,offsetHeight:height} = parentElement;
-        let ratio=this.ratio||"16:9";
-        if(!/\d+:\d+/g.test(ratio)){
-            ratio = "16:9";
-        }
-        const _ratios=ratio.split(":");
-        const _ratioW=Number(_ratios[0]);
-        const _ratioH=Number(_ratios[1]);
+        let ratio=this.eDux.config.ratio;
+        const _ratioW=ratio.w;
+        const _ratioH=ratio.h;
         const ratioNum=_ratioW/_ratioH;
         let calcSize:any;
         const defaultDimensionW = config.dimensions.width;
@@ -473,8 +476,6 @@ class EBoard{
             w = width;
             h = width / ratioNum;
         }
-        
-        const originW=originWidth||w;// 缓存发送端的内容宽度
         calcSize={
             width:w,
             height:h,
@@ -482,8 +483,8 @@ class EBoard{
                 width:defaultDimensionW,
                 height:defaultDimensionW * h/w,
             },
-            originWidth:originW,
-            scale:w/originW
+            originWidth:w,
+            scale:1
         };
         return calcSize;
     }
@@ -749,7 +750,7 @@ class EBoard{
      * @returns {this}
      */
     public setStrokeColor(color:string){
-        this.eDux.sharedData.stroke=color;
+        this.eDux.config.stroke=color;
         return this;
     }
     
@@ -759,7 +760,7 @@ class EBoard{
      * @returns {this}
      */
     public setFillColor(color:string){
-        this.eDux.sharedData.fill=color;
+        this.eDux.config.fill=color;
         return this;
     }
     
@@ -768,7 +769,7 @@ class EBoard{
      * @returns {this}
      */
     public setDisable(){
-        const container = this.getContainer();
+        const container = this.body;
         container.parentElement&&container.parentElement.classList.add("eboard-disable");
         this.eDux.sharedData.enable=false;
         return this;
@@ -779,7 +780,7 @@ class EBoard{
      * @returns {this}
      */
     public setEnable(){
-        const container = this.getContainer();
+        const container = this.body;
         container.parentElement&&container.parentElement.classList.remove("eboard-disable");
         this.eDux.sharedData.enable=true;
         return this;
