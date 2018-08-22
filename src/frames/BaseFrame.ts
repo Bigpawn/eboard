@@ -31,7 +31,6 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
     public frameMessage:any={};
     constructor(options:T,eDux:EDux){
         this.id=options.id||Date.now().toString();
-        // this.messageId = options.messageId||MessageIdMiddleWare.getId();
         this.eDux=eDux;
         this.container=options.container as any;
         this.options=options;

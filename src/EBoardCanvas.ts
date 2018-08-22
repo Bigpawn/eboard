@@ -15,19 +15,14 @@ import {
 } from '~fabric/fabric-impl';
 import {CursorTypeEnum} from './cursor/Enum';
 import {ICursorTypes} from './interface/ICursorTypes';
-import {IMessage, MessageTagEnum} from './middlewares/MessageMiddleWare';
+import {MessageTagEnum} from './middlewares/MessageMiddleWare';
 import {message} from './utils/decorators';
 import {EDux} from './utils/EDux';
 import {IExtraMessage} from './interface/IFrame';
 import {Plugins} from './plugins';
 import {EBoardEngine} from './EBoardEngine';
+import {ICursorMessage} from './interface/IMessage';
 
-
-declare interface ICursorMessage extends IMessage{
-    center?:{x:number;y:number};
-    type:CursorTypeEnum;
-    size:number;
-}
 
 
 class EBoardCanvas extends fabric.Canvas{

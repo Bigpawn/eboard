@@ -41,7 +41,7 @@ export enum FrameType{
 }
 
 class EBoard{
-    private eDux:EDux=new EDux();
+    public eDux:EDux=new EDux();
     private frames:Map<string,IFrame|IFrameGroup>=new Map();// frame管理
     private activeFrame:string;
     private body:HTMLDivElement;
@@ -116,7 +116,7 @@ class EBoard{
         const wrap = document.createElement("div");
         wrap.className="eboard-toolbar-wrap";
         this.container.appendChild(wrap);
-        let toolbar = new Toolbar(wrap,(item:any)=>{
+        let toolbar = new Toolbar(wrap,this,(item:any)=>{
             switch (item.key){
                 case "line":
                     this.setActivePlugin(Plugins.Line);
@@ -186,6 +186,10 @@ class EBoard{
                     break;
                 case "fill":
                     this.setFillColor(item.color);
+                    break;
+                case "fontSize":
+                    // 字体大小设置
+                    this.eDux.config.fontSize=item.fontSize;
                     break;
                 default:
                     break;

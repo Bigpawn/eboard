@@ -23,7 +23,8 @@
         "perfect-scrollbar":"^1.4.0",
         "@types/perfect-scrollbar":"^1.3.0",
         "lz-string":"^1.4.4",
-        "@types/lz-string":"^1.3.32"
+        "@types/lz-string":"^1.3.32",
+        "easydropdown":"^4.0.3"
     },
     "repository": {
         "type": "git",

@@ -7,5 +7,5 @@
  */
 export const enum Keys{
     ESC="esc",
-    Ctrl="ctrl"
+    Ctrl="ctrl",
 }

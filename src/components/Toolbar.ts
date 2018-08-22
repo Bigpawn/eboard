@@ -7,8 +7,12 @@
  * 兼容移动端
  */
 import '../style/toolbar.less';
-import Timer = NodeJS.Timer;
+import "../font/iconfont.css";
+import '../style/drop-down.less';
 import {jsColorPicker} from './ColorPicker/ColorPicker';
+import easydropdown from 'easydropdown';
+import {EBoardEngine} from '../EBoardEngine';
+import {EBoard} from '../EBoard';
 
 export declare interface IToolbarItem{
     name:string;
@@ -161,13 +165,16 @@ class Toolbar{
     private listener?:(item:IToolbarItem)=>void;
     private childInstance:ToolbarChildren;
     private activeKey:string;
-    constructor(container:HTMLElement,listener?:(item:IToolbarItem)=>void){
+    private eBoard:EBoard;
+    constructor(container:HTMLElement,eBoard:EBoard,listener?:(item:IToolbarItem)=>void){
         this.listener=listener;
+        this.eBoard=eBoard;
         this.initWrap();
         this.initItems();
         container.innerHTML='';
         container.appendChild(this.dom);
         this.createPicker();
+        this.initFontSizePicker();
     }
     private initWrap(){
         const wrap = document.createElement('div');
@@ -186,7 +193,7 @@ class Toolbar{
                 itemDom.innerHTML='<i class=\'eboard-icon eboard-icon-expend\'/>';
             }
             this.dom.appendChild(itemDom);
-            let timer:Timer;
+            let timer:any;
             const startEvent=(event:any)=>{
                 event.cancelBubble = true;
                 event.stopPropagation();
@@ -307,6 +314,46 @@ class Toolbar{
                 input.parentElement&&(input.parentElement.style.backgroundColor = input.value);
             }
         });
+    }
+    
+    /**
+     * 12px 以下不支持
+     */
+    private initFontSizePicker(){
+        const fontSizeWrap = document.createElement("div");
+        fontSizeWrap.className="eboard-toolbar-item eboard-toolbar-select";
+        fontSizeWrap.title="字体大小";
+        const fontSizeSelect = document.createElement('select');
+        const options:string[]=[];
+        options.push("<option value='"+this.eBoard.eDux.config.fontSize+"'>默认</option>");
+        options.push("<option value='56'>初号</option>");
+        options.push("<option value='48'>小初</option>");
+        options.push("<option value='34.7'>一号</option>");
+        options.push("<option value='32'>小一</option>");
+        options.push("<option value='29.3'>二号</option>");
+        options.push("<option value='24'>小二</option>");
+        options.push("<option value='21.3'>三号</option>");
+        options.push("<option value='20'>小三</option>");
+        options.push("<option value='18.7'>四号</option>");
+        options.push("<option value='16'>小四</option>");
+        options.push("<option value='14'>五号</option>");
+        options.push("<option value='12'>小五</option>");
+        fontSizeSelect.innerHTML=options.join("");
+        fontSizeWrap.appendChild(fontSizeSelect);
+        this.dom.appendChild(fontSizeWrap);
+        easydropdown(fontSizeSelect,{
+            callbacks:{
+                onSelect:(value:string)=>{
+                    const fontSize = parseFloat(value);
+                    this.listener&&this.listener.call(this,{
+                        key:"fontSize",
+                        fontSize:fontSize
+                    });
+                }
+            }
+        });
+        // 默认值
+        fontSizeSelect.value=this.eBoard.eDux.config.fontSize+"";
     }
 }
 
