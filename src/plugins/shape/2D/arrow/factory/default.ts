@@ -5,7 +5,7 @@
  * @Last Modified time: 2018/7/25 10:54
  * @disc:箭头生成工厂
  */
-import {ArrowMode} from '../Arrow';
+import {ArrowMode} from '../../../../../enums/ArrowMode';
 
 class DefaultFactory{
     /**

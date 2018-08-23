@@ -7,7 +7,7 @@
  */
 
 import DefaultFactory from './default';
-import {ArrowMode} from '../Arrow';
+import {ArrowMode} from '../../../../../enums/ArrowMode';
 class FishFactory extends DefaultFactory{
     /**
      *

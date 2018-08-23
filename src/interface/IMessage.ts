@@ -7,9 +7,9 @@
  */
 
 import {CursorTypeEnum} from '../cursor/Enum';
-import {ArrowMode} from '../plugins/shape/2D/arrow/Arrow';
 import {IFrameOptions} from './IFrame';
 import {MessageTag} from '../enums/MessageTag';
+import {ArrowMode} from '../enums/ArrowMode';
 
 
 export declare interface IMessage{

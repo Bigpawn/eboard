@@ -13,26 +13,21 @@ import {Arrow as FabricArrow} from '../../../../extends/Arrow';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IArrowMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
-
-export enum ArrowMode{
-    PREV,
-    NEXT,
-    ALL
-}
-
-export enum ArrowFactory{
-    DEFAULT="default",
-    HOLLOW="hollow",
-    FISH="fish"
-}
+import {EBoardEngine} from '../../../../EBoardEngine';
+import {ArrowMode} from '../../../../enums/ArrowMode';
 
 @setCursor(CursorTypeEnum.Cross)
 class Arrow extends AbstractShapePlugin{
     protected instance:FabricArrow;
-    private arrowFactory:ArrowFactory=ArrowFactory.FISH;
+    private arrowShape:"default"|"fish"|"hollow";
     protected arrowMode:ArrowMode=ArrowMode.ALL;
+    constructor(eBoardEngine:EBoardEngine){
+        super(eBoardEngine);
+        this.arrowShape=eBoardEngine.eDux.config.arrowShape as any;
+    }
+    
     private calcOptions(start:{x:number;y:number},end:{x:number;y:number},mode:ArrowMode){
-        const arrowFactory = require(`./factory/${this.arrowFactory}`).default as typeof DefaultFactory;
+        const arrowFactory = require(`./factory/${this.arrowShape}`).default as typeof DefaultFactory;
         const headlen = Math.max(this.strokeWidth * 2 +10,10);
         const {path,fill} = arrowFactory.calcPath(start,end,30,headlen,mode,this.fill);
         return {path,fill};

@@ -5,7 +5,8 @@
  * * @Last Modified time: 2018/8/6 9:05
  * @disc:ArrowNext
  */
-import {Arrow, ArrowMode} from './Arrow';
+import {Arrow} from './Arrow';
+import {ArrowMode} from '../../../../enums/ArrowMode';
 
 class ArrowNext extends Arrow{
     protected arrowMode = ArrowMode.NEXT;

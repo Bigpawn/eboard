@@ -24,6 +24,7 @@ export declare interface IConfig{
     stroke?:string;
     fill?:string;
     compress?:boolean;
+    arrowShape?:string;
 }
 
 export declare interface IDefaultConfig{
@@ -44,4 +45,5 @@ export declare interface IDefaultConfig{
     stroke:string;
     fill:string;
     compress:boolean;
+    arrowShape:string;
 }

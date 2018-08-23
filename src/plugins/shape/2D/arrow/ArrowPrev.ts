@@ -5,7 +5,8 @@
  * * @Last Modified time: 2018/8/6 9:03
  * @disc:前箭头
  */
-import {Arrow, ArrowMode} from './Arrow';
+import {Arrow} from './Arrow';
+import {ArrowMode} from '../../../../enums/ArrowMode';
 
 class ArrowPrev extends Arrow{
     protected arrowMode=ArrowMode.PREV;

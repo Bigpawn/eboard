@@ -6,7 +6,7 @@
  * @disc:空心
  */
 import DefaultFactory from './default';
-import {ArrowMode} from '../Arrow';
+import {ArrowMode} from '../../../../../enums/ArrowMode';
 
 class HollowFactory extends DefaultFactory{
     /**
