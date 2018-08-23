@@ -15,37 +15,9 @@
  */
 import {MessageIdMiddleWare} from './MessageIdMiddleWare';
 import * as LZString from "lz-string";
-import {IFrameOptions} from '../interface/IFrame';
 import {EventBus} from '../utils/EventBus';
 import {EDux} from '../utils/EDux';
-
-export enum MessageTagEnum{
-    CreateFrame,CreateFrameGroup,SwitchToFrame,Clear,AllowHtmlAction,DisAllowHtmlAction,Scroll,
-    Delete,Cursor,SelectionMove,SelectionScale,SelectionRotate,RemoveFrame,
-    Shape
-}
-
-
-export declare interface IMessage{
-    tag:MessageTagEnum;
-    messageId?:number;
-    point?:{x:number;y:number};
-    radius?:number;
-    id:string;// 实例类型及Id组合
-    frame?:IFrameOptions,// frame 创建属性
-    frameGroup?:IFrameOptions// frame组创建属性
-    rx?:number;
-    ry?:number;
-    start?:{x:number;y:number};
-    end?:{x:number;y:number};
-    length?:number;
-    angle?:number;
-    width?:number;
-    height?:number;
-    points?:any[];
-    flipX?:boolean;
-    flipY?:boolean;
-}
+import {IMessage} from '../interface/IMessage';
 
 
 class MessageMiddleWare{

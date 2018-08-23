@@ -8,13 +8,11 @@
  */
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {
-    MessageTagEnum,
-} from '../../../../middlewares/MessageMiddleWare';
 import {Square as FabricSquare} from "../../../../extends/Square";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {ISquareMessage} from '../../../../interface/IMessage';
+import {MessageTag} from '../../../../enums/MessageTag';
 
 
 
@@ -26,7 +24,7 @@ class Square extends AbstractShapePlugin{
     private throw(){
         return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Shape,
+            tag:MessageTag.Shape,
             start:this.start,
             length:this.instance.width,
             angle:this.instance.angle,

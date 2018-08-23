@@ -6,20 +6,20 @@
  * @disc:HTML 操作，禁用画板所有操作，启用html操作，仅HTMLCanvas 有效
  */
 import {AbstractPlugin} from '../../AbstractPlugin';
-import {MessageTagEnum} from '../../../middlewares/MessageMiddleWare';
 import {message} from '../../../utils/decorators';
+import {MessageTag} from '../../../enums/MessageTag';
 
 class HTML extends AbstractPlugin{
     @message
     private allowHTMLAction(){
         return {
-            tag:MessageTagEnum.AllowHtmlAction,
+            tag:MessageTag.AllowHtmlAction,
         }
     }
     @message
     private disAllowHTMLAction(){
         return {
-            tag:MessageTagEnum.DisAllowHtmlAction,
+            tag:MessageTag.DisAllowHtmlAction,
         }
     }
     public setEnable(enable:boolean,background?:boolean){

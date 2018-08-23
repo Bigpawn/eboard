@@ -7,13 +7,11 @@
  */
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from "~fabric/fabric-impl";
-import {
-    MessageTagEnum,
-} from '../../../../middlewares/MessageMiddleWare';
 import {Star as FabricStar} from "../../../../extends/Star";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IStarMessage} from '../../../../interface/IMessage';
+import {MessageTag} from '../../../../enums/MessageTag';
 
 
 @setCursor(CursorTypeEnum.Cross)
@@ -23,7 +21,7 @@ class Star extends AbstractShapePlugin{
     private throw(){
         return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Shape,
+            tag:MessageTag.Shape,
             points:this.instance.points,
             type:this.instance.type,
             stroke:this.instance.stroke,

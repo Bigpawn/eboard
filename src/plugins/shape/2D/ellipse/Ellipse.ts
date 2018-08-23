@@ -10,14 +10,12 @@
 
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {
-    MessageTagEnum,
-} from '../../../../middlewares/MessageMiddleWare';
 import {Ellipse as FabricEllipse} from "../../../../extends/Ellipse";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IEllipseMessage} from '../../../../interface/IMessage';
 import {Keys} from '../../../../enums/Keys';
+import {MessageTag} from '../../../../enums/MessageTag';
 
 @setCursor(CursorTypeEnum.Cross)
 class Ellipse extends AbstractShapePlugin{
@@ -84,7 +82,7 @@ class Ellipse extends AbstractShapePlugin{
     private throw(){
         return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Shape,
+            tag:MessageTag.Shape,
             start:{x:this.instance.left,y:this.instance.top},
             rx:this.instance.rx,
             ry:this.instance.ry,

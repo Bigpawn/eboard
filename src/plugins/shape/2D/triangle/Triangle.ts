@@ -9,13 +9,11 @@
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {ctrlKeyEnable, message, setCursor} from '../../../../utils/decorators';
-import {
-    MessageTagEnum,
-} from '../../../../middlewares/MessageMiddleWare';
 import {Triangle as FabricTriangle} from "../../../../extends/Triangle";
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {ITriangleMessage} from '../../../../interface/IMessage';
 import {Keys} from '../../../../enums/Keys';
+import {MessageTag} from '../../../../enums/MessageTag';
 
 
 @ctrlKeyEnable(true)
@@ -214,7 +212,7 @@ class Triangle extends AbstractShapePlugin{
     private throw(){
         return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Shape,
+            tag:MessageTag.Shape,
             start:{x:this.instance.left as number,y:this.instance.top as number},
             flipX:this.instance.flipX,
             flipY:this.instance.flipY,

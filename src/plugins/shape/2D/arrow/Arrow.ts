@@ -5,17 +5,14 @@
  * @Last Modified time: 2018/7/25 10:51
  * @disc:箭头
  */
-
 import {message, setCursor} from '../../../../utils/decorators';
 import {IEvent} from '~fabric/fabric-impl';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import DefaultFactory from './factory/default';
-import {
-    MessageTagEnum,
-} from '../../../../middlewares/MessageMiddleWare';
 import {Arrow as FabricArrow} from '../../../../extends/Arrow';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IArrowMessage} from '../../../../interface/IMessage';
+import {MessageTag} from '../../../../enums/MessageTag';
 
 export enum ArrowMode{
     PREV,
@@ -44,7 +41,7 @@ class Arrow extends AbstractShapePlugin{
     private throw(){
         return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Shape,
+            tag:MessageTag.Shape,
             start:this.start,
             end:this.end,
             type:this.instance.type,

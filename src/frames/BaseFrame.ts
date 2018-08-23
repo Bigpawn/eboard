@@ -11,9 +11,9 @@ import {
     IFrameOptions,
 } from '../interface/IFrame';
 import {EBoardEngine} from '../EBoardEngine';
-import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {message} from '../utils/decorators';
 import {EDux, IPluginConfigOptions} from '../utils/EDux';
+import {MessageTag} from '../enums/MessageTag';
 
 
 
@@ -87,7 +87,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
     @message
     public initializeAction(){
         return Object.assign({},{
-            tag:MessageTagEnum.CreateFrame,
+            tag:MessageTag.CreateFrame,
         },this.frameMessage);
     }
     protected initEngine(){

@@ -10,9 +10,9 @@ import {Pagination} from "../components/Pagination";
 import {message, pipMode, setAnimationName} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
 import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
-import {MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {Plugins} from '../plugins';
 import {EDux} from '../utils/EDux';
+import {MessageTag} from '../enums/MessageTag';
 
 
 @setAnimationName('eboard-pager')
@@ -59,7 +59,7 @@ class ImagesFrame implements IImagesFrame{
         return Object.assign({},{
             group:this.groupMessage
         },{
-            tag:MessageTagEnum.SwitchToFrame,
+            tag:MessageTag.SwitchToFrame,
             pageNum:pageNum
         });
     }

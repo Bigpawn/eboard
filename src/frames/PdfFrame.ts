@@ -15,11 +15,9 @@ import {
     IPdfFrameOptions,
 } from '../interface/IFrameGroup';
 import {EBoard} from '../EBoard';
-import {
-    MessageTagEnum,
-} from '../middlewares/MessageMiddleWare';
 import {Plugins} from '../plugins';
 import {EDux} from '../utils/EDux';
+import {MessageTag} from '../enums/MessageTag';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
@@ -72,7 +70,7 @@ class PdfFrame implements IPdfFrame{
         return Object.assign({},{
             group:this.groupMessage
         },{
-            tag:MessageTagEnum.SwitchToFrame,
+            tag:MessageTag.SwitchToFrame,
             pageNum:pageNum
         });
     }

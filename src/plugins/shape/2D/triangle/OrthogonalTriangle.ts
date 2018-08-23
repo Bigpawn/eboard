@@ -7,13 +7,11 @@
  */
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {
-    MessageTagEnum,
-} from '../../../../middlewares/MessageMiddleWare';
 import {OrthogonalTriangle as FabricOrthogonalTriangle} from "../../../../extends/OrthogonalTriangle";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IOrthogonalTriangleMessage} from '../../../../interface/IMessage';
+import {MessageTag} from '../../../../enums/MessageTag';
 
 
 @setCursor(CursorTypeEnum.Cross)
@@ -52,7 +50,7 @@ class OrthogonalTriangle extends AbstractShapePlugin{
     private throw(){
         return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Shape,
+            tag:MessageTag.Shape,
             points:this.instance.points,
             type:this.instance.type,
             fill:this.instance.fill,

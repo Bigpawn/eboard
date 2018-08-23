@@ -8,7 +8,6 @@
 import {EBoardEngine} from '../EBoardEngine';
 import {AbstractPlugin} from '../plugins/AbstractPlugin';
 import {ScrollbarType} from '../frames/HtmlFrame';
-import {IMessage} from '../middlewares/MessageMiddleWare';
 import {ScrollBar} from '../components/ScrollBar';
 import {IFrameGroup, IFrameGroupOptions} from './IFrameGroup';
 import {EBoard} from '../EBoard';

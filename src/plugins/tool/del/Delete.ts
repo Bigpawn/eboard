@@ -9,16 +9,13 @@
 
 import {AbstractPlugin} from '../../AbstractPlugin';
 import {message, setCursor} from '../../../utils/decorators';
-import {IMessage, MessageTagEnum} from '../../../middlewares/MessageMiddleWare';
 import {CursorTypeEnum} from '../../../cursor/Enum';
 import {IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
 import {EBoardEngine} from '../../../EBoardEngine';
 import {Keys} from '../../../enums/Keys';
-
-export declare interface IDeleteMessage extends IMessage{
-    ids:string[];
-}
+import {IDeleteMessage} from '../../../interface/IMessage';
+import {MessageTag} from '../../../enums/MessageTag';
 
 @setCursor(CursorTypeEnum.Rubber)
 class Delete extends AbstractPlugin{
@@ -59,7 +56,7 @@ class Delete extends AbstractPlugin{
     private deleteItems(ids:string[]){
         return {
             ids:ids,
-            tag:MessageTagEnum.Delete
+            tag:MessageTag.Delete
         }
     }
     

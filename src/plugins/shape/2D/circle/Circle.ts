@@ -10,12 +10,10 @@
 import {message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from "~fabric/fabric-impl";
-import {
-    MessageTagEnum,
-} from '../../../../middlewares/MessageMiddleWare';
 import {Circle as FabricCircle} from "../../../../extends/Circle";
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {ICircleMessage} from '../../../../interface/IMessage';
+import {MessageTag} from '../../../../enums/MessageTag';
 
 
 @setCursor(CursorTypeEnum.Cross)
@@ -24,7 +22,7 @@ class Circle extends AbstractShapePlugin{
     @message
     private throw(){
         return this.instance?{
-            tag:MessageTagEnum.Shape,
+            tag:MessageTag.Shape,
             id:this.instance.id,
             start:this.start,
             radius:this.instance.radius,

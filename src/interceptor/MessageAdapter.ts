@@ -5,7 +5,8 @@
  * * @Last Modified time: 2018/7/24 9:14
  * @disc:消息输出拦截器
  */
-import {IMessage, MessageMiddleWare} from '../middlewares/MessageMiddleWare';
+import {MessageMiddleWare} from '../middlewares/MessageMiddleWare';
+import {IMessage} from '../interface/IMessage';
 
 class MessageAdapter{
     private middleWare:MessageMiddleWare;

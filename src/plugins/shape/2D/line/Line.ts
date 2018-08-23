@@ -8,12 +8,10 @@
 import {message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {
-    MessageTagEnum,
-} from '../../../../middlewares/MessageMiddleWare';
 import {Line as FabricLine} from "../../../../extends/Line";
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {ILineMessage} from '../../../../interface/IMessage';
+import {MessageTag} from '../../../../enums/MessageTag';
 
 @setCursor(CursorTypeEnum.Cross)
 class Line extends AbstractShapePlugin{
@@ -22,7 +20,7 @@ class Line extends AbstractShapePlugin{
     private throw(){
         return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Shape,
+            tag:MessageTag.Shape,
             start:this.start,
             end:this.end,
             type:this.instance.type,

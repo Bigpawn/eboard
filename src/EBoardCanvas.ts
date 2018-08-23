@@ -15,13 +15,13 @@ import {
 } from '~fabric/fabric-impl';
 import {CursorTypeEnum} from './cursor/Enum';
 import {ICursorTypes} from './interface/ICursorTypes';
-import {MessageTagEnum} from './middlewares/MessageMiddleWare';
 import {message} from './utils/decorators';
 import {EDux} from './utils/EDux';
 import {IExtraMessage} from './interface/IFrame';
 import {Plugins} from './plugins';
 import {EBoardEngine} from './EBoardEngine';
 import {ICursorMessage} from './interface/IMessage';
+import {MessageTag} from './enums/MessageTag';
 
 
 
@@ -147,7 +147,7 @@ class EBoardCanvas extends fabric.Canvas{
     @message
     private cursorMessage(center?:{x:number;y:number}){
         return {
-            tag:MessageTagEnum.Cursor,
+            tag:MessageTag.Cursor,
             size:this.eDux.config.cursorSize,
             type:this.cursorTypeName,
             center:center,

@@ -16,7 +16,7 @@ import {HtmlFrame} from './frames/HtmlFrame';
 import {ImageFrame} from './frames/ImageFrame';
 import {PdfFrame} from "./frames/PdfFrame";
 import {ImagesFrame} from './frames/ImagesFrame';
-import {MessageMiddleWare, MessageTagEnum} from './middlewares/MessageMiddleWare';
+import {MessageMiddleWare} from './middlewares/MessageMiddleWare';
 import {MessageAdapter} from './interceptor/MessageAdapter';
 import {IFrameGroup, IImagesFrameOptions,IPdfFrameOptions} from './interface/IFrameGroup';
 import {
@@ -29,6 +29,7 @@ import {Tab, TabEventEnum} from './components/Tab';
 import {Toolbar} from './components/Toolbar';
 import {message} from './utils/decorators';
 import {IConfig} from './interface/IConfig';
+import {MessageTag} from './enums/MessageTag';
 
 const config = require("./config.json");
 
@@ -84,7 +85,7 @@ class EBoard{
     private switchMessage(id:string){
         return {
             frameId:id,
-            tag:MessageTagEnum.SwitchToFrame
+            tag:MessageTag.SwitchToFrame
         }
     }
     private initTab(){
@@ -446,14 +447,14 @@ class EBoard{
     @message
     private addFrameMessage(options:any){
         return Object.assign({
-            tag:MessageTagEnum.CreateFrame
+            tag:MessageTag.CreateFrame
         },options);
     }
     
     @message
     private addFrameGroupMessage(options:any){
         return Object.assign({
-            tag:MessageTagEnum.CreateFrameGroup
+            tag:MessageTag.CreateFrameGroup
         },options);
     }
     /**
@@ -568,7 +569,7 @@ class EBoard{
             }
         }
         return !withoutMessage?{
-            tag:MessageTagEnum.RemoveFrame,
+            tag:MessageTag.RemoveFrame,
             id:id
         }:undefined
     }
@@ -607,7 +608,7 @@ class EBoard{
 
     /**
      * 消息分发
-     * @param {IMessage} message
+     * @param {string} message
      * 消息内容节能会被压缩，需要解压
      */
     public onMessage(message:string){
@@ -637,42 +638,42 @@ class EBoard{
         }
         
         switch (tag){
-            case MessageTagEnum.CreateFrame:// 创建frame
+            case MessageTag.CreateFrame:// 创建frame
                 this.addFrame(messageObj);
                 break;
-            case MessageTagEnum.CreateFrameGroup:
+            case MessageTag.CreateFrameGroup:
                 this.addFrameGroup(messageObj);
                 break;
-            case MessageTagEnum.SwitchToFrame:
+            case MessageTag.SwitchToFrame:
                 if(void 0 !== frameGroup){
                     frameGroup.onGo(options.pageNum,options.messageId);
                 }else{
                     this.switchToFrame(options.frameId,true);
                 }
                 break;
-            case MessageTagEnum.Clear:
+            case MessageTag.Clear:
                 // 清空
                 (frame.getPlugin(Plugins.Clear) as Clear).onMessage();
                 break;
-            case MessageTagEnum.Delete:
+            case MessageTag.Delete:
                 (frame.getPlugin(Plugins.Delete) as Delete).onMessage(options);
                 break;
-            case MessageTagEnum.Scroll:
+            case MessageTag.Scroll:
                 frame.scrollbar&&frame.scrollbar.onMessage(options);
                 break;
-            case MessageTagEnum.Cursor:
+            case MessageTag.Cursor:
                 frame.engine&&frame.engine.eBoardCanvas.onMessage(options);
                 break;
-            case MessageTagEnum.SelectionMove:
+            case MessageTag.SelectionMove:
                 (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
                 break;
-            case MessageTagEnum.SelectionScale:
+            case MessageTag.SelectionScale:
                 (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
                 break;
-            case MessageTagEnum.SelectionRotate:
+            case MessageTag.SelectionRotate:
                 (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
                 break;
-            case MessageTagEnum.RemoveFrame:
+            case MessageTag.RemoveFrame:
                 this.removeFrame(options.id,true);
                 break;
             default:

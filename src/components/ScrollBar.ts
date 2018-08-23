@@ -10,15 +10,10 @@ import PerfectScrollbar from 'perfect-scrollbar';
 import {IExtraMessage, IFrame} from '../interface/IFrame';
 import Timer = NodeJS.Timer;
 import {message} from '../utils/decorators';
-import {IMessage, MessageTagEnum} from '../middlewares/MessageMiddleWare';
 import {IEDux} from '../utils/EDux';
+import {IScrollBarMessage} from '../interface/IMessage';
+import {MessageTag} from '../enums/MessageTag';
 
-export declare interface IScrollBarMessage extends IMessage{
-    scrollTop:number;
-    scrollLeft:number;
-    totalHeight:number;
-    totalWidth:number;
-}
 
 declare interface IScrollBarOptions extends PerfectScrollbar.Options{
     extraMessage?:IExtraMessage,
@@ -90,7 +85,7 @@ class ScrollBar extends PerfectScrollbar{
     private scrollAction(){
         // 返回总高度
         return this.eDux?{
-            tag:MessageTagEnum.Scroll,
+            tag:MessageTag.Scroll,
             scrollTop:this.container.scrollTop,
             scrollLeft:this.container.scrollLeft,
             totalHeight:this.container.scrollHeight,

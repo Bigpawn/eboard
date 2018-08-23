@@ -9,13 +9,11 @@
 import {ctrlKeyEnable, message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {
-    MessageTagEnum,
-} from '../../../../middlewares/MessageMiddleWare';
 import {Rectangle as FabricRectangle} from "../../../../extends/Rectangle";
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IRectangleMessage} from '../../../../interface/IMessage';
 import {Keys} from '../../../../enums/Keys';
+import {MessageTag} from '../../../../enums/MessageTag';
 
 @ctrlKeyEnable(true)
 @setCursor(CursorTypeEnum.Cross)
@@ -82,7 +80,7 @@ class Rectangle extends AbstractShapePlugin{
     private throw(){
         return this.instance?{
             id:this.instance.id,
-            tag:MessageTagEnum.Shape,
+            tag:MessageTag.Shape,
             start:{x:this.instance.left,y:this.instance.top},
             width:this.instance.width,
             height:this.instance.height,

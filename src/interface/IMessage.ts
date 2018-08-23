@@ -7,8 +7,21 @@
  */
 
 import {CursorTypeEnum} from '../cursor/Enum';
-import {IMessage} from '../middlewares/MessageMiddleWare';
 import {ArrowMode} from '../plugins/shape/2D/arrow/Arrow';
+import {IFrameOptions} from './IFrame';
+import {MessageTag} from '../enums/MessageTag';
+
+
+export declare interface IMessage{
+    tag:MessageTag;
+    messageId?:number;
+    id:string;
+    frame?:IFrameOptions,// frame 创建属性
+    frameGroup?:IFrameOptions// frame组创建属性
+}
+
+
+
 
 export declare interface ICursorMessage extends IMessage{
     center?:{x:number;y:number};
@@ -131,4 +144,28 @@ export declare interface ITriangleMessage extends IMessage{
     stroke:string;
     fill:string;
     strokeDashArray:number[]
+}
+
+export declare interface IDeleteMessage extends IMessage{
+    ids:string[];
+}
+
+export declare interface ISelectionMessage extends IMessage{
+    ids:string[];
+    transform:{
+        left:number;
+        top:number;
+        width:number;
+        height:number;
+        angle:number;
+        originX:string;
+        originY:string
+    }
+}
+
+export declare interface IScrollBarMessage extends IMessage{
+    scrollTop:number;
+    scrollLeft:number;
+    totalHeight:number;
+    totalWidth:number;
 }

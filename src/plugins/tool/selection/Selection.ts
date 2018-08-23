@@ -13,24 +13,11 @@
 import {AbstractPlugin} from '../../AbstractPlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
-import {IMessage, MessageTagEnum} from '../../../middlewares/MessageMiddleWare';
 import {message, pipMode} from '../../../utils/decorators';
 import {fabric} from "fabric";
 import {EBoardEngine} from '../../../EBoardEngine';
-
-
-export declare interface ISelectionMessage extends IMessage{
-    ids:string[];
-    transform:{
-        left:number;
-        top:number;
-        width:number;
-        height:number;
-        angle:number;
-        originX:string;
-        originY:string
-    }
-}
+import {ISelectionMessage} from '../../../interface/IMessage';
+import {MessageTag} from '../../../enums/MessageTag';
 
 
 class Selection extends AbstractPlugin{
@@ -145,7 +132,7 @@ class Selection extends AbstractPlugin{
     @message
     private moving(ids:string[],transform:any){
         return {
-            tag:MessageTagEnum.SelectionMove,
+            tag:MessageTag.SelectionMove,
             ids:ids,
             transform
         }
@@ -154,7 +141,7 @@ class Selection extends AbstractPlugin{
     @message
     private scaling(ids:string[],transform:any){
         return {
-            tag:MessageTagEnum.SelectionScale,
+            tag:MessageTag.SelectionScale,
             ids:ids,
             transform
         }
@@ -162,7 +149,7 @@ class Selection extends AbstractPlugin{
     @message
     private rotating(ids:string[],transform:any){
         return {
-            tag:MessageTagEnum.SelectionRotate,
+            tag:MessageTag.SelectionRotate,
             ids:ids,
             transform
         }
@@ -199,7 +186,7 @@ class Selection extends AbstractPlugin{
         const group = new fabric.Group(copy);
         this.eBoardCanvas.add(group);
         switch (tag){
-            case MessageTagEnum.SelectionMove:
+            case MessageTag.SelectionMove:
                 // 需要计算增量
                 console.log(transform);
                 group.set({
@@ -211,7 +198,7 @@ class Selection extends AbstractPlugin{
                 group["toActiveSelection"]();// 转成selection
                 this.eBoardCanvas.discardActiveObject();// 拆分成单独的对象
                 break;
-            case MessageTagEnum.SelectionScale:
+            case MessageTag.SelectionScale:
                 // 比例会成被增加
                 const scaleX = transform.width/group.get("width");
                 const scaleY = transform.height/group.get("height");
@@ -226,7 +213,7 @@ class Selection extends AbstractPlugin{
                 group["toActiveSelection"]();// 转成selection
                 this.eBoardCanvas.discardActiveObject();// 拆分成单独的对象
                 break;
-            case MessageTagEnum.SelectionRotate:
+            case MessageTag.SelectionRotate:
                 // 计算增量角度
                 group.rotate(transform.angle);
                 group["toActiveSelection"]();// 转成selection
