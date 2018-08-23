@@ -119,6 +119,9 @@ class EBoard{
                 case "line":
                     this.setActivePlugin(Plugins.Line);
                     break;
+                case "dotline":
+                    this.setActivePlugin(Plugins.DotLine);
+                    break;
                 case "arrow-next":
                     this.setActivePlugin(Plugins.ArrowNext);
                     break;

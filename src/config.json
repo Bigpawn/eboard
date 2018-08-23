@@ -1,5 +1,5 @@
 {
-    "plugins":["Line","Text","Selection","HTML","Pencil","Circle","Ellipse","Rectangle","Square","Triangle","EquilateralTriangle","OrthogonalTriangle","Polygon","Star","Pentagon","Hexagon","Clear","Arrow","ArrowNext","ArrowPrev","Delete","Ferule"],
+    "plugins":["Line","DotLine","Text","Selection","HTML","Pencil","Circle","Ellipse","Rectangle","Square","Triangle","EquilateralTriangle","OrthogonalTriangle","Polygon","Star","Pentagon","Hexagon","Clear","Arrow","ArrowNext","ArrowPrev","Delete","Ferule"],
     "showTab":true,
     "ratio":{"w":16,"h":9},
     "dimensions":{"width":1200},

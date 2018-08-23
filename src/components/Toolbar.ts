@@ -11,7 +11,6 @@ import "../font/iconfont.css";
 import '../style/drop-down.less';
 import {jsColorPicker} from './ColorPicker/ColorPicker';
 import easydropdown from 'easydropdown';
-import {EBoardEngine} from '../EBoardEngine';
 import {EBoard} from '../EBoard';
 
 export declare interface IToolbarItem{
@@ -26,6 +25,10 @@ const items:IToolbarItem[][]=[[{
     name:'直线',
     icon:'line',
     key:'line',
+},{
+    name:'虚线',
+    icon:'dotline',
+    key:'dotline',
 }],[{
     name:'左箭头',
     icon:'arrow-prev',
