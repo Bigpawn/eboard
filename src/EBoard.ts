@@ -31,8 +31,6 @@ import {message} from './utils/decorators';
 import {IConfig} from './interface/IConfig';
 
 const config = require("./config.json");
-// const extraConfig = require("/config/eboard.json");// 会报错
-const extraConfig = {};// 会报错
 
 
 
@@ -65,7 +63,7 @@ class EBoard{
      * 初始化config 及事件Emitter 消息adapter
      */
     private init(){
-        this.eDux.config=Object.assign({},config,extraConfig||{},this.config||{});
+        this.eDux.config=Object.assign({},config,this.config||{});
         this.middleWare=new MessageMiddleWare(this.eDux);
         this.eDux.adapter = new MessageAdapter(this.middleWare);
         this.calcSize=this.calc();
