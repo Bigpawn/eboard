@@ -11,7 +11,6 @@ import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {fabric} from "fabric";
 import {IEvent} from '~fabric/fabric-impl';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Polygon as FabricPolygon} from "../../../../extends/Polygon";

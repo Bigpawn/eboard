@@ -14,6 +14,7 @@ import {CursorTypeEnum} from '../../../cursor/Enum';
 import {IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
 import {EBoardEngine} from '../../../EBoardEngine';
+import {Keys} from '../../../enums/Keys';
 
 export declare interface IDeleteMessage extends IMessage{
     ids:string[];
@@ -32,7 +33,7 @@ class Delete extends AbstractPlugin{
     private initDelKeyListener(){
         window.addEventListener("keydown",(e:KeyboardEvent)=>{
             const code = e.keyCode;
-            if(code === 46){
+            if(code === Keys.Delete){
                 this.deleteSelection();
             }
         })

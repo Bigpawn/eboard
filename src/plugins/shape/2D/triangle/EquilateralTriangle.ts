@@ -9,7 +9,6 @@
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {EquilateralTriangle as FabricEquilateralTriangle} from "../../../../extends/EquilateralTriangle";

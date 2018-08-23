@@ -16,6 +16,7 @@ import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins} from './plugins';
 import {IExtraMessage} from './interface/IFrame';
 import {EDux} from './utils/EDux';
+import {Keys} from './enums/Keys';
 
 
 declare interface IExtraOptions{
@@ -49,7 +50,7 @@ class EBoardEngine{
         if(this["escKeyEnable"]){
             window.addEventListener("keydown",(e:KeyboardEvent)=>{
                 const code = e.keyCode;
-                if(code === 27){
+                if(code === Keys.Esc){
                     const activePlugin=this.getActivePlugin();
                     if(void 0 !== activePlugin){
                         activePlugin.setEnable(false);

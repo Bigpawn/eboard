@@ -15,6 +15,7 @@ import {
 import {Rectangle as FabricRectangle} from "../../../../extends/Rectangle";
 import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IRectangleMessage} from '../../../../interface/IMessage';
+import {Keys} from '../../../../enums/Keys';
 
 @ctrlKeyEnable(true)
 @setCursor(CursorTypeEnum.Cross)
@@ -130,7 +131,7 @@ class Rectangle extends AbstractShapePlugin{
     protected ctrlKeyDownHandler(e:KeyboardEvent){
         // 判断是否处于绘制模式
         const keyCode = e.keyCode;
-        if(17===keyCode){
+        if(Keys.Ctrl===keyCode){
             this.ctrlKey=true;
             if(void 0 === this.start || void 0 === this.instance){
                 return;
@@ -144,7 +145,7 @@ class Rectangle extends AbstractShapePlugin{
     }
     protected ctrlKeyUpHandler(e:KeyboardEvent){
         const keyCode = e.keyCode;
-        if(17===keyCode){
+        if(Keys.Ctrl===keyCode){
             // 恢复
             this.ctrlKey=false;
             if(void 0 === this.instance){
