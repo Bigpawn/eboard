@@ -11,21 +11,12 @@ import {message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from "~fabric/fabric-impl";
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Circle as FabricCircle} from "../../../../extends/Circle";
 import {CursorTypeEnum} from '../../../../cursor/Enum';
+import {ICircleMessage} from '../../../../interface/IMessage';
 
-
-
-export declare interface ICircleMessage extends IMessage{
-    start:{x:number;y:number};
-    radius:number;
-    stroke:string;
-    fill:string;
-    strokeDashArray:number[]
-}
 
 @setCursor(CursorTypeEnum.Cross)
 class Circle extends AbstractShapePlugin{

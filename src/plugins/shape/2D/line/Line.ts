@@ -9,18 +9,11 @@ import {message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Line as FabricLine} from "../../../../extends/Line";
 import {CursorTypeEnum} from '../../../../cursor/Enum';
-
-export declare interface ILineMessage extends IMessage{
-    start:{x:number;y:number};
-    end:{x:number;y:number};
-    stroke:string;
-    strokeDashArray:number[]
-}
+import {ILineMessage} from '../../../../interface/IMessage';
 
 @setCursor(CursorTypeEnum.Cross)
 class Line extends AbstractShapePlugin{

@@ -8,21 +8,13 @@
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {OrthogonalTriangle as FabricOrthogonalTriangle} from "../../../../extends/OrthogonalTriangle";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
+import {IOrthogonalTriangleMessage} from '../../../../interface/IMessage';
 
-
-
-export declare interface IOrthogonalTriangleMessage extends IMessage{
-    points:any[];
-    stroke:string;
-    fill:string;
-    strokeDashArray:number[]
-}
 
 @setCursor(CursorTypeEnum.Cross)
 class OrthogonalTriangle extends AbstractShapePlugin{

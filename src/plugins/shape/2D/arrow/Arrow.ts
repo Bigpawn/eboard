@@ -11,11 +11,11 @@ import {IEvent} from '~fabric/fabric-impl';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import DefaultFactory from './factory/default';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Arrow as FabricArrow} from '../../../../extends/Arrow';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
+import {IArrowMessage} from '../../../../interface/IMessage';
 
 export enum ArrowMode{
     PREV,
@@ -27,15 +27,6 @@ export enum ArrowFactory{
     DEFAULT="default",
     HOLLOW="hollow",
     FISH="fish"
-}
-
-export declare interface IArrowMessage extends IMessage{
-    start:{x:number;y:number};
-    end:{x:number;y:number};
-    mode:ArrowMode;
-    fill:string;
-    stroke:string;
-    strokeDashArray:number[]
 }
 
 @setCursor(CursorTypeEnum.Cross)

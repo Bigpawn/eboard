@@ -10,21 +10,11 @@ import {ctrlKeyEnable, message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Rectangle as FabricRectangle} from "../../../../extends/Rectangle";
 import {CursorTypeEnum} from '../../../../cursor/Enum';
-
-export declare interface IRectangleMessage extends IMessage{
-    start:{x:number;y:number};
-    width:number;
-    height:number;
-    fill:string;
-    stroke:string;
-    strokeDashArray:number[]
-}
-
+import {IRectangleMessage} from '../../../../interface/IMessage';
 
 @ctrlKeyEnable(true)
 @setCursor(CursorTypeEnum.Cross)

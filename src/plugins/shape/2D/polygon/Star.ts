@@ -8,20 +8,13 @@
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from "~fabric/fabric-impl";
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Star as FabricStar} from "../../../../extends/Star";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
+import {IStarMessage} from '../../../../interface/IMessage';
 
-
-export declare interface IStarMessage extends IMessage{
-    points:any[];
-    stroke:string;
-    fill:string;
-    strokeDashArray:number[]
-}
 
 @setCursor(CursorTypeEnum.Cross)
 class Star extends AbstractShapePlugin{

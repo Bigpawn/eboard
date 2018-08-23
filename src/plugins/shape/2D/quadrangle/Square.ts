@@ -9,21 +9,14 @@
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Square as FabricSquare} from "../../../../extends/Square";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
+import {ISquareMessage} from '../../../../interface/IMessage';
 
-export declare interface ISquareMessage extends IMessage{
-    start:{x:number;y:number};
-    length:number;
-    angle:number;
-    fill:string;
-    stroke:string;
-    strokeDashArray:number[]
-}
+
 
 
 @setCursor(CursorTypeEnum.Cross)

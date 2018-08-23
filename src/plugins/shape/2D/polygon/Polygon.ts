@@ -17,14 +17,7 @@ import {
 import {Polygon as FabricPolygon} from "../../../../extends/Polygon";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
-
-
-export declare interface IPolygonMessage extends IMessage{
-    points:any[];
-    stroke:string;
-    fill:string;
-    strokeDashArray:number[]
-}
+import {IPolygonMessage} from '../../../../interface/IMessage';
 
 
 @setCursor(CursorTypeEnum.Cross)

@@ -10,24 +10,11 @@ import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {ctrlKeyEnable, message, setCursor} from '../../../../utils/decorators';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Triangle as FabricTriangle} from "../../../../extends/Triangle";
 import {CursorTypeEnum} from '../../../../cursor/Enum';
-
-
-export declare interface ITriangleMessage extends IMessage{
-    start:{x:number;y:number};
-    width:number;
-    height:number;
-    flipX:boolean;
-    flipY:boolean;
-    stroke:string;
-    fill:string;
-    strokeDashArray:number[]
-}
-
+import {ITriangleMessage} from '../../../../interface/IMessage';
 
 
 @ctrlKeyEnable(true)

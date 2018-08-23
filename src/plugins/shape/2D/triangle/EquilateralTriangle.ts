@@ -15,14 +15,9 @@ import {
 import {EquilateralTriangle as FabricEquilateralTriangle} from "../../../../extends/EquilateralTriangle";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
+import {IEquilateralTriangleMessage} from '../../../../interface/IMessage';
 
 
-export declare interface IEquilateralTriangleMessage extends IMessage{
-    points:any[];
-    fill:string;
-    stroke:string;
-    strokeDashArray:number[]
-}
 @setCursor(CursorTypeEnum.Cross)
 class EquilateralTriangle extends AbstractShapePlugin{
     protected instance:FabricEquilateralTriangle;

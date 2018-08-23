@@ -8,21 +8,14 @@
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 
 import {Hexagon as FabricHexagon} from "../../../../extends/Hexagon";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
+import {IHexagonMessage} from '../../../../interface/IMessage';
 
-
-export declare interface IHexagonMessage extends IMessage{
-    points:any[];
-    stroke:string;
-    fill:string;
-    strokeDashArray:number[]
-}
 
 @setCursor(CursorTypeEnum.Cross)
 class Hexagon extends AbstractShapePlugin{

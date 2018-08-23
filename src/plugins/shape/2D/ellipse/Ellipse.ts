@@ -11,22 +11,12 @@
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Ellipse as FabricEllipse} from "../../../../extends/Ellipse";
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
-
-
-export declare interface IEllipseMessage extends IMessage{
-    start:{x:number;y:number};
-    rx:number;
-    ry:number;
-    fill:string;
-    stroke:string;
-    strokeDashArray:number[]
-}
+import {IEllipseMessage} from '../../../../interface/IMessage';
 
 @setCursor(CursorTypeEnum.Cross)
 class Ellipse extends AbstractShapePlugin{

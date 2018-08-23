@@ -9,19 +9,12 @@
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {
-    IMessage,
     MessageTagEnum,
 } from '../../../../middlewares/MessageMiddleWare';
 import {Pentagon as FabricPentagon} from '../../../../extends/Pentagon';
 import {message, setCursor} from '../../../../utils/decorators';
 import {CursorTypeEnum} from '../../../../cursor/Enum';
-
-export declare interface IPentagonMessage extends IMessage{
-    points:any[];
-    stroke:string;
-    fill:string;
-    strokeDashArray:number[]
-}
+import {IPentagonMessage} from '../../../../interface/IMessage';
 
 @setCursor(CursorTypeEnum.Cross)
 class Pentagon extends AbstractShapePlugin{
