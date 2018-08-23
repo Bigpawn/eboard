@@ -10,7 +10,7 @@ class SimpleCanvas extends React.Component<{}, {}> {
         setTimeout(()=>{
             const eBoard = EBoardInstance.getInstance();
             const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
-            eBoard.attachMessageMiddleWare((message)=>{
+            eBoard.on("message",(message)=>{
                 receiveEBoard.onMessage(message);
             });
             eBoard.clearCache().addEmptyFrame({

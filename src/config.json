@@ -13,5 +13,6 @@
     "borderWidth":1,
     "strokeWidth":1,
     "stroke":"#000",
-    "fontSize":18
+    "fontSize":18,
+    "compress":true
 }

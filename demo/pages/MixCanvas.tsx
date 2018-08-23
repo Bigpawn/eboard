@@ -18,7 +18,7 @@ class MixCanvas extends SimpleCanvas{
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
         const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
-        eBoard.attachMessageMiddleWare((message)=>{
+        eBoard.on("message",(message)=>{
             receiveEBoard.onMessage(message);
         });
         eBoard.clearCache().addPdfFrame({

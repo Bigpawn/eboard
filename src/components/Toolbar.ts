@@ -250,6 +250,7 @@ class Toolbar{
     private createPicker(){
         const strokePickerWrap = document.createElement("div");
         strokePickerWrap.className="eboard-toolbar-item eboard-toolbar-picker";
+        strokePickerWrap.title="线条/字体颜色";
         const strokePickerEl = document.createElement('input');
         strokePickerEl.id="eboard_stroke_picker";
         strokePickerEl.value="rgb(0,0,0)";
@@ -259,6 +260,7 @@ class Toolbar{
     
         const fillPickerWrap = document.createElement("div");
         fillPickerWrap.className="eboard-toolbar-item eboard-toolbar-picker";
+        fillPickerWrap.title="填充颜色";
         const fillPickerEl = document.createElement('input');
         fillPickerEl.id="eboard_fill_picker";
         fillPickerEl.value="rgba(255,255,255,0)";

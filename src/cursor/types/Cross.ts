@@ -10,9 +10,6 @@ import {fabric} from "fabric";
 import {ICursorTypes} from '../../interface/ICursorTypes';
 import {EBoardCanvas} from '../../EBoardCanvas';
 
-const crossImage = new Image();
-crossImage.src=`../${require("../png/cross.png")}`;
-
 class CrossCursor implements ICursorTypes{
     protected canvas:EBoardCanvas;
     constructor(canvas:EBoardCanvas){

@@ -23,6 +23,7 @@ export declare interface IConfig{
     strokeWidth?:number;
     stroke?:string;
     fill?:string;
+    compress?:boolean;
 }
 
 export declare interface IDefaultConfig{
@@ -41,5 +42,6 @@ export declare interface IDefaultConfig{
     borderWidth:number;
     strokeWidth:number;
     stroke:string;
-    fill:string
+    fill:string;
+    compress:boolean;
 }

@@ -51,6 +51,7 @@ class FishFactory extends DefaultFactory{
               x:(fromX-point3.x)/3 + point3.x,
               y:(fromY-point3.y)/3 + point3.y,
             };
+            path.splice(0,1,["M",point4.x,point4.y]);
             path.push(["M",point1.x ,point1.y]);
             path.push(["L",fromX,fromY]);
             path.push(["L",point2.x,point2.y]);
@@ -76,6 +77,7 @@ class FishFactory extends DefaultFactory{
                 x:(toX-point3.x)/3 + point3.x,
                 y:(toY-point3.y)/3 + point3.y,
             };
+            path.splice(1,1,["L",point4.x,point4.y]);
             path.push(["M",point1.x ,point1.y]);
             path.push(["L",toX,toY]);
             path.push(["L",point2.x,point2.y]);

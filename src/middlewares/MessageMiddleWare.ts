@@ -16,6 +16,8 @@
 import {MessageIdMiddleWare} from './MessageIdMiddleWare';
 import * as LZString from "lz-string";
 import {IFrameOptions} from '../interface/IFrame';
+import {EventBus} from '../utils/EventBus';
+import {EDux} from '../utils/EDux';
 
 export enum MessageTagEnum{
     CreateFrame,CreateFrameGroup,SwitchToFrame,Clear,AllowHtmlAction,DisAllowHtmlAction,Scroll,
@@ -48,25 +50,35 @@ export declare interface IMessage{
 
 class MessageMiddleWare{
     private compress:boolean=false;
-    private messageListener:(message:string)=>void;// 消息监听
-    public setOutputListener(messageListener:(message:string)=>void){
-        this.messageListener = messageListener;
+    private eventBus:EventBus;
+    constructor(eventBus:EDux){
+        this.eventBus=eventBus;
+        this.compress= eventBus.config.compress;// 如果压缩接收端需要解压
     }
-    
     /**
      * 内部调用该方法向外部发送消息
      * @param {IMessage} message
      * @returns {number}
      */
     public sendMessage(message:IMessage){
-        if(void 0 === this.messageListener){
+        if(void 0 === this.eventBus){
             return null;
         }
         // 自动生成id并返回id
         const id = void 0 === message.messageId?MessageIdMiddleWare.getId():message.messageId;
         const outMessage = Object.assign({},message,{messageId:id});
-        this.messageListener&&this.messageListener.call(this,this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage));
+        const messageStr = this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage);
+        this.eventBus.trigger("message",messageStr);
         return id;
+    }
+    
+    /**
+     * 消息还原
+     * @param {string} message
+     * @returns {any}
+     */
+    public decompressMessage(message:string){
+        return JSON.parse(this.compress?LZString.decompress(message):message);
     }
 }
 

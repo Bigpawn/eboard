@@ -11,7 +11,6 @@ module.exports=function(webpackConfig) {
             rule.test=/^(?!.*icon).*\.svg$/
         }
     });
-    
     webpackConfig.module.rules.unshift({
         test: /\S*icon\S*.svg$/,
         use: { loader: 'url-loader',options:{name: 'examples/[hash].[ext]',publicPath:"../",limit:10000}},
@@ -24,5 +23,6 @@ module.exports=function(webpackConfig) {
         test: /.pdf$/,
         use: { loader: 'file-loader',options: { name: 'examples/[hash].pdf',publicPath:"../"}}
     });
+    console.log(JSON.stringify(webpackConfig));
     return webpackConfig;
 };

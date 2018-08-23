@@ -41,15 +41,15 @@ export enum FrameType{
 }
 
 class EBoard{
-    public eDux:EDux=new EDux();
     private frames:Map<string,IFrame|IFrameGroup>=new Map();// frame管理
     private activeFrame:string;
     private body:HTMLDivElement;
     private container:HTMLDivElement;
-    public messageMiddleWare = new MessageMiddleWare();
     private tab:Tab;
     private calcSize:any;
     private config?:IConfig;
+    private middleWare:MessageMiddleWare;
+    public eDux:EDux=new EDux();
     constructor(container:HTMLDivElement,config?:IConfig){
         this.config=config;
         this.container=container;
@@ -66,15 +66,13 @@ class EBoard{
      */
     private init(){
         this.eDux.config=Object.assign({},config,extraConfig||{},this.config||{});
-        this.eDux.adapter = new MessageAdapter(this,false);
+        this.middleWare=new MessageMiddleWare(this.eDux);
+        this.eDux.adapter = new MessageAdapter(this.middleWare);
         this.calcSize=this.calc();
         // 画布分辨率比例计算
         this.eDux.transform =(size:number)=>{
             return size * this.calcSize.dimensions.width / this.calcSize.width;
         }
-        
-        
-        
     }
     
     private initLayout(){
@@ -609,10 +607,10 @@ class EBoard{
     /**
      * 消息分发
      * @param {IMessage} message
+     * 消息内容节能会被压缩，需要解压
      */
     public onMessage(message:string){
-        const messageObj:any = JSON.parse(message);
-        console.log(Object.assign({},messageObj));
+        const messageObj:any = this.middleWare.decompressMessage(message);
         // 获取frame实例，之后根据操作处理
         const {frame:frameOptions,group:frameGroupOptions,...options} = messageObj;
         const {tag,type} = options;
@@ -732,9 +730,17 @@ class EBoard{
         }
     }
     
-    public attachMessageMiddleWare(listener:(message:string)=>void){
-        this.messageMiddleWare.setOutputListener(listener);
-    }
+    /**
+     * 事件监听
+     * @param {string} type
+     * @param {(data: any) => void} listener
+     */
+    public on(type:string,listener:(data:any)=>void){
+        this.eDux.on(type,(event:any)=>{
+            const data = event.data;
+            listener.call(this,data);
+        })
+    };
     
     /**
      * 支持后台运行模式启用
