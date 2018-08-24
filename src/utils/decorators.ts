@@ -2,11 +2,9 @@
  * @Author: yanxinaliang (rainyxlxl@163.com)
  * @Date: 2018/7/6 16:10
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/6 16:10
+ * @Last Modified time: 2018/7/6 16:10
  * @disc:装饰器
  */
-import {MessageAdapter} from '../interceptor/MessageAdapter';
-import {MessageMiddleWare} from '../middlewares/MessageMiddleWare';
 import {CursorType} from '../enums/CursorType';
 
 function mixinPlugin(pluginName:string):ClassDecorator{
@@ -76,32 +74,7 @@ function setAnimationName(animationCssPrefix:string):ClassDecorator{
     }
 }
 
-/**
- * ctrl热键状态
- * @param {boolean} enable
- * @returns {ClassDecorator}
- */
-function ctrlKeyEnable(enable:boolean):ClassDecorator{
-    return (target:any)=>{
-        // 附加到插件列表中去
-        Object.assign(target.prototype, {
-            ctrlKeyEnable:enable,
-        });
-    }
-}
 
-/**
- * Esc 热键支持
- * @param {boolean} enable
- * @returns {ClassDecorator}
- */
-function escKeyEnable(enable:boolean):ClassDecorator{
-    return (target:any)=>{
-        Object.assign(target.prototype, {
-            escKeyEnable:enable,
-        });
-    }
-}
 /**
  * pip 管道模式注解
  * @param target
@@ -122,32 +95,6 @@ function pipMode(target:any, name:string, descriptor:PropertyDescriptor){
     return descriptor;
 }
 
-/**
- * 消息输出拦截器
- * @param {typeof MessageAdapter} interceptor
- * @param interceptAll
- * @returns {(target: any) => void}
- */
-function registerMessageInterceptor(interceptor:typeof MessageAdapter,interceptAll?:boolean){
-    return (target:any)=>{
-        Object.assign(target.prototype, {
-            messageAdapter:new interceptor(target,interceptAll)
-        });
-    }
-}
-
-/**
- * 消息中间件注册
- * @param {typeof MessageMiddleWare} middleWare
- * @returns {(target: any) => void}
- */
-function registerMessageMiddleWare(middleWare:typeof MessageMiddleWare){
-    return (target:any)=>{
-        Object.assign(target.prototype, {
-            messageMiddleWare:new middleWare(),
-        });
-    }
-}
 
 /**
  * 消息装饰器，添加到成员方法上，执行成员方法时会发送消息
@@ -169,28 +116,9 @@ function message(target:any, name:string, descriptor:PropertyDescriptor){
         if(void 0 !== adapter){
             adapter.messageHandle(copyMessage);
         }
-        /*
-        // 循环向上遍历
-        let parent= this.parent||(this.eBoardEngine?this.eBoardEngine.parent:undefined),adapter=this.messageAdapter;
-        while (void 0 !== parent && parent.constructor.name!=="EBoard"){// eBoard 类，具有属性frames
-            if(parent.child){
-                copyMessage.frameGroup={...parent.options,id:parent.id,messageId:parent.messageId};
-            }else{
-                copyMessage.frame={...parent.options,id:parent.id,messageId:parent.messageId};
-            }
-            adapter = adapter|| parent.messageAdapter;
-            parent = parent.parent||(parent.eBoardEngine?parent.eBoardEngine.parent:undefined)
-        }
-        adapter = adapter|| parent.messageAdapter;
-        
-        // 没有拦截器则不发送
-        if(void 0 !== adapter){
-            (adapter as MessageAdapter).messageHandle(copyMessage);// 拦截器作用是
-        }
-        */
         return message;
     };
     return descriptor;
 }
 
-export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,ctrlKeyEnable,registerMessageInterceptor,escKeyEnable,registerMessageMiddleWare,message};
+export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,message};

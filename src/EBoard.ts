@@ -30,6 +30,7 @@ import {Toolbar} from './components/Toolbar';
 import {message} from './utils/decorators';
 import {IConfig} from './interface/IConfig';
 import {MessageTag} from './enums/MessageTag';
+import {Keys} from './enums/Keys';
 
 const config = require("./config.json");
 
@@ -45,6 +46,7 @@ class EBoard{
     private body:HTMLDivElement;
     private container:HTMLDivElement;
     private tab:Tab;
+    private toolbar:Toolbar;
     private calcSize:any;
     private config?:IConfig;
     private middleWare:MessageMiddleWare;
@@ -54,12 +56,41 @@ class EBoard{
         this.container=container;
         this.initLayout();
         this.init();
-        this.initTab();
-        this.initToolbar();
+        if(this.eDux.config.showTab){
+            this.initTab();
+        }
+        if(this.eDux.config.showToolbar){
+            this.initToolbar();
+        }
         // plugin事件监听
         this.observePlugins();
+        this.escHandler();
     }
-    
+    private escHandler(){
+        if(this.eDux.config.escKey){
+            window.addEventListener("keydown",(e:KeyboardEvent)=>{
+                const code = e.keyCode;
+                if(code === Keys.Esc){
+                    // 退出当前Plugin
+                    const plugins = this.eDux.sharedData.plugins;
+                    plugins.forEach((options,plugin)=>{
+                        plugins.delete(plugin);
+                        this.eDux.trigger("plugin:disable",{
+                            plugin:plugin,
+                            options:{
+                                enable:false
+                            }
+                        });
+                    });
+                    
+                    // toolbar 修改
+                    if(void 0 !== this.toolbar){
+                        this.toolbar.disActive();
+                    }
+                }
+            })
+        }
+    }
     /**
      * 初始化config 及事件Emitter 消息adapter
      */
@@ -113,7 +144,7 @@ class EBoard{
         const wrap = document.createElement("div");
         wrap.className="eboard-toolbar-wrap";
         this.container.appendChild(wrap);
-        let toolbar = new Toolbar(wrap,this,(item:any)=>{
+        this.toolbar = new Toolbar(wrap,this,(item:any)=>{
             switch (item.key){
                 case "line":
                     this.setActivePlugin(Plugins.Line);

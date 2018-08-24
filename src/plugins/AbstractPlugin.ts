@@ -37,6 +37,7 @@ abstract class AbstractPlugin {
         this.eBoardEngine = eBoardEngine;
         this.eDux=eBoardEngine.eDux;
         this.extraMessage = eBoardEngine.extraMessage;
+        const ctrlKey = this.eDux.config.ctrlKey;
         if(void 0 !== this.onMouseDown){
             this.onMouseDown=this.onMouseDown.bind(this);
         }
@@ -51,6 +52,10 @@ abstract class AbstractPlugin {
         }
         if(void 0 !== this.ctrlKeyUpHandler){
             this.ctrlKeyUpHandler=this.ctrlKeyUpHandler.bind(this);
+        }
+        if(!ctrlKey){
+            this.ctrlKeyDownHandler=undefined;
+            this.ctrlKeyUpHandler=undefined;
         }
     }
     

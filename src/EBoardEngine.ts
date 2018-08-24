@@ -9,14 +9,10 @@
  */
 import {EBoardCanvas} from './EBoardCanvas';
 import {ICanvasOptions} from '~fabric/fabric-impl';
-import {escKeyEnable} from './utils/decorators';
-
-
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins} from './plugins';
 import {IExtraMessage} from './interface/IFrame';
 import {EDux} from './utils/EDux';
-import {Keys} from './enums/Keys';
 
 
 declare interface IExtraOptions{
@@ -25,7 +21,6 @@ declare interface IExtraOptions{
 }
 
 
-@escKeyEnable(true)
 class EBoardEngine{
     public eBoardCanvas:EBoardCanvas;
     public pluginInstanceMap=new Map<string,IPlugins>();
@@ -38,26 +33,12 @@ class EBoardEngine{
         options.allowTouchScrolling=true;
         this.eBoardCanvas = new EBoardCanvas(element,options,this);
         this.initPlugin();
-        this.escHandler();
     }
     private initPlugin(){
         // plugins 实例化
         this.eDux.config.plugins.forEach((pluginName:string)=>{
             this.pluginInstanceMap.set(pluginName,new (require(`./plugins`)[pluginName] as any)(this));
         });
-    }
-    private escHandler(){
-        if(this["escKeyEnable"]){
-            window.addEventListener("keydown",(e:KeyboardEvent)=>{
-                const code = e.keyCode;
-                if(code === Keys.Esc){
-                    const activePlugin=this.getActivePlugin();
-                    if(void 0 !== activePlugin){
-                        activePlugin.setEnable(false);
-                    }
-                }
-            })
-        }
     }
     public setActivePlugin(plugin?:AbstractPlugin){
         this.activePlugin=plugin;

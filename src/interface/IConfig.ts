@@ -25,6 +25,9 @@ export declare interface IConfig{
     fill?:string;
     compress?:boolean;
     arrowShape?:string;
+    escKey?:boolean;
+    showToolbar?:boolean;
+    ctrlKey?:boolean;
 }
 
 export declare interface IDefaultConfig{
@@ -46,4 +49,7 @@ export declare interface IDefaultConfig{
     fill:string;
     compress:boolean;
     arrowShape:string;
+    escKey:string;
+    showToolbar:boolean;
+    ctrlKey:boolean;
 }

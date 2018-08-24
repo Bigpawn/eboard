@@ -8,7 +8,7 @@
 
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {ctrlKeyEnable, message, setCursor} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
 import {Triangle as FabricTriangle} from "../../../../extends/Triangle";
 import {ITriangleMessage} from '../../../../interface/IMessage';
 import {Keys} from '../../../../enums/Keys';
@@ -16,7 +16,6 @@ import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
 
-@ctrlKeyEnable(true)
 @setCursor(CursorType.Cross)
 class Triangle extends AbstractShapePlugin{
     protected instance:FabricTriangle;

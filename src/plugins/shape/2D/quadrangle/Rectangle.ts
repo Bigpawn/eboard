@@ -6,7 +6,7 @@
  * @disc:矩形Plugin  还可以使用Path实现   flipX flipY 不起作用，使用动态计算left top实现四象限
  */
 
-import {ctrlKeyEnable, message, setCursor} from '../../../../utils/decorators';
+import {message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Rectangle as FabricRectangle} from "../../../../extends/Rectangle";
@@ -15,7 +15,6 @@ import {Keys} from '../../../../enums/Keys';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
-@ctrlKeyEnable(true)
 @setCursor(CursorType.Cross)
 class Rectangle extends AbstractShapePlugin{
     protected instance:FabricRectangle;

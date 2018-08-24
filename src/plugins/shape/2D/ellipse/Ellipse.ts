@@ -166,7 +166,6 @@ class Ellipse extends AbstractShapePlugin{
         }
     }
     
-    
     /**
      * 接收消息处理
      * @param {ICircleMessage} message

@@ -249,7 +249,6 @@ class Toolbar{
             }
         });
     }
-    
     private createPicker(){
         const strokePickerWrap = document.createElement("div");
         strokePickerWrap.className="eboard-toolbar-item eboard-toolbar-picker";
@@ -359,6 +358,16 @@ class Toolbar{
         });
         // 默认值
         fontSizeSelect.value=this.eBoard.eDux.config.fontSize+"";
+    }
+    
+    /**
+     * 取消选中
+     * @returns {this}
+     */
+    public disActive(){
+        const active = this.dom.querySelector(".active");
+        active&&active.classList.remove("active");
+        return this;
     }
 }
 
