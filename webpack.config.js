@@ -23,6 +23,5 @@ module.exports=function(webpackConfig) {
         test: /.pdf$/,
         use: { loader: 'file-loader',options: { name: 'examples/[hash].pdf',publicPath:"../"}}
     });
-    console.log(JSON.stringify(webpackConfig));
     return webpackConfig;
 };
