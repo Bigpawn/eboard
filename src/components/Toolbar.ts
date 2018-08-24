@@ -306,7 +306,7 @@ class Toolbar{
                           pickerEl.dispatchEvent(ev);*/
                 }
             },
-            displayCallback:(colors,b,c)=>{
+            displayCallback:()=>{
                 const input = c.input;
                 input.parentElement&&(input.parentElement.style.backgroundColor = input.value);
                 this.listener&&this.listener.call(this,{
@@ -314,7 +314,7 @@ class Toolbar{
                     color:input.value
                 });
             },
-            init:(input:HTMLInputElement,colors)=>{
+            init:(input:HTMLInputElement)=>{
                 input.parentElement&&(input.parentElement.style.backgroundColor = input.value);
             }
         });

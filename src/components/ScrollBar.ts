@@ -38,7 +38,7 @@ class ScrollBar extends PerfectScrollbar{
     }
     private initScrollEndEvent(){
         let scrollTimer:Timer,_self = this;
-        this.container.addEventListener("ps-scroll-x",function(e: any) {
+        this.container.addEventListener("ps-scroll-x",function() {
             if(void 0 !== scrollTimer){
                 clearTimeout(scrollTimer);
                 scrollTimer = undefined as any;
@@ -47,7 +47,7 @@ class ScrollBar extends PerfectScrollbar{
                 _self.scrollAction();
             }, 500)
         });
-        this.container.addEventListener("ps-scroll-y",function(e: any) {
+        this.container.addEventListener("ps-scroll-y",function() {
             if(void 0 !== scrollTimer){
                 clearTimeout(scrollTimer);
                 scrollTimer = undefined as any;

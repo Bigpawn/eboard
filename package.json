@@ -1,6 +1,6 @@
 {
     "name": "eboard",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "author": "Heng Li",
     "description": "eboard lib",
     "license": "MIT",
@@ -78,7 +78,7 @@
         "core-js": "^2.5.1",
         "jest": "^23.2.0",
         "open": "^0.0.5",
-        "yanxlg-rc-tools":"^8.1.4",
+        "yanxlg-rc-tools":"^8.1.5",
         "react": "^16.4.0",
         "react-dom": "^16.4.0",
         "react-redux": "^5.0.7",
