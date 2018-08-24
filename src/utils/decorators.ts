@@ -7,7 +7,7 @@
  */
 import {MessageAdapter} from '../interceptor/MessageAdapter';
 import {MessageMiddleWare} from '../middlewares/MessageMiddleWare';
-import {CursorTypeEnum} from '../cursor/Enum';
+import {CursorType} from '../enums/CursorType';
 
 function mixinPlugin(pluginName:string):ClassDecorator{
     return (target:any)=>{
@@ -53,7 +53,7 @@ function defaultValue(value: any):PropertyDecorator{
  * 插件引用Cursor
  * @returns {ClassDecorator}
  */
-function setCursor(cursorType:CursorTypeEnum):ClassDecorator{
+function setCursor(cursorType:CursorType):ClassDecorator{
     return (target:any)=>{
         // 附加到插件列表中去
         Object.assign(target.prototype, {

@@ -12,12 +12,12 @@ import {fabric} from "fabric";
 import {IEvent} from '~fabric/fabric-impl';
 import {Polygon as FabricPolygon} from "../../../../extends/Polygon";
 import {message, setCursor} from '../../../../utils/decorators';
-import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IPolygonMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
+import {CursorType} from '../../../../enums/CursorType';
 
 
-@setCursor(CursorTypeEnum.Cross)
+@setCursor(CursorType.Cross)
 class Polygon extends AbstractShapePlugin{
     protected instance:FabricPolygon;
     private points:fabric.Point[]=[];

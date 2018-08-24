@@ -10,13 +10,13 @@ import {IEvent} from '~fabric/fabric-impl';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import DefaultFactory from './factory/default';
 import {Arrow as FabricArrow} from '../../../../extends/Arrow';
-import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IArrowMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {EBoardEngine} from '../../../../EBoardEngine';
 import {ArrowMode} from '../../../../enums/ArrowMode';
+import {CursorType} from '../../../../enums/CursorType';
 
-@setCursor(CursorTypeEnum.Cross)
+@setCursor(CursorType.Cross)
 class Arrow extends AbstractShapePlugin{
     protected instance:FabricArrow;
     private arrowShape:"default"|"fish"|"hollow";

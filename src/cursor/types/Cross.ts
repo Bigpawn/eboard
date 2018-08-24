@@ -7,10 +7,10 @@
  */
 
 import {fabric} from "fabric";
-import {ICursorTypes} from '../../interface/ICursorTypes';
+import {ICursor} from '../../interface/ICursor';
 import {EBoardCanvas} from '../../EBoardCanvas';
 
-class CrossCursor implements ICursorTypes{
+class CrossCursor implements ICursor{
     protected canvas:EBoardCanvas;
     constructor(canvas:EBoardCanvas){
         this.canvas=canvas;

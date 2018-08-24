@@ -10,14 +10,14 @@ import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Square as FabricSquare} from "../../../../extends/Square";
 import {message, setCursor} from '../../../../utils/decorators';
-import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {ISquareMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
+import {CursorType} from '../../../../enums/CursorType';
 
 
 
 
-@setCursor(CursorTypeEnum.Cross)
+@setCursor(CursorType.Cross)
 class Square extends AbstractShapePlugin{
     protected instance:FabricSquare;
     @message

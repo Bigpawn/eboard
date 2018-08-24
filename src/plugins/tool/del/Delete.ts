@@ -9,15 +9,15 @@
 
 import {AbstractPlugin} from '../../AbstractPlugin';
 import {message, setCursor} from '../../../utils/decorators';
-import {CursorTypeEnum} from '../../../cursor/Enum';
 import {IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
 import {EBoardEngine} from '../../../EBoardEngine';
 import {Keys} from '../../../enums/Keys';
 import {IDeleteMessage} from '../../../interface/IMessage';
 import {MessageTag} from '../../../enums/MessageTag';
+import {CursorType} from '../../../enums/CursorType';
 
-@setCursor(CursorTypeEnum.Rubber)
+@setCursor(CursorType.Rubber)
 class Delete extends AbstractPlugin{
     constructor(eBoardEngine:EBoardEngine){
         super(eBoardEngine);

@@ -6,10 +6,10 @@
  * @disc:IMessage
  */
 
-import {CursorTypeEnum} from '../cursor/Enum';
 import {IFrameOptions} from './IFrame';
 import {MessageTag} from '../enums/MessageTag';
 import {ArrowMode} from '../enums/ArrowMode';
+import {CursorType} from '../enums/CursorType';
 
 
 export declare interface IMessage{
@@ -25,7 +25,7 @@ export declare interface IMessage{
 
 export declare interface ICursorMessage extends IMessage{
     center?:{x:number;y:number};
-    type:CursorTypeEnum;
+    type:CursorType;
     size:number;
 }
 

@@ -6,9 +6,9 @@
  * @disc:defaultCursor
  */
 import {fabric} from "fabric";
-import {ICursorTypes} from '../../interface/ICursorTypes';
+import {ICursor} from '../../interface/ICursor';
 
-class DefaultCursor implements ICursorTypes{
+class DefaultCursor implements ICursor{
     private scale:number=0.6;
     protected canvas:fabric.StaticCanvas;
     constructor(canvas:fabric.StaticCanvas){

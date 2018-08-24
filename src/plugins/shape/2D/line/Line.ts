@@ -9,11 +9,11 @@ import {message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Line as FabricLine} from "../../../../extends/Line";
-import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {ILineMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
+import {CursorType} from '../../../../enums/CursorType';
 
-@setCursor(CursorTypeEnum.Cross)
+@setCursor(CursorType.Cross)
 class Line extends AbstractShapePlugin{
     protected instance:FabricLine;
     @message

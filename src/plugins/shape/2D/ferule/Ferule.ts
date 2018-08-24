@@ -8,15 +8,15 @@
  * 触摸屏支持教鞭，不支持画线
  */
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
-import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {Plugins} from '../../../index';
+import {CursorType} from '../../../../enums/CursorType';
 class Ferule extends AbstractShapePlugin{
-    public cursorType = CursorTypeEnum.Default;// default Value
+    public cursorType = CursorType.Default;// default Value
     /**
      * 设置教鞭类型
-     * @param {CursorTypeEnum} type
+     * @param {CursorType} type
      */
-    public setFeruleType(type:CursorTypeEnum){
+    public setFeruleType(type:CursorType){
         this.cursorType = type;
     }
     

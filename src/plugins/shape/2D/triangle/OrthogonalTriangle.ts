@@ -9,12 +9,12 @@ import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {OrthogonalTriangle as FabricOrthogonalTriangle} from "../../../../extends/OrthogonalTriangle";
 import {message, setCursor} from '../../../../utils/decorators';
-import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IOrthogonalTriangleMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
+import {CursorType} from '../../../../enums/CursorType';
 
 
-@setCursor(CursorTypeEnum.Cross)
+@setCursor(CursorType.Cross)
 class OrthogonalTriangle extends AbstractShapePlugin{
     protected instance:FabricOrthogonalTriangle;
     protected onMouseMove(event:IEvent){

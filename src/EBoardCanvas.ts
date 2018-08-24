@@ -13,8 +13,7 @@ import {
     ICanvasDimensions, ICanvasDimensionsOptions,
     ICanvasOptions,
 } from '~fabric/fabric-impl';
-import {CursorTypeEnum} from './cursor/Enum';
-import {ICursorTypes} from './interface/ICursorTypes';
+import {ICursor} from './interface/ICursor';
 import {message} from './utils/decorators';
 import {EDux} from './utils/EDux';
 import {IExtraMessage} from './interface/IFrame';
@@ -22,18 +21,22 @@ import {Plugins} from './plugins';
 import {EBoardEngine} from './EBoardEngine';
 import {ICursorMessage} from './interface/IMessage';
 import {MessageTag} from './enums/MessageTag';
+import {CursorType} from './enums/CursorType';
 
 
 
 class EBoardCanvas extends fabric.Canvas{
     public cursorCanvas:fabric.StaticCanvas;
     private instance:fabric.Object;
-    private cursorType:ICursorTypes;
-    private cursorTypeName:CursorTypeEnum;
     private cursorMessageEnable:boolean=false;
     public eDux:EDux;
     public extraMessage:IExtraMessage;
     private touching:boolean=false;// 是否触摸模式
+    
+    // 光标类型
+    private cursor:ICursor;
+    private cursorType:CursorType;
+    
     constructor(element: HTMLCanvasElement,options: ICanvasOptions,eBoardEngine:EBoardEngine){
         super(element,options);
         this.eDux=eBoardEngine.eDux;
@@ -108,7 +111,7 @@ class EBoardCanvas extends fabric.Canvas{
      * @param event
      */
     private onMouseMove(event:any){
-        if(void 0 === this.cursorType){
+        if(void 0 === this.cursor){
             return;
         }
         const plugins = this.eDux.sharedData.plugins;
@@ -122,13 +125,12 @@ class EBoardCanvas extends fabric.Canvas{
         if(void 0 !== this.instance){
             this.cursorCanvas.remove(this.instance);
         }
-        this.instance = this.cursorType.render(point,this.eDux.transform(this.eDux.config.cursorSize));
-        this.instance.name=this.cursorTypeName; // 比较类型是否变化
+        this.instance = this.cursor.render(point,this.eDux.transform(this.eDux.config.cursorSize));
+        this.instance.name=this.cursorType; // 比较类型是否变化
         this.instance.type="cursor";// 设置type，扩展的Canvas可能会做其他操作
         this.cursorCanvas.add(this.instance);
         this.cursorCanvas.renderAll();
         this.cursorCanvas.renderOnAddRemove=true;
-    
         if(this.cursorMessageEnable === true){
             this.cursorMessage(point);
         }
@@ -149,7 +151,7 @@ class EBoardCanvas extends fabric.Canvas{
         return {
             tag:MessageTag.Cursor,
             size:this.eDux.config.cursorSize,
-            type:this.cursorTypeName,
+            type:this.cursorType,
             center:center,
         }
     }
@@ -159,30 +161,28 @@ class EBoardCanvas extends fabric.Canvas{
     
     /**
      * 设置光标类型
-     * @param {CursorTypeEnum} cursorType
+     * @param {CursorType} cursorType
      * @returns {this}
      */
-    public setCursorType(cursorType:CursorTypeEnum){
-        this.cursorTypeName=cursorType;
+    public setCursorType(cursorType:CursorType){
+        this.cursorType=cursorType;
         if(void 0 !== cursorType){
             switch (cursorType){
-                case CursorTypeEnum.None:
-                    this.cursorType=undefined as any;
-                    break;
-                case CursorTypeEnum.SystemCross:
-                    this.cursorType=CursorTypeEnum.SystemCross as any;
+                case CursorType.None:
+                case CursorType.SystemCross:// 系统级别光标
+                    this.cursor=undefined as any;
                     break;
                 default:
-                    this.cursorType=new (require(`./cursor/types/${cursorType}.ts`).default)(this);
+                    this.cursor=new (require(`./cursor/types/${cursorType}.ts`).default)(this);
                     break;
             }
         }
-        if(void 0 !== this.cursorType){
-            if(CursorTypeEnum.SystemCross as any === this.cursorType){
-                this.defaultCursor="crosshair";// 更新样式进行优化
-            }else{
-                this.activeCursor();
-            }
+        if(void 0 !== this.cursor){
+            this.activeCursor();
+        }else if(cursorType === CursorType.SystemCross){
+            // 系统级别Cross
+            this.defaultCursor="crosshair";// 更新样式进行优化
+            this.destroyCursor();
         }else{
             this.destroyCursor();
         }

@@ -10,13 +10,13 @@ import {ctrlKeyEnable, message, setCursor} from '../../../../utils/decorators';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Rectangle as FabricRectangle} from "../../../../extends/Rectangle";
-import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IRectangleMessage} from '../../../../interface/IMessage';
 import {Keys} from '../../../../enums/Keys';
 import {MessageTag} from '../../../../enums/MessageTag';
+import {CursorType} from '../../../../enums/CursorType';
 
 @ctrlKeyEnable(true)
-@setCursor(CursorTypeEnum.Cross)
+@setCursor(CursorType.Cross)
 class Rectangle extends AbstractShapePlugin{
     protected instance:FabricRectangle;
     protected ctrlKey:boolean=false;

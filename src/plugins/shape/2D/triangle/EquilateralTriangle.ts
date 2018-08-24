@@ -10,12 +10,12 @@ import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {EquilateralTriangle as FabricEquilateralTriangle} from "../../../../extends/EquilateralTriangle";
 import {message, setCursor} from '../../../../utils/decorators';
-import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IEquilateralTriangleMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
+import {CursorType} from '../../../../enums/CursorType';
 
 
-@setCursor(CursorTypeEnum.Cross)
+@setCursor(CursorType.Cross)
 class EquilateralTriangle extends AbstractShapePlugin{
     protected instance:FabricEquilateralTriangle;
     @message

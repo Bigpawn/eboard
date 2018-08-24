@@ -1,15 +1,13 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/8/7 17:00
+ * @Date: 2018/8/8 9:35
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * @Last Modified time: 2018/8/7 17:00
- * @disc:Cursor
+ * @Last Modified time: 2018/8/8 9:35
+ * @disc:CursorTypesInterface
  */
 
 import {fabric} from "fabric";
 
 export declare interface ICursor{
-    renderCursor(center:{x:number;y:number}):fabric.Object;
-    onMouseMove(event:MouseEvent):void;
-    destroy():void;
+    render(center:{x:number;y:number},size:number):fabric.Object;
 }

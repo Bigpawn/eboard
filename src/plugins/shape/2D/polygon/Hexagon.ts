@@ -9,12 +9,12 @@ import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Hexagon as FabricHexagon} from "../../../../extends/Hexagon";
 import {message, setCursor} from '../../../../utils/decorators';
-import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IHexagonMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
+import {CursorType} from '../../../../enums/CursorType';
 
 
-@setCursor(CursorTypeEnum.Cross)
+@setCursor(CursorType.Cross)
 class Hexagon extends AbstractShapePlugin{
     protected instance:FabricHexagon;
     @message

@@ -12,12 +12,12 @@ import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Ellipse as FabricEllipse} from "../../../../extends/Ellipse";
 import {message, setCursor} from '../../../../utils/decorators';
-import {CursorTypeEnum} from '../../../../cursor/Enum';
 import {IEllipseMessage} from '../../../../interface/IMessage';
 import {Keys} from '../../../../enums/Keys';
 import {MessageTag} from '../../../../enums/MessageTag';
+import {CursorType} from '../../../../enums/CursorType';
 
-@setCursor(CursorTypeEnum.Cross)
+@setCursor(CursorType.Cross)
 class Ellipse extends AbstractShapePlugin{
     private ctrlKey:boolean=false;
     protected instance:FabricEllipse;

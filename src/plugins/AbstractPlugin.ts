@@ -12,15 +12,15 @@ import {EBoardCanvas} from '../EBoardCanvas';
 import {EBoardEngine} from '../EBoardEngine';
 import {IEvent} from '~fabric/fabric-impl';
 import {fabric} from "fabric";
-import {CursorTypeEnum} from '../cursor/Enum';
 import {EDux} from '../utils/EDux';
 import {IExtraMessage} from '../interface/IFrame';
+import {CursorType} from '../enums/CursorType';
 
 
 abstract class AbstractPlugin {
     protected eBoardCanvas:EBoardCanvas;
     protected eBoardEngine:EBoardEngine;
-    protected cursorType:CursorTypeEnum;
+    protected cursorType:CursorType;
     protected instance:fabric.Object;
     protected enable:boolean=false;
     protected start:{x:number;y:number};
@@ -89,7 +89,7 @@ abstract class AbstractPlugin {
                 if(void 0 !== this.cursorType){
                     this.eBoardCanvas.setCursorType(this.cursorType);
                 }else{
-                    this.eBoardCanvas.setCursorType(CursorTypeEnum.None);
+                    this.eBoardCanvas.setCursorType(CursorType.None);
                 }
             }
             if(void 0 !== this.onMouseDown){
@@ -113,7 +113,7 @@ abstract class AbstractPlugin {
                     this.eBoardEngine.setActivePlugin(undefined);
                 }
                 // disable Cursor
-                this.eBoardCanvas.setCursorType(CursorTypeEnum.None);
+                this.eBoardCanvas.setCursorType(CursorType.None);
             }
             if(void 0 !== this.onMouseDown){
                 this.eBoardCanvas.off('mouse:down', this.onMouseDown);
