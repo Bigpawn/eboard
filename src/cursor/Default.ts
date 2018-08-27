@@ -6,7 +6,7 @@
  * @disc:defaultCursor
  */
 import {fabric} from "fabric";
-import {ICursor} from '../../interface/ICursor';
+import {ICursor} from '../interface/ICursor';
 
 class DefaultCursor implements ICursor{
     private scale:number=0.6;

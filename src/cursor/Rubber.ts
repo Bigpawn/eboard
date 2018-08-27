@@ -6,7 +6,7 @@
  * @disc:Rubber
  */
 import {fabric} from "fabric";
-import {ICursor} from '../../interface/ICursor';
+import {ICursor} from '../interface/ICursor';
 
 class RubberCursor implements ICursor{
     protected canvas:fabric.StaticCanvas;

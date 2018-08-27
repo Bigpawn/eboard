@@ -173,7 +173,7 @@ class EBoardCanvas extends fabric.Canvas{
                     this.cursor=undefined as any;
                     break;
                 default:
-                    this.cursor=new (require(`./cursor/types/${cursorType}`).default)(this);
+                    this.cursor=new (require(`./cursor/${cursorType}`))(this);
                     break;
             }
         }
@@ -223,7 +223,7 @@ class EBoardCanvas extends fabric.Canvas{
         }else{
             this.cursorCanvas.renderOnAddRemove=false;
             instance && this.cursorCanvas.remove(instance);
-            const cursorType=new (require(`./cursor/types/${type}`).default)(this);
+            const cursorType=new (require(`./cursor/${type}`))(this);
             instance = cursorType.render(center,size);
             instance.type="cursor";
             this.cursorCanvas.add(instance);

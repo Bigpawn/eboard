@@ -7,8 +7,8 @@
  */
 
 import {fabric} from "fabric";
-import {ICursor} from '../../interface/ICursor';
-import {EBoardCanvas} from '../../EBoardCanvas';
+import {ICursor} from '../interface/ICursor';
+import {EBoardCanvas} from '../EBoardCanvas';
 
 class CrossCursor implements ICursor{
     protected canvas:EBoardCanvas;
