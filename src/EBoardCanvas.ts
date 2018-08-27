@@ -173,7 +173,7 @@ class EBoardCanvas extends fabric.Canvas{
                     this.cursor=undefined as any;
                     break;
                 default:
-                    this.cursor=new (require(`./cursor/types/${cursorType}.ts`).default)(this);
+                    this.cursor=new (require(`./cursor/types/${cursorType}`).default)(this);
                     break;
             }
         }
