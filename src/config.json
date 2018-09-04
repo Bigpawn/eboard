@@ -3,7 +3,7 @@
     "showTab":true,
     "showToolbar":true,
     "ratio":{"w":16,"h":9},
-    "dimensions":{"width":1200},
+    "dimensions":{"width":1920},
     "borderColor":"#09ca51",
     "cornerColor":"#09ca51",
     "cornerStrokeColor":"#09ca51",
@@ -15,7 +15,7 @@
     "strokeWidth":1,
     "stroke":"#000",
     "fontSize":18,
-    "compress":true,
+    "compress":false,
     "arrowShape":"fish",
     "escKey":true,
     "ctrlKey":true

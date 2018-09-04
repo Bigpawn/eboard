@@ -2,7 +2,7 @@
  * @Author: yanxinaliang (rainyxlxl@163.com)
  * @Date: 2018/7/20 9:55
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * * @Last Modified time: 2018/7/20 9:55
+ * @Last Modified time: 2018/7/20 9:55
  * @disc:消息中间件 包括消息发送层 消息接收层
  *      发送层：内部将各种操作消息抛给消息中间件，消息中间件统一处理后交给外部的接收服务，外部接收服务进行消息发送
  *      接受层：
@@ -11,6 +11,9 @@
  *
  *      消息类型：
  *          Tab === Frame 项目中引入Frame概念，Frame支持类型字段，类型包括
+ *
+ *
+ *          lz-string 会出现null 暂时移除该功能
  *
  */
 import {MessageIdMiddleWare} from './MessageIdMiddleWare';
