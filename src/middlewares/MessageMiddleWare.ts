@@ -31,7 +31,7 @@ class MessageMiddleWare{
         this.compress= eventBus.config.compress;// 如果压缩接收端需要解压
     }
     private messageFactory(message:any){
-        const {start,end,type,mode,fill,stroke,strokeDashArray,radius,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix,messageId,frame,group,...rest} = message;
+        const {start,end,type,mode,fill,stroke,strokeDashArray,radius,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix,messageId,frame,group,center,size,text,totalWidth,totalHeight,scrollLeft,scrollTop,...rest} = message;
         // frame group 只传id
         return {
             messageId,
@@ -40,7 +40,7 @@ class MessageMiddleWare{
                 ...frame?{frameId:frame.id}:{},
                 ...group?{groupId:group.id}:{},
             },
-            body:{start,end,type,mode,fill,stroke,strokeDashArray,radius,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix}
+            body:{start,end,type,mode,fill,stroke,strokeDashArray,radius,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix,center,size,text,totalWidth,totalHeight,scrollLeft,scrollTop}
         }
     }
     private messageOutFactory(message:any){

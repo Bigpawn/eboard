@@ -28,7 +28,8 @@ class Arrow extends AbstractShapePlugin{
     
     private calcOptions(start:{x:number;y:number},end:{x:number;y:number},mode:ArrowMode){
         // fix production
-        const arrowFactory = require(`./factory/${this.arrowShape}`) as typeof DefaultFactory;
+        const arrowClass = require(`./factory/${this.arrowShape}`);
+        const arrowFactory = (arrowClass.default||arrowClass) as typeof DefaultFactory;
         const headlen = Math.max(this.strokeWidth * 2 +10,10);
         const {path,fill} = arrowFactory.calcPath(start,end,30,headlen,mode,this.fill);
         return {path,fill};
