@@ -30,6 +30,27 @@ class MessageMiddleWare{
         this.eventBus=eventBus;
         this.compress= eventBus.config.compress;// 如果压缩接收端需要解压
     }
+    private messageFactory(message:any){
+        const {start,end,type,mode,fill,stroke,strokeDashArray,radius,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix,messageId,frame,group,...rest} = message;
+        // frame group 只传id
+        return {
+            messageId,
+            header:{
+                ...rest,
+                ...frame?{frameId:frame.id}:{},
+                ...group?{groupId:group.id}:{},
+            },
+            body:{start,end,type,mode,fill,stroke,strokeDashArray,radius,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix}
+        }
+    }
+    private messageOutFactory(message:any){
+        const {header,body,messageId} = message;
+        return {
+            ...header,
+            ...body,
+            messageId
+        }
+    }
     /**
      * 内部调用该方法向外部发送消息
      * @param {IMessage} message
@@ -41,7 +62,7 @@ class MessageMiddleWare{
         }
         // 自动生成id并返回id
         const id = void 0 === message.messageId?MessageIdMiddleWare.getId():message.messageId;
-        const outMessage = Object.assign({},message,{messageId:id});
+        const outMessage = this.messageFactory(Object.assign({},message,{messageId:id}));
         const messageStr = this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage);
         this.eventBus.trigger("message",messageStr);
         return id;
@@ -53,7 +74,7 @@ class MessageMiddleWare{
      * @returns {any}
      */
     public decompressMessage(message:string){
-        return JSON.parse(this.compress?LZString.decompress(message):message);
+        return this.messageOutFactory(JSON.parse(this.compress?LZString.decompress(message):message));
     }
 }
 

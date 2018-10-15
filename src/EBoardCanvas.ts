@@ -24,7 +24,6 @@ import {MessageTag} from './enums/MessageTag';
 import {CursorType} from './enums/CursorType';
 
 
-
 class EBoardCanvas extends fabric.Canvas{
     public cursorCanvas:fabric.StaticCanvas;
     private instance:fabric.Object;
@@ -173,7 +172,8 @@ class EBoardCanvas extends fabric.Canvas{
                     this.cursor=undefined as any;
                     break;
                 default:
-                    this.cursor=new (require(`./cursor/${cursorType}`))(this);
+                    const courseClass = require(`./cursor/${cursorType}`);
+                    this.cursor=new (courseClass.default||courseClass)(this);
                     break;
             }
         }
@@ -223,7 +223,8 @@ class EBoardCanvas extends fabric.Canvas{
         }else{
             this.cursorCanvas.renderOnAddRemove=false;
             instance && this.cursorCanvas.remove(instance);
-            const cursorType=new (require(`./cursor/${type}`))(this);
+            const courseClass = require(`./cursor/${type}`);
+            const cursorType=new (courseClass.default||courseClass)(this);
             instance = cursorType.render(center,size);
             instance.type="cursor";
             this.cursorCanvas.add(instance);

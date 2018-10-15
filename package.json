@@ -1,6 +1,6 @@
 {
     "name": "eboard",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "author": "Heng Li",
     "description": "eboard lib",
     "license": "MIT",
@@ -35,7 +35,7 @@
         "build": "rc-tools run build",
         "dist": "rc-tools run dist",
         "gh-pages": "rc-tools run gh-pages",
-        "start": "node ./cli/open.js && rc-tools run server",
+        "start": "set NODE_ENV=development && node ./cli/open.js && rc-tools run server --a=1",
         "compile": "rc-tools run compile --babel-runtime",
         "pub": "rc-tools run pub --babel-runtime",
         "lint": "rc-tools run lint --no-js-lint",

@@ -12,6 +12,7 @@ class ImagesCanvas extends SimpleCanvas{
         const eBoard =EBoardInstance.getInstance();
         const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
         eBoard.on("message",(message)=>{
+            console.log(JSON.parse(message));
             receiveEBoard.onMessage(message);
         });
         const dataSet=[];

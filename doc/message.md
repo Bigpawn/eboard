@@ -21,11 +21,32 @@
     * 普通白板中消息示例：
     ```json
     {
-       id:"",
-    
+       id:"",// 对象id
+       frame:{},// frame 信息
+       frameGroup:{},// frameGroup信息
+       tag:"",// 操作类型，如创建Frame,创建frameGroup等
+       type:"",// 形状类型
+       ...options,// 形状参数，如stroke,color 等
     }
     ```
-    
+    ```javascript
+    export enum MessageTag{
+        CreateFrame,
+        CreateFrameGroup,
+        SwitchToFrame,
+        Clear,
+        AllowHtmlAction,
+        DisAllowHtmlAction,
+        Scroll,
+        Delete,
+        Cursor,
+        SelectionMove,
+        SelectionScale,
+        SelectionRotate,
+        RemoveFrame,
+        Shape
+    }
+    ```
     
 #### 消息处理
 所有的消息处理都应该按照队列来处理，在每个插件中按照队列的同时，整个实例中也应该按照队列处理，因为可能同时操作同一个对象，会存在一定的问题
