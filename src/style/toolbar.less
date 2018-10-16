@@ -13,6 +13,9 @@
 
 
 .eboard{
+    &-body{
+        background-color: #333333;
+    }
     &-disable{
         .eboard-toolbar-wrap{
             display: none;
@@ -50,6 +53,7 @@
         }
         position: relative;
         &-item{
+            margin: 5px 0;
             position: relative;
             width: @itemWidth;
             height: @itemHeight;
@@ -70,7 +74,8 @@
             &.active{
                 border: 1px solid transparent;
                 //box-shadow: inset 0 0 2px 2px #eeeeee;
-                background: rgba(0,0,0,0.3);
+                //background: rgba(0,0,0,0.3);
+                background: #eeeeee;
             }
         }
         &-expend{
@@ -82,16 +87,72 @@
                 width: @expendSize;
                 height: @expendSize;
                 line-height: @expendSize;
+                border-radius: 100%;
+            }
+        }
+        &-huabi{
+            .eboard-toolbar-item1{
+                cursor: pointer;
+                display: inline-block;
+                vertical-align: middle;
+                background-color: #333333;
+                border-radius: 10px;
+                margin: 10px 19px;
+                &:hover{
+                    background-color: #ffffff;
+                }
+            }
+        }
+        &-wenzi{
+            .eboard-toolbar-item1{
+                cursor: pointer;
+                display: inline-block;
+                margin: 10px 12px;
+                color: #333333;
+                font-weight: bolder;
+                font-size: 20px;
+                &:hover{
+                    color: #ffffff;
+                }
             }
         }
         &-category{
             position: absolute;
             z-index: 20;
-            background: rgba(0,0,0,0.4);
-            padding: 15px;
+            background: rgba(156, 156, 156, 0.4);
+            padding: 15px 15px 160px;
             border-radius: 10px;
             left: 100%;
             top: 0;
+            margin: -30px 0 0 45px;
+            width: 230px;
+            &-line{
+                position: absolute;
+                bottom: 150px;
+                left: 20px;
+                right: 20px;
+                height: 1px;
+                background-color: #555555;
+            }
+            &-color{
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                right: 13px;
+                &-item{
+                    cursor: pointer;
+                    display: inline-block;
+                    width: 26px;
+                    height: 26px;
+                    border-radius: 20px;
+                    margin: 10px 10px 0;
+                    padding: 2px;
+                    background-clip: content-box;
+                    &:hover{
+                        border: 1px solid #ffffff;
+                    }
+                }
+            }
         }
         &-picker{
             position: relative;
