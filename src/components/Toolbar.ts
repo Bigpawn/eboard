@@ -227,16 +227,22 @@ class ToolbarChildren{
             itemDom.className = `eboard-toolbar-category-color-item`;
             itemDom.style.backgroundColor = item;
             colorDom.appendChild(itemDom);
-            itemDom.addEventListener('click',()=>{
 
+            itemDom.addEventListener('click',()=>{
+                this.from.setAttribute('activeColor',item);
+                this.from.firstChild.style.backgroundColor = item;
             });
+
+            const activeColor = this.from.getAttribute('activeColor');
+            if(activeColor && activeColor === item){
+                itemDom.classList.add('active');
+            }
         });
         const lineDom = document.createElement('div');
         lineDom.className = `eboard-toolbar-category-line`;
         this.dom.appendChild(lineDom);
         this.dom.appendChild(colorDom);
         this.from.parentElement&&this.from.parentElement.appendChild(wrap);
-
 
         if(this.items[0].children){
             const itemDom = document.createElement('div');
@@ -245,7 +251,7 @@ class ToolbarChildren{
             }else if(this.items[0].icon === "wenzi"){
                 itemDom.className = "eboard-toolbar-wenzi";
             }
-            this.items[0].children.forEach((item1,index1)=>{
+            this.items[0].children.forEach((item1)=>{
                 const itemDom1 = document.createElement('div');
                 itemDom1.className = `eboard-toolbar-item1`;
                 if(this.items[0].icon === "huabi"){
@@ -255,6 +261,15 @@ class ToolbarChildren{
                     itemDom1.innerText = item1 + "";
                 }
                 itemDom.appendChild(itemDom1);
+
+                itemDom1.addEventListener('click',()=>{
+                    this.from.setAttribute('activeH',item1);
+                });
+
+                const active = this.from.getAttribute('activeH');
+                if(active && active === item1.toString()){
+                    itemDom1.classList.add('active');
+                }
             });
             this.dom.appendChild(itemDom);
         }
@@ -271,7 +286,7 @@ class ToolbarChildren{
         this.items.forEach((item,index)=>{
             const itemDom = document.createElement('div');
             itemDom.title=item.name;
-            itemDom.className = `eboard-toolbar-item eboard-icon eboard-icon-${item.icon}`;
+            itemDom.className = `eboard-toolbar-item1 eboard-icon eboard-icon-${item.icon}`;
             if(index){
                 this.dom.appendChild(itemDom);
             }
@@ -280,6 +295,11 @@ class ToolbarChildren{
                 this.from.setAttribute('active',index.toString());
                 this.from.className = this.from.className.replace(/eboard-icon-\S+/,'eboard-icon-'+item.icon);
             });
+
+            const active = this.from.getAttribute('active');
+            if(active && active === index.toString()){
+                itemDom.classList.add('active');
+            }
         });
     }
     public destroy(){
@@ -320,7 +340,11 @@ class Toolbar{
             itemDom.className = `eboard-toolbar-item eboard-icon eboard-icon-${item.icon} ${length>1||members[0].children?'eboard-toolbar-expend':''}`;
             itemDom.setAttribute('active','0');
             if(length>1||members[0].children){
-                itemDom.innerHTML='<i class=\'eboard-icon eboard-icon-expend\'/>';
+                if(item.icon === "wenzi"){
+                    itemDom.innerHTML='<i class=\'eboard-icon eboard-icon-line\'/>';
+                }else{
+                    itemDom.innerHTML='<i class=\'eboard-icon eboard-icon-expend\'/>';
+                }
             }
             this.dom.appendChild(itemDom);
             let timer:any;
@@ -345,7 +369,6 @@ class Toolbar{
                         clearTimeout(timer);
                         timer = undefined as any;
                         const newMembers = [...members];
-                        // newMembers.shift();
                         this.showChild(itemDom,newMembers);
                     },300);
                 }

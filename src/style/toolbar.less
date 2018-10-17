@@ -7,15 +7,12 @@
  */
 @itemWidth:40px;
 @itemHeight:40px;
-@iconSize:26px;
-@expendSize:12px;
+@iconSize:20px;
+@expendSize:8px;
 @toolbarPadding:10px;
 
 
 .eboard{
-    &-body{
-        background-color: #333333;
-    }
     &-disable{
         .eboard-toolbar-wrap{
             display: none;
@@ -78,27 +75,57 @@
                 background: #eeeeee;
             }
         }
+        &-item1{
+            margin: 5px 3px 5px 4px;
+            position: relative;
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            text-align: center;
+            font-size: 16px;
+            color: #000;
+            cursor: pointer;
+            &:hover{
+                color: #ffffff;
+            }
+            &.active{
+                color: #ffffff;
+            }
+        }
         &-expend{
             & > .eboard-icon-expend{
                 position: absolute;
-                right: 0;
-                bottom: 0;
+                right: 6px;
+                bottom: 6px;
                 font-size: @expendSize;
                 width: @expendSize;
                 height: @expendSize;
                 line-height: @expendSize;
                 border-radius: 100%;
             }
+            & > .eboard-icon-line{
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 5px;
+                margin: 0 auto;
+                width: 20px;
+                height: 2px;
+            }
         }
         &-huabi{
+            margin-right: -5px;
             .eboard-toolbar-item1{
                 cursor: pointer;
                 display: inline-block;
                 vertical-align: middle;
-                background-color: #333333;
+                background-color: #000000;
                 border-radius: 10px;
-                margin: 10px 19px;
+                margin: 10px;
                 &:hover{
+                    background-color: #ffffff;
+                }
+                &.active{
                     background-color: #ffffff;
                 }
             }
@@ -107,11 +134,14 @@
             .eboard-toolbar-item1{
                 cursor: pointer;
                 display: inline-block;
-                margin: 10px 12px;
-                color: #333333;
+                margin: 10px 6px;
+                color: #000000;
                 font-weight: bolder;
-                font-size: 20px;
+                font-size: 16px;
                 &:hover{
+                    color: #ffffff;
+                }
+                &.active{
                     color: #ffffff;
                 }
             }
@@ -120,36 +150,39 @@
             position: absolute;
             z-index: 20;
             background: rgba(156, 156, 156, 0.4);
-            padding: 15px 15px 160px;
+            padding: 15px 15px 120px;
             border-radius: 10px;
             left: 100%;
             top: 0;
             margin: -30px 0 0 45px;
-            width: 230px;
+            width: 148px;
             &-line{
                 position: absolute;
-                bottom: 150px;
-                left: 20px;
-                right: 20px;
+                bottom: 110px;
+                left: 15px;
+                right: 15px;
                 height: 1px;
                 background-color: #555555;
             }
             &-color{
                 position: absolute;
-                bottom: 20px;
-                left: 20px;
+                bottom: 10px;
+                left: 13px;
                 right: 13px;
                 &-item{
                     cursor: pointer;
                     display: inline-block;
-                    width: 26px;
-                    height: 26px;
+                    width: 20px;
+                    height: 20px;
                     border-radius: 20px;
-                    margin: 10px 10px 0;
+                    margin: 5px 5px 0;
                     padding: 2px;
                     background-clip: content-box;
                     &:hover{
-                        border: 1px solid #ffffff;
+                        border: 1px solid #666e7b;
+                    }
+                    &.active{
+                        border: 1px solid #666e7b;
                     }
                 }
             }
