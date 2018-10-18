@@ -147,6 +147,8 @@ class EBoard{
         wrap.className="eboard-toolbar-wrap";
         this.container.appendChild(wrap);
         this.toolbar = new Toolbar(wrap,this,(item:any)=>{
+            console.log(item);
+            const {name,color,size} = item;
             switch (item.key){
                 case "line":
                     this.setActivePlugin(Plugins.Line);
@@ -163,13 +165,23 @@ class EBoard{
                 case "arrow-both":
                     this.setActivePlugin(Plugins.Arrow);
                     break;
+                case "dotcircle":
+                    this.setConfig("circleDashed",true);
+                    this.setActivePlugin(Plugins.Circle);
+                    break;
                 case "circle":
+                    this.setConfig("circleDashed",false);
                     this.setActivePlugin(Plugins.Circle);
                     break;
                 case "ellipse":
                     this.setActivePlugin(Plugins.Ellipse);
                     break;
+                case "dottriangle":
+                    this.setConfig("triangleDashed",true);
+                    this.setActivePlugin(Plugins.Triangle);
+                    break;
                 case "triangle":
+                    this.setConfig("triangleDashed",false);
                     this.setActivePlugin(Plugins.Triangle);
                     break;
                 case "equilateral-triangle":
@@ -178,13 +190,23 @@ class EBoard{
                 case "orthogonal-triangle":
                     this.setActivePlugin(Plugins.OrthogonalTriangle);
                     break;
+                case "dotrectangle":
+                    this.setConfig("rectangleDashed",true);
+                    this.setActivePlugin(Plugins.Rectangle);
+                    break;
                 case "rectangle":
+                    this.setConfig("rectangleDashed",false);
                     this.setActivePlugin(Plugins.Rectangle);
                     break;
                 case "square":
                     this.setActivePlugin(Plugins.Square);
                     break;
+                case "dotstar":
+                    this.setConfig("starDashed",true);
+                    this.setActivePlugin(Plugins.Star);
+                    break;
                 case "star":
+                    this.setConfig("starDashed",false);
                     this.setActivePlugin(Plugins.Star);
                     break;
                 case "pentagon":
@@ -223,6 +245,33 @@ class EBoard{
                 case "fontSize":
                     // 字体大小设置
                     this.eDux.config.fontSize=item.fontSize;
+                    break;
+                case "color":
+                    // 颜色设置
+                    switch (name){
+                        case "pencil":
+                            this.setConfig("pencil",color);
+                            break;
+                        case "text":
+                            this.setConfig("text",color);
+                            break;
+                        default:
+                            // 形状颜色
+                            this.setConfig("shapeColor",color);
+                            break;
+                    }
+                    break;
+                case "size":
+                    switch (name){
+                        case "pencil":
+                            this.setConfig("pencilSize",size);
+                            break;
+                        case "text":
+                            this.setConfig("textSize",size);
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
                     break;
@@ -872,6 +921,14 @@ class EBoard{
         return this;
     }
     
+    public setConfig(name:string,val:any){
+        this.eDux.config[name]=val;
+        return this;
+    }
+    
+    public getConfig(){
+        return this.eDux.config;
+    }
     /**
      * 设置fillColor
      * @param {string} color

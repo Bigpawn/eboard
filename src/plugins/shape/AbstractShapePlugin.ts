@@ -17,11 +17,11 @@ export enum Quadrant{
 }
 
 abstract class AbstractShapePlugin extends AbstractPlugin{
-    private _fill:string;
-    private _strokeWidth:number;// 私有strokeWidth,用于计算
-    private _stroke:string;
+    protected _fill:string;
+    protected _strokeWidth:number;// 私有strokeWidth,用于计算
+    protected _stroke:string;
     private _strokeDashArray:number[];
-    private _fontSize:number;
+    protected _fontSize:number;
     
     /**
      * 自动计算比例

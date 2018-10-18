@@ -21,6 +21,12 @@ class Arrow extends AbstractShapePlugin{
     protected instance:FabricArrow;
     private arrowShape:"default"|"fish"|"hollow";
     protected arrowMode:ArrowMode=ArrowMode.ALL;
+    protected get stroke(){
+        return this._stroke||this.eDux.config.shapeColor||this.eDux.config.stroke;
+    }
+    protected get fill(){
+        return this._fill||this.eDux.config.shapeColor||this.eDux.config.fill;
+    }
     constructor(eBoardEngine:EBoardEngine){
         super(eBoardEngine);
         this.arrowShape=eBoardEngine.eDux.config.arrowShape as any;

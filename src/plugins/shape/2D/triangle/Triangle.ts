@@ -20,6 +20,18 @@ import {CursorType} from '../../../../enums/CursorType';
 class Triangle extends AbstractShapePlugin{
     protected instance:FabricTriangle;
     protected ctrlKey:boolean=false;
+    private get shapeColor(){
+        return this.eDux.config.shapeColor;
+    }
+    private get dashed(){
+        return this.eDux.config.triangleDashed;
+    }
+    protected get stroke(){
+        return this.dashed?"":(this._stroke||this.shapeColor||this.eDux.config.stroke);
+    }
+    protected get fill(){
+        return this.dashed?(this._fill||this.shapeColor||this.eDux.config.fill||"#000"):"";
+    }
     private getStartPoint():{x:number;y:number}{
         const start = this.start;
         const end = this.end;

@@ -52,4 +52,9 @@ export declare interface IDefaultConfig{
     escKey:string;
     showToolbar:boolean;
     ctrlKey:boolean;
+    shapeColor?:string;
+    circleDashed?:boolean;
+    starDashed?:boolean;
+    triangleDashed?:boolean;
+    rectangleDashed?:boolean;
 }
