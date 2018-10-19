@@ -29,7 +29,7 @@ class Circle extends AbstractShapePlugin{
         return this.dashed?"":(this._stroke||this.shapeColor||this.eDux.config.stroke);
     }
     protected get fill(){
-        return this.dashed?(this._fill||this.shapeColor||this.eDux.config.fill):"";
+        return this.dashed?(this._fill||this.shapeColor||this.eDux.config.fill||"#000"):"";
     }
     @message
     private throw(){
