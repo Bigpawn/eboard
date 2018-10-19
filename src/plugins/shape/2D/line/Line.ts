@@ -13,7 +13,7 @@ import {ILineMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class Line extends AbstractShapePlugin{
     protected instance:FabricLine;
     protected get stroke(){

@@ -16,7 +16,7 @@ import {EBoardEngine} from '../../../../EBoardEngine';
 import {ArrowMode} from '../../../../enums/ArrowMode';
 import {CursorType} from '../../../../enums/CursorType';
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class Arrow extends AbstractShapePlugin{
     protected instance:FabricArrow;
     private arrowShape:"default"|"fish"|"hollow";

@@ -17,7 +17,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class Square extends AbstractShapePlugin{
     protected instance:FabricSquare;
     @message

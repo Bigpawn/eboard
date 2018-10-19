@@ -17,7 +17,7 @@ import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class Polygon extends AbstractShapePlugin{
     protected instance:FabricPolygon;
     private points:fabric.Point[]=[];

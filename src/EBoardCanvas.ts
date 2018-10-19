@@ -181,8 +181,8 @@ class EBoardCanvas extends fabric.Canvas{
             this.activeCursor();
         }else if(cursorType === CursorType.SystemCross){
             // 系统级别Cross
-            this.defaultCursor="crosshair";// 更新样式进行优化
             this.destroyCursor();
+            this.defaultCursor="crosshair";// 更新样式进行优化
         }else{
             this.destroyCursor();
         }

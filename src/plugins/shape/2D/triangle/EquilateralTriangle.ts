@@ -15,7 +15,7 @@ import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class EquilateralTriangle extends AbstractShapePlugin{
     protected instance:FabricEquilateralTriangle;
     @message

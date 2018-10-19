@@ -37,7 +37,8 @@ class Ferule extends AbstractShapePlugin{
         if("ontouchstart" in document){
             return;
         }
-        if(enable){
+        // 不启用 pencil功能
+  /*      if(enable){
             this.eDux.trigger("plugin:active",{
                 plugin:Plugins.Pencil,
                 options:{
@@ -53,7 +54,7 @@ class Ferule extends AbstractShapePlugin{
                     background:true
                 }
             });
-        }
+        }*/
         return this;
     }
 }

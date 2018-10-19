@@ -16,7 +16,7 @@ import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class Triangle extends AbstractShapePlugin{
     protected instance:FabricTriangle;
     protected ctrlKey:boolean=false;

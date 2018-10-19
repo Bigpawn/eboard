@@ -14,7 +14,7 @@ import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class OrthogonalTriangle extends AbstractShapePlugin{
     protected instance:FabricOrthogonalTriangle;
     protected onMouseMove(event:IEvent){

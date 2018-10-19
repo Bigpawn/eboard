@@ -17,7 +17,7 @@ import {Keys} from '../../../../enums/Keys';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class Ellipse extends AbstractShapePlugin{
     private ctrlKey:boolean=false;
     protected instance:FabricEllipse;

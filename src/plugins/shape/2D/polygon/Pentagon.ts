@@ -14,7 +14,7 @@ import {IPentagonMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class Pentagon extends AbstractShapePlugin{
     protected instance:FabricPentagon;
     @message

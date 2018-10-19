@@ -14,7 +14,7 @@ import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class Hexagon extends AbstractShapePlugin{
     protected instance:FabricHexagon;
     @message

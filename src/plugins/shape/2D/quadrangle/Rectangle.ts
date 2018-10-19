@@ -15,7 +15,7 @@ import {Keys} from '../../../../enums/Keys';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
 
-@setCursor(CursorType.Cross)
+@setCursor(CursorType.SystemCross)
 class Rectangle extends AbstractShapePlugin{
     protected instance:FabricRectangle;
     protected ctrlKey:boolean=false;
