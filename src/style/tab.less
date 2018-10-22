@@ -5,12 +5,12 @@
  * * @Last Modified time: 2018/8/14 17:11
  * @disc:$DESC$
  */
-@height:40px;
-@width:80px;
-@radius:5px;
+@height:32px;
+@width:140px;
+@radius:10px;
 @padding:6px;
 @spacing:5px;
-@removeIcon:12px;
+@removeIcon:20px;
 
 .eboard{
     &-disable{
@@ -24,7 +24,7 @@
         bottom: 0;
         left: 0;
         height: @height;
-        z-index: 2;
+        z-index: 10;
         white-space: nowrap;
    /*     ~ .eboard-body{
             bottom: @height;
@@ -37,7 +37,7 @@
         vertical-align: middle;
         border-top-left-radius: @radius;
         border-top-right-radius: @radius;
-        background: rgba(100,100,100,0.3);
+        background: #a1bed1;
         text-align: center;
         line-height: @height - @padding *2;
         text-overflow: ellipsis;
@@ -48,8 +48,13 @@
         color: white;
         cursor: pointer;
         position: relative;
+        &:first-of-type{
+            .eboard-tab-remove{
+                display: none;
+            }
+        }
         &.eboard-tab-active{
-            background: rgba(210,100,170,0.5);
+            background: #4c84ff;
         }
         ~ .eboard-tab{
             margin-left: @spacing;
@@ -59,8 +64,9 @@
             position: absolute;
             line-height: @removeIcon;
             right: 3px;
-            top: 3px;
-            color: darkorange;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ec272a;
             opacity: 0;
             cursor: pointer;
             &:hover{

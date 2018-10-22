@@ -11,9 +11,10 @@ class MaterialUIPage extends SimpleCanvas{
         const eBoard =EBoardInstance.getInstance();
         const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
         eBoard.on("message",(message)=>{
+            console.log(message);
             receiveEBoard.onMessage(message);
         });
-        eBoard.clearCache().addPdfFrame({
+        eBoard.addPdfFrame({
             type:FrameType.Pdf,
             url:require("./4.pdf"),
             pageNum:1,

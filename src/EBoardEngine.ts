@@ -11,32 +11,34 @@ import {EBoardCanvas} from './EBoardCanvas';
 import {ICanvasOptions} from '~fabric/fabric-impl';
 import {AbstractPlugin} from './plugins/AbstractPlugin';
 import {IPlugins} from './plugins';
-import {IExtraMessage} from './interface/IFrame';
-import {EDux} from './utils/EDux';
+import {Context, ContextFactory} from './static/Context';
 
 
-declare interface IExtraOptions{
-    eDux:EDux;
-    extraMessage:IExtraMessage;
+declare interface IEBoardEngineOptions extends ICanvasOptions{
+    frame:string,
+    group:string|undefined
 }
 
 
-class EBoardEngine{
+
+class EBoardEngine extends ContextFactory{
     public eBoardCanvas:EBoardCanvas;
     public pluginInstanceMap=new Map<string,IPlugins>();
     private activePlugin?:AbstractPlugin;
-    public extraMessage:IExtraMessage;
-    public eDux:EDux;
-    constructor(element: HTMLCanvasElement, options: ICanvasOptions,props:IExtraOptions){
-        this.eDux=props.eDux;
-        this.extraMessage = props.extraMessage;
+    public frameId:string;
+    public groupId:string|undefined;
+    constructor(element: HTMLCanvasElement,context:Context, options: IEBoardEngineOptions){
+        super(context);
         options.allowTouchScrolling=true;
         this.eBoardCanvas = new EBoardCanvas(element,options,this);
+        this.frameId = options.frame;
+        this.groupId = options.group;
         this.initPlugin();
     }
     private initPlugin(){
         // plugins 实例化
-        this.eDux.config.plugins.forEach((pluginName:string)=>{
+        const {plugins=[]} = this.context.getConfig();
+        plugins.forEach((pluginName:string)=>{
             this.pluginInstanceMap.set(pluginName,new (require(`./plugins`)[pluginName] as any)(this));
         });
     }

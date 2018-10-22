@@ -12,9 +12,9 @@ import {EBoardCanvas} from '../EBoardCanvas';
 import {EBoardEngine} from '../EBoardEngine';
 import {IEvent} from '~fabric/fabric-impl';
 import {fabric} from "fabric";
-import {EDux} from '../utils/EDux';
 import {IExtraMessage} from '../interface/IFrame';
 import {CursorType} from '../enums/CursorType';
+import {Context} from '../static/Context';
 
 
 abstract class AbstractPlugin {
@@ -30,14 +30,17 @@ abstract class AbstractPlugin {
     protected onMouseUp?(event:IEvent):void;
     protected ctrlKeyDownHandler?(event:KeyboardEvent):void;
     protected ctrlKeyUpHandler?(event:KeyboardEvent):void;
-    protected eDux:EDux;
     protected extraMessage:IExtraMessage;
+    public context:Context;
+    public frameId:string;
+    public groupId:string|undefined;
     constructor(eBoardEngine:EBoardEngine){
         this.eBoardCanvas=eBoardEngine.eBoardCanvas;
         this.eBoardEngine = eBoardEngine;
-        this.eDux=eBoardEngine.eDux;
-        this.extraMessage = eBoardEngine.extraMessage;
-        const ctrlKey = this.eDux.config.ctrlKey;
+        this.context=eBoardEngine.context;
+        this.frameId = eBoardEngine.frameId;
+        this.groupId = eBoardEngine.groupId;
+        const {ctrlKey} = this.context.getConfig();
         if(void 0 !== this.onMouseDown){
             this.onMouseDown=this.onMouseDown.bind(this);
         }
@@ -148,7 +151,7 @@ abstract class AbstractPlugin {
      * @returns {number}
      */
     public getCanvasPixel(pixel:number){
-        return this.eDux.transform(pixel);
+        return this.context.transform(pixel);
     }
     
     /**

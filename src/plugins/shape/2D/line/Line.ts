@@ -16,9 +16,6 @@ import {CursorType} from '../../../../enums/CursorType';
 @setCursor(CursorType.SystemCross)
 class Line extends AbstractShapePlugin{
     protected instance:FabricLine;
-    protected get stroke(){
-        return this._stroke||this.eDux.config.shapeColor||this.eDux.config.stroke;
-    }
     @message
     private throw(){
         return this.instance?{

@@ -24,26 +24,26 @@ export declare interface IFrame{
     type:string;
     dom:HTMLElement;
     engine?:EBoardEngine;
-    id:string;
+    frameId:string;
     scrollbar?:ScrollBar;
     parent?:IFrameGroup|EBoard;
     extraMessage?:IExtraMessage;
     extraMessageOrigin?:IExtraMessage;
     eDux?:IEDux;// 数据接口共享模块
+    groupId?:string;
     getPlugin(pluginName:string):AbstractPlugin|undefined;
     destroy(silent?:boolean):void;
 }
 
 export declare interface IFrameOptions{
-    id?:string;
+    frameId?:string;
     type?:string;
     width?:number;
     height?:number;
-    extraMessage?:IExtraMessage;
     container?:HTMLDivElement;
-    append?:boolean;// 是否直接显示
     name?:string;
     calcSize?:any;
+    groupId?:string;
 }
 
 

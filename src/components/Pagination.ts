@@ -64,11 +64,14 @@ class Pagination{
         const span = document.createElement("span");
         span.className="eboard-pagination-total";
         this.span=span;
+        
+        bottom.appendChild(this.prev);
         bottom.appendChild(input);
         bottom.appendChild(document.createTextNode("/"));
         bottom.appendChild(span);
-        wrap.appendChild(prev);
-        wrap.appendChild(next);
+        bottom.appendChild(this.next);
+        // wrap.appendChild(prev);
+        // wrap.appendChild(next);
         wrap.appendChild(bottom);
         this.dom=wrap;
     }

@@ -8,7 +8,6 @@
  * 触摸屏支持教鞭，不支持画线
  */
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
-import {Plugins} from '../../../index';
 import {CursorType} from '../../../../enums/CursorType';
 class Ferule extends AbstractShapePlugin{
     public cursorType = CursorType.Default;// default Value

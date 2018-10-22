@@ -14,7 +14,7 @@ class SimpleCanvas extends React.Component<{}, {}> {
                 console.log(JSON.parse(message));
                 receiveEBoard.onMessage(message);
             });
-            eBoard.clearCache().addEmptyFrame({
+            eBoard.addEmptyFrame({
                 type:FrameType.Empty,
             });
         },2000)

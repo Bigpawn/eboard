@@ -9,12 +9,12 @@ import {fabric} from "fabric";
 import {IPathOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
 import {EBoardCanvas} from '../EBoardCanvas';
-import {EDux} from '../utils/EDux';
 import {IDefaultConfig} from '../interface/IConfig';
+import {Context} from '../static/Context';
 
 
 let _config:IDefaultConfig;
-let _eDux:EDux;
+let _context:Context;
 
 class Arrow extends fabric.Path implements IObject{
     public type:string="arrow";
@@ -27,14 +27,14 @@ class Arrow extends fabric.Path implements IObject{
      * @param eBoardCanvas
      */
     constructor(path: string | any[], options: IPathOptions,eBoardCanvas:EBoardCanvas){
-        super(path,(_eDux=eBoardCanvas.eDux,_config=_eDux.config,Object.assign({
+        super(path,(_context=eBoardCanvas.context,_config=_context.getConfig(),Object.assign({
             borderColor:_config.borderColor,
             cornerColor:_config.cornerColor,
             cornerStrokeColor:_config.cornerStrokeColor,
             cornerStyle:_config.cornerStyle,
             transparentCorners:_config.transparentCorners,
-            cornerSize:_eDux.transform(_config.cornerSize),
-            borderScaleFactor:_eDux.transform(_config.borderWidth)
+            cornerSize:_context.transform(_config.cornerSize),
+            borderScaleFactor:_context.transform(_config.borderWidth)
         },options)));
         this.id=Date.now().toString();
     }

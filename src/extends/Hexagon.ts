@@ -10,12 +10,12 @@ import {fabric} from "fabric";
 import {IObjectOptions} from '~fabric/fabric-impl';
 import {IObject} from '../interface/IObject';
 import {IDefaultConfig} from '../interface/IConfig';
-import {EDux} from '../utils/EDux';
 import {EBoardCanvas} from '../EBoardCanvas';
+import {Context} from '../static/Context';
 
 
 let _config:IDefaultConfig;
-let _eDux:EDux;
+let _context:Context;
 
 class Hexagon extends fabric.Polygon implements IObject{
     public type:string="hexagon";
@@ -28,14 +28,14 @@ class Hexagon extends fabric.Polygon implements IObject{
      * @param eBoardCanvas
      */
     constructor(points: Array<{ x: number; y: number }>, options: IObjectOptions,eBoardCanvas:EBoardCanvas){
-        super(points,(_eDux=eBoardCanvas.eDux,_config=_eDux.config,Object.assign({
+        super(points,(_context=eBoardCanvas.context,_config=_context.getConfig(),Object.assign({
             borderColor:_config.borderColor,
             cornerColor:_config.cornerColor,
             cornerStrokeColor:_config.cornerStrokeColor,
             cornerStyle:_config.cornerStyle,
             transparentCorners:_config.transparentCorners,
-            cornerSize:_eDux.transform(_config.cornerSize),
-            borderScaleFactor:_eDux.transform(_config.borderWidth)
+            cornerSize:_context.transform(_config.cornerSize),
+            borderScaleFactor:_context.transform(_config.borderWidth)
         },options)));
         this.id=Date.now().toString();
     }

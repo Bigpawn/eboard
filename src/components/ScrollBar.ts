@@ -13,6 +13,7 @@ import {message} from '../utils/decorators';
 import {IEDux} from '../utils/EDux';
 import {IScrollBarMessage} from '../interface/IMessage';
 import {MessageTag} from '../enums/MessageTag';
+import {Context} from '../static/Context';
 
 
 declare interface IScrollBarOptions extends PerfectScrollbar.Options{
@@ -25,12 +26,12 @@ class ScrollBar extends PerfectScrollbar{
     private container:HTMLElement;
     private delPixel:number=5;
     private scrollInterval:Timer;
-    public eDux?:IEDux;
     public extraMessage?:IExtraMessage;
-    constructor(element: string | HTMLElement, options: IScrollBarOptions){
+    public context?:Context;
+    constructor(element: string | HTMLElement,options: IScrollBarOptions,context?:Context){
         super(element,options);
+        this.context=context;
         this.container = typeof element === 'string'?document.querySelector(element) as HTMLElement:element;
-        this.eDux=options.eDux;
         this.extraMessage=options.extraMessage;
         if(void 0 !== this.container){
             this.initScrollEndEvent();
@@ -84,7 +85,7 @@ class ScrollBar extends PerfectScrollbar{
     @message
     private scrollAction(){
         // 返回总高度
-        return this.eDux?{
+        return this.context?{
             tag:MessageTag.Scroll,
             scrollTop:this.container.scrollTop,
             scrollLeft:this.container.scrollLeft,

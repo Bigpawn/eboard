@@ -11,8 +11,8 @@ import {message, pipMode, setAnimationName} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
 import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {Plugins} from '../plugins';
-import {EDux} from '../utils/EDux';
 import {MessageTag} from '../enums/MessageTag';
+import {Context} from '../static/Context';
 
 
 @setAnimationName('eboard-pager')
@@ -21,44 +21,48 @@ class ImagesFrame implements IImagesFrame{
     public container:HTMLDivElement;
     public dom:HTMLDivElement;
     public urlPrefix:string;
-    public pageNum:number;
+    public pageNum:number=1;
     public totalPages:number;
     public child:Map<number,ImageFrame>=new Map();
     public options:IImagesFrameOptions;
-    private pageFrame:ImageFrame;
+    public pageFrame:ImageFrame;
     private pagination:Pagination;
     private animationCssPrefix:string;
     public images:string[];
-    public id:string;
-    public eDux:EDux;
-    
-    public nextMessage:any={};
-    private groupMessage:any={};
-    
-    constructor(options:IImagesFrameOptions,eDux:EDux){
-        this.id = options.id||Date.now().toString();
-        this.eDux=eDux;
+    public groupId:string;
+    public context:Context;
+    constructor(context:Context,options:IImagesFrameOptions){
+        this.context=context;
+        this.groupId = options.groupId||Date.now().toString();
         this.container=options.container as any;
         this.options=options;
-        const {container,append,calcSize,...rest} = options;
-        this.groupMessage=Object.assign({},rest,{
-            id:this.id,
-            width:calcSize.width
-        });
-        this.nextMessage.group=this.groupMessage;
+        const {container} = options;
+        context.addGroup(this.groupId,this).setActiveKey(this.groupId);
         this.onGo=this.onGo.bind(this);
         this.initLayout();
         this.initialize();
-        if(append&&container){
+        if(container){
             container.innerHTML = "";
             container.appendChild(this.dom);// 立即显示
         }
+        if(!options.groupId){
+            this.initializeAction();
+        }
     }
+    @message
+    public initializeAction(){
+        const {container,calcSize,...rest} = this.options as any;
+        return Object.assign({},{
+            tag:MessageTag.CreateFrameGroup,
+            width:calcSize.width,
+            ...rest
+        });
+    }
+    
     @message
     public switchFrameAction(pageNum:number){
         return Object.assign({},{
-            group:this.groupMessage
-        },{
+            groupId:this.groupId,
             tag:MessageTag.SwitchToFrame,
             pageNum:pageNum
         });
@@ -84,14 +88,14 @@ class ImagesFrame implements IImagesFrame{
             this.child.clear();
         }
         if(this.images.length>0){
-            const pageFrame = new ImageFrame({
+            const pageFrame = new ImageFrame(this.context,{
                 content:this.urlPrefix+this.images[this.pageNum],
                 scrollbar:ScrollbarType.vertical,
                 container:this.container,
-                id:this.pageNum.toString(),
-                extraMessage:this.nextMessage,
+                frameId:this.groupId+"_"+this.pageNum.toString(),
+                groupId:this.groupId,
                 calcSize:this.options.calcSize
-            },this.eDux);
+            });
             this.pageFrame=pageFrame;
             this.dom.innerHTML="";
             this.dom.appendChild(this.pageFrame.dom);
@@ -143,14 +147,14 @@ class ImagesFrame implements IImagesFrame{
         let nextPageFrame = this.child.get(pageNum);
         if(void 0 === nextPageFrame){
             // 创建
-            nextPageFrame = new ImageFrame({
+            nextPageFrame = new ImageFrame(this.context,{
                 content:this.urlPrefix+this.images[pageNum],
                 scrollbar:ScrollbarType.vertical,
                 container:this.container,
-                id:pageNum.toString(),
-                extraMessage:this.nextMessage,
+                frameId:this.groupId+"_"+this.pageNum.toString(),
+                groupId:this.groupId,
                 calcSize:this.options.calcSize
-            },this.eDux);
+            });
             this.child.set(pageNum,nextPageFrame);
         }
         return nextPageFrame;
@@ -198,6 +202,7 @@ class ImagesFrame implements IImagesFrame{
             // 清空子项
             this.child.forEach(frame=>{
                 frame.destroy();
+                this.context.deleteFrame(frame.frameId);
             });
             this.child.clear();
         }

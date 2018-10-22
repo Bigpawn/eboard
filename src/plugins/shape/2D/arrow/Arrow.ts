@@ -21,17 +21,10 @@ class Arrow extends AbstractShapePlugin{
     protected instance:FabricArrow;
     private arrowShape:"default"|"fish"|"hollow";
     protected arrowMode:ArrowMode=ArrowMode.ALL;
-    protected get stroke(){
-        return this._stroke||this.eDux.config.shapeColor||this.eDux.config.stroke;
-    }
-    protected get fill(){
-        return this._fill||this.eDux.config.shapeColor||this.eDux.config.fill;
-    }
     constructor(eBoardEngine:EBoardEngine){
         super(eBoardEngine);
-        this.arrowShape=eBoardEngine.eDux.config.arrowShape as any;
+        this.arrowShape=eBoardEngine.context.getConfig().arrowShape as any;
     }
-    
     private calcOptions(start:{x:number;y:number},end:{x:number;y:number},mode:ArrowMode){
         // fix production
         const arrowClass = require(`./factory/${this.arrowShape}`);
@@ -59,7 +52,7 @@ class Arrow extends AbstractShapePlugin{
             return;
         }
         super.onMouseMove(event);
-        const {path,fill} = this.calcOptions(this.start,this.end,this.arrowMode);
+        const {path} = this.calcOptions(this.start,this.end,this.arrowMode);
         const center = {
             x:(this.start.x+this.end.x)/2,
             y:(this.start.y+this.end.y)/2,
@@ -74,7 +67,7 @@ class Arrow extends AbstractShapePlugin{
             strokeWidth:this.strokeWidth,
             top:center.y,
             left:center.x,
-            fill,
+            fill:this.stroke,
             originX:"center",
             originY:"center",
             strokeDashArray:this.strokeDashArray,

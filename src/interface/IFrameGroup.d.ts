@@ -17,7 +17,7 @@ export declare interface IFrameGroupOptions{
     messageId?:number;// frame 创建的消息Id
     scrollbar?:ScrollbarType;
     pageNum:number;// 传1 或者其他
-    id?:string;
+    groupId?:string;
     type?:string;
     width?:number;
     height?:number;
@@ -29,12 +29,13 @@ export declare interface IFrameGroupOptions{
 }
 
 export declare interface IFrameGroup{
+    pageFrame:IFrame;
     container:HTMLDivElement;
     type:string;// 窗口标识id
     dom:HTMLElement;// 窗口内容dom
     child:Map<number,IFrame>;
     options:IFrameOptions;
-    id:string;
+    groupId:string;
     parent?:EBoard;
     destroy(silent?:boolean):void;
     getPlugin(pluginName:string):AbstractPlugin|undefined;

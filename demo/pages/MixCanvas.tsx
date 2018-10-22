@@ -22,7 +22,7 @@ class MixCanvas extends SimpleCanvas{
             console.log(JSON.parse(message));
             receiveEBoard.onMessage(message);
         });
-        eBoard.clearCache().addPdfFrame({
+        eBoard.addPdfFrame({
             type:FrameType.Pdf,
             url:require("./4.pdf"),
             pageNum:1,

@@ -19,7 +19,7 @@ class ImagesCanvas extends SimpleCanvas{
         for (let i=0;i<114;i++){
             dataSet.push(i+".png");
         }
-        eBoard.clearCache().addImagesFrame({
+        eBoard.addImagesFrame({
             type:FrameType.Images,
             pageNum:1,
             urlPrefix:"https://res2dev.9itest.com/resource2/1000/document/20180716/56e61d90a7d7435c80a2499621055ceb_png/",

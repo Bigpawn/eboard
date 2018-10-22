@@ -17,18 +17,6 @@ import {CursorType} from '../../../../enums/CursorType';
 @setCursor(CursorType.SystemCross)
 class Star extends AbstractShapePlugin{
     protected instance:FabricStar;
-    private get shapeColor(){
-        return this.eDux.config.shapeColor;
-    }
-    private get dashed(){
-        return this.eDux.config.starDashed;
-    }
-    protected get stroke(){
-        return this.dashed?"":(this._stroke||this.shapeColor||this.eDux.config.stroke);
-    }
-    protected get fill(){
-        return this.dashed?(this._fill||this.shapeColor||this.eDux.config.fill||"#000"):"";
-    }
     @message
     private throw(){
         return this.instance?{

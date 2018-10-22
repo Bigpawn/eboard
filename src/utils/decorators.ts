@@ -110,9 +110,12 @@ function message(target:any, name:string, descriptor:PropertyDescriptor){
         if(void 0 === message || null === message){
             return message;
         }
-        let copyMessage = Object.assign({},this.extraMessage||{},message);
+        let copyMessage = Object.assign({},{
+            frameId:this.frameId,
+            groupId:this.groupId
+        },message);
         // 消息内容通过创建传递，adapter通过eventBus传递
-        const adapter = this.eDux.adapter;
+        const adapter = this.context.adapter;
         if(void 0 !== adapter){
             adapter.messageHandle(copyMessage);
         }

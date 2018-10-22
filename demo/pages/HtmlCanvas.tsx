@@ -15,7 +15,7 @@ class HtmlCanvas extends SimpleCanvas{
             console.log(JSON.parse(message));
             receiveEBoard.onMessage(message);
         });
-        eBoard.clearCache().addHtmlFrame({
+        eBoard.addHtmlFrame({
             type:FrameType.HTML,
             scrollbar:ScrollbarType.vertical,
             content:'html内容dsaaaaaaaaaaaaaaaadas\n' +

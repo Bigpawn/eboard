@@ -22,15 +22,25 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
     protected _stroke:string;
     private _strokeDashArray:number[];
     protected _fontSize:number;
+    public get dashed(){
+        return this.context.dashed;
+    }
+    public get color(){
+        return this.context.color;
+    }
     
     /**
      * 自动计算比例
      * @returns {number}
      */
     protected get strokeWidth(){
-        return this.eDux.transform(this._strokeWidth||this.eDux.config.strokeWidth);
+        return this.context.transform(this._strokeWidth||this.context.strokeWidth||this.context.getConfig("strokeWidth"));
     }
     
+    
+    protected get pencilWidth(){
+        return this.context.transform(this._strokeWidth||this.context.pencilWidth||this.context.getConfig("strokeWidth"));
+    }
     /**
      * 设置线条宽度
      * @param {number} strokeWidth
@@ -39,12 +49,16 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
         this._strokeWidth = strokeWidth;
     }
     
+    protected get fontColor(){
+        return this._fill||this.context.fontColor||this.context.getConfig("fontColor");
+    }
+    
     /**
      * 线条颜色
      * @returns {string}
      */
     protected get stroke(){
-        return this._stroke||this.eDux.config.stroke;
+        return this.dashed?"":(this._stroke||this.color||this.context.getConfig("stroke"));
     }
     
     /**
@@ -60,7 +74,7 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
      * @returns {string}
      */
     protected get fill(){
-        return this._fill||this.eDux.config.fill;
+        return this.dashed?(this._fill||this.color||this.context.getConfig("fill")||this.context.getConfig("fill")):"";
     }
     
     /**
@@ -92,7 +106,7 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
      * @returns {number}
      */
     protected get fontSize(){
-        return this.eDux.transform(this._fontSize||this.eDux.config.fontSize);
+        return this.context.transform(this._fontSize||this.context.fontSize||this.context.getConfig("fontSize"));
     }
     
     /**
@@ -184,33 +198,6 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
                 return angle;
         }
     }
-    
- /*   /!**
-     * 根据两点坐标计算角度
-     * @param {{x: number; y: number}} pointer1
-     * @param {{x: number; y: number}} pointer2
-     * @returns {number}
-     *!/
-    protected calcAngleByPoints(pointer1:{x:number;y:number},pointer2:{x:number;y:number}){
-        const offsetY = pointer2.y - pointer1.y;
-        const offsetX = pointer2.x - pointer1.x;
-        if(0===offsetY&&0===offsetX){
-            return 0;
-        }
-        const angle = Math.atan(offsetY/offsetX)/Math.PI * 180;// 可能返回NaN 即0/0  没有移动，不做处理
-        const quadrant = this.calcQuadrant(pointer2);
-        switch (quadrant){
-            case Quadrant.RT:
-                return 360 + angle;
-            case Quadrant.LB:
-                return 180 + angle;
-            case Quadrant.LT:
-                return 180 + angle;
-            case Quadrant.RB:
-            default:
-                return angle;
-        }
-    }*/
 }
 
 export {AbstractShapePlugin};

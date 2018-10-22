@@ -7,7 +7,7 @@
  * HtmlFrame 必然会存在滚动条，滚动条配置不起作用，仅在Image时生效
  * 需要判断是接收端还是发送端？
  */
-import {GenericBaseFrame} from './BaseFrame';
+import {GenericBaseFrame} from './EmptyFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import {IFrame,IHTMLFrame, IHTMLFrameOptions} from '../interface/IFrame';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
@@ -74,13 +74,12 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
         placeholder.innerHTML="当前浏览器不支持Canvas,请升级浏览器";
         container.appendChild(htmlContainer);
         container.appendChild(placeholder);
-        this.engine = new EBoardEngine(placeholder,{
+        this.engine = new EBoardEngine(placeholder,this.context,{
             selection:false,
             skipTargetFind:true,
-            containerClass:"eboard-canvas"
-        },{
-            eDux:this.eDux,
-            extraMessage:this.nextMessage
+            containerClass:"eboard-canvas",
+            frame:this.frameId,
+            group:this.groupId
         });
         // scrollbar 设置  如果是html,必然存在滚动条
         switch (this.options.scrollbar){
@@ -88,24 +87,18 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
                 this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
                     suppressScrollY:true,
-                    eDux:this.eDux,
-                    extraMessage:this.nextMessage
-                });
+                },this.context);
                 break;
             case ScrollbarType.vertical:
                 this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
                     suppressScrollX:true,
-                    eDux:this.eDux,
-                    extraMessage:this.nextMessage
-                });
+                },this.context);
                 break;
             case ScrollbarType.both:
                 this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
-                    eDux:this.eDux,
-                    extraMessage:this.nextMessage
-                });
+                },this.context);
                 break;
             case ScrollbarType.none:
             default:
@@ -113,9 +106,7 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
                     this.scrollbar= new ScrollBar(container,{
                         wheelSpeed: 2,
                         suppressScrollX:true,
-                        eDux:this.eDux,
-                        extraMessage:this.nextMessage
-                    });
+                    },this.context);
                 }
                 break;
         }

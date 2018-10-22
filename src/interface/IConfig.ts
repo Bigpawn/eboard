@@ -28,6 +28,8 @@ export declare interface IConfig{
     escKey?:boolean;
     showToolbar?:boolean;
     ctrlKey?:boolean;
+    fontColor?:string;
+    enable?:boolean;
 }
 
 export declare interface IDefaultConfig{
@@ -40,6 +42,7 @@ export declare interface IDefaultConfig{
     transparentCorners:boolean;
     cornerSize:number;
     fontSize:number;
+    fontColor:string;
     dimensions:{width:number};
     plugins:string[];
     cursorSize:number;
@@ -52,9 +55,5 @@ export declare interface IDefaultConfig{
     escKey:string;
     showToolbar:boolean;
     ctrlKey:boolean;
-    shapeColor?:string;
-    circleDashed?:boolean;
-    starDashed?:boolean;
-    triangleDashed?:boolean;
-    rectangleDashed?:boolean;
+    enable:boolean;
 }

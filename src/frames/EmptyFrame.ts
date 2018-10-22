@@ -12,49 +12,45 @@ import {
 } from '../interface/IFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import {message} from '../utils/decorators';
-import {EDux, IPluginConfigOptions} from '../utils/EDux';
+import {IPluginConfigOptions} from '../utils/EDux';
 import {MessageTag} from '../enums/MessageTag';
+import {Context, ContextFactory} from '../static/Context';
 
 
 
-class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
+class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implements IFrame{
     public container:HTMLDivElement;
     public type:string;
     public dom:HTMLDivElement;
     public engine:EBoardEngine;
     public options:T;
-    public id:string;
-    public eDux:EDux;
-    public messageId:number;
-    public extraMessage:any={};// 存放group属性
-    public nextMessage:any={};
-    public frameMessage:any={};
-    constructor(options:T,eDux:EDux){
-        this.id=options.id||Date.now().toString();
-        this.eDux=eDux;
+    public frameId:string;
+    public groupId:string|undefined;
+    constructor(context:Context,options:T){
+        super(context);
+        this.frameId=options.frameId||Date.now().toString();
+        const groupId = options.groupId;
+        this.groupId=groupId;
+        context.addFrame(this.frameId,this);
+        if(!groupId){
+            context.setActiveKey(this.frameId);
+        }
         this.container=options.container as any;
         this.options=options;
-        this.extraMessage=this.options.extraMessage||{};
-        if(options.extraMessage&&options.extraMessage.group){
-            this.nextMessage.group = this.extraMessage.group;
-        }
-        const {extraMessage,container,calcSize,append,...rest} = this.options as any;
-        this.frameMessage={
-            ...rest,
-            id:this.id,
-            width:calcSize.width,
-        };
-        this.nextMessage.frame=this.frameMessage;
-        
+        const {container} = this.options as any;
         this.initEngine();
         this.initPlugin();
-        if(append&&container){
+        if(!groupId&&container){
             container.innerHTML = "";
             container.appendChild(this.dom);// 立即显示
         }
+        if(!options.frameId){
+            this.initializeAction();
+        }
     }
     private initPlugin(){
-        const plugins = this.eDux.sharedData.plugins;
+        const {store} = this.context;
+        const plugins = store.plugins;
         plugins.forEach((obj:IPluginConfigOptions,plugin)=>{
             const {enable,background} = obj;
             if(enable){
@@ -64,7 +60,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
                 }
             }
         });
-        this.eDux.on("plugin:active",(event:any)=>{
+        store.on("plugin:active",(event:any)=>{
             const data = event.data;
             const {plugin,options} = data;
             const instance = this.getPlugin(plugin);
@@ -73,7 +69,7 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
                 instance.setEnable(true,background);
             }
         });
-        this.eDux.on("plugin:disable",(event:any)=>{
+        store.on("plugin:disable",(event:any)=>{
             const data = event.data;
             const {plugin,options} = data;
             const instance = this.getPlugin(plugin);
@@ -86,9 +82,12 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
     
     @message
     public initializeAction(){
+        const {container,calcSize,...rest} = this.options as any;
         return Object.assign({},{
             tag:MessageTag.CreateFrame,
-        },this.frameMessage);
+            width:calcSize.width,
+            ...rest
+        });
     }
     protected initEngine(){
         const container = document.createElement("div");
@@ -96,13 +95,12 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
         const placeholder = document.createElement("canvas");
         placeholder.innerHTML="当前浏览器不支持Canvas,请升级浏览器";
         container.appendChild(placeholder);
-        this.engine = new EBoardEngine(placeholder,{
+        this.engine = new EBoardEngine(placeholder,this.context,{
             selection:false,
             skipTargetFind:true,
-            containerClass:"eboard-canvas"
-        },{
-            eDux:this.eDux,
-            extraMessage:this.nextMessage
+            containerClass:"eboard-canvas",
+            frame:this.frameId,
+            group:this.groupId
         });
         const image = document.createElement("img");
         image.src="";
@@ -132,8 +130,8 @@ class GenericBaseFrame<T extends IFrameOptions> implements IFrame{
 export {GenericBaseFrame};
 
 
-class BaseFrame extends GenericBaseFrame<IBaseFrameOptions> implements IBaseFrame{
+class EmptyFrame extends GenericBaseFrame<IBaseFrameOptions> implements IBaseFrame{
     public type:string="empty-frame";
 }
 
-export {BaseFrame};
+export {EmptyFrame};

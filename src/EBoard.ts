@@ -11,26 +11,27 @@
 
 import "./style/canvas.less";
 import {IBaseFrameOptions, IFrame, IHTMLFrameOptions, IImageFrameOptions} from './interface/IFrame';
-import {BaseFrame} from './frames/BaseFrame';
+import {EmptyFrame} from './frames/EmptyFrame';
 import {HtmlFrame} from './frames/HtmlFrame';
 import {ImageFrame} from './frames/ImageFrame';
 import {PdfFrame} from "./frames/PdfFrame";
 import {ImagesFrame} from './frames/ImagesFrame';
 import {MessageMiddleWare} from './middlewares/MessageMiddleWare';
 import {MessageAdapter} from './interceptor/MessageAdapter';
-import {IFrameGroup, IImagesFrameOptions,IPdfFrameOptions} from './interface/IFrameGroup';
+import {IImagesFrameOptions,IPdfFrameOptions} from './interface/IFrameGroup';
 import {
     Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
     OrthogonalTriangle, Pencil, Pentagon,
     Plugins, Polygon, Rectangle, Square, Star, Triangle, Text, Delete,Selection
 } from './plugins';
-import {EDux, IPluginConfigOptions} from './utils/EDux';
+import {IPluginConfigOptions} from './utils/EDux';
 import {Tab, TabEventEnum} from './components/Tab';
 import {Toolbar} from './components/Toolbar';
 import {message} from './utils/decorators';
 import {IConfig} from './interface/IConfig';
 import {MessageTag} from './enums/MessageTag';
 import {Keys} from './enums/Keys';
+import {Context} from './static/Context';
 
 const config = require("./config.json");
 
@@ -40,9 +41,10 @@ export enum FrameType{
     Empty="empty-frame",Image="image-frame",HTML="html-frame",Canvas="canvas-frame",Pdf="pdf-frame",Images="images-frame"
 }
 
+
+
+
 class EBoard{
-    private frames:Map<string,IFrame|IFrameGroup>=new Map();// frame管理
-    private activeFrame:string;
     private body:HTMLDivElement;
     private container:HTMLDivElement;
     private tab:Tab;
@@ -50,61 +52,62 @@ class EBoard{
     private calcSize:any;
     private config?:IConfig;
     private middleWare:MessageMiddleWare;
-    private groupCreatePromiseMap:Map<string,any>=new Map();
-    private frameCreatePromiseMap:Map<string,any>=new Map();
-    public eDux:EDux=new EDux();
+    private context:Context;
     constructor(container:HTMLDivElement,config?:IConfig){
+        this.context=new Context();
         this.config=config;
         this.container=container;
         this.initLayout();
         this.init();
-        if(this.eDux.config.showTab){
+        const {showTab,showToolbar,escKey} = this.context.getConfig();
+        if(showTab){
             this.initTab();
         }
-        if(this.eDux.config.showToolbar){
+        if(showToolbar){
             this.initToolbar();
         }
         // plugin事件监听
         this.observePlugins();
+        if(escKey){
+            this.escHandler();
+        }
         this.escHandler();
     }
     private escHandler(){
-        if(this.eDux.config.escKey){
-            window.addEventListener("keydown",(e:KeyboardEvent)=>{
-                const code = e.keyCode;
-                if(code === Keys.Esc){
-                    // 退出当前Plugin
-                    const plugins = this.eDux.sharedData.plugins;
-                    plugins.forEach((options,plugin)=>{
-                        plugins.delete(plugin);
-                        this.eDux.trigger("plugin:disable",{
-                            plugin:plugin,
-                            options:{
-                                enable:false
-                            }
-                        });
+        window.addEventListener("keydown",(e:KeyboardEvent)=>{
+            const code = e.keyCode;
+            if(code === Keys.Esc){
+                // 退出当前Plugin
+                const {plugins} = this.context.store;
+                plugins.forEach((options:any,plugin:any)=>{
+                    plugins.delete(plugin);
+                    this.context.trigger("plugin:disable",{
+                        plugin:plugin,
+                        options:{
+                            enable:false
+                        }
                     });
-                    
-                    // toolbar 修改
-                    if(void 0 !== this.toolbar){
-                        this.toolbar.disActive();
-                    }
+                });
+                // toolbar 修改
+                if(void 0 !== this.toolbar){
+                    this.toolbar.disActive();
                 }
-            })
-        }
+            }
+        })
     }
     /**
      * 初始化config 及事件Emitter 消息adapter
      */
     private init(){
-        this.eDux.config=Object.assign({},config,this.config||{});
-        this.middleWare=new MessageMiddleWare(this.eDux);
-        this.eDux.adapter = new MessageAdapter(this.middleWare);
+        this.context.setConfig(Object.assign({},config,this.config||{}));
+        this.middleWare=new MessageMiddleWare(this.context);
+        
+        this.context.adapter = new MessageAdapter(this.middleWare);
         this.calcSize=this.calc();
         // 画布分辨率比例计算
-        this.eDux.transform =(size:number)=>{
+        this.context.transform=(size:number)=>{
             return size * this.calcSize.dimensions.width / this.calcSize.width;
-        }
+        };
     }
     
     private initLayout(){
@@ -117,7 +120,7 @@ class EBoard{
     @message
     private switchMessage(id:string){
         return {
-            frameId:id,
+            activeKey:id,
             tag:MessageTag.SwitchToFrame
         }
     }
@@ -135,7 +138,7 @@ class EBoard{
         });
         this.tab.on(TabEventEnum.Switch,(e: any) => {
             const tabId = e.data;
-            this.switchToFrame(tabId);// switch事件
+            this.switchToTab(tabId);// switch事件
         });
         this.tab.on(TabEventEnum.Remove,(e: any)=>{
             const tabId = e.data;
@@ -147,41 +150,47 @@ class EBoard{
         wrap.className="eboard-toolbar-wrap";
         this.container.appendChild(wrap);
         this.toolbar = new Toolbar(wrap,this,(item:any)=>{
-            console.log(item);
             const {name,color,size} = item;
             switch (item.key){
                 case "line":
+                    this.context.dashed=false;
                     this.setActivePlugin(Plugins.Line);
                     break;
                 case "dotline":
+                    this.context.dashed=false;
                     this.setActivePlugin(Plugins.DotLine);
                     break;
                 case "arrow-next":
+                    this.context.dashed=false;
                     this.setActivePlugin(Plugins.ArrowNext);
                     break;
                 case "arrow-prev":
+                    this.context.dashed=false;
                     this.setActivePlugin(Plugins.ArrowPrev);
                     break;
                 case "arrow-both":
+                    this.context.dashed=false;
                     this.setActivePlugin(Plugins.Arrow);
                     break;
                 case "dotcircle":
-                    this.setConfig("circleDashed",true);
+                    this.context.dashed=true;
                     this.setActivePlugin(Plugins.Circle);
                     break;
                 case "circle":
-                    this.setConfig("circleDashed",false);
+                    this.context.dashed=false;
                     this.setActivePlugin(Plugins.Circle);
                     break;
                 case "ellipse":
                     this.setActivePlugin(Plugins.Ellipse);
                     break;
                 case "dottriangle":
-                    this.setConfig("triangleDashed",true);
+                    this.context.dashed=true;
+                    this.context.color="#000";
                     this.setActivePlugin(Plugins.Triangle);
                     break;
                 case "triangle":
-                    this.setConfig("triangleDashed",false);
+                    this.context.dashed=false;
+                    this.context.color="#000";
                     this.setActivePlugin(Plugins.Triangle);
                     break;
                 case "equilateral-triangle":
@@ -191,22 +200,22 @@ class EBoard{
                     this.setActivePlugin(Plugins.OrthogonalTriangle);
                     break;
                 case "dotrectangle":
-                    this.setConfig("rectangleDashed",true);
+                    this.context.dashed=true;
                     this.setActivePlugin(Plugins.Rectangle);
                     break;
                 case "rectangle":
-                    this.setConfig("rectangleDashed",false);
+                    this.context.dashed=false;
                     this.setActivePlugin(Plugins.Rectangle);
                     break;
                 case "square":
                     this.setActivePlugin(Plugins.Square);
                     break;
                 case "dotstar":
-                    this.setConfig("starDashed",true);
+                    this.context.dashed=true;
                     this.setActivePlugin(Plugins.Star);
                     break;
                 case "star":
-                    this.setConfig("starDashed",false);
+                    this.context.dashed=false;
                     this.setActivePlugin(Plugins.Star);
                     break;
                 case "pentagon":
@@ -237,37 +246,30 @@ class EBoard{
                     this.setActivePlugin(Plugins.Ferule);
                     break;
                 case "stroke":
-                    this.setStrokeColor(item.color);
                     break;
                 case "fill":
-                    this.setFillColor(item.color);
-                    break;
-                case "fontSize":
-                    // 字体大小设置
-                    this.eDux.config.fontSize=item.fontSize;
                     break;
                 case "color":
                     // 颜色设置
                     switch (name){
                         case "pencil":
-                            this.setConfig("pencil",color);
+                            this.context.pencilColor=color;
                             break;
                         case "text":
-                            this.setConfig("text",color);
+                            this.context.fontColor=color;
                             break;
                         default:
-                            // 形状颜色
-                            this.setConfig("shapeColor",color);
+                            this.context.color=color;
                             break;
                     }
                     break;
                 case "size":
                     switch (name){
                         case "pencil":
-                            this.setConfig("pencilSize",size);
+                            this.context.pencilWidth=size;
                             break;
                         case "text":
-                            this.setConfig("textSize",size);
+                            this.context.fontSize=size;
                             break;
                         default:
                             break;
@@ -279,7 +281,7 @@ class EBoard{
         });
     }
     private observePlugins(){
-        this.eDux.on("plugin:active",(event:any)=>{
+        this.context.store.on("plugin:active",(event:any)=>{
             const data = event.data;
             const {plugin,options} = data;
             switch (plugin){
@@ -303,19 +305,27 @@ class EBoard{
                 case Plugins.HTML:
                 case Plugins.Selection:
                 case Plugins.Ferule:
-                    // 数据共享
-                    if(!options.background){
-                        this.eDux.sharedData.plugins.clear();// clear 什么时候触发
-                    }
-                    this.eDux.sharedData.plugins.set(plugin,{
+                    this.context.store.plugins.clear();
+                    this.context.store.plugins.set(plugin,{
                         ...options,
                         enable:true,
                     });
                     break;
                 case Plugins.Clear:
                     // 不设置，仅清空当前显示的画布 发送clear消息
-                    if(void 0 !== this.activeFrame){
-                        const frame = this.findFrameById(this.activeFrame);
+                    const activeKey = this.context.activeKey;
+                    // 判断是frame还是frameGroup
+                    const group = this.context.getGroupById(activeKey);
+                    if(group){
+                        // group
+                        const frame = group.pageFrame;
+                        if(void 0 !== frame){
+                            const instance = frame.getPlugin(Plugins.Clear) as Clear;
+                            instance.clear();
+                        }
+                    }else{
+                        // frame
+                        const frame = this.context.getFrameById(activeKey);
                         if(void 0 !== frame){
                             const instance = frame.getPlugin(Plugins.Clear) as Clear;
                             instance.clear();
@@ -326,11 +336,11 @@ class EBoard{
                     break;
             }
         });
-        this.eDux.on("plugin:disable",(event:any)=>{
+        this.context.store.on("plugin:disable",(event:any)=>{
             const data = event.data;
             const {plugin} = data;
-            if(this.eDux.sharedData.plugins.has(plugin)){
-                this.eDux.sharedData.plugins.delete(plugin);
+            if(this.context.store.plugins.has(plugin)){
+                this.context.store.plugins.delete(plugin);
             }
         });
     }
@@ -343,38 +353,20 @@ class EBoard{
      * @returns {IBaseFrame}
      */
     public addEmptyFrame(options:IBaseFrameOptions,withoutMessage?:boolean){
-        const {id} = options;
-        let frame:BaseFrame;
-        if(void 0 !== id && this.hasFrame(id)){
-            frame = this.findFrameById(id) as BaseFrame;
-            return frame;
-        }
-        const message = Object.assign({},options);
+        const {frameId} = options;
+        let frame = void 0 !== frameId?this.context.getFrameById(frameId):undefined;
+        if(void 0 !==frame) return frame;
         options.calcSize =Object.assign({},this.calcSize,options.width?{
             originWidth:options.width,
             scale:this.calcSize.width/options.width
         }:{});
         options.container = this.body;
-        options.append = true;
-        frame = new BaseFrame(options,this.eDux);
-        this.frames.set(frame.id,frame);
+        frame = new EmptyFrame(this.context,options);
         if(void 0 !== this.tab){
             this.tab.addTab({
-                tabId:frame.id,
+                tabId:frame.frameId,
                 label:options.name||""
             });
-        }
-        if(!withoutMessage){
-            this.addFrameMessage(Object.assign({
-                id:frame.id,
-                width:this.calcSize.width
-            },message));
-        }
-        this.activeFrame = frame.id;
-        if(this.frameCreatePromiseMap.has(id as any)){
-            this.eDux.trigger("frame_init_"+id);
-        }else{
-            this.frameCreatePromiseMap.set(id as string,new Promise((resole)=>{resole()}));
         }
         return frame;
     }
@@ -386,38 +378,20 @@ class EBoard{
      * @returns {IHTMLFrame}
      */
     public addHtmlFrame(options:IHTMLFrameOptions,withoutMessage?:boolean){
-        const {id} = options;
-        let frame:HtmlFrame;
-        if(void 0 !== id && this.hasFrame(id)){
-            frame = this.findFrameById(id) as HtmlFrame;
-            return frame;
-        }
-        const message = Object.assign({},options);
+        const {frameId} = options;
+        let frame=void 0 !== frameId?this.context.getFrameById(frameId):undefined;
+        if(void 0 !==frame) return frame;
         options.calcSize =Object.assign({},this.calcSize,options.width?{
             originWidth:options.width,
             scale:this.calcSize.width/options.width
         }:{});
         options.container = this.body;
-        options.append = true;
-        frame = new HtmlFrame(options,this.eDux);
-        this.frames.set(frame.id,frame);
-        this.activeFrame = frame.id;
+        frame = new HtmlFrame(this.context,options);
         if(void 0 !== this.tab){
             this.tab.addTab({
-                tabId:frame.id,
+                tabId:frame.frameId,
                 label:options.name||""
             });
-        }
-        if(!withoutMessage){
-            this.addFrameMessage(Object.assign({
-                id:frame.id,
-                width:this.calcSize.width
-            },message));
-        }
-        if(this.frameCreatePromiseMap.has(id as any)){
-            this.eDux.trigger("frame_init_"+id);
-        }else{
-            this.frameCreatePromiseMap.set(id as string,new Promise((resole)=>{resole()}));
         }
         return frame;
     }
@@ -429,38 +403,20 @@ class EBoard{
      * @returns {IImageFrame}
      */
     public addImageFrame(options:IImageFrameOptions,withoutMessage?:boolean){
-        const {id} = options;
-        let frame:ImageFrame;
-        if(void 0 !== id && this.hasFrame(id)){
-            frame = this.findFrameById(id) as ImageFrame;
-            return frame;
-        }
-        const message = Object.assign({},options);
+        const {frameId} = options;
+        let frame=void 0 !== frameId?this.context.getFrameById(frameId):undefined;
+        if(void 0 !==frame) return frame;
         options.calcSize =Object.assign({},this.calcSize,options.width?{
             originWidth:options.width,
             scale:this.calcSize.width/options.width
         }:{});
         options.container = this.body;
-        options.append = true;
-        frame = new ImageFrame(options,this.eDux);
-        this.frames.set(frame.id,frame);
-        this.activeFrame = frame.id;
+        frame = new ImageFrame(this.context,options);
         if(void 0 !== this.tab){
             this.tab.addTab({
-                tabId:frame.id,
+                tabId:frame.frameId,
                 label:options.name||""
             });
-        }
-        if(!withoutMessage){
-            this.addFrameMessage(Object.assign({
-                id:frame.id,
-                width:this.calcSize.width
-            },message));
-        }
-        if(this.frameCreatePromiseMap.has(id as any)){
-            this.eDux.trigger("frame_init_"+id);
-        }else{
-            this.frameCreatePromiseMap.set(id as string,new Promise((resole)=>{resole()}));
         }
         return frame;
     }
@@ -472,40 +428,22 @@ class EBoard{
      * @returns {IPdfFrame}
      */
     public addPdfFrame(options:IPdfFrameOptions,withoutMessage?:boolean){
-        const {id} = options;
-        let frame:PdfFrame;
-        if(void 0 !== id && this.hasFrame(id)){
-            frame = this.findFrameById(id) as PdfFrame;
-            return frame;
-        }
-        const message = Object.assign({},options);
+        const {groupId} = options;
+        let group = void 0 !== groupId?this.context.getGroupById(groupId):undefined;
+        if(group) return group;
         options.calcSize =Object.assign({},this.calcSize,options.width?{
             originWidth:options.width,
             scale:this.calcSize.width/options.width
         }:{});
         options.container = this.body;
-        options.append = true;
-        frame = new PdfFrame(options,this.eDux);
-        this.frames.set(frame.id,frame);
-        this.activeFrame = frame.id;
+        group = new PdfFrame(this.context,options);
         if(void 0 !== this.tab){
             this.tab.addTab({
-                tabId:frame.id,
+                tabId:group.groupId,
                 label:options.name||""
             });
         }
-        if(!withoutMessage){
-            this.addFrameGroupMessage(Object.assign({
-                id:frame.id,
-                width:this.calcSize.width
-            },message));
-        }
-        if(this.groupCreatePromiseMap.has(id as any)){
-            this.eDux.trigger("group_init_"+id);
-        }else{
-            this.groupCreatePromiseMap.set(id as string,new Promise((resole)=>{resole()}));
-        }
-        return frame;
+        return group;
     }
     
     /**
@@ -515,55 +453,24 @@ class EBoard{
      * @returns {ImagesFrame}
      */
     public addImagesFrame(options:IImagesFrameOptions,withoutMessage?:boolean){
-        const {id} = options;
-        let frame:ImagesFrame;
-        if(void 0 !== id && this.hasFrame(id)){
-            frame = this.findFrameById(id) as ImagesFrame;
-            return frame;
-        }
-        const message = Object.assign({},options);
+        const {groupId} = options;
+        let group = void 0 !== groupId?this.context.getGroupById(groupId):undefined;
+        if(group) return group;
         options.calcSize =Object.assign({},this.calcSize,options.width?{
             originWidth:options.width,
             scale:this.calcSize.width/options.width
         }:{});
         options.container = this.body;
-        options.append = true;
-        frame = new ImagesFrame(options,this.eDux);
-        this.frames.set(frame.id,frame);
-        this.activeFrame = frame.id;
+        group = new ImagesFrame(this.context,options);
         if(void 0 !== this.tab){
             this.tab.addTab({
-                tabId:frame.id,
+                tabId:group.groupId,
                 label:options.name||""
             });
         }
-        if(!withoutMessage){
-            this.addFrameGroupMessage(Object.assign({
-                id:frame.id,
-                width:this.calcSize.width
-            },message));
-        }
-        if(this.groupCreatePromiseMap.has(id as any)){
-            this.eDux.trigger("group_init_"+id);
-        }else{
-            this.groupCreatePromiseMap.set(id as string,new Promise((resole)=>{resole()}));
-        }
-        return frame;
+        return group;
     }
     
-    @message
-    private addFrameMessage(options:any){
-        return Object.assign({
-            tag:MessageTag.CreateFrame
-        },options);
-    }
-    
-    @message
-    private addFrameGroupMessage(options:any){
-        return Object.assign({
-            tag:MessageTag.CreateFrameGroup
-        },options);
-    }
     /**
      * 计算calc add 时需要调用，传递进去，发送消息时需要使用
      * @param {number} originWidth
@@ -573,7 +480,7 @@ class EBoard{
     private calc(){
         const parentElement = this.body;
         const {offsetWidth:width,offsetHeight:height} = parentElement;
-        let ratio=this.eDux.config.ratio;
+        let ratio=this.context.getConfig("ratio");
         const _ratioW=ratio.w;
         const _ratioH=ratio.h;
         const ratioNum=_ratioW/_ratioH;
@@ -626,123 +533,68 @@ class EBoard{
      * @param withoutMessage
      * @returns {undefined | IFrame | IFrameGroup}
      */
-    public switchToFrame(id:string|IFrame|IFrameGroup,withoutMessage?:boolean){
-        // 支持frameType标识和对象
-        if(typeof id === 'string'){
-            if(id === this.activeFrame||!this.hasFrame(id)){
-                return;
+    public switchToTab(id:string,withoutMessage?:boolean){
+        const activeKey = this.context.activeKey;
+        if(id===activeKey) return;
+        const frameInstance = this.context.getFrameById(id);
+        const groupInstance = this.context.getGroupById(id);
+        
+        if(!frameInstance&&!groupInstance){
+            return;
+        }
+        if(activeKey){
+            const oldFrameInstance = this.context.getFrameById(activeKey);
+            const oldGroupInstance = this.context.getGroupById(activeKey);
+            if(oldFrameInstance&&oldFrameInstance.dom&&oldFrameInstance.dom.parentElement){
+                oldFrameInstance.dom.parentElement.removeChild(oldFrameInstance.dom); // 隐藏
             }
-        }else{
-            if(id.id === this.activeFrame||!this.hasFrame(id.id)){
-                return;
+            if(oldGroupInstance&&oldGroupInstance.dom&&oldGroupInstance.dom.parentElement){
+                oldGroupInstance.dom.parentElement.removeChild(oldGroupInstance.dom); // 隐藏
             }
         }
-        if(this.activeFrame){
-            const frame = this.findFrameById(this.activeFrame);
-            if(frame&&frame.dom&&frame.dom.parentElement){
-                frame.dom.parentElement.removeChild(frame.dom); // 隐藏
-            }
+        if(frameInstance&&frameInstance.dom){
+            frameInstance.container.appendChild(frameInstance.dom);
+        }else if(groupInstance&&groupInstance.dom){
+            groupInstance.container.appendChild(groupInstance.dom);
         }
-        this.activeFrame = typeof id === 'string'?id:id.id;
-        const activeFrame = typeof id === 'string'?this.findFrameById(id):id;
-        if(activeFrame&&activeFrame.dom){
-            activeFrame.container.appendChild(activeFrame.dom);// 如果是子frame则存在问题
-        }
+        this.context.setActiveKey(id);
         if(void 0 !== this.tab){
-            this.tab.switchTo(this.activeFrame);
+            this.tab.switchTo(id);
         }
         if(!withoutMessage){
-            this.switchMessage(this.activeFrame);
+            this.switchMessage(id);
         }
-        return activeFrame;
     }
     
     @message
-    public removeFrame(id:string,withoutMessage?:boolean){
-        const frame = this.findFrameById(id);
-        if(void 0 !== frame){
-            frame.destroy();
-            this.frames.delete(id);
-            frame.dom.parentElement&&frame.dom.parentElement.removeChild(frame.dom);
+    public removeFrame(tabId:string,withoutMessage?:boolean){
+        const frameInstance = this.context.getFrameById(tabId);
+        const groupInstance = this.context.getGroupById(tabId);
+        if(void 0 !== frameInstance){
+            frameInstance.destroy();
+            this.context.deleteFrame(tabId);
+            frameInstance.dom.parentElement&&frameInstance.dom.parentElement.removeChild(frameInstance.dom);
+        }else if(groupInstance){
+            groupInstance.destroy();
+            this.context.deleteGroup(tabId);
+            groupInstance.dom.parentElement&&groupInstance.dom.parentElement.removeChild(groupInstance.dom);
         }
         if(void 0 !== this.tab){
-            this.tab.removeTab(id);
+            this.tab.removeTab(tabId);
         }
-        if(this.activeFrame === id){
-            const ids = Array.from(this.frames.keys());
-            const id = ids[ids.length-1];
-            if(id){
-                this.switchToFrame(id,true);
+        const activeKey = this.context.activeKey;
+        if(activeKey === tabId){
+            const lastId = this.context.getLastFrameOrGroupId();
+            if(lastId){
+                this.switchToTab(lastId,true);
             }
         }
         return !withoutMessage?{
             tag:MessageTag.RemoveFrame,
-            id:id
+            tabId:tabId
         }:undefined
     }
     
-    /**
-     * 根据id获取frame实例
-     * @param {string} id
-     * @returns {IFrame | IFrameGroup | undefined}
-     */
-    public findFrameById(id:string){
-        return this.frames.get(id);
-    }
-    
-    /**
-     * 检测是否存在某个frame
-     * @returns {boolean}
-     * @param id
-     */
-    public hasFrame(id:string){
-        return this.frames.has(id);
-    }
-    
-    /**
-     * 清空缓存
-     * @returns {this}
-     */
-    public clearCache(){
-        if(this.frames.size>0){
-            this.frames.forEach(frame=>{
-                frame.destroy();
-            });
-            this.frames.clear();
-        }
-        return this;
-    }
-    private awaitGroup(groupId:string){
-        let groupPromise:any;
-        if(this.groupCreatePromiseMap.has(groupId)){
-            groupPromise=this.groupCreatePromiseMap.get(groupId);
-        }else{
-            groupPromise=new Promise((resolve)=>{
-                // TODO 向教师请求group属性
-                this.eDux.on("group_init_"+groupId,function() {
-                    resolve();
-                })
-            });
-            this.groupCreatePromiseMap.set(groupId,groupPromise);
-        }
-        return groupPromise;
-    }
-    private awaitFrame(frameId:string){
-        let framePromise:any;
-        if(this.frameCreatePromiseMap.has(frameId)){
-            framePromise=this.frameCreatePromiseMap.get(frameId);
-        }else{
-            // TODO 向教师请求frame属性
-            
-            framePromise=new Promise((resolve)=>{
-                this.eDux.on("frame_init_"+frameId,function() {
-                    resolve();
-                })
-            });
-            this.frameCreatePromiseMap.set(frameId,framePromise);
-        }
-        return framePromise;
-    }
     /**
      * 消息分发
      * @param {string} message
@@ -751,6 +603,127 @@ class EBoard{
     public onMessage(message:string){
         const messageObj:any = this.middleWare.decompressMessage(message);
         const {frameId,groupId,...options} = messageObj;
+        const {tag,type} = options;
+        if(tag===MessageTag.CreateFrame){
+            this.addFrame(messageObj);
+            return;
+        }
+        if(tag===MessageTag.CreateFrameGroup){
+            this.addFrameGroup(messageObj);
+            return;
+        }
+        if(frameId){
+            this.context.getFrame(frameId).then((frame:IFrame)=>{
+                switch (tag){
+                    case MessageTag.Clear:
+                        // 清空
+                        (frame.getPlugin(Plugins.Clear) as Clear).onMessage();
+                        break;
+                    case MessageTag.Delete:
+                        (frame.getPlugin(Plugins.Delete) as Delete).onMessage(options);
+                        break;
+                    case MessageTag.Scroll:
+                        frame.scrollbar&&frame.scrollbar.onMessage(options);
+                        break;
+                    case MessageTag.Cursor:
+                        frame.engine&&frame.engine.eBoardCanvas.onMessage(options);
+                        break;
+                    case MessageTag.SelectionMove:
+                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                        break;
+                    case MessageTag.SelectionScale:
+                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                        break;
+                    case MessageTag.SelectionRotate:
+                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                        break;
+                    default:
+                        if(void 0 !== frame){
+                            switch (type){
+                                case "line":
+                                    (frame.getPlugin(Plugins.Line) as Line).onMessage(options);
+                                    break;
+                                case "arrow":
+                                    (frame.getPlugin(Plugins.Arrow) as Arrow).onMessage(options);
+                                    break;
+                                case "circle":
+                                    (frame.getPlugin(Plugins.Circle) as Circle).onMessage(options);
+                                    break;
+                                case "ellipse":
+                                    (frame.getPlugin(Plugins.Ellipse) as Ellipse).onMessage(options);
+                                    break;
+                                case "hexagon":
+                                    (frame.getPlugin(Plugins.Hexagon) as Hexagon).onMessage(options);
+                                    break;
+                                case "pentagon":
+                                    (frame.getPlugin(Plugins.Pentagon) as Pentagon).onMessage(options);
+                                    break;
+                                case "polygon":
+                                    (frame.getPlugin(Plugins.Polygon) as Polygon).onMessage(options);
+                                    break;
+                                case "star":
+                                    (frame.getPlugin(Plugins.Star) as Star).onMessage(options);
+                                    break;
+                                case "rectangle":
+                                    (frame.getPlugin(Plugins.Rectangle) as Rectangle).onMessage(options);
+                                    break;
+                                case "square":
+                                    (frame.getPlugin(Plugins.Square) as Square).onMessage(options);
+                                    break;
+                                case "equilateral-triangle":
+                                    (frame.getPlugin(Plugins.EquilateralTriangle) as EquilateralTriangle).onMessage(options);
+                                    break;
+                                case "orthogonal-triangle":
+                                    (frame.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle).onMessage(options);
+                                    break;
+                                case "triangle":
+                                    (frame.getPlugin(Plugins.Triangle) as Triangle).onMessage(options);
+                                    break;
+                                case "pencil":
+                                    (frame.getPlugin(Plugins.Pencil) as Pencil).onMessage(options);
+                                    break;
+                                case "text":
+                                    (frame.getPlugin(Plugins.Text) as Text).onMessage(options);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
+                }
+            })
+        }else if(groupId){
+            switch (tag) {
+                case MessageTag.CreateFrame:// 创建frame
+                    this.addFrame(messageObj);
+                    break;
+                case MessageTag.CreateFrameGroup:
+                    this.addFrameGroup(messageObj);
+                    break;
+                case MessageTag.SwitchToFrame:
+                    this.context.getGroup(groupId).then((group:any)=>{
+                        group.onGo(options.pageNum,options.messageId);
+                    });
+                    break;
+                default:
+                    
+                    break;
+            }
+            
+        }else{
+            switch (tag){
+                case MessageTag.SwitchToFrame:
+                    this.switchToTab(options.activeKey);
+                case MessageTag.RemoveFrame:
+                    this.removeFrame(options.tabId,true);
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        
+        /*
         let frame = undefined as any,frameGroup = undefined as any;
         let groupPromise:any,framePromise:any;
         if(void 0 !== groupId){
@@ -758,11 +731,11 @@ class EBoard{
         }else{
             groupPromise = new Promise((resole)=>{resole()});
         }
-       /* if(void 0 !== frameId){
+       /!* if(void 0 !== frameId){
             framePromise = this.awaitFrame(frameId);
         }else{
             framePromise = new Promise((resole)=>{resole()});
-        }*/
+        }*!/
         const {tag,type} = options;
         groupPromise.then(()=>{
             if(groupId){
@@ -867,7 +840,7 @@ class EBoard{
                     }
                     break;
             }
-        });
+        });*/
         // const {frame:frameOptions,group:frameGroupOptions,...options} = messageObj;
       
         
@@ -898,7 +871,7 @@ class EBoard{
      * @param {(data: any) => void} listener
      */
     public on(type:string,listener:(data:any)=>void){
-        this.eDux.on(type,(event:any)=>{
+        this.context.on(type,(event:any)=>{
             const data = event.data;
             listener.call(this,data);
         })
@@ -910,38 +883,10 @@ class EBoard{
      * @param {IPluginConfigOptions} options
      */
     public setActivePlugin(plugin:Plugins,options?:IPluginConfigOptions){
-        this.eDux.trigger("plugin:active",{
+        this.context.store.trigger("plugin:active",{
             plugin:plugin,
             options:options||{}
         });
-    }
-    
-    /**
-     * 设置strokeColor
-     * @param {string} color
-     * @returns {this}
-     */
-    public setStrokeColor(color:string){
-        this.eDux.config.stroke=color;
-        return this;
-    }
-    
-    public setConfig(name:string,val:any){
-        this.eDux.config[name]=val;
-        return this;
-    }
-    
-    public getConfig(){
-        return this.eDux.config;
-    }
-    /**
-     * 设置fillColor
-     * @param {string} color
-     * @returns {this}
-     */
-    public setFillColor(color:string){
-        this.eDux.config.fill=color;
-        return this;
     }
     
     /**
@@ -951,7 +896,9 @@ class EBoard{
     public setDisable(){
         const container = this.body;
         container.parentElement&&container.parentElement.classList.add("eboard-disable");
-        this.eDux.sharedData.enable=false;
+        this.context.updateConfig({
+            enable:false
+        });
         return this;
     }
     
@@ -962,7 +909,9 @@ class EBoard{
     public setEnable(){
         const container = this.body;
         container.parentElement&&container.parentElement.classList.remove("eboard-disable");
-        this.eDux.sharedData.enable=true;
+        this.context.updateConfig({
+            enable:true
+        });
         return this;
     }
 }

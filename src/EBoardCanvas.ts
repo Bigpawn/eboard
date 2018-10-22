@@ -15,31 +15,28 @@ import {
 } from '~fabric/fabric-impl';
 import {ICursor} from './interface/ICursor';
 import {message} from './utils/decorators';
-import {EDux} from './utils/EDux';
-import {IExtraMessage} from './interface/IFrame';
 import {Plugins} from './plugins';
 import {EBoardEngine} from './EBoardEngine';
 import {ICursorMessage} from './interface/IMessage';
 import {MessageTag} from './enums/MessageTag';
 import {CursorType} from './enums/CursorType';
+import {Context} from './static/Context';
 
 
 class EBoardCanvas extends fabric.Canvas{
     public cursorCanvas:fabric.StaticCanvas;
     private instance:fabric.Object;
     private cursorMessageEnable:boolean=false;
-    public eDux:EDux;
-    public extraMessage:IExtraMessage;
     private touching:boolean=false;// 是否触摸模式
     
     // 光标类型
     private cursor:ICursor;
     private cursorType:CursorType;
+    public context:Context;
     
     constructor(element: HTMLCanvasElement,options: ICanvasOptions,eBoardEngine:EBoardEngine){
         super(element,options);
-        this.eDux=eBoardEngine.eDux;
-        this.extraMessage=eBoardEngine.extraMessage;
+        this.context=eBoardEngine.context;
         const cursorCanvasEl=document.createElement("canvas");
         cursorCanvasEl.className="eboard-cursor";
         element.parentElement&&element.parentElement.appendChild(cursorCanvasEl);
@@ -113,7 +110,7 @@ class EBoardCanvas extends fabric.Canvas{
         if(void 0 === this.cursor){
             return;
         }
-        const plugins = this.eDux.sharedData.plugins;
+        const plugins = this.context.store.plugins;
         // touching 模式下不显示
         const touching = event.type ==="touchmove";
         if(!plugins.has(Plugins.Ferule)&&this.touching){
@@ -124,7 +121,7 @@ class EBoardCanvas extends fabric.Canvas{
         if(void 0 !== this.instance){
             this.cursorCanvas.remove(this.instance);
         }
-        this.instance = this.cursor.render(point,this.eDux.transform(this.eDux.config.cursorSize));
+        this.instance = this.cursor.render(point,this.context.transform(this.context.getFrame("cursorSize")));
         this.instance.name=this.cursorType; // 比较类型是否变化
         this.instance.type="cursor";// 设置type，扩展的Canvas可能会做其他操作
         this.cursorCanvas.add(this.instance);
@@ -149,7 +146,7 @@ class EBoardCanvas extends fabric.Canvas{
     private cursorMessage(center?:{x:number;y:number}){
         return {
             tag:MessageTag.Cursor,
-            size:this.eDux.config.cursorSize,
+            size:this.context.getConfig("cursorSize"),
             type:this.cursorType,
             center:center,
         }

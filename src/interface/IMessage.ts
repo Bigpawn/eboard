@@ -65,7 +65,8 @@ export declare interface ILineMessage extends IMessage{
 export declare interface IPencilMessage extends IMessage{
     path:string;
     stroke:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface IHexagonMessage extends IMessage{
