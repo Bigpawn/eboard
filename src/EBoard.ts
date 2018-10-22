@@ -758,110 +758,115 @@ class EBoard{
         }else{
             groupPromise = new Promise((resole)=>{resole()});
         }
-        if(void 0 !== frameId){
+       /* if(void 0 !== frameId){
             framePromise = this.awaitFrame(frameId);
         }else{
             framePromise = new Promise((resole)=>{resole()});
-        }
+        }*/
         const {tag,type} = options;
         groupPromise.then(()=>{
-            groupId&&(frameGroup=this.findFrameById(groupId));
-            framePromise.then(()=>{
-                frameId&&(frame=this.findFrameById(frameId));
-                switch (tag){
-                    case MessageTag.CreateFrame:// 创建frame
-                        this.addFrame(messageObj);
-                        break;
-                    case MessageTag.CreateFrameGroup:
-                        this.addFrameGroup(messageObj);
-                        break;
-                    case MessageTag.SwitchToFrame:
-                        if(void 0 !== frameGroup){
-                            frameGroup.onGo(options.pageNum,options.messageId);
-                        }else{
-                            this.switchToFrame(options.frameId,true);
+            if(groupId){
+                frameGroup=this.findFrameById(groupId);
+                frameId&&(frame = frameGroup.createFrame({
+                    pageNum:Number(frameId),
+                }) as IFrame);
+            }else{
+                frameId&&(frame = this.findFrameById(frameId));
+            }
+    
+            switch (tag){
+                case MessageTag.CreateFrame:// 创建frame
+                    this.addFrame(messageObj);
+                    break;
+                case MessageTag.CreateFrameGroup:
+                    this.addFrameGroup(messageObj);
+                    break;
+                case MessageTag.SwitchToFrame:
+                    if(void 0 !== frameGroup){
+                        frameGroup.onGo(options.pageNum,options.messageId);
+                    }else{
+                        this.switchToFrame(options.frameId,true);
+                    }
+                    break;
+                case MessageTag.Clear:
+                    // 清空
+                    (frame.getPlugin(Plugins.Clear) as Clear).onMessage();
+                    break;
+                case MessageTag.Delete:
+                    (frame.getPlugin(Plugins.Delete) as Delete).onMessage(options);
+                    break;
+                case MessageTag.Scroll:
+                    frame.scrollbar&&frame.scrollbar.onMessage(options);
+                    break;
+                case MessageTag.Cursor:
+                    frame.engine&&frame.engine.eBoardCanvas.onMessage(options);
+                    break;
+                case MessageTag.SelectionMove:
+                    (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                    break;
+                case MessageTag.SelectionScale:
+                    (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                    break;
+                case MessageTag.SelectionRotate:
+                    (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                    break;
+                case MessageTag.RemoveFrame:
+                    this.removeFrame(options.id,true);
+                    break;
+                default:
+                    if(void 0 !== frame){
+                        switch (type){
+                            case "line":
+                                (frame.getPlugin(Plugins.Line) as Line).onMessage(options);
+                                break;
+                            case "arrow":
+                                (frame.getPlugin(Plugins.Arrow) as Arrow).onMessage(options);
+                                break;
+                            case "circle":
+                                (frame.getPlugin(Plugins.Circle) as Circle).onMessage(options);
+                                break;
+                            case "ellipse":
+                                (frame.getPlugin(Plugins.Ellipse) as Ellipse).onMessage(options);
+                                break;
+                            case "hexagon":
+                                (frame.getPlugin(Plugins.Hexagon) as Hexagon).onMessage(options);
+                                break;
+                            case "pentagon":
+                                (frame.getPlugin(Plugins.Pentagon) as Pentagon).onMessage(options);
+                                break;
+                            case "polygon":
+                                (frame.getPlugin(Plugins.Polygon) as Polygon).onMessage(options);
+                                break;
+                            case "star":
+                                (frame.getPlugin(Plugins.Star) as Star).onMessage(options);
+                                break;
+                            case "rectangle":
+                                (frame.getPlugin(Plugins.Rectangle) as Rectangle).onMessage(options);
+                                break;
+                            case "square":
+                                (frame.getPlugin(Plugins.Square) as Square).onMessage(options);
+                                break;
+                            case "equilateral-triangle":
+                                (frame.getPlugin(Plugins.EquilateralTriangle) as EquilateralTriangle).onMessage(options);
+                                break;
+                            case "orthogonal-triangle":
+                                (frame.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle).onMessage(options);
+                                break;
+                            case "triangle":
+                                (frame.getPlugin(Plugins.Triangle) as Triangle).onMessage(options);
+                                break;
+                            case "pencil":
+                                (frame.getPlugin(Plugins.Pencil) as Pencil).onMessage(options);
+                                break;
+                            case "text":
+                                (frame.getPlugin(Plugins.Text) as Text).onMessage(options);
+                                break;
+                            default:
+                                break;
                         }
-                        break;
-                    case MessageTag.Clear:
-                        // 清空
-                        (frame.getPlugin(Plugins.Clear) as Clear).onMessage();
-                        break;
-                    case MessageTag.Delete:
-                        (frame.getPlugin(Plugins.Delete) as Delete).onMessage(options);
-                        break;
-                    case MessageTag.Scroll:
-                        frame.scrollbar&&frame.scrollbar.onMessage(options);
-                        break;
-                    case MessageTag.Cursor:
-                        frame.engine&&frame.engine.eBoardCanvas.onMessage(options);
-                        break;
-                    case MessageTag.SelectionMove:
-                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
-                        break;
-                    case MessageTag.SelectionScale:
-                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
-                        break;
-                    case MessageTag.SelectionRotate:
-                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
-                        break;
-                    case MessageTag.RemoveFrame:
-                        this.removeFrame(options.id,true);
-                        break;
-                    default:
-                        if(void 0 !== frame){
-                            switch (type){
-                                case "line":
-                                    (frame.getPlugin(Plugins.Line) as Line).onMessage(options);
-                                    break;
-                                case "arrow":
-                                    (frame.getPlugin(Plugins.Arrow) as Arrow).onMessage(options);
-                                    break;
-                                case "circle":
-                                    (frame.getPlugin(Plugins.Circle) as Circle).onMessage(options);
-                                    break;
-                                case "ellipse":
-                                    (frame.getPlugin(Plugins.Ellipse) as Ellipse).onMessage(options);
-                                    break;
-                                case "hexagon":
-                                    (frame.getPlugin(Plugins.Hexagon) as Hexagon).onMessage(options);
-                                    break;
-                                case "pentagon":
-                                    (frame.getPlugin(Plugins.Pentagon) as Pentagon).onMessage(options);
-                                    break;
-                                case "polygon":
-                                    (frame.getPlugin(Plugins.Polygon) as Polygon).onMessage(options);
-                                    break;
-                                case "star":
-                                    (frame.getPlugin(Plugins.Star) as Star).onMessage(options);
-                                    break;
-                                case "rectangle":
-                                    (frame.getPlugin(Plugins.Rectangle) as Rectangle).onMessage(options);
-                                    break;
-                                case "square":
-                                    (frame.getPlugin(Plugins.Square) as Square).onMessage(options);
-                                    break;
-                                case "equilateral-triangle":
-                                    (frame.getPlugin(Plugins.EquilateralTriangle) as EquilateralTriangle).onMessage(options);
-                                    break;
-                                case "orthogonal-triangle":
-                                    (frame.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle).onMessage(options);
-                                    break;
-                                case "triangle":
-                                    (frame.getPlugin(Plugins.Triangle) as Triangle).onMessage(options);
-                                    break;
-                                case "pencil":
-                                    (frame.getPlugin(Plugins.Pencil) as Pencil).onMessage(options);
-                                    break;
-                                case "text":
-                                    (frame.getPlugin(Plugins.Text) as Text).onMessage(options);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        break;
-                }
-            })
+                    }
+                    break;
+            }
         });
         // const {frame:frameOptions,group:frameGroupOptions,...options} = messageObj;
       
