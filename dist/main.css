@@ -265,10 +265,11 @@ input::-webkit-inner-spin-button {
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 999px;
   padding-top: 4px;
+  padding-left: 10px;
 }
 .eboard-pagination-current {
-  width: 4rem;
-  height: 26px;
+  width: 4rem !important;
+  height: 26px !important;
   border: 1px solid transparent;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -280,7 +281,7 @@ input::-webkit-inner-spin-button {
   margin-right: 10px;
 }
 .eboard-pagination-current:hover {
-  border: 1px solid rgba(51, 133, 255, 0.5);
+  border: 1px solid #09ca51;
 }
 .eboard-pagination-total {
   padding: 0.2rem;
