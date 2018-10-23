@@ -58,10 +58,11 @@ input::-webkit-inner-spin-button {
             background-color: rgba(0,0,0,0.3);
             border-radius: 999px;
             padding-top: 4px;
+            padding-left: 10px;
         }
         &-current{
-            width: @inputWidth;
-            height: @width;
+            width: @inputWidth!important;
+            height: @width!important;
             border: 1px solid transparent;
             -webkit-box-sizing: border-box;
             -moz-box-sizing: border-box;
@@ -72,7 +73,7 @@ input::-webkit-inner-spin-button {
             border-radius: 5px;
             margin-right: 10px;
             &:hover{
-                border:1px solid rgba(51, 133, 255,0.5);
+                border:1px solid #09ca51;
             }
         }
         &-total{
