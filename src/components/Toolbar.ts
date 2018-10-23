@@ -38,7 +38,7 @@ const newItems:IToolbarItem[][]=[
         key:'text',
         children: [14,18,24,26],
     }],[{
-        name: '空心矩形',
+        name: '图形',
         icon: 'tuxing',
         key: 'rectangle',
     },{
