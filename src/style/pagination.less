@@ -9,6 +9,7 @@
 @inputWidth:4rem;
 @fontSize:18px;
 @bottomPadding:0.2rem;
+@bottomGoSize:35px;
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -66,18 +67,32 @@ input::-webkit-inner-spin-button {
             -moz-box-sizing: border-box;
             box-sizing: border-box;
             background: #dddddd;
-            text-align: right;
+            text-align: center;
             vertical-align: middle;
+            border-radius: 5px;
+            margin-right: 10px;
             &:hover{
                 border:1px solid rgba(51, 133, 255,0.5);
             }
         }
         &-total{
             padding: @bottomPadding;
-            color: #09ca51;
+            color: #ffffff;
             display: inline-block;
             vertical-align: middle;
         }
+      &-bottomGo{
+        display: inline-block;
+        margin: 0 5px 0 20px;
+        background-color: #666666;
+        color: #ffffff;
+        border-radius: 100%;
+        text-align: center;
+        width: @bottomGoSize;
+        height: @bottomGoSize;
+        line-height: @bottomGoSize;
+        cursor: pointer;
+      }
     }
     &-pager{
         &-enter-from-right{

@@ -28,6 +28,7 @@ class Pagination{
         this.onPrev=this.onPrev.bind(this);
         this.onNext=this.onNext.bind(this);
         this.onKeyEnter=this.onKeyEnter.bind(this);
+        this.onGo=this.onGo.bind(this);
         this.initLayout();
         this.setPageNum(pageNum);
         this.setTotalPages(totalPages);
@@ -64,12 +65,17 @@ class Pagination{
         const span = document.createElement("span");
         span.className="eboard-pagination-total";
         this.span=span;
+        const bottomGo = document.createElement("div");
+        bottomGo.innerText = "GO";
+        bottomGo.className="eboard-pagination-bottomGo";
+        bottomGo.addEventListener("click",this.onGo);
         
         bottom.appendChild(this.prev);
         bottom.appendChild(input);
         bottom.appendChild(document.createTextNode("/"));
         bottom.appendChild(span);
         bottom.appendChild(this.next);
+        bottom.appendChild(bottomGo);
         // wrap.appendChild(prev);
         // wrap.appendChild(next);
         wrap.appendChild(bottom);
@@ -87,6 +93,12 @@ class Pagination{
                 this.onGoListener.call(this,number);
             }
         }
+    }
+
+    private onGo(){
+        // 翻页
+        this.todoChange();
+        this.input.blur();// 自动失去焦点
     }
     
     private onKeyEnter(event:any){
