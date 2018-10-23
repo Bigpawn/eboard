@@ -601,7 +601,9 @@ class EBoard{
     public onMessage(message:string){
         const messageObj:any = this.middleWare.decompressMessage(message);
         const {frameId,groupId,...options} = messageObj;
-        const {tag,type} = options;
+        let {tag,type} = options;
+        tag = typeof tag==="string"?Number(tag):tag;
+        
         if(tag===MessageTag.CreateFrame){
             this.addFrame(messageObj);
             return;
@@ -711,7 +713,7 @@ class EBoard{
         }else{
             switch (tag){
                 case MessageTag.SwitchToFrame:
-                    this.switchToTab(options.activeKey);
+                    this.switchToTab(options.activeKey,true);
                 case MessageTag.RemoveFrame:
                     this.removeFrame(options.tabId,true);
                     break;

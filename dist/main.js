@@ -38302,6 +38302,7 @@ var EBoard = /** @class */function () {
             options = __rest(messageObj, ["frameId", "groupId"]);
         var tag = options.tag,
             type = options.type;
+        tag = typeof tag === "string" ? Number(tag) : tag;
         if (tag === __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].CreateFrame) {
             this.addFrame(messageObj);
             return;
@@ -38410,7 +38411,7 @@ var EBoard = /** @class */function () {
         } else {
             switch (tag) {
                 case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame:
-                    this.switchToTab(options.activeKey);
+                    this.switchToTab(options.activeKey, true);
                 case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].RemoveFrame:
                     this.removeFrame(options.tabId, true);
                     break;

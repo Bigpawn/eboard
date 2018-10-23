@@ -244,6 +244,7 @@ input::-webkit-inner-spin-button {
   text-align: center;
   cursor: pointer;
   vertical-align: middle;
+  margin-left: 10px;
 }
 .eboard-pagination-right.disabled {
   pointer-events: none;
@@ -260,7 +261,7 @@ input::-webkit-inner-spin-button {
   height: 44px;
   bottom: 54px;
   left: 50%;
-  margin-left: -4rem;
+  margin-left: -40px;
   font-size: 18px;
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 999px;
@@ -268,7 +269,7 @@ input::-webkit-inner-spin-button {
   padding-left: 10px;
 }
 .eboard-pagination-current {
-  width: 4rem !important;
+  width: 40px !important;
   height: 26px !important;
   border: 1px solid transparent;
   -webkit-box-sizing: border-box;
@@ -291,7 +292,7 @@ input::-webkit-inner-spin-button {
 }
 .eboard-pagination-bottomGo {
   display: inline-block;
-  margin: 0 5px 0 20px;
+  margin: 0 5px 0 0;
   background-color: #666666;
   color: #ffffff;
   border-radius: 100%;
@@ -339,6 +340,13 @@ input::-webkit-inner-spin-button {
 }
 .eboard-disable .eboard-pagination-bottom {
   pointer-events: none;
+}
+.eboard-disable .eboard-pagination-current {
+  pointer-events: none;
+  background-color: transparent!important;
+}
+.eboard-disable .eboard-pagination-bottomGo {
+  display: none;
 }
 @keyframes page-enter-from-right {
   from {
