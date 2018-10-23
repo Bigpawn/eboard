@@ -59,6 +59,23 @@ class Pagination{
         bottom.className="eboard-pagination-bottom";
         const input = document.createElement("input");
         input.type="number";
+        input.oninput=()=>{
+            console.log(input.value);
+            input.value=input.value.replace(/\D/g,'');
+            const number = Number(input.value);
+            if(number>this.totalPages){
+                input.value = this.totalPages.toString();
+            }
+            if(input.value==="0"){
+                input.value = "1";
+            }
+        };
+        input.onblur=()=>{
+            const number = Number(input.value);
+            if(number<1){
+                input.value = "1";
+            }
+        };
         input.className="eboard-pagination-current";
         input.addEventListener("keydown",this.onKeyEnter);
         this.input=input;

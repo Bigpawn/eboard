@@ -83,7 +83,8 @@ class ScrollBar extends PerfectScrollbar{
     @message
     private scrollAction(){
         // 返回总高度
-        return this.context?{
+        const enable = this.context&&this.context.getConfig("enable");
+        return enable?{
             tag:MessageTag.Scroll,
             scrollTop:this.container.scrollTop,
             scrollLeft:this.container.scrollLeft,
