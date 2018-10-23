@@ -17,7 +17,7 @@ module.exports=function(webpackConfig) {
     });
     webpackConfig.module.rules.unshift({
         test:/\.worker\.js$/,
-        use: { loader: 'worker-loader',options: { name: 'examples/[hash].worker.js',publicPath:"../"}}
+        use: { loader: 'worker-loader',options: { name: 'examples/[hash].worker.js',publicPath:"../",inline: true}}
     });
     webpackConfig.module.rules.push({
         test: /.pdf$/,
