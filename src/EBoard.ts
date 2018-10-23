@@ -185,12 +185,10 @@ class EBoard{
                     break;
                 case "dottriangle":
                     this.context.dashed=true;
-                    this.context.color="#000";
                     this.setActivePlugin(Plugins.Triangle);
                     break;
                 case "triangle":
                     this.context.dashed=false;
-                    this.context.color="#000";
                     this.setActivePlugin(Plugins.Triangle);
                     break;
                 case "equilateral-triangle":

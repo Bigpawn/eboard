@@ -7,18 +7,16 @@
  */
 
 import PerfectScrollbar from 'perfect-scrollbar';
-import {IExtraMessage, IFrame} from '../interface/IFrame';
+import {IFrame} from '../interface/IFrame';
 import Timer = NodeJS.Timer;
 import {message} from '../utils/decorators';
-import {IEDux} from '../utils/EDux';
 import {IScrollBarMessage} from '../interface/IMessage';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
 
 
 declare interface IScrollBarOptions extends PerfectScrollbar.Options{
-    extraMessage?:IExtraMessage,
-    eDux?:IEDux
+    frameId?:string;
 }
 
 class ScrollBar extends PerfectScrollbar{
@@ -26,13 +24,13 @@ class ScrollBar extends PerfectScrollbar{
     private container:HTMLElement;
     private delPixel:number=5;
     private scrollInterval:Timer;
-    public extraMessage?:IExtraMessage;
+    private frameId?:string;
     public context?:Context;
     constructor(element: string | HTMLElement,options: IScrollBarOptions,context?:Context){
         super(element,options);
         this.context=context;
+        this.frameId=options.frameId;
         this.container = typeof element === 'string'?document.querySelector(element) as HTMLElement:element;
-        this.extraMessage=options.extraMessage;
         if(void 0 !== this.container){
             this.initScrollEndEvent();
         }
@@ -91,6 +89,7 @@ class ScrollBar extends PerfectScrollbar{
             scrollLeft:this.container.scrollLeft,
             totalHeight:this.container.scrollHeight,
             totalWidth:this.container.scrollWidth,
+            frameId:this.frameId
         }:undefined
     }
     

@@ -1,6 +1,6 @@
 {
     "name": "eboard",
-    "version": "0.2.1",
+    "version": "0.2.3",
     "author": "Heng Li",
     "description": "eboard lib",
     "license": "MIT",
@@ -53,7 +53,8 @@
         "dist"
     ],
     "config": {
-        "port": 8002
+        "port": 8002,
+        "entry":"./src/EBoard.ts"
     },
     "main": "./lib/Animation",
     "module": "./es/Animation",

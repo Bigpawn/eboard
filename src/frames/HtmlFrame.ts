@@ -87,17 +87,20 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
                 this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
                     suppressScrollY:true,
+                    frameId:this.frameId
                 },this.context);
                 break;
             case ScrollbarType.vertical:
                 this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
                     suppressScrollX:true,
+                    frameId:this.frameId
                 },this.context);
                 break;
             case ScrollbarType.both:
                 this.scrollbar= new ScrollBar(container,{
                     wheelSpeed: 2,
+                    frameId:this.frameId
                 },this.context);
                 break;
             case ScrollbarType.none:
@@ -106,6 +109,7 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
                     this.scrollbar= new ScrollBar(container,{
                         wheelSpeed: 2,
                         suppressScrollX:true,
+                        frameId:this.frameId
                     },this.context);
                 }
                 break;
