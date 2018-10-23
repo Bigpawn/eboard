@@ -33,10 +33,13 @@ class EBoardCanvas extends fabric.Canvas{
     private cursor:ICursor;
     private cursorType:CursorType;
     public context:Context;
-    
+    private frameId:string;
+    private groupId?:string;
     constructor(element: HTMLCanvasElement,options: ICanvasOptions,eBoardEngine:EBoardEngine){
         super(element,options);
         this.context=eBoardEngine.context;
+        this.frameId=eBoardEngine.frameId;
+        this.groupId=eBoardEngine.groupId;
         const cursorCanvasEl=document.createElement("canvas");
         cursorCanvasEl.className="eboard-cursor";
         element.parentElement&&element.parentElement.appendChild(cursorCanvasEl);
@@ -121,7 +124,7 @@ class EBoardCanvas extends fabric.Canvas{
         if(void 0 !== this.instance){
             this.cursorCanvas.remove(this.instance);
         }
-        this.instance = this.cursor.render(point,this.context.transform(this.context.getFrame("cursorSize")));
+        this.instance = this.cursor.render(point,this.context.transform(this.context.getConfig("cursorSize")));
         this.instance.name=this.cursorType; // 比较类型是否变化
         this.instance.type="cursor";// 设置type，扩展的Canvas可能会做其他操作
         this.cursorCanvas.add(this.instance);
@@ -149,6 +152,8 @@ class EBoardCanvas extends fabric.Canvas{
             size:this.context.getConfig("cursorSize"),
             type:this.cursorType,
             center:center,
+            frameId:this.frameId,
+            groupId:this.groupId
         }
     }
     private getCursorInstance(){

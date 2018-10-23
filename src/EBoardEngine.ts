@@ -30,9 +30,9 @@ class EBoardEngine extends ContextFactory{
     constructor(element: HTMLCanvasElement,context:Context, options: IEBoardEngineOptions){
         super(context);
         options.allowTouchScrolling=true;
-        this.eBoardCanvas = new EBoardCanvas(element,options,this);
         this.frameId = options.frame;
         this.groupId = options.group;
+        this.eBoardCanvas = new EBoardCanvas(element,options,this);
         this.initPlugin();
     }
     private initPlugin(){
