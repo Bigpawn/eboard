@@ -83,14 +83,14 @@ class ScrollBar extends PerfectScrollbar{
     @message
     private scrollAction(){
         // 返回总高度
-        return {
+        return this.context?{
             tag:MessageTag.Scroll,
             scrollTop:this.container.scrollTop,
             scrollLeft:this.container.scrollLeft,
             totalHeight:this.container.scrollHeight,
             totalWidth:this.container.scrollWidth,
             frameId:this.frameId
-        }
+        }:undefined
     }
     
     public onMessage(message:IScrollBarMessage){

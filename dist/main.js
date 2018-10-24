@@ -33807,9 +33807,7 @@ var GenericBaseFrame = /** @class */function (_super) {
             container.innerHTML = "";
             container.appendChild(_this.dom); // 立即显示
         }
-        if (!options.frameId) {
-            _this.initializeAction();
-        }
+        _this.initializeAction();
         return _this;
     }
     GenericBaseFrame.prototype.initPlugin = function () {
@@ -34523,15 +34521,14 @@ var ScrollBar = /** @class */function (_super) {
     };
     ScrollBar.prototype.scrollAction = function () {
         // 返回总高度
-        var enable = this.context && this.context.getConfig("enable") !== false;
-        return enable ? {
+        return {
             tag: __WEBPACK_IMPORTED_MODULE_2__enums_MessageTag__["a" /* MessageTag */].Scroll,
             scrollTop: this.container.scrollTop,
             scrollLeft: this.container.scrollLeft,
             totalHeight: this.container.scrollHeight,
             totalWidth: this.container.scrollWidth,
             frameId: this.frameId
-        } : undefined;
+        };
     };
     ScrollBar.prototype.onMessage = function (message) {
         var scrollTop = message.scrollTop,
@@ -38263,7 +38260,7 @@ var EBoard = /** @class */function () {
             this.switchMessage(id);
         }
     };
-    EBoard.prototype.removeFrame = function (tabId, withoutMessage) {
+    EBoard.prototype.removeFrame = function (tabId) {
         var frameInstance = this.context.getFrameById(tabId);
         var groupInstance = this.context.getGroupById(tabId);
         if (void 0 !== frameInstance) {
@@ -38285,10 +38282,10 @@ var EBoard = /** @class */function () {
                 this.switchToTab(lastId, true);
             }
         }
-        return !withoutMessage ? {
+        return {
             tag: __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].RemoveFrame,
             tabId: tabId
-        } : undefined;
+        };
     };
     /**
      * 消息分发
@@ -38413,7 +38410,7 @@ var EBoard = /** @class */function () {
                 case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame:
                     this.switchToTab(options.activeKey, true);
                 case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].RemoveFrame:
-                    this.removeFrame(options.tabId, true);
+                    this.removeFrame(options.tabId);
                     break;
                 default:
                     break;
@@ -45230,9 +45227,7 @@ var PdfFrame = /** @class */function () {
             container.innerHTML = "";
             container.appendChild(this.dom); // 立即显示
         }
-        if (!options.groupId) {
-            this.initializeAction();
-        }
+        this.initializeAction();
     }
     PdfFrame.prototype.initializeAction = function () {
         var _a = this.options,
@@ -45242,12 +45237,11 @@ var PdfFrame = /** @class */function () {
         return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, __assign({ tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].CreateFrameGroup, width: calcSize.width }, rest));
     };
     PdfFrame.prototype.switchFrameAction = function (pageNum) {
-        var enable = this.context.getConfig("enable") !== false;
-        return enable ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, {
+        return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, {
             groupId: this.groupId,
             tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame,
             pageNum: pageNum
-        }) : null;
+        });
     };
     PdfFrame.prototype.initLayout = function () {
         var pagerContainer = document.createElement("div");
@@ -71895,9 +71889,7 @@ var ImagesFrame = /** @class */function () {
             container.innerHTML = "";
             container.appendChild(this.dom); // 立即显示
         }
-        if (!options.groupId) {
-            this.initializeAction();
-        }
+        this.initializeAction();
     }
     ImagesFrame.prototype.initializeAction = function () {
         var _a = this.options,
@@ -71907,12 +71899,11 @@ var ImagesFrame = /** @class */function () {
         return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, __assign({ tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].CreateFrameGroup, width: calcSize.width }, rest));
     };
     ImagesFrame.prototype.switchFrameAction = function (pageNum) {
-        var enable = this.context.getConfig("enable") !== false;
-        return enable ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, {
+        return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, {
             groupId: this.groupId,
             tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame,
             pageNum: pageNum
-        }) : null;
+        });
     };
     ImagesFrame.prototype.initLayout = function () {
         var pagerContainer = document.createElement("div");
