@@ -81,6 +81,9 @@
   width: 100%;
   overflow: hidden;
 }
+textarea[data-fabric-hiddentextarea] {
+  left: 0!important;
+}
 /*
  * Container style
  */

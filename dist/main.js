@@ -34523,7 +34523,7 @@ var ScrollBar = /** @class */function (_super) {
     };
     ScrollBar.prototype.scrollAction = function () {
         // 返回总高度
-        var enable = this.context && this.context.getConfig("enable");
+        var enable = this.context && this.context.getConfig("enable") !== false;
         return enable ? {
             tag: __WEBPACK_IMPORTED_MODULE_2__enums_MessageTag__["a" /* MessageTag */].Scroll,
             scrollTop: this.container.scrollTop,
@@ -45242,11 +45242,12 @@ var PdfFrame = /** @class */function () {
         return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, __assign({ tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].CreateFrameGroup, width: calcSize.width }, rest));
     };
     PdfFrame.prototype.switchFrameAction = function (pageNum) {
-        return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, {
+        var enable = this.context.getConfig("enable") !== false;
+        return enable ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, {
             groupId: this.groupId,
             tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame,
             pageNum: pageNum
-        });
+        }) : null;
     };
     PdfFrame.prototype.initLayout = function () {
         var pagerContainer = document.createElement("div");
@@ -71906,11 +71907,12 @@ var ImagesFrame = /** @class */function () {
         return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, __assign({ tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].CreateFrameGroup, width: calcSize.width }, rest));
     };
     ImagesFrame.prototype.switchFrameAction = function (pageNum) {
-        return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, {
+        var enable = this.context.getConfig("enable") !== false;
+        return enable ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, {
             groupId: this.groupId,
             tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame,
             pageNum: pageNum
-        });
+        }) : null;
     };
     ImagesFrame.prototype.initLayout = function () {
         var pagerContainer = document.createElement("div");
@@ -72977,7 +72979,7 @@ var newItems = [[{
     key: 'text',
     children: [14, 18, 24, 26]
 }], [{
-    name: '空心矩形',
+    name: '图形',
     icon: 'tuxing',
     key: 'rectangle'
 }, {

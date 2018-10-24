@@ -565,7 +565,7 @@ class EBoard{
     }
     
     @message
-    public removeFrame(tabId:string,withoutMessage?:boolean){
+    public removeFrame(tabId:string){
         const frameInstance = this.context.getFrameById(tabId);
         const groupInstance = this.context.getGroupById(tabId);
         if(void 0 !== frameInstance){
@@ -587,10 +587,10 @@ class EBoard{
                 this.switchToTab(lastId,true);
             }
         }
-        return !withoutMessage?{
+        return {
             tag:MessageTag.RemoveFrame,
             tabId:tabId
-        }:undefined
+        }
     }
     
     /**
@@ -715,7 +715,7 @@ class EBoard{
                 case MessageTag.SwitchToFrame:
                     this.switchToTab(options.activeKey,true);
                 case MessageTag.RemoveFrame:
-                    this.removeFrame(options.tabId,true);
+                    this.removeFrame(options.tabId);
                     break;
                 default:
                     break;

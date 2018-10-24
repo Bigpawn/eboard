@@ -45,9 +45,7 @@ class ImagesFrame implements IImagesFrame{
             container.innerHTML = "";
             container.appendChild(this.dom);// 立即显示
         }
-        if(!options.groupId){
-            this.initializeAction();
-        }
+        this.initializeAction();
     }
     @message
     public initializeAction(){
