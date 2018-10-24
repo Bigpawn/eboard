@@ -108,6 +108,21 @@ const colors = [
     "#ff7c81"
     ];
 
+const defaultActive={
+    activeH: {
+        size: "8",
+        color: "#f66c00",
+    },
+    activeW: {
+        size: "18",
+        color: "#f66c00",
+    },
+    activeT: {
+        index: "10",
+        color: "#f66c00",
+    }
+};
+
 
 class ToolbarChildren{
     private from:HTMLDivElement;
@@ -137,6 +152,7 @@ class ToolbarChildren{
             itemDom.style.backgroundColor = item;
             colorDom.appendChild(itemDom);
             itemDom.addEventListener('click',()=>{
+                this.from.click();
                 this.from.setAttribute('activeColor',item);
                 this.from.firstChild&&((this.from.firstChild as HTMLElement).style.backgroundColor = item);
                 this.listener&&this.listener({
@@ -150,6 +166,12 @@ class ToolbarChildren{
             const activeColor = this.from.getAttribute('activeColor');
             if(activeColor && activeColor === item){
                 itemDom.classList.add('active');
+                this.listener&&this.listener({
+                    key:"color",
+                    name:this.items[0].key,
+                    icon:"",
+                    color:item
+                })
             }
         });
         const lineDom = document.createElement('div');
@@ -177,7 +199,8 @@ class ToolbarChildren{
                 itemDom.appendChild(itemDom1);
 
                 itemDom1.addEventListener('click',()=>{
-                    this.from.setAttribute('activeH',item1);
+                    this.from.click();
+                    this.from.setAttribute(this.items[0].icon === "huabi" ? "activeH" : "activeW",item1);
                     this.listener&&this.listener({
                         key:"size",
                         name:this.items[0].key,
@@ -186,9 +209,15 @@ class ToolbarChildren{
                     })
                 });
 
-                const active = this.from.getAttribute('activeH');
+                const active = this.from.getAttribute(this.items[0].icon === "huabi" ? "activeH" : "activeW");
                 if(active && active === item1.toString()){
                     itemDom1.classList.add('active');
+                    this.listener&&this.listener({
+                        key:"size",
+                        name:this.items[0].key,
+                        icon:"",
+                        size:item1
+                    })
                 }
             });
             this.dom.appendChild(itemDom);
@@ -214,11 +243,18 @@ class ToolbarChildren{
             if(index){
                 this.dom.appendChild(itemDom);
             }
+
+            //默认值
+            if(this.items[0].icon === "tuxing"&&!Number(this.from.getAttribute('active'))){
+                this.from.setAttribute('active',defaultActive.activeT.index);
+                this.from.className = this.from.className.replace(/eboard-icon-\S+/,'eboard-icon-'+this.items[Number(defaultActive.activeT.index)].icon);
+            }
+
+
             itemDom.addEventListener('click',()=>{
                 this.listener&&this.listener.call(this,item);
                 this.from.setAttribute('active',index.toString());
                 this.from.className = this.from.className.replace(/eboard-icon-\S+/,'eboard-icon-'+item.icon);
-                this.listener&&this.listener(item);
             });
 
             const active = this.from.getAttribute('active');
@@ -239,6 +275,7 @@ class Toolbar{
     private listener?:(item:IToolbarItem)=>void;
     private childInstance:ToolbarChildren;
     private activeKey:string;
+    private over:boolean;
     constructor(container:HTMLElement,eBoard:EBoard,listener?:(item:IToolbarItem)=>void){
         this.listener=listener;
         this.initWrap();
@@ -267,6 +304,16 @@ class Toolbar{
                 }
             }
             this.dom.appendChild(itemDom);
+
+            //默认值
+            !itemDom.getAttribute('activeColor')&&itemDom.setAttribute('activeColor',defaultActive[members[0].icon === "wenzi" ? "activeW" : members[0].icon === "huabi" ? "activeH" : "activeT"].color);
+            !itemDom.getAttribute('activeH')&&itemDom.setAttribute('activeH',defaultActive.activeH.size);
+            !itemDom.getAttribute('activeW')&&itemDom.setAttribute('activeW',defaultActive.activeW.size);
+            const activeColor = itemDom.getAttribute('activeColor');
+            itemDom.firstChild&&((itemDom.firstChild as HTMLElement).style.backgroundColor = activeColor);
+
+
+
             let timer:any;
             const startEvent=(event:any)=>{
                 event.cancelBubble = true;
@@ -293,15 +340,47 @@ class Toolbar{
                     },300);
                 }
             };
+            const hoverEvent=(event:any)=>{
+                // this.closeChild();
+                if(length>1||members[0].children){
+                    this.over = true;
+                    const newMembers = [...members];
+                    this.showChild(itemDom,newMembers);
+                }
+            };
+            const outEvent=(event:any)=>{
+                this.dom.lastChild.addEventListener('mousemove',colorEvent);
+                this.dom.lastChild.addEventListener('mouseleave',()=>{
+                    this.closeChild();
+                });
+                this.over = false;
+                timer = setTimeout(()=>{
+                    !this.over&&this.closeChild();
+                },300);
+            };
+            const colorEvent=(event:any)=>{
+                clearTimeout(timer);
+                timer = undefined as any;
+            };
             itemDom.addEventListener('touchstart',startEvent);
-            itemDom.addEventListener('mousedown',startEvent);
+            itemDom.addEventListener('mousemove',hoverEvent);
+            itemDom.addEventListener('mouseleave',outEvent);
             itemDom.addEventListener('click',(event:any)=>{
                 event.cancelBubble = true;
                 event.stopPropagation();
-                if(timer){
-                    clearTimeout(timer);
-                    timer = undefined as any;
+                const activeItem = Number(itemDom.getAttribute('active'))||0;
+                const key = members[activeItem].key;
+                const active = members[activeItem].active;
+                if(key !== this.activeKey){
+                    this.listener&&this.listener.call(this,members[activeItem]);// 可能不是该item
                 }
+                if(active !== false){
+                    const active = itemDom.parentElement?itemDom.parentElement.querySelector('.active'):undefined;
+                    active&&active.classList.remove('active');
+                    itemDom.classList.add('active');// 移除
+                    this.activeKey= key;
+                }
+                this.closeChild();
             });
         });
     }
