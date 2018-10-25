@@ -727,12 +727,11 @@ class EBoard{
      * @param {(data: any) => void} listener
      */
     public on(type:string,listener:(data:any)=>void){
-        this.context.on(type,(event:any)=>{
-            const data = event.data;
-            listener.call(this,data);
-        })
+        this.context.on(type,listener);
     };
-    
+    public off(type:string,listener:(data:any)=>void){
+        this.context.off(type,listener);
+    }
     /**
      * 支持后台运行模式启用
      * @param {Plugins} plugin

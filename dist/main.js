@@ -38452,13 +38452,12 @@ var EBoard = /** @class */function () {
      * @param {(data: any) => void} listener
      */
     EBoard.prototype.on = function (type, listener) {
-        var _this = this;
-        this.context.on(type, function (event) {
-            var data = event.data;
-            listener.call(_this, data);
-        });
+        this.context.on(type, listener);
     };
     ;
+    EBoard.prototype.off = function (type, listener) {
+        this.context.off(type, listener);
+    };
     /**
      * 支持后台运行模式启用
      * @param {Plugins} plugin
@@ -39181,7 +39180,7 @@ var EBoardCanvas = /** @class */function (_super) {
      */
     EBoardCanvas.prototype.setDimensions = function (dimensions, options) {
         _super.prototype.setDimensions.call(this, dimensions, options);
-        this.setDimensions(dimensions, options);
+        // this.setDimensions(dimensions,options);
         return this;
     };
     EBoardCanvas.prototype.getLowerCanvas = function () {
@@ -39974,21 +39973,7 @@ var Text = /** @class */function (_super) {
     Text.prototype.onMouseDown = function (event) {
         var _this = this;
         _super.prototype.onMouseDown.call(this, event);
-        if (void 0 === this.instance) {
-            this.instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Text__["a" /* Text */]('', {
-                left: this.start.x,
-                top: this.start.y,
-                fontSize: this.fontSize,
-                fill: this.fontColor,
-                fontFamily: 'Microsoft YaHei'
-            }, this.eBoardCanvas);
-            this.instance.on("changed", function () {
-                _this["throw"]();
-            });
-            this.eBoardCanvas.add(this.instance);
-            this.instance.enterEditing(); // 进入编辑模式
-            this["throw"]();
-        } else {
+        if (void 0 !== this.instance) {
             this["throw"]();
             // 关闭当前的，如果当前的没有内容则删除
             this.eBoardCanvas.renderOnAddRemove = false;
@@ -40001,6 +39986,19 @@ var Text = /** @class */function (_super) {
             this.eBoardCanvas.renderAll();
             this.eBoardCanvas.renderOnAddRemove = true;
         }
+        this.instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Text__["a" /* Text */]('', {
+            left: this.start.x,
+            top: this.start.y,
+            fontSize: this.fontSize,
+            fill: this.fontColor,
+            fontFamily: 'Microsoft YaHei'
+        }, this.eBoardCanvas);
+        this.instance.on("changed", function () {
+            _this["throw"]();
+        });
+        this.eBoardCanvas.add(this.instance);
+        this.instance.enterEditing(); // 进入编辑模式
+        this["throw"]();
     };
     Text.prototype.onMouseUp = function () {
         // 取消默认操作
@@ -72505,6 +72503,15 @@ if (!("classList" in document.documentElement)) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__font_iconfont_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__font_iconfont_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__style_drop_down_less__ = __webpack_require__(190);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__style_drop_down_less___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__style_drop_down_less__);
+var __assign = this && this.__assign || Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) {
+            if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+    }
+    return t;
+};
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
  * @Date: 2018/7/31 15:30
@@ -72585,7 +72592,7 @@ var newItems = [[{
     key: 'ferule'
 }]];
 var colors = ["#ffffff", "#888888", "#555555", "#000000", "#f22500", "#f66c00", "#fad500", "#64cb00", "#00cac4", "#3698f3", "#8b6dc5", "#ff7c81"];
-var defaultActive = {
+var defaultActive = JSON.parse(localStorage.getItem("defaultActive")) || {
     activeH: {
         size: "8",
         color: "#f66c00"
@@ -72597,7 +72604,16 @@ var defaultActive = {
     activeT: {
         index: "10",
         color: "#f66c00"
+    },
+    activeKey: {
+        key: ""
     }
+};
+localStorage.setItem("defaultActive", JSON.stringify(defaultActive));
+var setActive = function setActive(item, active) {
+    var localActive = JSON.parse(localStorage.getItem("defaultActive"));
+    localActive[item] = __assign({}, localActive[item], active);
+    localStorage.setItem("defaultActive", JSON.stringify(localActive));
 };
 var ToolbarChildren = /** @class */function () {
     function ToolbarChildren(from, items, listener) {
@@ -72636,6 +72652,7 @@ var ToolbarChildren = /** @class */function () {
                     icon: "",
                     color: item
                 });
+                setActive(_this.items[0].icon === "wenzi" ? "activeW" : _this.items[0].icon === "huabi" ? "activeH" : "activeT", { color: item });
             });
             var activeColor = _this.from.getAttribute('activeColor');
             if (activeColor && activeColor === item) {
@@ -72646,6 +72663,7 @@ var ToolbarChildren = /** @class */function () {
                     icon: "",
                     color: item
                 });
+                setActive(_this.items[0].icon === "wenzi" ? "activeW" : _this.items[0].icon === "huabi" ? "activeH" : "activeT", { color: item });
             }
         });
         var lineDom = document.createElement('div');
@@ -72680,6 +72698,7 @@ var ToolbarChildren = /** @class */function () {
                         icon: "",
                         size: item1
                     });
+                    setActive(_this.items[0].icon === "huabi" ? "activeH" : "activeW", { size: item1 });
                 });
                 var active = _this.from.getAttribute(_this.items[0].icon === "huabi" ? "activeH" : "activeW");
                 if (active && active === item1.toString()) {
@@ -72690,6 +72709,7 @@ var ToolbarChildren = /** @class */function () {
                         icon: "",
                         size: item1
                     });
+                    setActive(_this.items[0].icon === "huabi" ? "activeH" : "activeW", { size: item1 });
                 }
             });
             this.dom.appendChild(itemDom_1);
@@ -72717,15 +72737,11 @@ var ToolbarChildren = /** @class */function () {
             if (index) {
                 _this.dom.appendChild(itemDom);
             }
-            //默认值
-            if (_this.items[0].icon === "tuxing" && !Number(_this.from.getAttribute('active'))) {
-                _this.from.setAttribute('active', defaultActive.activeT.index);
-                _this.from.className = _this.from.className.replace(/eboard-icon-\S+/, 'eboard-icon-' + _this.items[Number(defaultActive.activeT.index)].icon);
-            }
             itemDom.addEventListener('click', function () {
                 _this.listener && _this.listener.call(_this, item);
                 _this.from.setAttribute('active', index.toString());
                 _this.from.className = _this.from.className.replace(/eboard-icon-\S+/, 'eboard-icon-' + item.icon);
+                setActive("activeT", { index: index.toString() });
             });
             var active = _this.from.getAttribute('active');
             if (active && active === index.toString()) {
@@ -72768,12 +72784,6 @@ var Toolbar = /** @class */function () {
                 }
             }
             _this.dom.appendChild(itemDom);
-            //默认值
-            !itemDom.getAttribute('activeColor') && itemDom.setAttribute('activeColor', defaultActive[members[0].icon === "wenzi" ? "activeW" : members[0].icon === "huabi" ? "activeH" : "activeT"].color);
-            !itemDom.getAttribute('activeH') && itemDom.setAttribute('activeH', defaultActive.activeH.size);
-            !itemDom.getAttribute('activeW') && itemDom.setAttribute('activeW', defaultActive.activeW.size);
-            var activeColor = itemDom.getAttribute('activeColor');
-            itemDom.firstChild && (itemDom.firstChild.style.backgroundColor = activeColor);
             var timer;
             var startEvent = function startEvent(event) {
                 event.cancelBubble = true;
@@ -72804,8 +72814,7 @@ var Toolbar = /** @class */function () {
                 // this.closeChild();
                 if (length > 1 || members[0].children) {
                     _this.over = true;
-                    var newMembers = members.slice();
-                    _this.showChild(itemDom, newMembers);
+                    _this.showChild(itemDom, members);
                 }
             };
             var outEvent = function outEvent(event) {
@@ -72840,8 +72849,27 @@ var Toolbar = /** @class */function () {
                     itemDom.classList.add('active'); // 移除
                     _this.activeKey = key;
                 }
+                setActive("activeKey", { key: key });
                 _this.closeChild();
             });
+            //默认值
+            !itemDom.getAttribute('activeColor') && itemDom.setAttribute('activeColor', defaultActive[members[0].icon === "wenzi" ? "activeW" : members[0].icon === "huabi" ? "activeH" : "activeT"].color);
+            !itemDom.getAttribute('activeH') && itemDom.setAttribute('activeH', defaultActive.activeH.size);
+            !itemDom.getAttribute('activeW') && itemDom.setAttribute('activeW', defaultActive.activeW.size);
+            var activeColor = itemDom.getAttribute('activeColor');
+            itemDom.firstChild && (itemDom.firstChild.style.backgroundColor = activeColor);
+            //延时设置缓存的activeKey
+            setTimeout(function () {
+                //默认activeT
+                if (members[0].icon === "tuxing" && !Number(itemDom.getAttribute('active'))) {
+                    itemDom.setAttribute('active', defaultActive.activeT.index);
+                    itemDom.className = itemDom.className.replace(/eboard-icon-\S+/, 'eboard-icon-' + members[Number(defaultActive.activeT.index)].icon);
+                }
+                if (members[Number(itemDom.getAttribute('active')) || 0].key === defaultActive.activeKey.key) {
+                    hoverEvent();
+                    itemDom.click();
+                }
+            }, 500);
         });
     };
     Toolbar.prototype.closeChild = function () {
