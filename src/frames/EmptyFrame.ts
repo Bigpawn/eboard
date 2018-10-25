@@ -44,7 +44,9 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
             container.innerHTML = "";
             container.appendChild(this.dom);// 立即显示
         }
-        this.initializeAction();
+        if(!this.groupId){
+            this.initializeAction();
+        }
     }
     private initPlugin(){
         const {store} = this.context;

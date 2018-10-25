@@ -688,7 +688,7 @@ input::-webkit-inner-spin-button {
 .eboard-toolbar-category {
   position: absolute;
   z-index: 20;
-  background: rgba(156, 156, 156, 0.4);
+  background: #cccccc;
   padding: 15px 15px 120px;
   border-radius: 10px;
   left: 100%;

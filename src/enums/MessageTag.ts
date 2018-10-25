@@ -19,5 +19,6 @@ export enum MessageTag{
     SelectionScale,
     SelectionRotate,
     RemoveFrame,
-    Shape
+    Shape,
+    TurnPage,// 翻页
 }

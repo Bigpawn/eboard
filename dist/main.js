@@ -220,6 +220,7 @@ var MessageTag;
     MessageTag[MessageTag["SelectionRotate"] = 11] = "SelectionRotate";
     MessageTag[MessageTag["RemoveFrame"] = 12] = "RemoveFrame";
     MessageTag[MessageTag["Shape"] = 13] = "Shape";
+    MessageTag[MessageTag["TurnPage"] = 14] = "TurnPage";
 })(MessageTag || (MessageTag = {}));
 
 /***/ }),
@@ -33807,7 +33808,9 @@ var GenericBaseFrame = /** @class */function (_super) {
             container.innerHTML = "";
             container.appendChild(_this.dom); // 立即显示
         }
-        _this.initializeAction();
+        if (!_this.groupId) {
+            _this.initializeAction();
+        }
         return _this;
     }
     GenericBaseFrame.prototype.initPlugin = function () {
@@ -34521,14 +34524,14 @@ var ScrollBar = /** @class */function (_super) {
     };
     ScrollBar.prototype.scrollAction = function () {
         // 返回总高度
-        return {
+        return this.context ? {
             tag: __WEBPACK_IMPORTED_MODULE_2__enums_MessageTag__["a" /* MessageTag */].Scroll,
             scrollTop: this.container.scrollTop,
             scrollLeft: this.container.scrollLeft,
             totalHeight: this.container.scrollHeight,
             totalWidth: this.container.scrollWidth,
             frameId: this.frameId
-        };
+        } : undefined;
     };
     ScrollBar.prototype.onMessage = function (message) {
         var scrollTop = message.scrollTop,
@@ -38397,7 +38400,7 @@ var EBoard = /** @class */function () {
                 case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].CreateFrameGroup:
                     this.addFrameGroup(messageObj);
                     break;
-                case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame:
+                case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].TurnPage:
                     this.context.getGroup(groupId).then(function (group) {
                         group.onGo(options.pageNum, options.messageId);
                     });
@@ -38464,6 +38467,12 @@ var EBoard = /** @class */function () {
             enable: true
         });
         return this;
+    };
+    EBoard.prototype.getFrameGroup = function (groupId) {
+        return this.context.getGroupById(groupId);
+    };
+    EBoard.prototype.getFrame = function (frameId) {
+        return this.context.getFrameById(frameId);
     };
     __decorate([__WEBPACK_IMPORTED_MODULE_12__utils_decorators__["a" /* message */]], EBoard.prototype, "switchMessage", null);
     __decorate([__WEBPACK_IMPORTED_MODULE_12__utils_decorators__["a" /* message */]], EBoard.prototype, "removeFrame", null);
@@ -45239,7 +45248,7 @@ var PdfFrame = /** @class */function () {
     PdfFrame.prototype.switchFrameAction = function (pageNum) {
         return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, {
             groupId: this.groupId,
-            tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame,
+            tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].TurnPage,
             pageNum: pageNum
         });
     };
@@ -45390,18 +45399,14 @@ var PdfFrame = /** @class */function () {
             currentFrameDom.classList.add(leaveClassName);
             _this.dom.insertBefore(frameDom, _this.pagination.dom);
             _this.setPageNum(pageNum);
-            var transitionEndListener = function transitionEndListener(e) {
-                frameDom.removeEventListener('animationend', transitionEndListener);
+            setTimeout(function () {
                 frameDom.classList.remove(enterClassName);
                 currentFrameDom.classList.remove(leaveClassName);
                 // 删除dom
                 currentFrameDom.parentElement && currentFrameDom.parentElement.removeChild(currentFrameDom);
                 _this.pageFrame = nextPageFrame;
-                setTimeout(function () {
-                    resolve(_this);
-                }, 0);
-            };
-            frameDom.addEventListener('animationend', transitionEndListener);
+                resolve(_this);
+            }, 510);
         });
     };
     PdfFrame.prototype.getPlugin = function (pluginName) {
@@ -71901,7 +71906,7 @@ var ImagesFrame = /** @class */function () {
     ImagesFrame.prototype.switchFrameAction = function (pageNum) {
         return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, {
             groupId: this.groupId,
-            tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame,
+            tag: __WEBPACK_IMPORTED_MODULE_5__enums_MessageTag__["a" /* MessageTag */].TurnPage,
             pageNum: pageNum
         });
     };
@@ -71928,7 +71933,7 @@ var ImagesFrame = /** @class */function () {
         }
         if (this.images.length > 0) {
             var pageFrame = new __WEBPACK_IMPORTED_MODULE_4__ImageFrame__["a" /* ImageFrame */](this.context, {
-                content: this.urlPrefix + this.images[this.pageNum],
+                content: this.urlPrefix + this.images[this.pageNum - 1],
                 scrollbar: __WEBPACK_IMPORTED_MODULE_1__HtmlFrame__["c" /* ScrollbarType */].vertical,
                 container: this.container,
                 frameId: this.groupId + "_" + this.pageNum.toString(),
@@ -71983,7 +71988,7 @@ var ImagesFrame = /** @class */function () {
         if (void 0 === nextPageFrame) {
             // 创建
             nextPageFrame = new __WEBPACK_IMPORTED_MODULE_4__ImageFrame__["a" /* ImageFrame */](this.context, {
-                content: this.urlPrefix + this.images[pageNum],
+                content: this.urlPrefix + this.images[pageNum - 1],
                 scrollbar: __WEBPACK_IMPORTED_MODULE_1__HtmlFrame__["c" /* ScrollbarType */].vertical,
                 container: this.container,
                 frameId: this.groupId + "_" + this.pageNum.toString(),
@@ -71999,6 +72004,7 @@ var ImagesFrame = /** @class */function () {
      * @param {number} pageNum
      * @returns {any}
      */
+    // @pipMode
     ImagesFrame.prototype.switchToFrame = function (pageNum) {
         var _this = this;
         if (this.pageNum === pageNum || void 0 === pageNum) {
@@ -72008,24 +72014,22 @@ var ImagesFrame = /** @class */function () {
         return new Promise(function (resolve) {
             var frameDom = nextPageFrame.dom;
             var currentFrameDom = _this.pageFrame.dom;
-            var enterClassName = _this.animationCssPrefix + "-enter-from-" + (pageNum > _this.pageNum ? "right" : "left");
-            var leaveClassName = _this.animationCssPrefix + "-leave-to-" + (pageNum > _this.pageNum ? "left" : "right");
-            frameDom.classList.add(enterClassName);
-            currentFrameDom.classList.add(leaveClassName);
+            // const enterClassName = `${this.animationCssPrefix}-enter-from-${pageNum>this.pageNum?"right":"left"}`;
+            // const leaveClassName = `${this.animationCssPrefix}-leave-to-${pageNum>this.pageNum?"left":"right"}`;
+            // frameDom.classList.add(enterClassName);
+            // currentFrameDom.classList.add(leaveClassName);
             _this.dom.insertBefore(frameDom, _this.pagination.dom);
             _this.setPageNum(pageNum);
-            var transitionEndListener = function transitionEndListener(e) {
-                frameDom.removeEventListener('animationend', transitionEndListener);
-                frameDom.classList.remove(enterClassName);
-                currentFrameDom.classList.remove(leaveClassName);
-                // 删除dom
-                currentFrameDom.parentElement && currentFrameDom.parentElement.removeChild(currentFrameDom);
-                _this.pageFrame = nextPageFrame;
-                setTimeout(function () {
-                    resolve(_this);
-                }, 0);
-            };
-            frameDom.addEventListener('animationend', transitionEndListener);
+            currentFrameDom.parentElement && currentFrameDom.parentElement.removeChild(currentFrameDom);
+            _this.pageFrame = nextPageFrame;
+            /*     setTimeout(()=>{
+                     frameDom.classList.remove(enterClassName);
+                     currentFrameDom.classList.remove(leaveClassName);
+                     // 删除dom
+                     currentFrameDom.parentElement&&currentFrameDom.parentElement.removeChild(currentFrameDom);
+                     this.pageFrame=nextPageFrame as ImageFrame;
+                     resolve(this);
+                 },510);*/
         });
     };
     ImagesFrame.prototype.getPlugin = function (pluginName) {
@@ -72044,7 +72048,6 @@ var ImagesFrame = /** @class */function () {
     };
     __decorate([__WEBPACK_IMPORTED_MODULE_3__utils_decorators__["a" /* message */]], ImagesFrame.prototype, "initializeAction", null);
     __decorate([__WEBPACK_IMPORTED_MODULE_3__utils_decorators__["a" /* message */]], ImagesFrame.prototype, "switchFrameAction", null);
-    __decorate([__WEBPACK_IMPORTED_MODULE_3__utils_decorators__["b" /* pipMode */]], ImagesFrame.prototype, "switchToFrame", null);
     ImagesFrame = __decorate([Object(__WEBPACK_IMPORTED_MODULE_3__utils_decorators__["c" /* setAnimationName */])('eboard-pager')], ImagesFrame);
     return ImagesFrame;
 }();
@@ -73024,6 +73027,20 @@ var newItems = [[{
     key: 'ferule'
 }]];
 var colors = ["#ffffff", "#888888", "#555555", "#000000", "#f22500", "#f66c00", "#fad500", "#64cb00", "#00cac4", "#3698f3", "#8b6dc5", "#ff7c81"];
+var defaultActive = {
+    activeH: {
+        size: "8",
+        color: "#f66c00"
+    },
+    activeW: {
+        size: "18",
+        color: "#f66c00"
+    },
+    activeT: {
+        index: "10",
+        color: "#f66c00"
+    }
+};
 var ToolbarChildren = /** @class */function () {
     function ToolbarChildren(from, items, listener) {
         this.from = from;
@@ -73052,6 +73069,7 @@ var ToolbarChildren = /** @class */function () {
             itemDom.style.backgroundColor = item;
             colorDom.appendChild(itemDom);
             itemDom.addEventListener('click', function () {
+                _this.from.click();
                 _this.from.setAttribute('activeColor', item);
                 _this.from.firstChild && (_this.from.firstChild.style.backgroundColor = item);
                 _this.listener && _this.listener({
@@ -73064,6 +73082,12 @@ var ToolbarChildren = /** @class */function () {
             var activeColor = _this.from.getAttribute('activeColor');
             if (activeColor && activeColor === item) {
                 itemDom.classList.add('active');
+                _this.listener && _this.listener({
+                    key: "color",
+                    name: _this.items[0].key,
+                    icon: "",
+                    color: item
+                });
             }
         });
         var lineDom = document.createElement('div');
@@ -73090,7 +73114,8 @@ var ToolbarChildren = /** @class */function () {
                 }
                 itemDom_1.appendChild(itemDom1);
                 itemDom1.addEventListener('click', function () {
-                    _this.from.setAttribute('activeH', item1);
+                    _this.from.click();
+                    _this.from.setAttribute(_this.items[0].icon === "huabi" ? "activeH" : "activeW", item1);
                     _this.listener && _this.listener({
                         key: "size",
                         name: _this.items[0].key,
@@ -73098,9 +73123,15 @@ var ToolbarChildren = /** @class */function () {
                         size: item1
                     });
                 });
-                var active = _this.from.getAttribute('activeH');
+                var active = _this.from.getAttribute(_this.items[0].icon === "huabi" ? "activeH" : "activeW");
                 if (active && active === item1.toString()) {
                     itemDom1.classList.add('active');
+                    _this.listener && _this.listener({
+                        key: "size",
+                        name: _this.items[0].key,
+                        icon: "",
+                        size: item1
+                    });
                 }
             });
             this.dom.appendChild(itemDom_1);
@@ -73128,11 +73159,15 @@ var ToolbarChildren = /** @class */function () {
             if (index) {
                 _this.dom.appendChild(itemDom);
             }
+            //默认值
+            if (_this.items[0].icon === "tuxing" && !Number(_this.from.getAttribute('active'))) {
+                _this.from.setAttribute('active', defaultActive.activeT.index);
+                _this.from.className = _this.from.className.replace(/eboard-icon-\S+/, 'eboard-icon-' + _this.items[Number(defaultActive.activeT.index)].icon);
+            }
             itemDom.addEventListener('click', function () {
                 _this.listener && _this.listener.call(_this, item);
                 _this.from.setAttribute('active', index.toString());
                 _this.from.className = _this.from.className.replace(/eboard-icon-\S+/, 'eboard-icon-' + item.icon);
-                _this.listener && _this.listener(item);
             });
             var active = _this.from.getAttribute('active');
             if (active && active === index.toString()) {
@@ -73175,6 +73210,12 @@ var Toolbar = /** @class */function () {
                 }
             }
             _this.dom.appendChild(itemDom);
+            //默认值
+            !itemDom.getAttribute('activeColor') && itemDom.setAttribute('activeColor', defaultActive[members[0].icon === "wenzi" ? "activeW" : members[0].icon === "huabi" ? "activeH" : "activeT"].color);
+            !itemDom.getAttribute('activeH') && itemDom.setAttribute('activeH', defaultActive.activeH.size);
+            !itemDom.getAttribute('activeW') && itemDom.setAttribute('activeW', defaultActive.activeW.size);
+            var activeColor = itemDom.getAttribute('activeColor');
+            itemDom.firstChild && (itemDom.firstChild.style.backgroundColor = activeColor);
             var timer;
             var startEvent = function startEvent(event) {
                 event.cancelBubble = true;
@@ -73201,15 +73242,47 @@ var Toolbar = /** @class */function () {
                     }, 300);
                 }
             };
+            var hoverEvent = function hoverEvent(event) {
+                // this.closeChild();
+                if (length > 1 || members[0].children) {
+                    _this.over = true;
+                    var newMembers = members.slice();
+                    _this.showChild(itemDom, newMembers);
+                }
+            };
+            var outEvent = function outEvent(event) {
+                _this.dom.lastChild.addEventListener('mousemove', colorEvent);
+                _this.dom.lastChild.addEventListener('mouseleave', function () {
+                    _this.closeChild();
+                });
+                _this.over = false;
+                timer = setTimeout(function () {
+                    !_this.over && _this.closeChild();
+                }, 300);
+            };
+            var colorEvent = function colorEvent(event) {
+                clearTimeout(timer);
+                timer = undefined;
+            };
             itemDom.addEventListener('touchstart', startEvent);
-            itemDom.addEventListener('mousedown', startEvent);
+            itemDom.addEventListener('mousemove', hoverEvent);
+            itemDom.addEventListener('mouseleave', outEvent);
             itemDom.addEventListener('click', function (event) {
                 event.cancelBubble = true;
                 event.stopPropagation();
-                if (timer) {
-                    clearTimeout(timer);
-                    timer = undefined;
+                var activeItem = Number(itemDom.getAttribute('active')) || 0;
+                var key = members[activeItem].key;
+                var active = members[activeItem].active;
+                if (key !== _this.activeKey) {
+                    _this.listener && _this.listener.call(_this, members[activeItem]); // 可能不是该item
                 }
+                if (active !== false) {
+                    var active_2 = itemDom.parentElement ? itemDom.parentElement.querySelector('.active') : undefined;
+                    active_2 && active_2.classList.remove('active');
+                    itemDom.classList.add('active'); // 移除
+                    _this.activeKey = key;
+                }
+                _this.closeChild();
             });
         });
     };

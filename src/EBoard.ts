@@ -700,16 +700,14 @@ class EBoard{
                 case MessageTag.CreateFrameGroup:
                     this.addFrameGroup(messageObj);
                     break;
-                case MessageTag.SwitchToFrame:
+                case MessageTag.TurnPage:
                     this.context.getGroup(groupId).then((group:any)=>{
                         group.onGo(options.pageNum,options.messageId);
                     });
                     break;
                 default:
-                    
                     break;
             }
-            
         }else{
             switch (tag){
                 case MessageTag.SwitchToFrame:
@@ -771,6 +769,13 @@ class EBoard{
             enable:true
         });
         return this;
+    }
+    
+    public getFrameGroup(groupId:string){
+        return this.context.getGroupById(groupId);
+    }
+    public getFrame(frameId:string){
+        return this.context.getFrameById(frameId);
     }
 }
 
