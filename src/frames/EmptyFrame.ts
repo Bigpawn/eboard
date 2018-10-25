@@ -15,6 +15,7 @@ import {message} from '../utils/decorators';
 import {IPluginConfigOptions} from '../utils/EDux';
 import {MessageTag} from '../enums/MessageTag';
 import {Context, ContextFactory} from '../static/Context';
+import {IDGenerator} from '../utils/IDGenerator';
 
 
 
@@ -28,7 +29,7 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
     public groupId:string|undefined;
     constructor(context:Context,options:T){
         super(context);
-        this.frameId=options.frameId||Date.now().toString();
+        this.frameId=options.frameId||IDGenerator.getId();
         const groupId = options.groupId;
         this.groupId=groupId;
         context.addFrame(this.frameId,this);
@@ -44,7 +45,9 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
             container.innerHTML = "";
             container.appendChild(this.dom);// 立即显示
         }
-        this.initializeAction();
+        if(!this.groupId){
+            this.initializeAction();
+        }
     }
     private initPlugin(){
         const {store} = this.context;

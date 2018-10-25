@@ -11,6 +11,7 @@ import {IObject} from '../interface/IObject';
 import {IDefaultConfig} from '../interface/IConfig';
 import {EBoardCanvas} from '../EBoardCanvas';
 import {Context} from '../static/Context';
+import {IDGenerator} from '../utils/IDGenerator';
 
 
 let _config:IDefaultConfig;
@@ -30,7 +31,7 @@ class Square extends fabric.Rect implements IObject{
             cornerSize:_context.transform(_config.cornerSize),
             borderScaleFactor:_context.transform(_config.borderWidth)
         },options)));
-        this.id=Date.now().toString();
+        this.id=IDGenerator.getId();
     }
     public setId(id:string){
         this.id=id;

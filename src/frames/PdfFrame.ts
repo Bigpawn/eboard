@@ -18,6 +18,7 @@ import {EBoard} from '../EBoard';
 import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
+import {IDGenerator} from '../utils/IDGenerator';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
@@ -42,7 +43,7 @@ class PdfFrame implements IPdfFrame{
     public context:Context;
     constructor(context:Context,options:IPdfFrameOptions){
         this.context=context;
-        this.groupId=options.groupId||Date.now().toString();
+        this.groupId=options.groupId||IDGenerator.getId();
         this.options=options;
         this.container=options.container as any;
         const {container} = options;
@@ -71,7 +72,7 @@ class PdfFrame implements IPdfFrame{
     public switchFrameAction(pageNum:number){
         return Object.assign({},{
             groupId:this.groupId,
-            tag:MessageTag.SwitchToFrame,
+            tag:MessageTag.TurnPage,
             pageNum:pageNum
         });
     }
@@ -225,18 +226,14 @@ class PdfFrame implements IPdfFrame{
             currentFrameDom.classList.add(leaveClassName);
             this.dom.insertBefore(frameDom,this.pagination.dom);
             this.setPageNum(pageNum);
-            const transitionEndListener=(e:any)=>{
-                frameDom.removeEventListener('animationend',transitionEndListener);
+            setTimeout(()=>{
                 frameDom.classList.remove(enterClassName);
                 currentFrameDom.classList.remove(leaveClassName);
                 // 删除dom
                 currentFrameDom.parentElement&&currentFrameDom.parentElement.removeChild(currentFrameDom);
                 this.pageFrame=nextPageFrame as CanvasFrame;
-                setTimeout(()=>{
-                    resolve(this);
-                },0)
-            };
-            frameDom.addEventListener('animationend',transitionEndListener);
+                resolve(this);
+            },510);
         });
     }
     public getPlugin(pluginName:Plugins){

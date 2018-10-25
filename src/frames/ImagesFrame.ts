@@ -13,6 +13,7 @@ import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
+import {IDGenerator} from '../utils/IDGenerator';
 
 
 @setAnimationName('eboard-pager')
@@ -33,7 +34,7 @@ class ImagesFrame implements IImagesFrame{
     public context:Context;
     constructor(context:Context,options:IImagesFrameOptions){
         this.context=context;
-        this.groupId = options.groupId||Date.now().toString();
+        this.groupId = options.groupId||IDGenerator.getId();
         this.container=options.container as any;
         this.options=options;
         const {container} = options;
@@ -61,7 +62,7 @@ class ImagesFrame implements IImagesFrame{
     public switchFrameAction(pageNum:number){
         return Object.assign({},{
             groupId:this.groupId,
-            tag:MessageTag.SwitchToFrame,
+            tag:MessageTag.TurnPage,
             pageNum:pageNum
         });
     }
@@ -87,7 +88,7 @@ class ImagesFrame implements IImagesFrame{
         }
         if(this.images.length>0){
             const pageFrame = new ImageFrame(this.context,{
-                content:this.urlPrefix+this.images[this.pageNum],
+                content:this.urlPrefix+this.images[this.pageNum-1],
                 scrollbar:ScrollbarType.vertical,
                 container:this.container,
                 frameId:this.groupId+"_"+this.pageNum.toString(),
@@ -146,10 +147,10 @@ class ImagesFrame implements IImagesFrame{
         if(void 0 === nextPageFrame){
             // 创建
             nextPageFrame = new ImageFrame(this.context,{
-                content:this.urlPrefix+this.images[pageNum],
+                content:this.urlPrefix+this.images[pageNum-1],
                 scrollbar:ScrollbarType.vertical,
                 container:this.container,
-                frameId:this.groupId+"_"+this.pageNum.toString(),
+                frameId:this.groupId+"_"+pageNum.toString(),
                 groupId:this.groupId,
                 calcSize:this.options.calcSize
             });
@@ -163,7 +164,7 @@ class ImagesFrame implements IImagesFrame{
      * @param {number} pageNum
      * @returns {any}
      */
-    @pipMode
+    // @pipMode
     public switchToFrame(pageNum:number){
         if(this.pageNum === pageNum||void 0 === pageNum){
             return this;
@@ -172,24 +173,34 @@ class ImagesFrame implements IImagesFrame{
         return new Promise<this>((resolve)=>{
             const frameDom = (nextPageFrame as ImageFrame).dom;
             const currentFrameDom = this.pageFrame.dom;
-            const enterClassName = `${this.animationCssPrefix}-enter-from-${pageNum>this.pageNum?"right":"left"}`;
-            const leaveClassName = `${this.animationCssPrefix}-leave-to-${pageNum>this.pageNum?"left":"right"}`;
-            frameDom.classList.add(enterClassName);
-            currentFrameDom.classList.add(leaveClassName);
-            this.dom.insertBefore(frameDom,this.pagination.dom);
+            // const enterClassName = `${this.animationCssPrefix}-enter-from-${pageNum>this.pageNum?"right":"left"}`;
+            // const leaveClassName = `${this.animationCssPrefix}-leave-to-${pageNum>this.pageNum?"left":"right"}`;
+            // frameDom.classList.add(enterClassName);
+            // currentFrameDom.classList.add(leaveClassName);
+            
+            
+            
+            
+            // 不能做隐藏，隐藏会造成布局未完成即开始绘制
+            frameDom.classList.remove("eboard-page-hide");
+            frameDom.classList.add("eboard-page-show");
+            if(!frameDom.parentElement){
+                this.dom.insertBefore(frameDom,this.pagination.dom);
+            }
+            currentFrameDom.classList.remove("eboard-page-show");
+            currentFrameDom.classList.add("eboard-page-hide");
             this.setPageNum(pageNum);
-            const transitionEndListener=(e:any)=>{
-                frameDom.removeEventListener('animationend',transitionEndListener);
+            // currentFrameDom.parentElement&&currentFrameDom.parentElement.removeChild(currentFrameDom);
+            this.pageFrame=nextPageFrame as ImageFrame;
+            
+       /*     setTimeout(()=>{
                 frameDom.classList.remove(enterClassName);
                 currentFrameDom.classList.remove(leaveClassName);
                 // 删除dom
                 currentFrameDom.parentElement&&currentFrameDom.parentElement.removeChild(currentFrameDom);
                 this.pageFrame=nextPageFrame as ImageFrame;
-                setTimeout(()=>{
-                    resolve(this);
-                },0)
-            };
-            frameDom.addEventListener('animationend',transitionEndListener);
+                resolve(this);
+            },510);*/
         });
     }
     public getPlugin(pluginName:Plugins){
