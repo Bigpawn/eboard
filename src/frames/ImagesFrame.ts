@@ -13,6 +13,7 @@ import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
+import {IDGenerator} from '../utils/IDGenerator';
 
 
 @setAnimationName('eboard-pager')
@@ -33,7 +34,7 @@ class ImagesFrame implements IImagesFrame{
     public context:Context;
     constructor(context:Context,options:IImagesFrameOptions){
         this.context=context;
-        this.groupId = options.groupId||Date.now().toString();
+        this.groupId = options.groupId||IDGenerator.getId();
         this.container=options.container as any;
         this.options=options;
         const {container} = options;

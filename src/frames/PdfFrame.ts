@@ -18,6 +18,7 @@ import {EBoard} from '../EBoard';
 import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
+import {IDGenerator} from '../utils/IDGenerator';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
@@ -42,7 +43,7 @@ class PdfFrame implements IPdfFrame{
     public context:Context;
     constructor(context:Context,options:IPdfFrameOptions){
         this.context=context;
-        this.groupId=options.groupId||Date.now().toString();
+        this.groupId=options.groupId||IDGenerator.getId();
         this.options=options;
         this.container=options.container as any;
         const {container} = options;
