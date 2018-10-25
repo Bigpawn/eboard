@@ -108,7 +108,7 @@ const colors = [
     "#ff7c81"
     ];
 
-const defaultActive={
+const defaultActive=JSON.parse(localStorage.getItem("defaultActive"))||{
     activeH: {
         size: "8",
         color: "#f66c00",
@@ -120,7 +120,16 @@ const defaultActive={
     activeT: {
         index: "10",
         color: "#f66c00",
+    },
+    activeKey: {
+        key: ""
     }
+};
+localStorage.setItem("defaultActive", JSON.stringify(defaultActive));
+const setActive = (item, active:any) =>{
+    const localActive=JSON.parse(localStorage.getItem("defaultActive"));
+    localActive[item] = {...localActive[item], ...active};
+    localStorage.setItem("defaultActive", JSON.stringify(localActive));
 };
 
 
@@ -160,7 +169,8 @@ class ToolbarChildren{
                     name:this.items[0].key,
                     icon:"",
                     color:item
-                })
+                });
+                setActive(this.items[0].icon === "wenzi" ? "activeW" : this.items[0].icon === "huabi" ? "activeH" : "activeT", {color:item});
             });
 
             const activeColor = this.from.getAttribute('activeColor');
@@ -171,7 +181,8 @@ class ToolbarChildren{
                     name:this.items[0].key,
                     icon:"",
                     color:item
-                })
+                });
+                setActive(this.items[0].icon === "wenzi" ? "activeW" : this.items[0].icon === "huabi" ? "activeH" : "activeT", {color:item});
             }
         });
         const lineDom = document.createElement('div');
@@ -206,7 +217,8 @@ class ToolbarChildren{
                         name:this.items[0].key,
                         icon:"",
                         size:item1
-                    })
+                    });
+                    setActive(this.items[0].icon === "huabi" ? "activeH" : "activeW", {size:item1});
                 });
 
                 const active = this.from.getAttribute(this.items[0].icon === "huabi" ? "activeH" : "activeW");
@@ -217,7 +229,8 @@ class ToolbarChildren{
                         name:this.items[0].key,
                         icon:"",
                         size:item1
-                    })
+                    });
+                    setActive(this.items[0].icon === "huabi" ? "activeH" : "activeW", {size:item1});
                 }
             });
             this.dom.appendChild(itemDom);
@@ -244,17 +257,11 @@ class ToolbarChildren{
                 this.dom.appendChild(itemDom);
             }
 
-            //默认值
-            if(this.items[0].icon === "tuxing"&&!Number(this.from.getAttribute('active'))){
-                this.from.setAttribute('active',defaultActive.activeT.index);
-                this.from.className = this.from.className.replace(/eboard-icon-\S+/,'eboard-icon-'+this.items[Number(defaultActive.activeT.index)].icon);
-            }
-
-
             itemDom.addEventListener('click',()=>{
                 this.listener&&this.listener.call(this,item);
                 this.from.setAttribute('active',index.toString());
                 this.from.className = this.from.className.replace(/eboard-icon-\S+/,'eboard-icon-'+item.icon);
+                setActive("activeT", {index:index.toString()});
             });
 
             const active = this.from.getAttribute('active');
@@ -305,15 +312,6 @@ class Toolbar{
             }
             this.dom.appendChild(itemDom);
 
-            //默认值
-            !itemDom.getAttribute('activeColor')&&itemDom.setAttribute('activeColor',defaultActive[members[0].icon === "wenzi" ? "activeW" : members[0].icon === "huabi" ? "activeH" : "activeT"].color);
-            !itemDom.getAttribute('activeH')&&itemDom.setAttribute('activeH',defaultActive.activeH.size);
-            !itemDom.getAttribute('activeW')&&itemDom.setAttribute('activeW',defaultActive.activeW.size);
-            const activeColor = itemDom.getAttribute('activeColor');
-            itemDom.firstChild&&((itemDom.firstChild as HTMLElement).style.backgroundColor = activeColor);
-
-
-
             let timer:any;
             const startEvent=(event:any)=>{
                 event.cancelBubble = true;
@@ -344,8 +342,7 @@ class Toolbar{
                 // this.closeChild();
                 if(length>1||members[0].children){
                     this.over = true;
-                    const newMembers = [...members];
-                    this.showChild(itemDom,newMembers);
+                    this.showChild(itemDom,members);
                 }
             };
             const outEvent=(event:any)=>{
@@ -380,8 +377,28 @@ class Toolbar{
                     itemDom.classList.add('active');// 移除
                     this.activeKey= key;
                 }
+                setActive("activeKey", {key});
                 this.closeChild();
             });
+
+            //默认值
+            !itemDom.getAttribute('activeColor')&&itemDom.setAttribute('activeColor',defaultActive[members[0].icon === "wenzi" ? "activeW" : members[0].icon === "huabi" ? "activeH" : "activeT"].color);
+            !itemDom.getAttribute('activeH')&&itemDom.setAttribute('activeH',defaultActive.activeH.size);
+            !itemDom.getAttribute('activeW')&&itemDom.setAttribute('activeW',defaultActive.activeW.size);
+            const activeColor = itemDom.getAttribute('activeColor');
+            itemDom.firstChild&&((itemDom.firstChild as HTMLElement).style.backgroundColor = activeColor);
+            //延时设置缓存的activeKey
+            setTimeout(()=>{
+                //默认activeT
+                if(members[0].icon === "tuxing"&&!Number(itemDom.getAttribute('active'))){
+                    itemDom.setAttribute('active',defaultActive.activeT.index);
+                    itemDom.className = itemDom.className.replace(/eboard-icon-\S+/,'eboard-icon-'+members[Number(defaultActive.activeT.index)].icon);
+                }
+                if(members[Number(itemDom.getAttribute('active'))||0].key === defaultActive.activeKey.key){
+                    hoverEvent();
+                    itemDom.click();
+                }
+            },500);
         });
     }
     private closeChild(){
