@@ -177,9 +177,20 @@ class ImagesFrame implements IImagesFrame{
             // const leaveClassName = `${this.animationCssPrefix}-leave-to-${pageNum>this.pageNum?"left":"right"}`;
             // frameDom.classList.add(enterClassName);
             // currentFrameDom.classList.add(leaveClassName);
-            this.dom.insertBefore(frameDom,this.pagination.dom);
+            
+            
+            
+            
+            // 不能做隐藏，隐藏会造成布局未完成即开始绘制
+            frameDom.classList.remove("eboard-page-hide");
+            frameDom.classList.add("eboard-page-show");
+            if(!frameDom.parentElement){
+                this.dom.insertBefore(frameDom,this.pagination.dom);
+            }
+            currentFrameDom.classList.remove("eboard-page-show");
+            currentFrameDom.classList.add("eboard-page-hide");
             this.setPageNum(pageNum);
-            currentFrameDom.parentElement&&currentFrameDom.parentElement.removeChild(currentFrameDom);
+            // currentFrameDom.parentElement&&currentFrameDom.parentElement.removeChild(currentFrameDom);
             this.pageFrame=nextPageFrame as ImageFrame;
             
        /*     setTimeout(()=>{
