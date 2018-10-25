@@ -28957,7 +28957,7 @@ var CursorType;
 var IDGenerator = /** @class */function () {
     function IDGenerator() {}
     IDGenerator.getId = function () {
-        this.id = this.id++;
+        ++this.id;
         return this.id.toString();
     };
     IDGenerator.id = Date.now();
@@ -37715,10 +37715,10 @@ window.FrameType = __WEBPACK_IMPORTED_MODULE_0__EBoard__["b" /* FrameType */];
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__frames_PdfFrame__ = __webpack_require__(143);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__frames_ImagesFrame__ = __webpack_require__(181);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__middlewares_MessageMiddleWare__ = __webpack_require__(182);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__interceptor_MessageAdapter__ = __webpack_require__(185);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__interceptor_MessageAdapter__ = __webpack_require__(184);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__plugins__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_Tab__ = __webpack_require__(186);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Toolbar__ = __webpack_require__(189);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_Tab__ = __webpack_require__(185);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Toolbar__ = __webpack_require__(188);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils_decorators__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__enums_Keys__ = __webpack_require__(14);
@@ -37774,7 +37774,7 @@ var __rest = this && this.__rest || function (s, e) {
 
 
 
-var config = __webpack_require__(192);
+var config = __webpack_require__(191);
 var FrameType;
 (function (FrameType) {
     FrameType["Empty"] = "empty-frame";
@@ -39025,13 +39025,13 @@ var EBoardCanvas = /** @class */function (_super) {
         _this.context = eBoardEngine.context;
         _this.frameId = eBoardEngine.frameId;
         _this.groupId = eBoardEngine.groupId;
-        var cursorCanvasEl = document.createElement("canvas");
-        cursorCanvasEl.className = "eboard-cursor";
-        element.parentElement && element.parentElement.appendChild(cursorCanvasEl);
-        _this.cursorCanvas = new __WEBPACK_IMPORTED_MODULE_0_fabric__["fabric"].StaticCanvas(cursorCanvasEl, {
-            selection: false,
-            skipTargetFind: true
-        });
+        /*const cursorCanvasEl=document.createElement("canvas");
+        cursorCanvasEl.className="eboard-cursor";
+        element.parentElement&&element.parentElement.appendChild(cursorCanvasEl);*/
+        /*      this.cursorCanvas=new fabric.StaticCanvas(cursorCanvasEl,{
+                  selection:false,
+                  skipTargetFind:true,
+              });*/
         _this.fixTouchDevice();
         _this.onMouseMove = _this.onMouseMove.bind(_this);
         _this.onMouseOut = _this.onMouseOut.bind(_this);
@@ -39084,7 +39084,7 @@ var EBoardCanvas = /** @class */function (_super) {
         container.removeEventListener("touchend", this.onMouseOut);
         container.removeEventListener("touchcancel", this.onMouseOut);
         if (void 0 !== this.instance) {
-            this.cursorCanvas.remove(this.instance);
+            this.remove(this.instance);
         }
         return this;
     };
@@ -39103,23 +39103,23 @@ var EBoardCanvas = /** @class */function (_super) {
             return;
         }
         var point = touching ? this.getPointer(event.touches[0]) : this.getPointer(event.e);
-        this.cursorCanvas.renderOnAddRemove = false;
+        this.renderOnAddRemove = false;
         if (void 0 !== this.instance) {
-            this.cursorCanvas.remove(this.instance);
+            this.remove(this.instance);
         }
         this.instance = this.cursor.render(point, this.context.transform(this.context.getConfig("cursorSize")));
         this.instance.name = this.cursorType; // 比较类型是否变化
         this.instance.type = "cursor"; // 设置type，扩展的Canvas可能会做其他操作
-        this.cursorCanvas.add(this.instance);
-        this.cursorCanvas.renderAll();
-        this.cursorCanvas.renderOnAddRemove = true;
+        this.add(this.instance);
+        this.renderAll();
+        this.renderOnAddRemove = true;
         if (this.cursorMessageEnable === true) {
             this.cursorMessage(point);
         }
     };
     EBoardCanvas.prototype.onMouseOut = function () {
         if (void 0 !== this.instance) {
-            this.cursorCanvas.remove(this.instance);
+            this.remove(this.instance);
             this.instance = undefined;
         }
         if (this.cursorMessageEnable === true) {
@@ -39137,7 +39137,7 @@ var EBoardCanvas = /** @class */function (_super) {
         };
     };
     EBoardCanvas.prototype.getCursorInstance = function () {
-        return this.cursorCanvas.getObjects("cursor")[0];
+        return this.getObjects("cursor")[0];
     };
     /**
      * 设置光标类型
@@ -39181,7 +39181,7 @@ var EBoardCanvas = /** @class */function (_super) {
      */
     EBoardCanvas.prototype.setDimensions = function (dimensions, options) {
         _super.prototype.setDimensions.call(this, dimensions, options);
-        this.cursorCanvas.setDimensions(dimensions, options);
+        this.setDimensions(dimensions, options);
         return this;
     };
     EBoardCanvas.prototype.getLowerCanvas = function () {
@@ -39200,17 +39200,17 @@ var EBoardCanvas = /** @class */function (_super) {
         var instance = this.getCursorInstance();
         if (void 0 === center) {
             // 结束
-            instance && this.cursorCanvas.remove(instance);
+            instance && this.remove(instance);
         } else {
-            this.cursorCanvas.renderOnAddRemove = false;
-            instance && this.cursorCanvas.remove(instance);
+            this.renderOnAddRemove = false;
+            instance && this.remove(instance);
             var courseClass = __webpack_require__(45)("./" + type);
             var cursorType = new (courseClass["default"] || courseClass)(this);
             instance = cursorType.render(center, size);
             instance.type = "cursor";
-            this.cursorCanvas.add(instance);
-            this.cursorCanvas.renderAll();
-            this.cursorCanvas.renderOnAddRemove = true;
+            this.add(instance);
+            this.renderAll();
+            this.renderOnAddRemove = true;
         }
     };
     __decorate([__WEBPACK_IMPORTED_MODULE_1__utils_decorators__["a" /* message */]], EBoardCanvas.prototype, "cursorMessage", null);
@@ -72129,8 +72129,6 @@ var ImagesFrame = /** @class */function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__MessageIdMiddleWare__ = __webpack_require__(183);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lz_string__ = __webpack_require__(184);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lz_string___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_lz_string__);
 
 var __assign = this && this.__assign || Object.assign || function (t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -72168,12 +72166,10 @@ var __rest = this && this.__rest || function (s, e) {
  *
  */
 
-
 var MessageMiddleWare = /** @class */function () {
     function MessageMiddleWare(context) {
-        this.compress = false;
         this.context = context;
-        this.compress = context.compress; // 如果压缩接收端需要解压
+        // this.compress= context.compress;// 如果压缩接收端需要解压
     }
     MessageMiddleWare.prototype.messageFactory = function (message) {
         var start = message.start,
@@ -72184,6 +72180,7 @@ var MessageMiddleWare = /** @class */function () {
             stroke = message.stroke,
             tabId = message.tabId,
             scrollbar = message.scrollbar,
+            activeKey = message.activeKey,
             strokeDashArray = message.strokeDashArray,
             strokeWidth = message.strokeWidth,
             content = message.content,
@@ -72210,13 +72207,13 @@ var MessageMiddleWare = /** @class */function () {
             totalHeight = message.totalHeight,
             scrollLeft = message.scrollLeft,
             scrollTop = message.scrollTop,
-            rest = __rest(message, ["start", "end", "type", "mode", "fill", "stroke", "tabId", "scrollbar", "strokeDashArray", "strokeWidth", "content", "radius", "rx", "ry", "path", "points", "width", "height", "fontSize", "name", "url", "pageNum", "images", "urlPrefix", "messageId", "frameId", "groupId", "center", "size", "text", "totalWidth", "totalHeight", "scrollLeft", "scrollTop"]);
+            rest = __rest(message, ["start", "end", "type", "mode", "fill", "stroke", "tabId", "scrollbar", "activeKey", "strokeDashArray", "strokeWidth", "content", "radius", "rx", "ry", "path", "points", "width", "height", "fontSize", "name", "url", "pageNum", "images", "urlPrefix", "messageId", "frameId", "groupId", "center", "size", "text", "totalWidth", "totalHeight", "scrollLeft", "scrollTop"]);
         // frame group 只传id
         return {
             messageId: messageId,
             header: __assign({}, rest, { frameId: frameId,
                 groupId: groupId }),
-            body: { start: start, end: end, type: type, mode: mode, fill: fill, stroke: stroke, tabId: tabId, scrollbar: scrollbar, strokeDashArray: strokeDashArray, radius: radius, strokeWidth: strokeWidth, content: content, rx: rx, ry: ry, path: path, points: points, width: width, height: height, fontSize: fontSize, name: name, url: url, pageNum: pageNum, images: images, urlPrefix: urlPrefix, center: center, size: size, text: text, totalWidth: totalWidth, totalHeight: totalHeight, scrollLeft: scrollLeft, scrollTop: scrollTop }
+            body: { start: start, end: end, type: type, mode: mode, fill: fill, stroke: stroke, tabId: tabId, scrollbar: scrollbar, activeKey: activeKey, strokeDashArray: strokeDashArray, radius: radius, strokeWidth: strokeWidth, content: content, rx: rx, ry: ry, path: path, points: points, width: width, height: height, fontSize: fontSize, name: name, url: url, pageNum: pageNum, images: images, urlPrefix: urlPrefix, center: center, size: size, text: text, totalWidth: totalWidth, totalHeight: totalHeight, scrollLeft: scrollLeft, scrollTop: scrollTop }
         };
     };
     MessageMiddleWare.prototype.messageOutFactory = function (message) {
@@ -72235,11 +72232,12 @@ var MessageMiddleWare = /** @class */function () {
             return null;
         }
         // 自动生成id并返回id
-        var id = void 0 === message.messageId ? __WEBPACK_IMPORTED_MODULE_1__MessageIdMiddleWare__["a" /* MessageIdMiddleWare */].getId() : message.messageId;
-        var outMessage = this.messageFactory(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, message, { messageId: id }));
-        var messageStr = this.compress ? __WEBPACK_IMPORTED_MODULE_2_lz_string__["compress"](JSON.stringify(outMessage)) : JSON.stringify(outMessage);
-        this.context.trigger("message", messageStr);
-        return id;
+        var outMessage = this.messageFactory(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, message, { messageId: message.messageId || __WEBPACK_IMPORTED_MODULE_1__MessageIdMiddleWare__["a" /* MessageIdMiddleWare */].getId() }));
+        // const messageStr = this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage);
+        // this.context.trigger("message",messageStr);
+        var messageString = JSON.stringify(outMessage);
+        this.context.trigger("message", messageString);
+        return outMessage;
     };
     /**
      * 消息还原
@@ -72247,7 +72245,7 @@ var MessageMiddleWare = /** @class */function () {
      * @returns {any}
      */
     MessageMiddleWare.prototype.decompressMessage = function (message) {
-        return this.messageOutFactory(JSON.parse(this.compress ? __WEBPACK_IMPORTED_MODULE_2_lz_string__["decompress"](message) : message));
+        return this.messageOutFactory(JSON.parse(message));
     };
     return MessageMiddleWare;
 }();
@@ -72278,514 +72276,6 @@ var MessageIdMiddleWare = /** @class */function () {
 
 /***/ }),
 /* 184 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_RESULT__;// Copyright (c) 2013 Pieroxy <pieroxy@pieroxy.net>
-// This work is free. You can redistribute it and/or modify it
-// under the terms of the WTFPL, Version 2
-// For more information see LICENSE.txt or http://www.wtfpl.net/
-//
-// For more information, the home page:
-// http://pieroxy.net/blog/pages/lz-string/testing.html
-//
-// LZ-based compression algorithm, version 1.4.4
-var LZString = (function() {
-
-// private property
-var f = String.fromCharCode;
-var keyStrBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-var keyStrUriSafe = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$";
-var baseReverseDic = {};
-
-function getBaseValue(alphabet, character) {
-  if (!baseReverseDic[alphabet]) {
-    baseReverseDic[alphabet] = {};
-    for (var i=0 ; i<alphabet.length ; i++) {
-      baseReverseDic[alphabet][alphabet.charAt(i)] = i;
-    }
-  }
-  return baseReverseDic[alphabet][character];
-}
-
-var LZString = {
-  compressToBase64 : function (input) {
-    if (input == null) return "";
-    var res = LZString._compress(input, 6, function(a){return keyStrBase64.charAt(a);});
-    switch (res.length % 4) { // To produce valid Base64
-    default: // When could this happen ?
-    case 0 : return res;
-    case 1 : return res+"===";
-    case 2 : return res+"==";
-    case 3 : return res+"=";
-    }
-  },
-
-  decompressFromBase64 : function (input) {
-    if (input == null) return "";
-    if (input == "") return null;
-    return LZString._decompress(input.length, 32, function(index) { return getBaseValue(keyStrBase64, input.charAt(index)); });
-  },
-
-  compressToUTF16 : function (input) {
-    if (input == null) return "";
-    return LZString._compress(input, 15, function(a){return f(a+32);}) + " ";
-  },
-
-  decompressFromUTF16: function (compressed) {
-    if (compressed == null) return "";
-    if (compressed == "") return null;
-    return LZString._decompress(compressed.length, 16384, function(index) { return compressed.charCodeAt(index) - 32; });
-  },
-
-  //compress into uint8array (UCS-2 big endian format)
-  compressToUint8Array: function (uncompressed) {
-    var compressed = LZString.compress(uncompressed);
-    var buf=new Uint8Array(compressed.length*2); // 2 bytes per character
-
-    for (var i=0, TotalLen=compressed.length; i<TotalLen; i++) {
-      var current_value = compressed.charCodeAt(i);
-      buf[i*2] = current_value >>> 8;
-      buf[i*2+1] = current_value % 256;
-    }
-    return buf;
-  },
-
-  //decompress from uint8array (UCS-2 big endian format)
-  decompressFromUint8Array:function (compressed) {
-    if (compressed===null || compressed===undefined){
-        return LZString.decompress(compressed);
-    } else {
-        var buf=new Array(compressed.length/2); // 2 bytes per character
-        for (var i=0, TotalLen=buf.length; i<TotalLen; i++) {
-          buf[i]=compressed[i*2]*256+compressed[i*2+1];
-        }
-
-        var result = [];
-        buf.forEach(function (c) {
-          result.push(f(c));
-        });
-        return LZString.decompress(result.join(''));
-
-    }
-
-  },
-
-
-  //compress into a string that is already URI encoded
-  compressToEncodedURIComponent: function (input) {
-    if (input == null) return "";
-    return LZString._compress(input, 6, function(a){return keyStrUriSafe.charAt(a);});
-  },
-
-  //decompress from an output of compressToEncodedURIComponent
-  decompressFromEncodedURIComponent:function (input) {
-    if (input == null) return "";
-    if (input == "") return null;
-    input = input.replace(/ /g, "+");
-    return LZString._decompress(input.length, 32, function(index) { return getBaseValue(keyStrUriSafe, input.charAt(index)); });
-  },
-
-  compress: function (uncompressed) {
-    return LZString._compress(uncompressed, 16, function(a){return f(a);});
-  },
-  _compress: function (uncompressed, bitsPerChar, getCharFromInt) {
-    if (uncompressed == null) return "";
-    var i, value,
-        context_dictionary= {},
-        context_dictionaryToCreate= {},
-        context_c="",
-        context_wc="",
-        context_w="",
-        context_enlargeIn= 2, // Compensate for the first entry which should not count
-        context_dictSize= 3,
-        context_numBits= 2,
-        context_data=[],
-        context_data_val=0,
-        context_data_position=0,
-        ii;
-
-    for (ii = 0; ii < uncompressed.length; ii += 1) {
-      context_c = uncompressed.charAt(ii);
-      if (!Object.prototype.hasOwnProperty.call(context_dictionary,context_c)) {
-        context_dictionary[context_c] = context_dictSize++;
-        context_dictionaryToCreate[context_c] = true;
-      }
-
-      context_wc = context_w + context_c;
-      if (Object.prototype.hasOwnProperty.call(context_dictionary,context_wc)) {
-        context_w = context_wc;
-      } else {
-        if (Object.prototype.hasOwnProperty.call(context_dictionaryToCreate,context_w)) {
-          if (context_w.charCodeAt(0)<256) {
-            for (i=0 ; i<context_numBits ; i++) {
-              context_data_val = (context_data_val << 1);
-              if (context_data_position == bitsPerChar-1) {
-                context_data_position = 0;
-                context_data.push(getCharFromInt(context_data_val));
-                context_data_val = 0;
-              } else {
-                context_data_position++;
-              }
-            }
-            value = context_w.charCodeAt(0);
-            for (i=0 ; i<8 ; i++) {
-              context_data_val = (context_data_val << 1) | (value&1);
-              if (context_data_position == bitsPerChar-1) {
-                context_data_position = 0;
-                context_data.push(getCharFromInt(context_data_val));
-                context_data_val = 0;
-              } else {
-                context_data_position++;
-              }
-              value = value >> 1;
-            }
-          } else {
-            value = 1;
-            for (i=0 ; i<context_numBits ; i++) {
-              context_data_val = (context_data_val << 1) | value;
-              if (context_data_position ==bitsPerChar-1) {
-                context_data_position = 0;
-                context_data.push(getCharFromInt(context_data_val));
-                context_data_val = 0;
-              } else {
-                context_data_position++;
-              }
-              value = 0;
-            }
-            value = context_w.charCodeAt(0);
-            for (i=0 ; i<16 ; i++) {
-              context_data_val = (context_data_val << 1) | (value&1);
-              if (context_data_position == bitsPerChar-1) {
-                context_data_position = 0;
-                context_data.push(getCharFromInt(context_data_val));
-                context_data_val = 0;
-              } else {
-                context_data_position++;
-              }
-              value = value >> 1;
-            }
-          }
-          context_enlargeIn--;
-          if (context_enlargeIn == 0) {
-            context_enlargeIn = Math.pow(2, context_numBits);
-            context_numBits++;
-          }
-          delete context_dictionaryToCreate[context_w];
-        } else {
-          value = context_dictionary[context_w];
-          for (i=0 ; i<context_numBits ; i++) {
-            context_data_val = (context_data_val << 1) | (value&1);
-            if (context_data_position == bitsPerChar-1) {
-              context_data_position = 0;
-              context_data.push(getCharFromInt(context_data_val));
-              context_data_val = 0;
-            } else {
-              context_data_position++;
-            }
-            value = value >> 1;
-          }
-
-
-        }
-        context_enlargeIn--;
-        if (context_enlargeIn == 0) {
-          context_enlargeIn = Math.pow(2, context_numBits);
-          context_numBits++;
-        }
-        // Add wc to the dictionary.
-        context_dictionary[context_wc] = context_dictSize++;
-        context_w = String(context_c);
-      }
-    }
-
-    // Output the code for w.
-    if (context_w !== "") {
-      if (Object.prototype.hasOwnProperty.call(context_dictionaryToCreate,context_w)) {
-        if (context_w.charCodeAt(0)<256) {
-          for (i=0 ; i<context_numBits ; i++) {
-            context_data_val = (context_data_val << 1);
-            if (context_data_position == bitsPerChar-1) {
-              context_data_position = 0;
-              context_data.push(getCharFromInt(context_data_val));
-              context_data_val = 0;
-            } else {
-              context_data_position++;
-            }
-          }
-          value = context_w.charCodeAt(0);
-          for (i=0 ; i<8 ; i++) {
-            context_data_val = (context_data_val << 1) | (value&1);
-            if (context_data_position == bitsPerChar-1) {
-              context_data_position = 0;
-              context_data.push(getCharFromInt(context_data_val));
-              context_data_val = 0;
-            } else {
-              context_data_position++;
-            }
-            value = value >> 1;
-          }
-        } else {
-          value = 1;
-          for (i=0 ; i<context_numBits ; i++) {
-            context_data_val = (context_data_val << 1) | value;
-            if (context_data_position == bitsPerChar-1) {
-              context_data_position = 0;
-              context_data.push(getCharFromInt(context_data_val));
-              context_data_val = 0;
-            } else {
-              context_data_position++;
-            }
-            value = 0;
-          }
-          value = context_w.charCodeAt(0);
-          for (i=0 ; i<16 ; i++) {
-            context_data_val = (context_data_val << 1) | (value&1);
-            if (context_data_position == bitsPerChar-1) {
-              context_data_position = 0;
-              context_data.push(getCharFromInt(context_data_val));
-              context_data_val = 0;
-            } else {
-              context_data_position++;
-            }
-            value = value >> 1;
-          }
-        }
-        context_enlargeIn--;
-        if (context_enlargeIn == 0) {
-          context_enlargeIn = Math.pow(2, context_numBits);
-          context_numBits++;
-        }
-        delete context_dictionaryToCreate[context_w];
-      } else {
-        value = context_dictionary[context_w];
-        for (i=0 ; i<context_numBits ; i++) {
-          context_data_val = (context_data_val << 1) | (value&1);
-          if (context_data_position == bitsPerChar-1) {
-            context_data_position = 0;
-            context_data.push(getCharFromInt(context_data_val));
-            context_data_val = 0;
-          } else {
-            context_data_position++;
-          }
-          value = value >> 1;
-        }
-
-
-      }
-      context_enlargeIn--;
-      if (context_enlargeIn == 0) {
-        context_enlargeIn = Math.pow(2, context_numBits);
-        context_numBits++;
-      }
-    }
-
-    // Mark the end of the stream
-    value = 2;
-    for (i=0 ; i<context_numBits ; i++) {
-      context_data_val = (context_data_val << 1) | (value&1);
-      if (context_data_position == bitsPerChar-1) {
-        context_data_position = 0;
-        context_data.push(getCharFromInt(context_data_val));
-        context_data_val = 0;
-      } else {
-        context_data_position++;
-      }
-      value = value >> 1;
-    }
-
-    // Flush the last char
-    while (true) {
-      context_data_val = (context_data_val << 1);
-      if (context_data_position == bitsPerChar-1) {
-        context_data.push(getCharFromInt(context_data_val));
-        break;
-      }
-      else context_data_position++;
-    }
-    return context_data.join('');
-  },
-
-  decompress: function (compressed) {
-    if (compressed == null) return "";
-    if (compressed == "") return null;
-    return LZString._decompress(compressed.length, 32768, function(index) { return compressed.charCodeAt(index); });
-  },
-
-  _decompress: function (length, resetValue, getNextValue) {
-    var dictionary = [],
-        next,
-        enlargeIn = 4,
-        dictSize = 4,
-        numBits = 3,
-        entry = "",
-        result = [],
-        i,
-        w,
-        bits, resb, maxpower, power,
-        c,
-        data = {val:getNextValue(0), position:resetValue, index:1};
-
-    for (i = 0; i < 3; i += 1) {
-      dictionary[i] = i;
-    }
-
-    bits = 0;
-    maxpower = Math.pow(2,2);
-    power=1;
-    while (power!=maxpower) {
-      resb = data.val & data.position;
-      data.position >>= 1;
-      if (data.position == 0) {
-        data.position = resetValue;
-        data.val = getNextValue(data.index++);
-      }
-      bits |= (resb>0 ? 1 : 0) * power;
-      power <<= 1;
-    }
-
-    switch (next = bits) {
-      case 0:
-          bits = 0;
-          maxpower = Math.pow(2,8);
-          power=1;
-          while (power!=maxpower) {
-            resb = data.val & data.position;
-            data.position >>= 1;
-            if (data.position == 0) {
-              data.position = resetValue;
-              data.val = getNextValue(data.index++);
-            }
-            bits |= (resb>0 ? 1 : 0) * power;
-            power <<= 1;
-          }
-        c = f(bits);
-        break;
-      case 1:
-          bits = 0;
-          maxpower = Math.pow(2,16);
-          power=1;
-          while (power!=maxpower) {
-            resb = data.val & data.position;
-            data.position >>= 1;
-            if (data.position == 0) {
-              data.position = resetValue;
-              data.val = getNextValue(data.index++);
-            }
-            bits |= (resb>0 ? 1 : 0) * power;
-            power <<= 1;
-          }
-        c = f(bits);
-        break;
-      case 2:
-        return "";
-    }
-    dictionary[3] = c;
-    w = c;
-    result.push(c);
-    while (true) {
-      if (data.index > length) {
-        return "";
-      }
-
-      bits = 0;
-      maxpower = Math.pow(2,numBits);
-      power=1;
-      while (power!=maxpower) {
-        resb = data.val & data.position;
-        data.position >>= 1;
-        if (data.position == 0) {
-          data.position = resetValue;
-          data.val = getNextValue(data.index++);
-        }
-        bits |= (resb>0 ? 1 : 0) * power;
-        power <<= 1;
-      }
-
-      switch (c = bits) {
-        case 0:
-          bits = 0;
-          maxpower = Math.pow(2,8);
-          power=1;
-          while (power!=maxpower) {
-            resb = data.val & data.position;
-            data.position >>= 1;
-            if (data.position == 0) {
-              data.position = resetValue;
-              data.val = getNextValue(data.index++);
-            }
-            bits |= (resb>0 ? 1 : 0) * power;
-            power <<= 1;
-          }
-
-          dictionary[dictSize++] = f(bits);
-          c = dictSize-1;
-          enlargeIn--;
-          break;
-        case 1:
-          bits = 0;
-          maxpower = Math.pow(2,16);
-          power=1;
-          while (power!=maxpower) {
-            resb = data.val & data.position;
-            data.position >>= 1;
-            if (data.position == 0) {
-              data.position = resetValue;
-              data.val = getNextValue(data.index++);
-            }
-            bits |= (resb>0 ? 1 : 0) * power;
-            power <<= 1;
-          }
-          dictionary[dictSize++] = f(bits);
-          c = dictSize-1;
-          enlargeIn--;
-          break;
-        case 2:
-          return result.join('');
-      }
-
-      if (enlargeIn == 0) {
-        enlargeIn = Math.pow(2, numBits);
-        numBits++;
-      }
-
-      if (dictionary[c]) {
-        entry = dictionary[c];
-      } else {
-        if (c === dictSize) {
-          entry = w + w.charAt(0);
-        } else {
-          return null;
-        }
-      }
-      result.push(entry);
-
-      // Add w+entry[0] to the dictionary.
-      dictionary[dictSize++] = w + entry.charAt(0);
-      enlargeIn--;
-
-      w = entry;
-
-      if (enlargeIn == 0) {
-        enlargeIn = Math.pow(2, numBits);
-        numBits++;
-      }
-
-    }
-  }
-};
-  return LZString;
-})();
-
-if (true) {
-  !(__WEBPACK_AMD_DEFINE_RESULT__ = (function () { return LZString; }).call(exports, __webpack_require__, exports, module),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-} else if( typeof module !== 'undefined' && module != null ) {
-  module.exports = LZString
-}
-
-
-/***/ }),
-/* 185 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -72804,19 +72294,19 @@ var MessageAdapter = /** @class */function () {
 
 
 /***/ }),
-/* 186 */
+/* 185 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return TabEventEnum; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Tab; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_tab_less__ = __webpack_require__(187);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_tab_less__ = __webpack_require__(186);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_tab_less___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__style_tab_less__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__font_iconfont_css__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__font_iconfont_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__font_iconfont_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_EventBus__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ScrollBar__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_ClassListPolyfill__ = __webpack_require__(188);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_ClassListPolyfill__ = __webpack_require__(187);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_ClassListPolyfill___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__utils_ClassListPolyfill__);
 var __extends = this && this.__extends || function () {
     var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
@@ -72952,13 +72442,13 @@ var Tab = /** @class */function (_super) {
 
 
 /***/ }),
-/* 187 */
+/* 186 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 188 */
+/* 187 */
 /***/ (function(module, exports) {
 
 /**
@@ -73004,16 +72494,16 @@ if (!("classList" in document.documentElement)) {
 }
 
 /***/ }),
-/* 189 */
+/* 188 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Toolbar; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_toolbar_less__ = __webpack_require__(190);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_toolbar_less__ = __webpack_require__(189);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_toolbar_less___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__style_toolbar_less__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__font_iconfont_css__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__font_iconfont_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__font_iconfont_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__style_drop_down_less__ = __webpack_require__(191);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__style_drop_down_less__ = __webpack_require__(190);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__style_drop_down_less___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__style_drop_down_less__);
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
@@ -73385,6 +72875,12 @@ var Toolbar = /** @class */function () {
 
 
 /***/ }),
+/* 189 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
 /* 190 */
 /***/ (function(module, exports) {
 
@@ -73392,12 +72888,6 @@ var Toolbar = /** @class */function () {
 
 /***/ }),
 /* 191 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 192 */
 /***/ (function(module, exports) {
 
 module.exports = {"plugins":["Line","DotLine","Text","Selection","HTML","Pencil","Circle","Ellipse","Rectangle","Square","Triangle","EquilateralTriangle","OrthogonalTriangle","Polygon","Star","Pentagon","Hexagon","Clear","Arrow","ArrowNext","ArrowPrev","Delete","Ferule"],"showTab":true,"showToolbar":true,"ratio":{"w":16,"h":9},"dimensions":{"width":1920},"borderColor":"#09ca51","cornerColor":"#09ca51","cornerStrokeColor":"#09ca51","cornerStyle":"rect","transparentCorners":true,"cornerSize":13,"cursorSize":26,"borderWidth":1,"strokeWidth":1,"stroke":"#000","fill":"#000","fontColor":"#000","fontSize":18,"compress":false,"arrowShape":"fish","escKey":true,"ctrlKey":true}

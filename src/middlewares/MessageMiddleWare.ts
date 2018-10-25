@@ -17,20 +17,20 @@
  *
  */
 import {MessageIdMiddleWare} from './MessageIdMiddleWare';
-import * as LZString from "lz-string";
+// import * as LZString from "lz-string";
 import {IMessage} from '../interface/IMessage';
 import {Context} from '../static/Context';
 
 
 class MessageMiddleWare{
-    private compress:boolean=false;
+    // private compress:boolean=false;
     private context:Context;
     constructor(context:Context){
         this.context=context;
-        this.compress= context.compress;// 如果压缩接收端需要解压
+        // this.compress= context.compress;// 如果压缩接收端需要解压
     }
     private messageFactory(message:any){
-        const {start,end,type,mode,fill,stroke,tabId,scrollbar,strokeDashArray,strokeWidth,content,radius,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix,messageId,frameId,groupId,center,size,text,totalWidth,totalHeight,scrollLeft,scrollTop,...rest} = message;
+        const {start,end,type,mode,fill,stroke,tabId,scrollbar,activeKey,strokeDashArray,strokeWidth,content,radius,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix,messageId,frameId,groupId,center,size,text,totalWidth,totalHeight,scrollLeft,scrollTop,...rest} = message;
         // frame group 只传id
         return {
             messageId,
@@ -39,7 +39,7 @@ class MessageMiddleWare{
                 frameId,
                 groupId
             },
-            body:{start,end,type,mode,fill,stroke,tabId,scrollbar,strokeDashArray,radius,strokeWidth,content,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix,center,size,text,totalWidth,totalHeight,scrollLeft,scrollTop}
+            body:{start,end,type,mode,fill,stroke,tabId,scrollbar,activeKey,strokeDashArray,radius,strokeWidth,content,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix,center,size,text,totalWidth,totalHeight,scrollLeft,scrollTop}
         }
     }
     private messageOutFactory(message:any){
@@ -60,11 +60,12 @@ class MessageMiddleWare{
             return null;
         }
         // 自动生成id并返回id
-        const id = void 0 === message.messageId?MessageIdMiddleWare.getId():message.messageId;
-        const outMessage = this.messageFactory(Object.assign({},message,{messageId:id}));
-        const messageStr = this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage);
-        this.context.trigger("message",messageStr);
-        return id;
+        const outMessage = this.messageFactory(Object.assign({},message,{messageId:message.messageId||MessageIdMiddleWare.getId()}));
+        // const messageStr = this.compress?LZString.compress(JSON.stringify(outMessage)):JSON.stringify(outMessage);
+        // this.context.trigger("message",messageStr);
+        const messageString = JSON.stringify(outMessage);
+        this.context.trigger("message",messageString);
+        return outMessage;
     }
     
     /**
@@ -73,7 +74,7 @@ class MessageMiddleWare{
      * @returns {any}
      */
     public decompressMessage(message:string){
-        return this.messageOutFactory(JSON.parse(this.compress?LZString.decompress(message):message));
+        return this.messageOutFactory(JSON.parse(message));
     }
 }
 

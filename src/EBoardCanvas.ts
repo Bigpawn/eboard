@@ -24,7 +24,7 @@ import {Context} from './static/Context';
 
 
 class EBoardCanvas extends fabric.Canvas{
-    public cursorCanvas:fabric.StaticCanvas;
+    // public cursorCanvas:fabric.StaticCanvas;
     private instance:fabric.Object;
     private cursorMessageEnable:boolean=false;
     private touching:boolean=false;// 是否触摸模式
@@ -40,13 +40,13 @@ class EBoardCanvas extends fabric.Canvas{
         this.context=eBoardEngine.context;
         this.frameId=eBoardEngine.frameId;
         this.groupId=eBoardEngine.groupId;
-        const cursorCanvasEl=document.createElement("canvas");
+        /*const cursorCanvasEl=document.createElement("canvas");
         cursorCanvasEl.className="eboard-cursor";
-        element.parentElement&&element.parentElement.appendChild(cursorCanvasEl);
-        this.cursorCanvas=new fabric.StaticCanvas(cursorCanvasEl,{
+        element.parentElement&&element.parentElement.appendChild(cursorCanvasEl);*/
+  /*      this.cursorCanvas=new fabric.StaticCanvas(cursorCanvasEl,{
             selection:false,
             skipTargetFind:true,
-        });
+        });*/
         this.fixTouchDevice();
         this.onMouseMove=this.onMouseMove.bind(this);
         this.onMouseOut=this.onMouseOut.bind(this);
@@ -100,7 +100,7 @@ class EBoardCanvas extends fabric.Canvas{
         container.removeEventListener("touchend",this.onMouseOut);
         container.removeEventListener("touchcancel",this.onMouseOut);
         if(void 0 !==this.instance){
-            this.cursorCanvas.remove(this.instance);
+            this.remove(this.instance);
         }
         return this;
     }
@@ -120,16 +120,16 @@ class EBoardCanvas extends fabric.Canvas{
             return;
         }
         const point = touching?this.getPointer(event.touches[0]):this.getPointer(event.e);
-        this.cursorCanvas.renderOnAddRemove=false;
+        this.renderOnAddRemove=false;
         if(void 0 !== this.instance){
-            this.cursorCanvas.remove(this.instance);
+            this.remove(this.instance);
         }
         this.instance = this.cursor.render(point,this.context.transform(this.context.getConfig("cursorSize")));
         this.instance.name=this.cursorType; // 比较类型是否变化
         this.instance.type="cursor";// 设置type，扩展的Canvas可能会做其他操作
-        this.cursorCanvas.add(this.instance);
-        this.cursorCanvas.renderAll();
-        this.cursorCanvas.renderOnAddRemove=true;
+        this.add(this.instance);
+        this.renderAll();
+        this.renderOnAddRemove=true;
         if(this.cursorMessageEnable === true){
             this.cursorMessage(point);
         }
@@ -137,7 +137,7 @@ class EBoardCanvas extends fabric.Canvas{
     
     private onMouseOut(){
         if(void 0 !== this.instance){
-            this.cursorCanvas.remove(this.instance);
+            this.remove(this.instance);
             this.instance = undefined as any;
         }
         if(this.cursorMessageEnable === true){
@@ -157,7 +157,7 @@ class EBoardCanvas extends fabric.Canvas{
         }
     }
     private getCursorInstance(){
-        return this.cursorCanvas.getObjects("cursor")[0];
+        return this.getObjects("cursor")[0];
     }
     
     /**
@@ -202,7 +202,7 @@ class EBoardCanvas extends fabric.Canvas{
      */
     public setDimensions(dimensions: ICanvasDimensions, options?: ICanvasDimensionsOptions){
         super.setDimensions(dimensions,options);
-        this.cursorCanvas.setDimensions(dimensions,options);
+        // this.setDimensions(dimensions,options);
         return this;
     }
     
@@ -221,17 +221,17 @@ class EBoardCanvas extends fabric.Canvas{
         let instance = this.getCursorInstance();
         if(void 0 === center){
             // 结束
-            instance && this.cursorCanvas.remove(instance);
+            instance && this.remove(instance);
         }else{
-            this.cursorCanvas.renderOnAddRemove=false;
-            instance && this.cursorCanvas.remove(instance);
+            this.renderOnAddRemove=false;
+            instance && this.remove(instance);
             const courseClass = require(`./cursor/${type}`);
             const cursorType=new (courseClass.default||courseClass)(this);
             instance = cursorType.render(center,size);
             instance.type="cursor";
-            this.cursorCanvas.add(instance);
-            this.cursorCanvas.renderAll();
-            this.cursorCanvas.renderOnAddRemove=true;
+            this.add(instance);
+            this.renderAll();
+            this.renderOnAddRemove=true;
         }
     }
 }
