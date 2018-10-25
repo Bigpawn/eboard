@@ -10,7 +10,6 @@ import '../style/toolbar.less';
 import "../font/iconfont.css";
 import '../style/drop-down.less';
 import {EBoard} from '../EBoard';
-import {number} from "prop-types";
 
 export declare interface IToolbarItem{
     name:string;
