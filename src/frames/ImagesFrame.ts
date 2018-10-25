@@ -150,7 +150,7 @@ class ImagesFrame implements IImagesFrame{
                 content:this.urlPrefix+this.images[pageNum-1],
                 scrollbar:ScrollbarType.vertical,
                 container:this.container,
-                frameId:this.groupId+"_"+this.pageNum.toString(),
+                frameId:this.groupId+"_"+pageNum.toString(),
                 groupId:this.groupId,
                 calcSize:this.options.calcSize
             });

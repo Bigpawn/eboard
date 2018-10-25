@@ -72051,7 +72051,7 @@ var ImagesFrame = /** @class */function () {
                 content: this.urlPrefix + this.images[pageNum - 1],
                 scrollbar: __WEBPACK_IMPORTED_MODULE_1__HtmlFrame__["c" /* ScrollbarType */].vertical,
                 container: this.container,
-                frameId: this.groupId + "_" + this.pageNum.toString(),
+                frameId: this.groupId + "_" + pageNum.toString(),
                 groupId: this.groupId,
                 calcSize: this.options.calcSize
             });
@@ -72078,9 +72078,16 @@ var ImagesFrame = /** @class */function () {
             // const leaveClassName = `${this.animationCssPrefix}-leave-to-${pageNum>this.pageNum?"left":"right"}`;
             // frameDom.classList.add(enterClassName);
             // currentFrameDom.classList.add(leaveClassName);
-            _this.dom.insertBefore(frameDom, _this.pagination.dom);
+            // 不能做隐藏，隐藏会造成布局未完成即开始绘制
+            frameDom.classList.remove("eboard-page-hide");
+            frameDom.classList.add("eboard-page-show");
+            if (!frameDom.parentElement) {
+                _this.dom.insertBefore(frameDom, _this.pagination.dom);
+            }
+            currentFrameDom.classList.remove("eboard-page-show");
+            currentFrameDom.classList.add("eboard-page-hide");
             _this.setPageNum(pageNum);
-            currentFrameDom.parentElement && currentFrameDom.parentElement.removeChild(currentFrameDom);
+            // currentFrameDom.parentElement&&currentFrameDom.parentElement.removeChild(currentFrameDom);
             _this.pageFrame = nextPageFrame;
             /*     setTimeout(()=>{
                      frameDom.classList.remove(enterClassName);
@@ -72175,6 +72182,7 @@ var MessageMiddleWare = /** @class */function () {
             mode = message.mode,
             fill = message.fill,
             stroke = message.stroke,
+            tabId = message.tabId,
             scrollbar = message.scrollbar,
             strokeDashArray = message.strokeDashArray,
             strokeWidth = message.strokeWidth,
@@ -72202,13 +72210,13 @@ var MessageMiddleWare = /** @class */function () {
             totalHeight = message.totalHeight,
             scrollLeft = message.scrollLeft,
             scrollTop = message.scrollTop,
-            rest = __rest(message, ["start", "end", "type", "mode", "fill", "stroke", "scrollbar", "strokeDashArray", "strokeWidth", "content", "radius", "rx", "ry", "path", "points", "width", "height", "fontSize", "name", "url", "pageNum", "images", "urlPrefix", "messageId", "frameId", "groupId", "center", "size", "text", "totalWidth", "totalHeight", "scrollLeft", "scrollTop"]);
+            rest = __rest(message, ["start", "end", "type", "mode", "fill", "stroke", "tabId", "scrollbar", "strokeDashArray", "strokeWidth", "content", "radius", "rx", "ry", "path", "points", "width", "height", "fontSize", "name", "url", "pageNum", "images", "urlPrefix", "messageId", "frameId", "groupId", "center", "size", "text", "totalWidth", "totalHeight", "scrollLeft", "scrollTop"]);
         // frame group 只传id
         return {
             messageId: messageId,
             header: __assign({}, rest, { frameId: frameId,
                 groupId: groupId }),
-            body: { start: start, end: end, type: type, mode: mode, fill: fill, stroke: stroke, scrollbar: scrollbar, strokeDashArray: strokeDashArray, radius: radius, strokeWidth: strokeWidth, content: content, rx: rx, ry: ry, path: path, points: points, width: width, height: height, fontSize: fontSize, name: name, url: url, pageNum: pageNum, images: images, urlPrefix: urlPrefix, center: center, size: size, text: text, totalWidth: totalWidth, totalHeight: totalHeight, scrollLeft: scrollLeft, scrollTop: scrollTop }
+            body: { start: start, end: end, type: type, mode: mode, fill: fill, stroke: stroke, tabId: tabId, scrollbar: scrollbar, strokeDashArray: strokeDashArray, radius: radius, strokeWidth: strokeWidth, content: content, rx: rx, ry: ry, path: path, points: points, width: width, height: height, fontSize: fontSize, name: name, url: url, pageNum: pageNum, images: images, urlPrefix: urlPrefix, center: center, size: size, text: text, totalWidth: totalWidth, totalHeight: totalHeight, scrollLeft: scrollLeft, scrollTop: scrollTop }
         };
     };
     MessageMiddleWare.prototype.messageOutFactory = function (message) {

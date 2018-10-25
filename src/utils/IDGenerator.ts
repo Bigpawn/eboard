@@ -9,7 +9,7 @@
 class IDGenerator{
     private static id:number=Date.now();
     public static getId():string{
-        this.id = this.id++;
+        ++this.id;
         return this.id.toString();
     }
 }

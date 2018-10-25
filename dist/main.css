@@ -337,6 +337,13 @@ input::-webkit-inner-spin-button {
   transform: translate(50%, -50%);
   animation: page-leave-to-right ease 500ms;
 }
+.eboard-page-show {
+  visibility: visible;
+}
+.eboard-page-hide {
+  visibility: hidden;
+  margin-left: -100%;
+}
 .eboard-disable .eboard-pagination-left,
 .eboard-disable .eboard-pagination-right {
   display: none;
