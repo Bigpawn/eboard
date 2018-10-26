@@ -613,8 +613,6 @@ class EBoard{
         const messageObj:any = this.middleWare.decompressMessage(message);
         const {frameId,groupId,...options} = messageObj;
         let {tag,type} = options;
-        tag = typeof tag==="string"?Number(tag):tag;
-        
         if(tag===MessageTag.CreateFrame){
             this.addFrame(messageObj);
             return;

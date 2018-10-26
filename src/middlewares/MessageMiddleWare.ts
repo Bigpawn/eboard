@@ -44,11 +44,14 @@ class MessageMiddleWare{
     }
     private messageOutFactory(message:any){
         const {header,body,messageId} = message;
-        return {
+        // tag 转成字符串
+        const messageObject:any = {
             ...header,
             ...body,
             messageId
-        }
+        };
+        messageObject.tag = typeof messageObject.tag==="string"?Number(messageObject.tag):messageObject.tag;
+        return messageObject
     }
     /**
      * 内部调用该方法向外部发送消息
