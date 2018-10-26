@@ -244,7 +244,7 @@ class Triangle extends AbstractShapePlugin{
             flipY:flipY,
             width:width,
             height:height,
-            strokeDashArray:strokeDashArray,
+            ...strokeDashArray?{strokeDashArray}:{},
             strokeWidth:this.strokeWidth,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);

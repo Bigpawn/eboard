@@ -76,7 +76,7 @@ class Hexagon extends AbstractShapePlugin{
         instance= new FabricHexagon(points,{
             stroke: stroke,
             strokeWidth: this.strokeWidth,
-            strokeDashArray:strokeDashArray,
+            ...strokeDashArray?{strokeDashArray}:{},
             fill: fill,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);

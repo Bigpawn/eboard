@@ -21,7 +21,6 @@ class DefaultCursor implements ICursor{
             fill:"red",
             left: center.x,
             top: center.y,
-            stroke:"black",
             radius:size/2 * this.scale,
         })
     }

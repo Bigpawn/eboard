@@ -175,7 +175,7 @@ class Rectangle extends AbstractShapePlugin{
             left: start.x,
             top: start.y,
             stroke:stroke,
-            strokeDashArray:strokeDashArray,
+            ...strokeDashArray?{strokeDashArray}:{},
             width:width,
             height:height,
             strokeWidth:this.strokeWidth,

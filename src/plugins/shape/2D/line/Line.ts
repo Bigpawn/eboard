@@ -73,7 +73,7 @@ class Line extends AbstractShapePlugin{
         instance= new FabricLine([start.x,start.y,end.x,end.y],{
             stroke: stroke,
             strokeWidth:this.strokeWidth,
-            strokeDashArray:strokeDashArray,
+            ...strokeDashArray?{strokeDashArray}:{},
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

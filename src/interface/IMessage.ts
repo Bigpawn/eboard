@@ -103,6 +103,7 @@ export declare interface IRectangleMessage extends IMessage{
     height:number;
     fill:string;
     stroke:string;
+    strokeWidth:number;
     strokeDashArray:number[]
 }
 
@@ -120,6 +121,8 @@ export declare interface ITextMessage extends IMessage{
     start:{x:number;y:number};
     fill:string;
     fontSize:number;
+    flipY:boolean;
+    flipX:boolean;
 }
 
 export declare interface IEquilateralTriangleMessage extends IMessage{

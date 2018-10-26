@@ -185,7 +185,7 @@ class Ellipse extends AbstractShapePlugin{
             rx:rx,
             ry:ry,
             stroke:stroke,
-            strokeDashArray:strokeDashArray,
+            ...strokeDashArray?{strokeDashArray}:{},
             strokeWidth:this.strokeWidth,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);

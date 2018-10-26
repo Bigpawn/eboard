@@ -75,7 +75,7 @@ class Star extends AbstractShapePlugin{
         instance = new FabricStar(points,{
             stroke: stroke,
             strokeWidth: this.strokeWidth,
-            strokeDashArray:strokeDashArray,
+            ...strokeDashArray?{strokeDashArray}:{},
             fill: fill,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);

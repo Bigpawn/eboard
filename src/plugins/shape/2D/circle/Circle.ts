@@ -86,7 +86,7 @@ class Circle extends AbstractShapePlugin{
             left: start.x,
             top: start.y,
             stroke:stroke,
-            strokeDashArray:strokeDashArray,
+            ...strokeDashArray?{strokeDashArray}:{},
             strokeWidth:this.strokeWidth,
             radius:radius,
         },this.eBoardCanvas).setId(id);

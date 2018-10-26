@@ -91,7 +91,7 @@ class Square extends AbstractShapePlugin{
             left: start.x,
             top: start.y,
             stroke:stroke,
-            strokeDashArray:strokeDashArray,
+            ...strokeDashArray?{strokeDashArray}:{},
             strokeWidth:this.strokeWidth,
             originX:"center",
             originY:"center",

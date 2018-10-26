@@ -29,13 +29,13 @@ class Pencil extends fabric.Path implements IObject{
      */
     constructor(path: string | any[], options: IPathOptions,eBoardCanvas:EBoardCanvas){
         super(path,(_context=eBoardCanvas.context,_config=_context.getConfig(),Object.assign({
-            borderColor:_config.borderColor,
+        /*    borderColor:_config.borderColor,
             cornerColor:_config.cornerColor,
             cornerStrokeColor:_config.cornerStrokeColor,
             cornerStyle:_config.cornerStyle,
             transparentCorners:_config.transparentCorners,
             cornerSize:_context.transform(_config.cornerSize),
-            borderScaleFactor:_context.transform(_config.borderWidth)
+            borderScaleFactor:_context.transform(_config.borderWidth)*/
         },options)));
         this.id=IDGenerator.getId();
     }

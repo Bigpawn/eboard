@@ -110,7 +110,7 @@ class Arrow extends AbstractShapePlugin{
             originY:"center",
             top:center.y,
             left:center.x,
-            strokeDashArray:strokeDashArray,
+            ...strokeDashArray?{strokeDashArray}:{},
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
