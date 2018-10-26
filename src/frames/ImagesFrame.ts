@@ -28,7 +28,7 @@ class ImagesFrame implements IImagesFrame{
     public options:IImagesFrameOptions;
     public pageFrame:ImageFrame;
     private pagination:Pagination;
-    private animationCssPrefix:string;
+    // private animationCssPrefix:string;
     public images:string[];
     public groupId:string;
     public context:Context;

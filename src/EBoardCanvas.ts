@@ -10,7 +10,6 @@
  */
 import {fabric} from "fabric";
 import {
-    ICanvasDimensions, ICanvasDimensionsOptions,
     ICanvasOptions,
 } from '~fabric/fabric-impl';
 import {ICursor} from './interface/ICursor';
@@ -28,7 +27,7 @@ class EBoardCanvas extends fabric.Canvas{
     private instance:fabric.Object;
     private cursorMessageEnable:boolean=false;
     private touching:boolean=false;// 是否触摸模式
-    
+    public enableRetinaScaling:boolean=false;
     // 光标类型
     private cursor:ICursor;
     private cursorType:CursorType;
@@ -37,6 +36,7 @@ class EBoardCanvas extends fabric.Canvas{
     private groupId?:string;
     constructor(element: HTMLCanvasElement,options: ICanvasOptions,eBoardEngine:EBoardEngine){
         super(element,options);
+        this.enableRetinaScaling=false;// 不自动根据分辨率缩放  否则ios 会自动*3
         this.context=eBoardEngine.context;
         this.frameId=eBoardEngine.frameId;
         this.groupId=eBoardEngine.groupId;
@@ -192,18 +192,6 @@ class EBoardCanvas extends fabric.Canvas{
     }
     public setCursorMessageEnable(enable:boolean){
         this.cursorMessageEnable = enable;
-    }
-    
-    /**
-     * @override
-     * @param {ICanvasDimensions} dimensions
-     * @param {ICanvasDimensionsOptions} options
-     * @returns {this}
-     */
-    public setDimensions(dimensions: ICanvasDimensions, options?: ICanvasDimensionsOptions){
-        super.setDimensions(dimensions,options);
-        // this.setDimensions(dimensions,options);
-        return this;
     }
     
     public getLowerCanvas(){

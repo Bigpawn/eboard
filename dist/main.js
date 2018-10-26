@@ -31842,7 +31842,7 @@ var GenericHtmlFrame = /** @class */function (_super) {
         this.dom = container;
     };
     GenericHtmlFrame.prototype.initLayout = function () {
-        var calcSize = this.options.calcSize;
+        var calcSize = this.calcSize;
         this.dom.style.width = calcSize.width + "px";
         this.dom.style.height = calcSize.height + "px";
         // 如果是图片还是
@@ -33827,6 +33827,7 @@ var GenericBaseFrame = /** @class */function (_super) {
         }
         _this.container = options.container;
         _this.options = options;
+        _this.calcSize = options.calcSize || {};
         var container = _this.options.container;
         _this.initEngine();
         _this.initPlugin();
@@ -33837,6 +33838,11 @@ var GenericBaseFrame = /** @class */function (_super) {
         if (!_this.groupId) {
             _this.initializeAction();
         }
+        // resize
+        context.on("resize", function (e) {
+            _this.calcSize = e.data;
+            _this.initLayout();
+        });
         return _this;
     }
     GenericBaseFrame.prototype.initPlugin = function () {
@@ -33905,7 +33911,7 @@ var GenericBaseFrame = /** @class */function (_super) {
         this.dom = container;
     };
     GenericBaseFrame.prototype.initLayout = function () {
-        var calcSize = this.options.calcSize;
+        var calcSize = this.calcSize;
         this.engine.eBoardCanvas.setDimensions({ width: calcSize.width, height: calcSize.height }); // 设置样式大小
         this.engine.eBoardCanvas.setDimensions(calcSize.dimensions, { backstoreOnly: true }); // 设置canvas 画布大小
     };
@@ -37844,6 +37850,15 @@ var EBoard = /** @class */function () {
         this.context.transform = function (size) {
             return size * _this.calcSize.dimensions.width / _this.calcSize.width;
         };
+        window.addEventListener("resize", function () {
+            _this.calcSize = _this.calc();
+            // 画布分辨率比例计算
+            _this.context.transform = function (size) {
+                return size * _this.calcSize.dimensions.width / _this.calcSize.width;
+            };
+            // 触发所有frame 的重新layout
+            _this.context.trigger("resize", _this.calcSize);
+        });
     };
     EBoard.prototype.initLayout = function () {
         var body = document.createElement("div");

@@ -10,7 +10,8 @@ class MaterialUIPage extends SimpleCanvas{
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
         const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
-        eBoard.on("message",(message)=>{
+        eBoard.on("message",(e:any)=>{
+            const message = e.data;
             console.log(message);
             receiveEBoard.onMessage(message);
         });

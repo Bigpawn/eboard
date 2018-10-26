@@ -16,6 +16,7 @@ import {IPluginConfigOptions} from '../utils/EDux';
 import {MessageTag} from '../enums/MessageTag';
 import {Context, ContextFactory} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
+import {ScrollBar} from '../components/ScrollBar';
 
 
 
@@ -27,6 +28,8 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
     public options:T;
     public frameId:string;
     public groupId:string|undefined;
+    public scrollbar:ScrollBar;
+    protected calcSize:any;
     constructor(context:Context,options:T){
         super(context);
         this.frameId=options.frameId||IDGenerator.getId();
@@ -38,6 +41,7 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
         }
         this.container=options.container as any;
         this.options=options;
+        this.calcSize=options.calcSize||{};
         const {container} = this.options as any;
         this.initEngine();
         this.initPlugin();
@@ -48,6 +52,15 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
         if(!this.groupId){
             this.initializeAction();
         }
+        
+        // resize
+        context.on("resize",(e:any)=>{
+            this.calcSize=e.data;
+            this.initLayout();
+            if(this.scrollbar){
+                this.scrollbar.update();
+            }
+        })
     }
     private initPlugin(){
         const {store} = this.context;
@@ -113,8 +126,8 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
         this.dom = container;
     }
     protected initLayout(){
-        const calcSize = this.options.calcSize;
-        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:calcSize.height});// 设置样式大小
+        const calcSize = this.calcSize;
+        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:calcSize.height},{cssOnly:true});// 设置样式大小
         this.engine.eBoardCanvas.setDimensions(calcSize.dimensions,{backstoreOnly:true});// 设置canvas 画布大小
     };
     public getPlugin(pluginName:string){

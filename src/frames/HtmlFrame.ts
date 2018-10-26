@@ -24,7 +24,6 @@ export enum ScrollbarType{
 class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> implements IFrame{
     private htmlWrap:HTMLDivElement;
     public type="html-frame";
-    public scrollbar:ScrollBar;
     private html:string|HTMLElement|undefined;
     protected getChildren():string|HTMLElement|undefined{
         return this.options.content;
@@ -117,7 +116,7 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
         this.dom = container;
     }
     protected initLayout(){
-        let calcSize=this.options.calcSize;
+        let calcSize=this.calcSize;
         this.dom.style.width=calcSize.width+"px";
         this.dom.style.height=calcSize.height+"px";
         // 如果是图片还是
@@ -144,7 +143,7 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
             width:calcSize.dimensions.width,
             height:calcSize.dimensions.width * height / calcSize.width, // 都需要计算，根据dimensions.width 按照比例计算
         };
-        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 样式大小
+        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height},{cssOnly:true});// 样式大小
         this.engine.eBoardCanvas.setDimensions(dimensions,{backstoreOnly:true});// canvas分辨率
     }
     public destroy(){

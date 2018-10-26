@@ -211,6 +211,9 @@ textarea[data-fabric-hiddentextarea] {
   right: 0!important;
   left: auto!important;
 }
+.eboard-disable .ps {
+  pointer-events: none;
+}
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
  * @Date: 2018/7/11 19:38

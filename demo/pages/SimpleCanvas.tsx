@@ -10,16 +10,33 @@ class SimpleCanvas extends React.Component<{}, {}> {
     componentDidMount(){
         setTimeout(()=>{
             const eBoard = EBoardInstance.getInstance();
-            const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
-            eBoard.on("message",(e:any)=>{
-                const message = e.data;
-                console.log(message);
-                receiveEBoard.onMessage(message);
+            // const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
+            eBoard.on("message",(message)=>{
+                // console.log(JSON.parse(message));
+                // receiveEBoard.onMessage(message);
             });
             const frame=eBoard.addEmptyFrame({
                 type:FrameType.Empty,
             });
-        },2000)
+            const canvas=frame.engine.eBoardCanvas.getUpperCanvas();
+            // canvas.style.backgroundColor="blue";
+            const canvasContext= canvas.getContext("2d");
+            canvasContext.fillStyle="red";
+            canvasContext.fillRect(0,0,300,75);
+            setTimeout(()=>{
+                const canvas=frame.engine.eBoardCanvas.getUpperCanvas();
+                // canvas.style.backgroundColor="blue";
+                const canvasContext= canvas.getContext("2d");
+                canvasContext.fillStyle="blue";
+                canvasContext.fillRect(0,0,150,75);
+                const message ={"messageId":11,"header":{"id":"1540442682021","tag":13,"frameId":frame.frameId},"body":{"type":"pencil","stroke":"#f66c00","strokeWidth":10.8,"path":"M 8 18 Q 8 18 8.5 18 Q 9 18 10.5 21 Q 12 24 15 30 Q 18 36 21 41 Q 24 46 25 49.5 Q 26 53 30.5 57.5 Q 35 62 35 64 Q 35 66 36 69.5 Q 37 73 38.5 76.5 Q 40 80 40 81 Q 40 82 40 83 L 40 84"}};
+                eBoard.onMessage(JSON.stringify(message));
+            },300)
+            
+            
+            // const message ={"messageId":11,"header":{"id":"1540442682021","tag":13,"frameId":frame.frameId},"body":{"type":"pencil","stroke":"#f66c00","strokeWidth":10.8,"path":"M 8 18 Q 8 18 8.5 18 Q 9 18 10.5 21 Q 12 24 15 30 Q 18 36 21 41 Q 24 46 25 49.5 Q 26 53 30.5 57.5 Q 35 62 35 64 Q 35 66 36 69.5 Q 37 73 38.5 76.5 Q 40 80 40 81 Q 40 82 40 83 L 40 84"}};
+            // eBoard.onMessage(JSON.stringify(message));
+        },100)
     }
     public render(): JSX.Element {
         return (
@@ -27,6 +44,7 @@ class SimpleCanvas extends React.Component<{}, {}> {
                 <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"200%",height:"100%",position:"relative"}}>
                     <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainer"}/>
                     <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainerReceive"}>
+                        <canvas id="test"></canvas>
                     </div>
                 </div>
             </Card>
