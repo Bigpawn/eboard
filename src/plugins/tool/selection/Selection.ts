@@ -59,9 +59,6 @@ class Selection extends AbstractPlugin{
         this.onScaling = this.onScaling.bind(this);
         this.onRotating = this.onRotating.bind(this);
     }
-    
-    
-    
     private onMoving(e:IEvent){
         const _target = e.target;
         if(_target){
@@ -88,10 +85,11 @@ class Selection extends AbstractPlugin{
             }
             const transform = e["transform"];
             const {target} = transform;
-            this.scaling(ids,{width:target.width * target.scaleX,height:target.height * target.scaleY,left:target.left,top:target.top,originX:target.originX,originY:target.originY});
+            this.scaling(ids,{width:target.width * target.scaleX,height:target.height * target.scaleY,left:target.left,top:target.top,originX:target.originX,originY:target.originY,flipY:target.flipY,flipX:target.flipX});
         }
     }
     private onRotating(e:IEvent){
+        console.log("rotate");
         const _target = e.target;
         if(_target){
             let ids:string[];
@@ -188,7 +186,6 @@ class Selection extends AbstractPlugin{
         switch (tag){
             case MessageTag.SelectionMove:
                 // 需要计算增量
-                console.log(transform);
                 group.set({
                     left:transform.left,
                     top:transform.top,
@@ -208,7 +205,9 @@ class Selection extends AbstractPlugin{
                     left:transform.left,
                     top:transform.top,
                     originX:transform.originX,
-                    originY:transform.originY
+                    originY:transform.originY,
+                    flipY:transform.flipY,
+                    flipX:transform.flipX
                 }).setCoords();
                 group["toActiveSelection"]();// 转成selection
                 this.eBoardCanvas.discardActiveObject();// 拆分成单独的对象

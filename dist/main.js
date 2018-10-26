@@ -39766,10 +39766,11 @@ var Selection = /** @class */function (_super) {
             }
             var transform = e["transform"];
             var target = transform.target;
-            this.scaling(ids, { width: target.width * target.scaleX, height: target.height * target.scaleY, left: target.left, top: target.top, originX: target.originX, originY: target.originY });
+            this.scaling(ids, { width: target.width * target.scaleX, height: target.height * target.scaleY, left: target.left, top: target.top, originX: target.originX, originY: target.originY, flipY: target.flipY, flipX: target.flipX });
         }
     };
     Selection.prototype.onRotating = function (e) {
+        console.log("rotate");
         var _target = e.target;
         if (_target) {
             var ids = void 0;
@@ -39864,7 +39865,6 @@ var Selection = /** @class */function (_super) {
         switch (tag) {
             case __WEBPACK_IMPORTED_MODULE_3__enums_MessageTag__["a" /* MessageTag */].SelectionMove:
                 // 需要计算增量
-                console.log(transform);
                 group.set({
                     left: transform.left,
                     top: transform.top,
@@ -39884,7 +39884,9 @@ var Selection = /** @class */function (_super) {
                     left: transform.left,
                     top: transform.top,
                     originX: transform.originX,
-                    originY: transform.originY
+                    originY: transform.originY,
+                    flipY: transform.flipY,
+                    flipX: transform.flipX
                 }).setCoords();
                 group["toActiveSelection"](); // 转成selection
                 this.eBoardCanvas.discardActiveObject(); // 拆分成单独的对象
@@ -72177,6 +72179,8 @@ var MessageMiddleWare = /** @class */function () {
             fill = message.fill,
             stroke = message.stroke,
             tabId = message.tabId,
+            transform = message.transform,
+            ids = message.ids,
             scrollbar = message.scrollbar,
             activeKey = message.activeKey,
             strokeDashArray = message.strokeDashArray,
@@ -72205,13 +72209,13 @@ var MessageMiddleWare = /** @class */function () {
             totalHeight = message.totalHeight,
             scrollLeft = message.scrollLeft,
             scrollTop = message.scrollTop,
-            rest = __rest(message, ["start", "end", "type", "mode", "fill", "stroke", "tabId", "scrollbar", "activeKey", "strokeDashArray", "strokeWidth", "content", "radius", "rx", "ry", "path", "points", "width", "height", "fontSize", "name", "url", "pageNum", "images", "urlPrefix", "messageId", "frameId", "groupId", "center", "size", "text", "totalWidth", "totalHeight", "scrollLeft", "scrollTop"]);
+            rest = __rest(message, ["start", "end", "type", "mode", "fill", "stroke", "tabId", "transform", "ids", "scrollbar", "activeKey", "strokeDashArray", "strokeWidth", "content", "radius", "rx", "ry", "path", "points", "width", "height", "fontSize", "name", "url", "pageNum", "images", "urlPrefix", "messageId", "frameId", "groupId", "center", "size", "text", "totalWidth", "totalHeight", "scrollLeft", "scrollTop"]);
         // frame group 只传id
         return {
             messageId: messageId,
             header: __assign({}, rest, { frameId: frameId,
                 groupId: groupId }),
-            body: { start: start, end: end, type: type, mode: mode, fill: fill, stroke: stroke, tabId: tabId, scrollbar: scrollbar, activeKey: activeKey, strokeDashArray: strokeDashArray, radius: radius, strokeWidth: strokeWidth, content: content, rx: rx, ry: ry, path: path, points: points, width: width, height: height, fontSize: fontSize, name: name, url: url, pageNum: pageNum, images: images, urlPrefix: urlPrefix, center: center, size: size, text: text, totalWidth: totalWidth, totalHeight: totalHeight, scrollLeft: scrollLeft, scrollTop: scrollTop }
+            body: { start: start, end: end, type: type, mode: mode, fill: fill, stroke: stroke, tabId: tabId, transform: transform, ids: ids, scrollbar: scrollbar, activeKey: activeKey, strokeDashArray: strokeDashArray, radius: radius, strokeWidth: strokeWidth, content: content, rx: rx, ry: ry, path: path, points: points, width: width, height: height, fontSize: fontSize, name: name, url: url, pageNum: pageNum, images: images, urlPrefix: urlPrefix, center: center, size: size, text: text, totalWidth: totalWidth, totalHeight: totalHeight, scrollLeft: scrollLeft, scrollTop: scrollTop }
         };
     };
     MessageMiddleWare.prototype.messageOutFactory = function (message) {

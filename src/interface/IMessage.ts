@@ -160,7 +160,9 @@ export declare interface ISelectionMessage extends IMessage{
         height:number;
         angle:number;
         originX:string;
-        originY:string
+        originY:string;
+        flipY:boolean;
+        flipX:boolean;
     }
 }
 
