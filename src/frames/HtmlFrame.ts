@@ -143,7 +143,7 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
             width:calcSize.dimensions.width,
             height:calcSize.dimensions.width * height / calcSize.width, // 都需要计算，根据dimensions.width 按照比例计算
         };
-        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height},{cssOnly:true});// 样式大小
+        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 样式大小
         this.engine.eBoardCanvas.setDimensions(dimensions,{backstoreOnly:true});// canvas分辨率
     }
     public destroy(){

@@ -127,7 +127,7 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
     }
     protected initLayout(){
         const calcSize = this.calcSize;
-        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:calcSize.height},{cssOnly:true});// 设置样式大小
+        this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:calcSize.height});// 设置样式大小
         this.engine.eBoardCanvas.setDimensions(calcSize.dimensions,{backstoreOnly:true});// 设置canvas 画布大小
     };
     public getPlugin(pluginName:string){
