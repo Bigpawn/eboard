@@ -25,6 +25,7 @@ class Line extends AbstractShapePlugin{
             end:this.end,
             type:this.instance.type,
             stroke:this.instance.stroke,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
@@ -63,7 +64,7 @@ class Line extends AbstractShapePlugin{
      * @param {IEllipseMessage} message
      */
     public onMessage(message:ILineMessage){
-        const {id,start,end,stroke,strokeDashArray} = message;
+        const {id,start,end,stroke,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricLine;
         this.eBoardCanvas.renderOnAddRemove=false;
     
@@ -72,7 +73,7 @@ class Line extends AbstractShapePlugin{
         }
         instance= new FabricLine([start.x,start.y,end.x,end.y],{
             stroke: stroke,
-            strokeWidth:this.strokeWidth,
+            strokeWidth,
             ...strokeDashArray?{strokeDashArray}:{},
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);

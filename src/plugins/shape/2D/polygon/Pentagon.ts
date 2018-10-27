@@ -26,6 +26,7 @@ class Pentagon extends AbstractShapePlugin{
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
@@ -68,7 +69,7 @@ class Pentagon extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IPentagonMessage){
-        const {id,points,stroke,fill,strokeDashArray} = message;
+        const {id,points,stroke,fill,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricPentagon;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -76,7 +77,7 @@ class Pentagon extends AbstractShapePlugin{
         }
         instance = new FabricPentagon(points,{
             stroke: stroke,
-            strokeWidth: this.strokeWidth,
+            strokeWidth,
             ...strokeDashArray?{strokeDashArray}:{},
             fill: fill,
         },this.eBoardCanvas).setId(id);

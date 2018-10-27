@@ -220,6 +220,7 @@ class Triangle extends AbstractShapePlugin{
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
@@ -229,23 +230,23 @@ class Triangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ITriangleMessage){
-        const {id,start,flipX,flipY,width,height,stroke,fill,strokeDashArray} = message;
+        const {id,start,flipX,flipY,width,height,stroke,fill,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
         instance = new FabricTriangle({
-            fill:fill,
+            fill,
             left: start.x,
             top: start.y,
-            stroke:stroke,
-            flipX:flipX,
-            flipY:flipY,
-            width:width,
-            height:height,
+            stroke,
+            flipX,
+            flipY,
+            width,
+            height,
             ...strokeDashArray?{strokeDashArray}:{},
-            strokeWidth:this.strokeWidth,
+            strokeWidth,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

@@ -26,6 +26,7 @@ class Hexagon extends AbstractShapePlugin{
             type:this.instance.type,
             stroke:this.instance.stroke,
             fill:this.instance.fill,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
@@ -67,7 +68,7 @@ class Hexagon extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IHexagonMessage){
-        const {id,points,fill,stroke,strokeDashArray} = message;
+        const {id,points,fill,stroke,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricHexagon;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -75,7 +76,7 @@ class Hexagon extends AbstractShapePlugin{
         }
         instance= new FabricHexagon(points,{
             stroke: stroke,
-            strokeWidth: this.strokeWidth,
+            strokeWidth,
             ...strokeDashArray?{strokeDashArray}:{},
             fill: fill,
         },this.eBoardCanvas).setId(id);

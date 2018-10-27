@@ -86,6 +86,7 @@ class Rectangle extends AbstractShapePlugin{
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
@@ -164,21 +165,21 @@ class Rectangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IRectangleMessage){
-        const {id,start,width,height,fill,stroke,strokeDashArray} = message;
+        const {id,start,width,height,fill,stroke,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricRectangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
         instance = new FabricRectangle({
-            fill:fill,
+            fill,
             left: start.x,
             top: start.y,
-            stroke:stroke,
+            stroke,
             ...strokeDashArray?{strokeDashArray}:{},
-            width:width,
-            height:height,
-            strokeWidth:this.strokeWidth,
+            width,
+            height,
+            strokeWidth,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

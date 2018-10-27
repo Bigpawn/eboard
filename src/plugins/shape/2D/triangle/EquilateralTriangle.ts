@@ -27,6 +27,7 @@ class EquilateralTriangle extends AbstractShapePlugin{
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
@@ -66,17 +67,17 @@ class EquilateralTriangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IEquilateralTriangleMessage){
-        const {id,points,fill,stroke,strokeDashArray} = message;
+        const {id,points,fill,stroke,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricEquilateralTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
         instance = new FabricEquilateralTriangle(points,{
-            stroke: stroke,
-            strokeWidth: this.strokeWidth,
+            stroke,
+            strokeWidth,
             ...strokeDashArray?{strokeDashArray}:{},
-            fill: fill,
+            fill,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

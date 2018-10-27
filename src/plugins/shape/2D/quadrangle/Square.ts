@@ -31,6 +31,7 @@ class Square extends AbstractShapePlugin{
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
@@ -80,24 +81,24 @@ class Square extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ISquareMessage){
-        const {id,start,length,angle,fill,stroke,strokeDashArray} = message;
+        const {id,start,length,angle,fill,stroke,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricSquare;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
         instance = new FabricSquare({
-            fill:fill,
+            fill,
             left: start.x,
             top: start.y,
-            stroke:stroke,
+            stroke,
             ...strokeDashArray?{strokeDashArray}:{},
-            strokeWidth:this.strokeWidth,
+            strokeWidth,
             originX:"center",
             originY:"center",
             width:length,
             height:length,
-            angle:angle,
+            angle,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

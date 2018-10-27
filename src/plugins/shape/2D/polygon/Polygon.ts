@@ -64,6 +64,7 @@ class Polygon extends AbstractShapePlugin{
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
@@ -157,7 +158,7 @@ class Polygon extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IPolygonMessage){
-        const {id,points,stroke,fill,strokeDashArray} = message;
+        const {id,points,stroke,fill,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricPolygon;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -166,7 +167,7 @@ class Polygon extends AbstractShapePlugin{
         instance = new FabricPolygon(points,{
             stroke:stroke,
             ...strokeDashArray?{strokeDashArray}:{},
-            strokeWidth:this.strokeWidth,
+            strokeWidth,
             fill:fill,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);

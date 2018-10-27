@@ -35,7 +35,8 @@ export declare interface IArrowMessage extends IMessage{
     mode:ArrowMode;
     fill:string;
     stroke:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface ICircleMessage extends IMessage{
@@ -43,7 +44,8 @@ export declare interface ICircleMessage extends IMessage{
     radius:number;
     stroke:string;
     fill:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface IEllipseMessage extends IMessage{
@@ -52,14 +54,16 @@ export declare interface IEllipseMessage extends IMessage{
     ry:number;
     fill:string;
     stroke:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface ILineMessage extends IMessage{
     start:{x:number;y:number};
     end:{x:number;y:number};
     stroke:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface IPencilMessage extends IMessage{
@@ -73,28 +77,32 @@ export declare interface IHexagonMessage extends IMessage{
     points:any[];
     stroke:string;
     fill:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface IPentagonMessage extends IMessage{
     points:any[];
     stroke:string;
     fill:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface IPolygonMessage extends IMessage{
     points:any[];
     stroke:string;
     fill:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface IStarMessage extends IMessage{
     points:any[];
     stroke:string;
     fill:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface IRectangleMessage extends IMessage{
@@ -104,7 +112,7 @@ export declare interface IRectangleMessage extends IMessage{
     fill:string;
     stroke:string;
     strokeWidth:number;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
 }
 
 export declare interface ISquareMessage extends IMessage{
@@ -113,7 +121,8 @@ export declare interface ISquareMessage extends IMessage{
     angle:number;
     fill:string;
     stroke:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface ITextMessage extends IMessage{
@@ -129,14 +138,16 @@ export declare interface IEquilateralTriangleMessage extends IMessage{
     points:any[];
     fill:string;
     stroke:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface IOrthogonalTriangleMessage extends IMessage{
     points:any[];
     stroke:string;
     fill:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface ITriangleMessage extends IMessage{
@@ -147,7 +158,8 @@ export declare interface ITriangleMessage extends IMessage{
     flipY:boolean;
     stroke:string;
     fill:string;
-    strokeDashArray:number[]
+    strokeDashArray:number[];
+    strokeWidth:number;
 }
 
 export declare interface IDeleteMessage extends IMessage{

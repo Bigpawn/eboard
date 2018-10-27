@@ -55,6 +55,7 @@ class OrthogonalTriangle extends AbstractShapePlugin{
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined;
     }
@@ -64,17 +65,17 @@ class OrthogonalTriangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IOrthogonalTriangleMessage){
-        const {id,points,stroke,fill,strokeDashArray} = message;
+        const {id,points,stroke,fill,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricOrthogonalTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
         instance = new FabricOrthogonalTriangle(points,{
-            stroke: stroke,
-            strokeWidth: this.strokeWidth,
+            stroke,
+            strokeWidth,
             ...strokeDashArray?{strokeDashArray}:{},
-            fill: fill,
+            fill,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

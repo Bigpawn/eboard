@@ -26,6 +26,7 @@ class Star extends AbstractShapePlugin{
             type:this.instance.type,
             stroke:this.instance.stroke,
             fill:this.instance.fill,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
@@ -66,7 +67,7 @@ class Star extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IStarMessage){
-        const {id,points,fill,stroke,strokeDashArray} = message;
+        const {id,points,fill,stroke,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricStar;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -74,7 +75,7 @@ class Star extends AbstractShapePlugin{
         }
         instance = new FabricStar(points,{
             stroke: stroke,
-            strokeWidth: this.strokeWidth,
+            strokeWidth,
             ...strokeDashArray?{strokeDashArray}:{},
             fill: fill,
         },this.eBoardCanvas).setId(id);

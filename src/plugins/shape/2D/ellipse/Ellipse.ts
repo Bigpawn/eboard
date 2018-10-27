@@ -89,6 +89,7 @@ class Ellipse extends AbstractShapePlugin{
             type:this.instance.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
+            strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
@@ -171,7 +172,7 @@ class Ellipse extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IEllipseMessage){
-        const {id,start,rx,ry,fill,stroke,strokeDashArray} = message;
+        const {id,start,rx,ry,fill,stroke,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricEllipse;
         this.eBoardCanvas.renderOnAddRemove=false;
     
@@ -185,8 +186,8 @@ class Ellipse extends AbstractShapePlugin{
             rx:rx,
             ry:ry,
             stroke:stroke,
+            strokeWidth,
             ...strokeDashArray?{strokeDashArray}:{},
-            strokeWidth:this.strokeWidth,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
