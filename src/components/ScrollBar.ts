@@ -80,10 +80,13 @@ class ScrollBar extends PerfectScrollbar{
             }
         },1);
     }
+    private get messageEnable(){
+        return this.context&&this.context.getConfig("enable");
+    }
     @message
     private scrollAction(){
-        // 返回总高度
-        return this.context?{
+        // 滚动消息，需要根据enable判断
+        return this.messageEnable?{
             tag:MessageTag.Scroll,
             scrollTop:this.container.scrollTop,
             scrollLeft:this.container.scrollLeft,
@@ -93,11 +96,27 @@ class ScrollBar extends PerfectScrollbar{
         }:undefined
     }
     
+    /**
+     * 会触发滚动消息
+     * @param {IScrollBarMessage} message
+     */
     public onMessage(message:IScrollBarMessage){
         const {scrollTop,scrollLeft,totalHeight,totalWidth} = message;
         if(this.container){
             const {scrollHeight,scrollWidth} = this.container;
             this.scrollTo(scrollTop * scrollHeight/totalHeight,scrollLeft * scrollWidth / totalWidth);
+        }
+    }
+    
+    /**
+     * 用于恢复，不触发滚动消息
+     */
+    public recovery(message:IScrollBarMessage){
+        const {scrollTop,scrollLeft,totalHeight,totalWidth} = message;
+        if(this.container){
+            const {scrollHeight,scrollWidth} = this.container;
+            this.container.scrollLeft = scrollLeft * scrollWidth / totalWidth;
+            this.container.scrollTop = scrollTop * scrollHeight/totalHeight;
         }
     }
 }

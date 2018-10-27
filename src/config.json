@@ -20,5 +20,6 @@
     "compress":false,
     "arrowShape":"fish",
     "escKey":true,
-    "ctrlKey":true
+    "ctrlKey":true,
+    "enable":true
 }

@@ -21,6 +21,7 @@ class Pagination{
     private prev:HTMLDivElement;
     private next:HTMLDivElement;
     private input:HTMLInputElement;
+    private inputLabel:HTMLSpanElement;
     private onGoListener:(pageNum:number,messageId:number)=>void;
     constructor(pageNum:number,totalPages:number){
         this.pageNum=pageNum;
@@ -45,8 +46,13 @@ class Pagination{
             this.onGoListener.call(this,this.pageNum+1);
         }
     }
+    private updatePageNum(pageNum:number){
+        const label = pageNum.toString();
+        this.input.value=label;
+        this.inputLabel.innerText=label;
+    }
     private initLayout(){
-        const wrap = document.createElement("div");
+        // const wrap = document.createElement("div");
         const prev = document.createElement("div");
         prev.className="eboard-pagination-left";
         prev.innerHTML='<i class="eboard-icon eboard-icon-prev"/>';
@@ -59,8 +65,12 @@ class Pagination{
         bottom.className="eboard-pagination-bottom";
         const input = document.createElement("input");
         input.type="number";
+     
+        input.className="eboard-pagination-input";
+        input.addEventListener("keydown",this.onKeyEnter);
+        const inputSpan = this.inputLabel = document.createElement("span");
+        inputSpan.className="eboard-pagination-input-label";
         input.oninput=()=>{
-            console.log(input.value);
             input.value=input.value.replace(/\D/g,'');
             const number = Number(input.value);
             if(number>this.totalPages){
@@ -69,6 +79,7 @@ class Pagination{
             if(input.value==="0"){
                 input.value = "1";
             }
+            inputSpan.innerText=input.value;
         };
         input.onblur=()=>{
             const number = Number(input.value);
@@ -76,8 +87,7 @@ class Pagination{
                 input.value = "1";
             }
         };
-        input.className="eboard-pagination-current";
-        input.addEventListener("keydown",this.onKeyEnter);
+        
         this.input=input;
         const span = document.createElement("span");
         span.className="eboard-pagination-total";
@@ -89,20 +99,20 @@ class Pagination{
         
         bottom.appendChild(this.prev);
         bottom.appendChild(input);
-        bottom.appendChild(document.createTextNode("/"));
+        bottom.appendChild(inputSpan);
         bottom.appendChild(span);
         bottom.appendChild(this.next);
         bottom.appendChild(bottomGo);
         // wrap.appendChild(prev);
         // wrap.appendChild(next);
-        wrap.appendChild(bottom);
-        this.dom=wrap;
+        // wrap.appendChild(bottom);
+        this.dom=bottom;
     }
     private todoChange(){
         const value = this.input.value;
         const number =Number(value);
         if("" === value || number<1 || number>this.totalPages){
-            this.input.value=this.pageNum as any;
+            this.updatePageNum(this.pageNum);
         }else{
             this.pageNum = number;
             if(this.onGoListener){
@@ -155,7 +165,7 @@ class Pagination{
      */
     public setPageNum(pageNum:number){
         this.pageNum=pageNum;
-        this.input.value=pageNum as any;
+        this.updatePageNum(pageNum);
         this.initPagerAction();
         return this;
     }

@@ -603,8 +603,9 @@ class EBoard{
      * 消息分发
      * @param {string} message
      * 消息内容节能会被压缩，需要解压
+     * @param recovery 是否用于恢复
      */
-    public onMessage(message:string){
+    public onMessage(message:string,recovery?:boolean){
         const messageObj:any = this.middleWare.decompressMessage(message);
         const {frameId,groupId,...options} = messageObj;
         let {tag,type} = options;
@@ -627,7 +628,11 @@ class EBoard{
                         (frame.getPlugin(Plugins.Delete) as Delete).onMessage(options);
                         break;
                     case MessageTag.Scroll:
-                        frame.scrollbar&&frame.scrollbar.onMessage(options);
+                        if(recovery){
+                            frame.scrollbar&&frame.scrollbar.recovery(options);
+                        }else{
+                            frame.scrollbar&&frame.scrollbar.onMessage(options);
+                        }
                         break;
                     case MessageTag.Cursor:
                         frame.engine&&frame.engine.eBoardCanvas.onMessage(options);

@@ -5,11 +5,16 @@
  * * @Last Modified time: 2018/7/11 19:38
  * @disc:Pagination style
  */
-@width: 26px;
+@iconSize: 26px;
 @inputWidth:40px;
 @fontSize:18px;
 @bottomPadding:0.2rem;
 @bottomGoSize:35px;
+@height:44px;
+@bottom:54px;
+@currentColor:#333;
+@totalColor:#fff;
+@splitMargin:5px;
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -22,17 +27,20 @@ input::-webkit-inner-spin-button {
     }
     &-pagination{
         @icon:{
-            font-size: @width*0.8;
+            font-size: @iconSize*0.8;
             color: #ffffff;
-            line-height: @width;
+            line-height: @iconSize;
         };
         @action:{
             display: inline-block;
-            width: @width;
-            height: @width;
+            width: @iconSize;
+            height: @iconSize;
+            line-height: @iconSize;
             text-align: center;
             cursor: pointer;
             vertical-align: middle;
+            position: relative;
+            top: -2px;
             &.disabled{
                 pointer-events: none;
                 opacity:0.3;
@@ -50,41 +58,41 @@ input::-webkit-inner-spin-button {
             & >.eboard-icon{
                 @icon();
             }
-            margin-left: 10px;
         }
         &-bottom{
             position: fixed;
-            height: 44px;
-            bottom: 54px;
+            height: @height;
+            bottom: @bottom;
             left: 50%;
-            margin-left: -@inputWidth;
+            transform: translateX(-50%);
             font-size: @fontSize;
             background-color: rgba(0,0,0,0.3);
             border-radius: 999px;
-            padding-top: 4px;
-            padding-left: 10px;
+            padding: 0 @height/2;
+            line-height: @height;
+            padding-right: 0;
         }
-        &-current{
+        &-input{
             width: @inputWidth!important;
-            height: @width!important;
-            border: 1px solid transparent;
+            height: @iconSize!important;
             -webkit-box-sizing: border-box;
             -moz-box-sizing: border-box;
             box-sizing: border-box;
             background: #dddddd;
             text-align: center;
-            vertical-align: middle;
             border-radius: 5px;
-            margin-right: 10px;
-            &:hover{
-                border:1px solid #09ca51;
+            border: none;
+            &-label{
+                display: none;
             }
         }
         &-total{
-            padding: @bottomPadding;
-            color: #ffffff;
-            display: inline-block;
-            vertical-align: middle;
+            color: @totalColor;
+            &:before{
+                content: '/';
+                margin: 0 @splitMargin;
+                color: @currentColor;
+            }
         }
       &-bottomGo{
         display: inline-block;
@@ -149,10 +157,13 @@ input::-webkit-inner-spin-button {
         }
         &-bottom{
             pointer-events: none;
+            padding-right:@height/2;
         }
-        &-current{
-            pointer-events: none;
-            background-color: transparent!important;
+        &-input{
+            display: none;
+            &-label{
+                display: inline;
+            }
         }
         &-bottomGo{
             display: none;

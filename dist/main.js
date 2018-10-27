@@ -32482,6 +32482,7 @@ var Arrow = /** @class */function (_super) {
             mode: this.arrowMode,
             fill: this.instance.fill,
             stroke: this.instance.stroke,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -32533,7 +32534,8 @@ var Arrow = /** @class */function (_super) {
             mode = message.mode,
             stroke = message.stroke,
             fill = message.fill,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         var path = this.calcOptions(start, end, mode).path;
@@ -32544,7 +32546,8 @@ var Arrow = /** @class */function (_super) {
             x: (start.x + end.x) / 2,
             y: (start.y + end.y) / 2
         };
-        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Arrow__["a" /* Arrow */](path, __assign({ stroke: stroke, strokeWidth: this.strokeWidth, fill: fill, originX: "center", originY: "center", top: center.y, left: center.x }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Arrow__["a" /* Arrow */](path, __assign({ stroke: stroke, strokeWidth: strokeWidth,
+            fill: fill, originX: "center", originY: "center", top: center.y, left: center.x }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -34092,6 +34095,7 @@ var Line = /** @class */function (_super) {
             end: this.end,
             type: this.instance.type,
             stroke: this.instance.stroke,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -34131,13 +34135,14 @@ var Line = /** @class */function (_super) {
             start = message.start,
             end = message.end,
             stroke = message.stroke,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Line__["a" /* Line */]([start.x, start.y, end.x, end.y], __assign({ stroke: stroke, strokeWidth: this.strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Line__["a" /* Line */]([start.x, start.y, end.x, end.y], __assign({ stroke: stroke, strokeWidth: strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -34561,9 +34566,16 @@ var ScrollBar = /** @class */function (_super) {
             }
         }, 1);
     };
+    Object.defineProperty(ScrollBar.prototype, "messageEnable", {
+        get: function get() {
+            return this.context && this.context.getConfig("enable");
+        },
+        enumerable: true,
+        configurable: true
+    });
     ScrollBar.prototype.scrollAction = function () {
-        // 返回总高度
-        return this.context ? {
+        // 滚动消息，需要根据enable判断
+        return this.messageEnable ? {
             tag: __WEBPACK_IMPORTED_MODULE_2__enums_MessageTag__["a" /* MessageTag */].Scroll,
             scrollTop: this.container.scrollTop,
             scrollLeft: this.container.scrollLeft,
@@ -34572,6 +34584,10 @@ var ScrollBar = /** @class */function (_super) {
             frameId: this.frameId
         } : undefined;
     };
+    /**
+     * 会触发滚动消息
+     * @param {IScrollBarMessage} message
+     */
     ScrollBar.prototype.onMessage = function (message) {
         var scrollTop = message.scrollTop,
             scrollLeft = message.scrollLeft,
@@ -34582,6 +34598,22 @@ var ScrollBar = /** @class */function (_super) {
                 scrollHeight = _a.scrollHeight,
                 scrollWidth = _a.scrollWidth;
             this.scrollTo(scrollTop * scrollHeight / totalHeight, scrollLeft * scrollWidth / totalWidth);
+        }
+    };
+    /**
+     * 用于恢复，不触发滚动消息
+     */
+    ScrollBar.prototype.recovery = function (message) {
+        var scrollTop = message.scrollTop,
+            scrollLeft = message.scrollLeft,
+            totalHeight = message.totalHeight,
+            totalWidth = message.totalWidth;
+        if (this.container) {
+            var _a = this.container,
+                scrollHeight = _a.scrollHeight,
+                scrollWidth = _a.scrollWidth;
+            this.container.scrollLeft = scrollLeft * scrollWidth / totalWidth;
+            this.container.scrollTop = scrollTop * scrollHeight / totalHeight;
         }
     };
     __decorate([__WEBPACK_IMPORTED_MODULE_1__utils_decorators__["a" /* message */]], ScrollBar.prototype, "scrollAction", null);
@@ -38337,8 +38369,9 @@ var EBoard = /** @class */function () {
      * 消息分发
      * @param {string} message
      * 消息内容节能会被压缩，需要解压
+     * @param recovery 是否用于恢复
      */
-    EBoard.prototype.onMessage = function (message) {
+    EBoard.prototype.onMessage = function (message, recovery) {
         var messageObj = this.middleWare.decompressMessage(message);
         var frameId = messageObj.frameId,
             groupId = messageObj.groupId,
@@ -38364,7 +38397,11 @@ var EBoard = /** @class */function () {
                         frame.getPlugin(__WEBPACK_IMPORTED_MODULE_9__plugins__["Plugins"].Delete).onMessage(options);
                         break;
                     case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].Scroll:
-                        frame.scrollbar && frame.scrollbar.onMessage(options);
+                        if (recovery) {
+                            frame.scrollbar && frame.scrollbar.recovery(options);
+                        } else {
+                            frame.scrollbar && frame.scrollbar.onMessage(options);
+                        }
                         break;
                     case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].Cursor:
                         frame.engine && frame.engine.eBoardCanvas.onMessage(options);
@@ -40468,6 +40505,7 @@ var Circle = /** @class */function (_super) {
             type: this.instance.type,
             stroke: this.instance.stroke,
             fill: this.instance.fill,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -40516,13 +40554,14 @@ var Circle = /** @class */function (_super) {
             radius = message.radius,
             stroke = message.stroke,
             fill = message.fill,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Circle__["a" /* Circle */](__assign({ originX: "center", originY: "center", fill: fill, left: start.x, top: start.y, stroke: stroke }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { strokeWidth: this.strokeWidth, radius: radius }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Circle__["a" /* Circle */](__assign({ originX: "center", originY: "center", fill: fill, left: start.x, top: start.y, stroke: stroke }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { strokeWidth: strokeWidth, radius: radius }), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -40747,6 +40786,7 @@ var Ellipse = /** @class */function (_super) {
             type: this.instance.type,
             fill: this.instance.fill,
             stroke: this.instance.stroke,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -40833,13 +40873,14 @@ var Ellipse = /** @class */function (_super) {
             ry = message.ry,
             fill = message.fill,
             stroke = message.stroke,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Ellipse__["a" /* Ellipse */](__assign({ fill: fill, left: start.x, top: start.y, rx: rx, ry: ry, stroke: stroke }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { strokeWidth: this.strokeWidth }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Ellipse__["a" /* Ellipse */](__assign({ fill: fill, left: start.x, top: start.y, rx: rx, ry: ry, stroke: stroke, strokeWidth: strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -41061,6 +41102,7 @@ var Rectangle = /** @class */function (_super) {
             type: this.instance.type,
             fill: this.instance.fill,
             stroke: this.instance.stroke,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -41146,13 +41188,16 @@ var Rectangle = /** @class */function (_super) {
             height = message.height,
             fill = message.fill,
             stroke = message.stroke,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Rectangle__["a" /* Rectangle */](__assign({ fill: fill, left: start.x, top: start.y, stroke: stroke }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { width: width, height: height, strokeWidth: this.strokeWidth }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Rectangle__["a" /* Rectangle */](__assign({ fill: fill, left: start.x, top: start.y, stroke: stroke }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { width: width,
+            height: height,
+            strokeWidth: strokeWidth }), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -41298,6 +41343,7 @@ var Square = /** @class */function (_super) {
             type: this.instance.type,
             fill: this.instance.fill,
             stroke: this.instance.stroke,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -41353,13 +41399,14 @@ var Square = /** @class */function (_super) {
             angle = message.angle,
             fill = message.fill,
             stroke = message.stroke,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Square__["a" /* Square */](__assign({ fill: fill, left: start.x, top: start.y, stroke: stroke }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { strokeWidth: this.strokeWidth, originX: "center", originY: "center", width: length, height: length, angle: angle }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Square__["a" /* Square */](__assign({ fill: fill, left: start.x, top: start.y, stroke: stroke }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { strokeWidth: strokeWidth, originX: "center", originY: "center", width: length, height: length, angle: angle }), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -41702,6 +41749,7 @@ var Triangle = /** @class */function (_super) {
             type: this.instance.type,
             fill: this.instance.fill,
             stroke: this.instance.stroke,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -41718,13 +41766,18 @@ var Triangle = /** @class */function (_super) {
             height = message.height,
             stroke = message.stroke,
             fill = message.fill,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Triangle__["a" /* Triangle */](__assign({ fill: fill, left: start.x, top: start.y, stroke: stroke, flipX: flipX, flipY: flipY, width: width, height: height }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { strokeWidth: this.strokeWidth }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Triangle__["a" /* Triangle */](__assign({ fill: fill, left: start.x, top: start.y, stroke: stroke,
+            flipX: flipX,
+            flipY: flipY,
+            width: width,
+            height: height }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { strokeWidth: strokeWidth }), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -41876,6 +41929,7 @@ var EquilateralTriangle = /** @class */function (_super) {
             type: this.instance.type,
             fill: this.instance.fill,
             stroke: this.instance.stroke,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -41920,13 +41974,15 @@ var EquilateralTriangle = /** @class */function (_super) {
             points = message.points,
             fill = message.fill,
             stroke = message.stroke,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_EquilateralTriangle__["a" /* EquilateralTriangle */](points, __assign({ stroke: stroke, strokeWidth: this.strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { fill: fill }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_EquilateralTriangle__["a" /* EquilateralTriangle */](points, __assign({ stroke: stroke,
+            strokeWidth: strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { fill: fill }), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -42134,6 +42190,7 @@ var OrthogonalTriangle = /** @class */function (_super) {
             type: this.instance.type,
             fill: this.instance.fill,
             stroke: this.instance.stroke,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -42146,13 +42203,15 @@ var OrthogonalTriangle = /** @class */function (_super) {
             points = message.points,
             stroke = message.stroke,
             fill = message.fill,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_OrthogonalTriangle__["a" /* OrthogonalTriangle */](points, __assign({ stroke: stroke, strokeWidth: this.strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { fill: fill }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_OrthogonalTriangle__["a" /* OrthogonalTriangle */](points, __assign({ stroke: stroke,
+            strokeWidth: strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { fill: fill }), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -42337,6 +42396,7 @@ var Polygon = /** @class */function (_super) {
             type: this.instance.type,
             fill: this.instance.fill,
             stroke: this.instance.stroke,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -42431,13 +42491,14 @@ var Polygon = /** @class */function (_super) {
             points = message.points,
             stroke = message.stroke,
             fill = message.fill,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Polygon__["a" /* Polygon */](points, __assign({ stroke: stroke }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { strokeWidth: this.strokeWidth, fill: fill }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_2__extends_Polygon__["a" /* Polygon */](points, __assign({ stroke: stroke }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { strokeWidth: strokeWidth, fill: fill }), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -42596,6 +42657,7 @@ var Star = /** @class */function (_super) {
             type: this.instance.type,
             stroke: this.instance.stroke,
             fill: this.instance.fill,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -42640,13 +42702,14 @@ var Star = /** @class */function (_super) {
             points = message.points,
             fill = message.fill,
             stroke = message.stroke,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Star__["a" /* Star */](points, __assign({ stroke: stroke, strokeWidth: this.strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { fill: fill }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Star__["a" /* Star */](points, __assign({ stroke: stroke, strokeWidth: strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { fill: fill }), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -42851,6 +42914,7 @@ var Pentagon = /** @class */function (_super) {
             type: this.instance.type,
             fill: this.instance.fill,
             stroke: this.instance.stroke,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -42895,13 +42959,14 @@ var Pentagon = /** @class */function (_super) {
             points = message.points,
             stroke = message.stroke,
             fill = message.fill,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Pentagon__["a" /* Pentagon */](points, __assign({ stroke: stroke, strokeWidth: this.strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { fill: fill }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Pentagon__["a" /* Pentagon */](points, __assign({ stroke: stroke, strokeWidth: strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { fill: fill }), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -43096,6 +43161,7 @@ var Hexagon = /** @class */function (_super) {
             type: this.instance.type,
             stroke: this.instance.stroke,
             fill: this.instance.fill,
+            strokeWidth: this.instance.strokeWidth,
             strokeDashArray: this.instance.strokeDashArray
         } : undefined;
     };
@@ -43140,13 +43206,14 @@ var Hexagon = /** @class */function (_super) {
             points = message.points,
             fill = message.fill,
             stroke = message.stroke,
-            strokeDashArray = message.strokeDashArray;
+            strokeDashArray = message.strokeDashArray,
+            strokeWidth = message.strokeWidth;
         var instance = this.getInstanceById(id);
         this.eBoardCanvas.renderOnAddRemove = false;
         if (void 0 !== instance) {
             this.eBoardCanvas.remove(instance);
         }
-        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Hexagon__["a" /* Hexagon */](points, __assign({ stroke: stroke, strokeWidth: this.strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { fill: fill }), this.eBoardCanvas).setId(id);
+        instance = new __WEBPACK_IMPORTED_MODULE_1__extends_Hexagon__["a" /* Hexagon */](points, __assign({ stroke: stroke, strokeWidth: strokeWidth }, strokeDashArray ? { strokeDashArray: strokeDashArray } : {}, { fill: fill }), this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
         this.eBoardCanvas.renderOnAddRemove = true;
@@ -72964,7 +73031,7 @@ var Toolbar = /** @class */function () {
 /* 191 */
 /***/ (function(module, exports) {
 
-module.exports = {"plugins":["Line","DotLine","Text","Selection","HTML","Pencil","Circle","Ellipse","Rectangle","Square","Triangle","EquilateralTriangle","OrthogonalTriangle","Polygon","Star","Pentagon","Hexagon","Clear","Arrow","ArrowNext","ArrowPrev","Delete","Ferule"],"showTab":true,"showToolbar":true,"ratio":{"w":16,"h":9},"dimensions":{"width":1920},"borderColor":"#09ca51","cornerColor":"#09ca51","cornerStrokeColor":"#09ca51","cornerStyle":"rect","transparentCorners":true,"cornerSize":13,"cursorSize":26,"borderWidth":1,"strokeWidth":1,"stroke":"#000","fill":"#000","fontColor":"#000","fontSize":18,"compress":false,"arrowShape":"fish","escKey":true,"ctrlKey":true}
+module.exports = {"plugins":["Line","DotLine","Text","Selection","HTML","Pencil","Circle","Ellipse","Rectangle","Square","Triangle","EquilateralTriangle","OrthogonalTriangle","Polygon","Star","Pentagon","Hexagon","Clear","Arrow","ArrowNext","ArrowPrev","Delete","Ferule"],"showTab":true,"showToolbar":true,"ratio":{"w":16,"h":9},"dimensions":{"width":1920},"borderColor":"#09ca51","cornerColor":"#09ca51","cornerStrokeColor":"#09ca51","cornerStyle":"rect","transparentCorners":true,"cornerSize":13,"cursorSize":26,"borderWidth":1,"strokeWidth":1,"stroke":"#000","fill":"#000","fontColor":"#000","fontSize":18,"compress":false,"arrowShape":"fish","escKey":true,"ctrlKey":true,"enable":true}
 
 /***/ })
 /******/ ]);
