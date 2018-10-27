@@ -229,9 +229,12 @@ input::-webkit-inner-spin-button {
   display: inline-block;
   width: 26px;
   height: 26px;
+  line-height: 26px;
   text-align: center;
   cursor: pointer;
   vertical-align: middle;
+  position: relative;
+  top: -2px;
 }
 .eboard-pagination-left.disabled {
   pointer-events: none;
@@ -247,10 +250,12 @@ input::-webkit-inner-spin-button {
   display: inline-block;
   width: 26px;
   height: 26px;
+  line-height: 26px;
   text-align: center;
   cursor: pointer;
   vertical-align: middle;
-  margin-left: 10px;
+  position: relative;
+  top: -2px;
 }
 .eboard-pagination-right.disabled {
   pointer-events: none;
@@ -265,36 +270,39 @@ input::-webkit-inner-spin-button {
 .eboard-pagination-bottom {
   position: fixed;
   height: 44px;
-  bottom: 54px;
+  bottom: 38px;
   left: 50%;
-  margin-left: -40px;
+  transform: translateX(-50%);
   font-size: 18px;
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 999px;
-  padding-top: 4px;
-  padding-left: 10px;
+  padding: 0 22px;
+  line-height: 44px;
+  padding-right: 0;
 }
-.eboard-pagination-current {
+.eboard-pagination-input {
   width: 40px !important;
   height: 26px !important;
-  border: 1px solid transparent;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   background: #dddddd;
   text-align: center;
-  vertical-align: middle;
   border-radius: 5px;
-  margin-right: 10px;
+  border: none;
+  position: relative;
+  top: -2px;
 }
-.eboard-pagination-current:hover {
-  border: 1px solid #09ca51;
+.eboard-pagination-input-label {
+  display: none;
 }
 .eboard-pagination-total {
-  padding: 0.2rem;
-  color: #ffffff;
-  display: inline-block;
-  vertical-align: middle;
+  color: #fff;
+}
+.eboard-pagination-total:before {
+  content: '/';
+  margin: 0 5px;
+  color: #333;
 }
 .eboard-pagination-bottomGo {
   display: inline-block;
@@ -353,10 +361,13 @@ input::-webkit-inner-spin-button {
 }
 .eboard-disable .eboard-pagination-bottom {
   pointer-events: none;
+  padding-right: 22px;
 }
-.eboard-disable .eboard-pagination-current {
-  pointer-events: none;
-  background-color: transparent!important;
+.eboard-disable .eboard-pagination-input {
+  display: none;
+}
+.eboard-disable .eboard-pagination-input-label {
+  display: inline;
 }
 .eboard-disable .eboard-pagination-bottomGo {
   display: none;

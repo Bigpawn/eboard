@@ -6,19 +6,19 @@
  * @disc:MessageTag 消息标记
  */
 export enum MessageTag{
-    CreateFrame,
-    CreateFrameGroup,
-    SwitchToFrame,
-    Clear,
-    AllowHtmlAction,
-    DisAllowHtmlAction,
-    Scroll,
-    Delete,
-    Cursor,
-    SelectionMove,
-    SelectionScale,
-    SelectionRotate,
-    RemoveFrame,
-    Shape,
-    TurnPage,// 翻页
+    CreateFrame=0,
+    CreateFrameGroup=1,
+    SwitchToFrame=2,
+    Clear=3,
+    AllowHtmlAction=4,
+    DisAllowHtmlAction=5,
+    Scroll=6,
+    Delete=7,
+    Cursor=8,
+    SelectionMove=9,
+    SelectionScale=10,
+    SelectionRotate=11,
+    RemoveFrame=12,
+    Shape=13,
+    TurnPage=14,// 翻页
 }

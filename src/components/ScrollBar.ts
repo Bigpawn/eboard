@@ -22,7 +22,7 @@ declare interface IScrollBarOptions extends PerfectScrollbar.Options{
 class ScrollBar extends PerfectScrollbar{
     public parent:IFrame;
     private container:HTMLElement;
-    private delPixel:number=5;
+    private delPixel:number=10;
     private scrollInterval:Timer;
     private frameId?:string;
     public context?:Context;
@@ -78,7 +78,7 @@ class ScrollBar extends PerfectScrollbar{
                 clearInterval(this.scrollInterval);
                 this.scrollInterval=undefined as any;
             }
-        },1);
+        },10);
     }
     private get messageEnable(){
         return this.context&&this.context.getConfig("enable");

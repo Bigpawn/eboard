@@ -149,7 +149,6 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
     public destroy(){
         super.destroy();
         if(this.scrollbar){
-            this.scrollbar.destroy();
             this.scrollbar=undefined as any;
         }
     }

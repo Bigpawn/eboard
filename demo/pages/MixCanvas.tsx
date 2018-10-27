@@ -18,9 +18,9 @@ class MixCanvas extends SimpleCanvas{
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
         const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
-        eBoard.on("message",(message)=>{
-            console.log(JSON.parse(message));
-            receiveEBoard.onMessage(message);
+        eBoard.on("message",(e)=>{
+            console.log(e.data);
+            receiveEBoard.onMessage(e.data);
         });
         eBoard.addPdfFrame({
             type:FrameType.Pdf,
@@ -175,7 +175,7 @@ class MixCanvas extends SimpleCanvas{
                     <button onClick={this.createPdfCanvas}>pdfFrame</button>
                     <button onClick={this.createImagesCanvas}>imagesFrame</button>
                 </div>
-                <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"200%",height:"100%",position:"relative"}}>
+                <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"100%",height:"100%",position:"relative"}}>
                     <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainer"}/>
                     <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainerReceive"}/>
                 </div>

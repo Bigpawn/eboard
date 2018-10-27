@@ -176,8 +176,7 @@ export declare interface ISelectionMessage extends IMessage{
         angle:number;
         originX:string;
         originY:string;
-        flipY:boolean;
-        flipX:boolean;
+        flipArray:Array<{flipX:boolean;flipY:boolean;angle:number}>;
     }
 }
 
