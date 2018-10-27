@@ -49,10 +49,10 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
             container.innerHTML = "";
             container.appendChild(this.dom);// 立即显示
         }
-        if(!this.groupId){
+        
+        if(!this.groupId||options.messageId){
             this.initializeAction();
         }
-        
         // resize
         context.on("resize",(e:any)=>{
             this.calcSize=e.data;

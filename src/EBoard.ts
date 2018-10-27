@@ -358,10 +358,9 @@ class EBoard{
     /**
      * 添加空白画布
      * @param {IBaseFrameOptions} options
-     * @param withoutMessage
      * @returns {IBaseFrame}
      */
-    public addEmptyFrame(options:IBaseFrameOptions,withoutMessage?:boolean){
+    public addEmptyFrame(options:IBaseFrameOptions){
         const {frameId} = options;
         let frame = void 0 !== frameId?this.context.getFrameById(frameId):undefined;
         if(void 0 !==frame) return frame;
@@ -383,10 +382,9 @@ class EBoard{
     /**
      * 添加HtmlFrame
      * @param {IHTMLFrameOptions} options
-     * @param withoutMessage
      * @returns {IHTMLFrame}
      */
-    public addHtmlFrame(options:IHTMLFrameOptions,withoutMessage?:boolean){
+    public addHtmlFrame(options:IHTMLFrameOptions){
         const {frameId} = options;
         let frame=void 0 !== frameId?this.context.getFrameById(frameId):undefined;
         if(void 0 !==frame) return frame;
@@ -408,10 +406,9 @@ class EBoard{
     /**
      * 添加ImageFrame
      * @param {IImageFrameOptions} options
-     * @param withoutMessage
      * @returns {IImageFrame}
      */
-    public addImageFrame(options:IImageFrameOptions,withoutMessage?:boolean){
+    public addImageFrame(options:IImageFrameOptions){
         const {frameId} = options;
         let frame=void 0 !== frameId?this.context.getFrameById(frameId):undefined;
         if(void 0 !==frame) return frame;
@@ -433,10 +430,9 @@ class EBoard{
     /**
      * 添加PdfFrame
      * @param {IPdfFrameOptions} options
-     * @param withoutMessage
      * @returns {IPdfFrame}
      */
-    public addPdfFrame(options:IPdfFrameOptions,withoutMessage?:boolean){
+    public addPdfFrame(options:IPdfFrameOptions){
         const {groupId} = options;
         let group = void 0 !== groupId?this.context.getGroupById(groupId):undefined;
         if(group) return group;
@@ -458,10 +454,9 @@ class EBoard{
     /**
      * 添加ImagesFrame
      * @param {IImagesFrameOptions} options
-     * @param withoutMessage
      * @returns {ImagesFrame}
      */
-    public addImagesFrame(options:IImagesFrameOptions,withoutMessage?:boolean){
+    public addImagesFrame(options:IImagesFrameOptions){
         const {groupId} = options;
         let group = void 0 !== groupId?this.context.getGroupById(groupId):undefined;
         if(group) return group;
@@ -523,7 +518,7 @@ class EBoard{
      */
     private addFrameGroup(options:IImagesFrameOptions|IPdfFrameOptions){
         const type = options.type;
-        return type === FrameType.Images?this.addImagesFrame(options as IImagesFrameOptions,true):this.addPdfFrame(options as IPdfFrameOptions,true);
+        return type === FrameType.Images?this.addImagesFrame(options as IImagesFrameOptions):this.addPdfFrame(options as IPdfFrameOptions);
     }
     
     /**
@@ -533,16 +528,16 @@ class EBoard{
      */
     private addFrame(options:IBaseFrameOptions|IImageFrameOptions|IHTMLFrameOptions){
         const type = options.type;
-        return type === FrameType.Image?this.addImageFrame(options as IImageFrameOptions,true):type === FrameType.HTML?this.addHtmlFrame(options as IHTMLFrameOptions,true):this.addEmptyFrame(options as IBaseFrameOptions,true);
+        return type === FrameType.Image?this.addImageFrame(options as IImageFrameOptions):type === FrameType.HTML?this.addHtmlFrame(options as IHTMLFrameOptions):this.addEmptyFrame(options as IBaseFrameOptions);
     }
     
     /**
      * 显示指定的Frame
      * @param {string | IFrame | IFrameGroup} id
-     * @param withoutMessage
+     * @param forbidMessage
      * @returns {undefined | IFrame | IFrameGroup}
      */
-    public switchToTab(id:string,withoutMessage?:boolean){
+    public switchToTab(id:string,forbidMessage?:boolean){
         const activeKey = this.context.activeKey;
         if(id===activeKey) return;
         const frameInstance = this.context.getFrameById(id);
@@ -570,13 +565,13 @@ class EBoard{
         if(void 0 !== this.tab){
             this.tab.switchTo(id);
         }
-        if(!withoutMessage){
+        if(!forbidMessage){
             this.switchMessage(id);
         }
     }
     
     @message
-    public removeFrame(tabId:string){
+    public removeFrame(tabId:string,forbidMessage?:boolean){
         const frameInstance = this.context.getFrameById(tabId);
         const groupInstance = this.context.getGroupById(tabId);
         if(void 0 !== frameInstance){
@@ -598,7 +593,7 @@ class EBoard{
                 this.switchToTab(lastId,true);
             }
         }
-        return {
+        return forbidMessage?undefined:{
             tag:MessageTag.RemoveFrame,
             tabId:tabId
         }
@@ -721,8 +716,9 @@ class EBoard{
             switch (tag){
                 case MessageTag.SwitchToFrame:
                     this.switchToTab(options.activeKey,true);
+                    break;
                 case MessageTag.RemoveFrame:
-                    this.removeFrame(options.tabId);
+                    this.removeFrame(options.tabId,true);
                     break;
                 default:
                     break;

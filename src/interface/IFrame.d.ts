@@ -44,6 +44,7 @@ export declare interface IFrameOptions{
     name?:string;
     calcSize?:any;
     groupId?:string;
+    messageId?:number;
 }
 
 

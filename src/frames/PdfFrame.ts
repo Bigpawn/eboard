@@ -138,10 +138,12 @@ class PdfFrame implements IPdfFrame{
             })
         }
     }
-    private onGo(pageNum:number){
+    private onGo(pageNum:number,forbidMessage?:boolean){
         const pageNumber=Number(pageNum);
         this.switchToFrame(pageNumber);// 消息id，需要先生成消息id然后才能调用api
-        this.switchFrameAction(pageNumber);
+        if(!forbidMessage){
+            this.switchFrameAction(pageNumber);
+        }
     }
 
     /**

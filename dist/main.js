@@ -33835,7 +33835,7 @@ var GenericBaseFrame = /** @class */function (_super) {
             container.innerHTML = "";
             container.appendChild(_this.dom); // 立即显示
         }
-        if (!_this.groupId) {
+        if (!_this.groupId || options.messageId) {
             _this.initializeAction();
         }
         // resize
@@ -38103,10 +38103,9 @@ var EBoard = /** @class */function () {
     /**
      * 添加空白画布
      * @param {IBaseFrameOptions} options
-     * @param withoutMessage
      * @returns {IBaseFrame}
      */
-    EBoard.prototype.addEmptyFrame = function (options, withoutMessage) {
+    EBoard.prototype.addEmptyFrame = function (options) {
         var frameId = options.frameId;
         var frame = void 0 !== frameId ? this.context.getFrameById(frameId) : undefined;
         if (void 0 !== frame) return frame;
@@ -38127,10 +38126,9 @@ var EBoard = /** @class */function () {
     /**
      * 添加HtmlFrame
      * @param {IHTMLFrameOptions} options
-     * @param withoutMessage
      * @returns {IHTMLFrame}
      */
-    EBoard.prototype.addHtmlFrame = function (options, withoutMessage) {
+    EBoard.prototype.addHtmlFrame = function (options) {
         var frameId = options.frameId;
         var frame = void 0 !== frameId ? this.context.getFrameById(frameId) : undefined;
         if (void 0 !== frame) return frame;
@@ -38151,10 +38149,9 @@ var EBoard = /** @class */function () {
     /**
      * 添加ImageFrame
      * @param {IImageFrameOptions} options
-     * @param withoutMessage
      * @returns {IImageFrame}
      */
-    EBoard.prototype.addImageFrame = function (options, withoutMessage) {
+    EBoard.prototype.addImageFrame = function (options) {
         var frameId = options.frameId;
         var frame = void 0 !== frameId ? this.context.getFrameById(frameId) : undefined;
         if (void 0 !== frame) return frame;
@@ -38175,10 +38172,9 @@ var EBoard = /** @class */function () {
     /**
      * 添加PdfFrame
      * @param {IPdfFrameOptions} options
-     * @param withoutMessage
      * @returns {IPdfFrame}
      */
-    EBoard.prototype.addPdfFrame = function (options, withoutMessage) {
+    EBoard.prototype.addPdfFrame = function (options) {
         var groupId = options.groupId;
         var group = void 0 !== groupId ? this.context.getGroupById(groupId) : undefined;
         if (group) return group;
@@ -38199,10 +38195,9 @@ var EBoard = /** @class */function () {
     /**
      * 添加ImagesFrame
      * @param {IImagesFrameOptions} options
-     * @param withoutMessage
      * @returns {ImagesFrame}
      */
-    EBoard.prototype.addImagesFrame = function (options, withoutMessage) {
+    EBoard.prototype.addImagesFrame = function (options) {
         var groupId = options.groupId;
         var group = void 0 !== groupId ? this.context.getGroupById(groupId) : undefined;
         if (group) return group;
@@ -38263,7 +38258,7 @@ var EBoard = /** @class */function () {
      */
     EBoard.prototype.addFrameGroup = function (options) {
         var type = options.type;
-        return type === FrameType.Images ? this.addImagesFrame(options, true) : this.addPdfFrame(options, true);
+        return type === FrameType.Images ? this.addImagesFrame(options) : this.addPdfFrame(options);
     };
     /**
      * 添加 Frame
@@ -38272,15 +38267,15 @@ var EBoard = /** @class */function () {
      */
     EBoard.prototype.addFrame = function (options) {
         var type = options.type;
-        return type === FrameType.Image ? this.addImageFrame(options, true) : type === FrameType.HTML ? this.addHtmlFrame(options, true) : this.addEmptyFrame(options, true);
+        return type === FrameType.Image ? this.addImageFrame(options) : type === FrameType.HTML ? this.addHtmlFrame(options) : this.addEmptyFrame(options);
     };
     /**
      * 显示指定的Frame
      * @param {string | IFrame | IFrameGroup} id
-     * @param withoutMessage
+     * @param forbidMessage
      * @returns {undefined | IFrame | IFrameGroup}
      */
-    EBoard.prototype.switchToTab = function (id, withoutMessage) {
+    EBoard.prototype.switchToTab = function (id, forbidMessage) {
         var activeKey = this.context.activeKey;
         if (id === activeKey) return;
         var frameInstance = this.context.getFrameById(id);
@@ -38307,11 +38302,11 @@ var EBoard = /** @class */function () {
         if (void 0 !== this.tab) {
             this.tab.switchTo(id);
         }
-        if (!withoutMessage) {
+        if (!forbidMessage) {
             this.switchMessage(id);
         }
     };
-    EBoard.prototype.removeFrame = function (tabId) {
+    EBoard.prototype.removeFrame = function (tabId, forbidMessage) {
         var frameInstance = this.context.getFrameById(tabId);
         var groupInstance = this.context.getGroupById(tabId);
         if (void 0 !== frameInstance) {
@@ -38333,7 +38328,7 @@ var EBoard = /** @class */function () {
                 this.switchToTab(lastId, true);
             }
         }
-        return {
+        return forbidMessage ? undefined : {
             tag: __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].RemoveFrame,
             tabId: tabId
         };
@@ -38350,7 +38345,6 @@ var EBoard = /** @class */function () {
             options = __rest(messageObj, ["frameId", "groupId"]);
         var tag = options.tag,
             type = options.type;
-        tag = typeof tag === "string" ? Number(tag) : tag;
         if (tag === __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].CreateFrame) {
             this.addFrame(messageObj);
             return;
@@ -38460,8 +38454,9 @@ var EBoard = /** @class */function () {
             switch (tag) {
                 case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame:
                     this.switchToTab(options.activeKey, true);
+                    break;
                 case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].RemoveFrame:
-                    this.removeFrame(options.tabId);
+                    this.removeFrame(options.tabId, true);
                     break;
                 default:
                     break;
@@ -45412,10 +45407,12 @@ var PdfFrame = /** @class */function () {
             });
         }
     };
-    PdfFrame.prototype.onGo = function (pageNum) {
+    PdfFrame.prototype.onGo = function (pageNum, forbidMessage) {
         var pageNumber = Number(pageNum);
         this.switchToFrame(pageNumber); // 消息id，需要先生成消息id然后才能调用api
-        this.switchFrameAction(pageNumber);
+        if (!forbidMessage) {
+            this.switchFrameAction(pageNumber);
+        }
     };
     /**
      * 更新文档页数
@@ -72050,10 +72047,12 @@ var ImagesFrame = /** @class */function () {
             this.child.set(this.pageNum, pageFrame);
         }
     };
-    ImagesFrame.prototype.onGo = function (pageNum) {
+    ImagesFrame.prototype.onGo = function (pageNum, forbidMessage) {
         var pageNumber = Number(pageNum);
         this.switchToFrame(pageNumber);
-        this.switchFrameAction(pageNumber);
+        if (!forbidMessage) {
+            this.switchFrameAction(pageNumber);
+        }
     };
     /**
      * 更新文档页数
@@ -72262,7 +72261,10 @@ var MessageMiddleWare = /** @class */function () {
         var header = message.header,
             body = message.body,
             messageId = message.messageId;
-        return __assign({}, header, body, { messageId: messageId });
+        // tag 转成字符串
+        var messageObject = __assign({}, header, body, { messageId: messageId });
+        messageObject.tag = typeof messageObject.tag === "string" ? Number(messageObject.tag) : messageObject.tag;
+        return messageObject;
     };
     /**
      * 内部调用该方法向外部发送消息

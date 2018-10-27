@@ -105,10 +105,12 @@ class ImagesFrame implements IImagesFrame{
             this.child.set(this.pageNum,pageFrame);
         }
     }
-    private onGo(pageNum:number){
+    private onGo(pageNum:number,forbidMessage?:boolean){
         const pageNumber=Number(pageNum);
         this.switchToFrame(pageNumber);
-        this.switchFrameAction(pageNumber);
+        if(!forbidMessage){
+            this.switchFrameAction(pageNumber);
+        }
     }
     
     /**
