@@ -218,7 +218,7 @@ var MessageTag;
     MessageTag[MessageTag["SelectionMove"] = 9] = "SelectionMove";
     MessageTag[MessageTag["SelectionScale"] = 10] = "SelectionScale";
     MessageTag[MessageTag["SelectionRotate"] = 11] = "SelectionRotate";
-    MessageTag[MessageTag["RemoveFrame"] = 12] = "RemoveFrame";
+    MessageTag[MessageTag["RemoveTab"] = 12] = "RemoveTab";
     MessageTag[MessageTag["Shape"] = 13] = "Shape";
     MessageTag[MessageTag["TurnPage"] = 14] = "TurnPage";
 })(MessageTag || (MessageTag = {}));
@@ -37936,7 +37936,7 @@ var EBoard = /** @class */function () {
         });
         this.tab.on(__WEBPACK_IMPORTED_MODULE_10__components_Tab__["b" /* TabEventEnum */].Remove, function (e) {
             var tabId = e.data;
-            _this.removeFrame(tabId);
+            _this.removeTab(tabId);
         });
     };
     EBoard.prototype.initToolbar = function () {
@@ -38355,7 +38355,7 @@ var EBoard = /** @class */function () {
             this.switchMessage(id);
         }
     };
-    EBoard.prototype.removeFrame = function (tabId, forbidMessage) {
+    EBoard.prototype.removeTab = function (tabId, forbidMessage) {
         var frameInstance = this.context.getFrameById(tabId);
         var groupInstance = this.context.getGroupById(tabId);
         if (void 0 !== frameInstance) {
@@ -38370,15 +38370,16 @@ var EBoard = /** @class */function () {
         if (void 0 !== this.tab) {
             this.tab.removeTab(tabId);
         }
+        // 显示最后一个tab
         var activeKey = this.context.activeKey;
         if (activeKey === tabId) {
-            var lastId = this.context.getLastFrameOrGroupId();
-            if (lastId) {
-                this.switchToTab(lastId, true);
+            var activeTabId = this.tab.getLastTabId();
+            if (activeTabId) {
+                this.switchToTab(activeTabId, true);
             }
         }
         return forbidMessage ? undefined : {
-            tag: __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].RemoveFrame,
+            tag: __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].RemoveTab,
             tabId: tabId
         };
     };
@@ -38509,8 +38510,8 @@ var EBoard = /** @class */function () {
                 case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].SwitchToFrame:
                     this.switchToTab(options.activeKey, true);
                     break;
-                case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].RemoveFrame:
-                    this.removeFrame(options.tabId, true);
+                case __WEBPACK_IMPORTED_MODULE_13__enums_MessageTag__["a" /* MessageTag */].RemoveTab:
+                    this.removeTab(options.tabId, true);
                     break;
                 default:
                     break;
@@ -38571,7 +38572,7 @@ var EBoard = /** @class */function () {
         return this.context.getFrameById(frameId);
     };
     __decorate([__WEBPACK_IMPORTED_MODULE_12__utils_decorators__["a" /* message */]], EBoard.prototype, "switchMessage", null);
-    __decorate([__WEBPACK_IMPORTED_MODULE_12__utils_decorators__["a" /* message */]], EBoard.prototype, "removeFrame", null);
+    __decorate([__WEBPACK_IMPORTED_MODULE_12__utils_decorators__["a" /* message */]], EBoard.prototype, "removeTab", null);
     return EBoard;
 }();
 
@@ -72280,8 +72281,8 @@ var MessageMiddleWare = /** @class */function () {
             fill = message.fill,
             stroke = message.stroke,
             tabId = message.tabId,
-            transform = message.transform,
             ids = message.ids,
+            objects = message.objects,
             scrollbar = message.scrollbar,
             activeKey = message.activeKey,
             strokeDashArray = message.strokeDashArray,
@@ -72310,13 +72311,13 @@ var MessageMiddleWare = /** @class */function () {
             totalHeight = message.totalHeight,
             scrollLeft = message.scrollLeft,
             scrollTop = message.scrollTop,
-            rest = __rest(message, ["start", "end", "type", "mode", "fill", "stroke", "tabId", "transform", "ids", "scrollbar", "activeKey", "strokeDashArray", "strokeWidth", "content", "radius", "rx", "ry", "path", "points", "width", "height", "fontSize", "name", "url", "pageNum", "images", "urlPrefix", "messageId", "frameId", "groupId", "center", "size", "text", "totalWidth", "totalHeight", "scrollLeft", "scrollTop"]);
+            rest = __rest(message, ["start", "end", "type", "mode", "fill", "stroke", "tabId", "ids", "objects", "scrollbar", "activeKey", "strokeDashArray", "strokeWidth", "content", "radius", "rx", "ry", "path", "points", "width", "height", "fontSize", "name", "url", "pageNum", "images", "urlPrefix", "messageId", "frameId", "groupId", "center", "size", "text", "totalWidth", "totalHeight", "scrollLeft", "scrollTop"]);
         // frame group 只传id
         return {
             messageId: messageId,
             header: __assign({}, rest, { frameId: frameId,
                 groupId: groupId }),
-            body: { start: start, end: end, type: type, mode: mode, fill: fill, stroke: stroke, tabId: tabId, transform: transform, ids: ids, scrollbar: scrollbar, activeKey: activeKey, strokeDashArray: strokeDashArray, radius: radius, strokeWidth: strokeWidth, content: content, rx: rx, ry: ry, path: path, points: points, width: width, height: height, fontSize: fontSize, name: name, url: url, pageNum: pageNum, images: images, urlPrefix: urlPrefix, center: center, size: size, text: text, totalWidth: totalWidth, totalHeight: totalHeight, scrollLeft: scrollLeft, scrollTop: scrollTop }
+            body: { start: start, end: end, type: type, mode: mode, fill: fill, stroke: stroke, tabId: tabId, objects: objects, ids: ids, scrollbar: scrollbar, activeKey: activeKey, strokeDashArray: strokeDashArray, radius: radius, strokeWidth: strokeWidth, content: content, rx: rx, ry: ry, path: path, points: points, width: width, height: height, fontSize: fontSize, name: name, url: url, pageNum: pageNum, images: images, urlPrefix: urlPrefix, center: center, size: size, text: text, totalWidth: totalWidth, totalHeight: totalHeight, scrollLeft: scrollLeft, scrollTop: scrollTop }
         };
     };
     MessageMiddleWare.prototype.messageOutFactory = function (message) {
@@ -72455,6 +72456,7 @@ var Tab = /** @class */function (_super) {
     __extends(Tab, _super);
     function Tab(container) {
         var _this = _super.call(this) || this;
+        _this.tabIdList = [];
         _this.initContainer(container);
         _this.initAddBtn();
         _this.initScrollbar();
@@ -72519,6 +72521,7 @@ var Tab = /** @class */function (_super) {
         var scrollWidth = this.container.scrollWidth;
         var scrollLeft = Math.max(0, scrollWidth - this.container.offsetWidth);
         this.scrollbar.scrollTo(0, scrollLeft);
+        this.tabIdList.push(options.tabId);
     };
     /**
      * remove Tab
@@ -72527,6 +72530,9 @@ var Tab = /** @class */function (_super) {
     Tab.prototype.removeTab = function (tabId) {
         var tabItem = this.container.querySelector("[data-id='" + tabId + "']");
         tabItem && this.container.removeChild(tabItem);
+        this.tabIdList = this.tabIdList.filter(function (id) {
+            return id !== tabId;
+        });
     };
     /**
      * switch Tab
@@ -72542,6 +72548,9 @@ var Tab = /** @class */function (_super) {
             active.classList.remove("eboard-tab-active");
         }
         tabItem && tabItem.classList.add("eboard-tab-active");
+    };
+    Tab.prototype.getLastTabId = function () {
+        return this.tabIdList[this.tabIdList.length - 1];
     };
     return Tab;
 }(__WEBPACK_IMPORTED_MODULE_2__utils_EventBus__["a" /* EventBus */]);

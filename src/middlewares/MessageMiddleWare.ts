@@ -30,16 +30,20 @@ class MessageMiddleWare{
         // this.compress= context.compress;// 如果压缩接收端需要解压
     }
     private messageFactory(message:any){
-        const {start,end,type,mode,fill,stroke,tabId,transform,ids,scrollbar,activeKey,strokeDashArray,strokeWidth,content,radius,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix,messageId,frameId,groupId,center,size,text,totalWidth,totalHeight,scrollLeft,scrollTop,...rest} = message;
+        const {messageId,frameId,groupId,tag,ids,id,...rest} = message;
         // frame group 只传id
         return {
             messageId,
             header:{
-                ...rest,
+                tag,
                 frameId,
-                groupId
+                groupId,
+                ids,
+                id
             },
-            body:{start,end,type,mode,fill,stroke,tabId,transform,ids,scrollbar,activeKey,strokeDashArray,radius,strokeWidth,content,rx,ry,path,points,width,height,fontSize,name,url,pageNum,images,urlPrefix,center,size,text,totalWidth,totalHeight,scrollLeft,scrollTop}
+            body:{
+                ...rest
+            }
         }
     }
     private messageOutFactory(message:any){
