@@ -30,6 +30,7 @@ class Tab extends EventBus{
     private container:HTMLDivElement;
     private scrollbar:ScrollBar;
     private addBtn:HTMLDivElement;
+    private tabIdList:string[]=[];
     constructor(container:HTMLDivElement){
         super();
         this.initContainer(container);
@@ -95,6 +96,7 @@ class Tab extends EventBus{
         const scrollWidth = this.container.scrollWidth;
         const scrollLeft = Math.max(0,scrollWidth - this.container.offsetWidth);
         this.scrollbar.scrollTo(0,scrollLeft);
+        this.tabIdList.push(options.tabId);
     }
     
     /**
@@ -104,6 +106,7 @@ class Tab extends EventBus{
     public removeTab(tabId:string){
         const tabItem = this.container.querySelector(`[data-id='${tabId}']`);
         tabItem&&this.container.removeChild(tabItem);
+        this.tabIdList=this.tabIdList.filter((id)=>id!==tabId);
     }
     
     /**
@@ -120,6 +123,10 @@ class Tab extends EventBus{
             active.classList.remove("eboard-tab-active");
         }
         tabItem&&tabItem.classList.add("eboard-tab-active");
+    }
+    
+    public getLastTabId(){
+        return this.tabIdList[this.tabIdList.length-1];
     }
 }
 

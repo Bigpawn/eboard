@@ -81,6 +81,9 @@
   width: 100%;
   overflow: hidden;
 }
+.eboard-hide {
+  visibility: hidden;
+}
 textarea[data-fabric-hiddentextarea] {
   left: 0!important;
 }

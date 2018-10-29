@@ -153,7 +153,7 @@ class EBoard{
         });
         this.tab.on(TabEventEnum.Remove,(e: any)=>{
             const tabId = e.data;
-            this.removeFrame(tabId);
+            this.removeTab(tabId);
         });
     }
     private initToolbar(){
@@ -546,20 +546,31 @@ class EBoard{
         if(!frameInstance&&!groupInstance){
             return;
         }
+        // 显示隐藏，不能进行移除
         if(activeKey){
             const oldFrameInstance = this.context.getFrameById(activeKey);
             const oldGroupInstance = this.context.getGroupById(activeKey);
             if(oldFrameInstance&&oldFrameInstance.dom&&oldFrameInstance.dom.parentElement){
-                oldFrameInstance.dom.parentElement.removeChild(oldFrameInstance.dom); // 隐藏
+                oldFrameInstance.dom.classList.add("eboard-hide");
+                // oldFrameInstance.dom.parentElement.removeChild(oldFrameInstance.dom); // 隐藏
             }
             if(oldGroupInstance&&oldGroupInstance.dom&&oldGroupInstance.dom.parentElement){
-                oldGroupInstance.dom.parentElement.removeChild(oldGroupInstance.dom); // 隐藏
+                oldGroupInstance.dom.classList.add("eboard-hide");
+                // oldGroupInstance.dom.parentElement.removeChild(oldGroupInstance.dom); // 隐藏
             }
         }
         if(frameInstance&&frameInstance.dom){
-            frameInstance.container.appendChild(frameInstance.dom);
+            if(frameInstance.dom.parentElement){
+                frameInstance.dom.classList.remove("eboard-hide");
+            }else{
+                frameInstance.container.appendChild(frameInstance.dom);
+            }
         }else if(groupInstance&&groupInstance.dom){
-            groupInstance.container.appendChild(groupInstance.dom);
+            if(groupInstance&&groupInstance.dom.parentElement){
+                groupInstance.dom.classList.remove("eboard-hide");
+            }else{
+                groupInstance.container.appendChild(groupInstance.dom);
+            }
         }
         this.context.setActiveKey(id);
         if(void 0 !== this.tab){
@@ -571,7 +582,7 @@ class EBoard{
     }
     
     @message
-    public removeFrame(tabId:string,forbidMessage?:boolean){
+    public removeTab(tabId:string, forbidMessage?:boolean){
         const frameInstance = this.context.getFrameById(tabId);
         const groupInstance = this.context.getGroupById(tabId);
         if(void 0 !== frameInstance){
@@ -586,15 +597,17 @@ class EBoard{
         if(void 0 !== this.tab){
             this.tab.removeTab(tabId);
         }
+        
+        // 显示最后一个tab
         const activeKey = this.context.activeKey;
         if(activeKey === tabId){
-            const lastId = this.context.getLastFrameOrGroupId();
-            if(lastId){
-                this.switchToTab(lastId,true);
+            const activeTabId = this.tab.getLastTabId();
+            if(activeTabId){
+                this.switchToTab(activeTabId,true);
             }
         }
         return forbidMessage?undefined:{
-            tag:MessageTag.RemoveFrame,
+            tag:MessageTag.RemoveTab,
             tabId:tabId
         }
     }
@@ -722,8 +735,8 @@ class EBoard{
                 case MessageTag.SwitchToFrame:
                     this.switchToTab(options.activeKey,true);
                     break;
-                case MessageTag.RemoveFrame:
-                    this.removeFrame(options.tabId,true);
+                case MessageTag.RemoveTab:
+                    this.removeTab(options.tabId,true);
                     break;
                 default:
                     break;

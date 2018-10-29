@@ -14,97 +14,110 @@ import {AbstractPlugin} from '../../AbstractPlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
 import {message, pipMode} from '../../../utils/decorators';
-import {fabric} from "fabric";
 import {EBoardEngine} from '../../../EBoardEngine';
 import {ISelectionMessage} from '../../../interface/IMessage';
 import {MessageTag} from '../../../enums/MessageTag';
 
 
 class Selection extends AbstractPlugin{
-    private angle:number=0;
     constructor(eBoardEngine:EBoardEngine){
         super(eBoardEngine);
         this.onSelection = this.onSelection.bind(this);
-        this.onMoving = this.onMoving.bind(this);
-        this.onScaling = this.onScaling.bind(this);
-        this.onRotating = this.onRotating.bind(this);
+        this.onMoved = this.onMoved.bind(this);
+        this.onRotated = this.onRotated.bind(this);
+        this.onScaled=this.onScaled.bind(this);
     }
-    private onMoving(e:IEvent){
-        const _target = e.target;
-        if(_target){
-            let ids:string[];
-            if("_objects" in _target && _target["_objects"].length>0){
-                ids = _target["_objects"].map((object:IObject)=>object.id);
-            }else{
-                ids = [(_target as IObject).id];
-            }
-            const transform = e["transform"];
-            const {target} = transform;
-            this.moving(ids,{top:target.top,left:target.left,originX:target.originX,originY:target.originY});
-        }
-    }
-    private onScaling(e:IEvent){
-        const _target = e.target;
-        if(_target){
+    private onMoved(e:IEvent){
+        this.eBoardCanvas.discardActiveObject();
+        const target:IObject = e.target as IObject;
+        // _target 可能是group可能是单个对象
+        const isGroup = "_objects" in target;
+        const objects = isGroup?target["_objects"]:[target];
+        if(void 0 !== target){
             // 可能只有一个对象
-            let ids:string[],flipArray:any[];
-            if("_objects" in _target && _target["_objects"].length>0){
-                const objects = _target["_objects"];
-                ids=[];
-                flipArray=[];
-                objects.map((object:IObject)=>{
-                    ids.push(object.id);
-                    flipArray.push({
-                        flipX:object.flipX,
-                        flipY:object.flipY,
-                        angle:object.angle,
-                    })
-                });
-            }else{
-                ids = [(_target as IObject).id];
-                flipArray=[{
-                    flipX:(_target as IObject).flipX,
-                    flipY:(_target as IObject).flipY,
-                    angle:(_target as IObject).angle,
-                }]
-            }
-            const transform = e["transform"];
-            const {target} = transform;
-            this.scaling(ids,{width:target.width * target.scaleX,height:target.height * target.scaleY,left:target.left,top:target.top,originX:target.originX,originY:target.originY,flipArray:flipArray,flipX:target.flipX,flipY:target.flipY});
+            let ids:string[]=[],objectsTransform:any={};
+            objects.map((object:IObject)=>{
+                ids.push(object.id);
+                objectsTransform[object.id]={
+                    flipX:object.flipX,
+                    flipY:object.flipY,
+                    angle:object.angle,
+                    scaleX:object.scaleX,
+                    scaleY:object.scaleY,
+                    left:object.left,
+                    top:object.top
+                };
+            });
+            this.moving(ids,{
+                objects:objectsTransform
+            });
         }
     }
-    private onRotating(e:IEvent){
-        console.log("rotate");
-        const _target = e.target;
-        if(_target){
-            let ids:string[];
-            if("_objects" in _target && _target["_objects"].length>0){
-                ids = _target["_objects"].map((object:IObject)=>object.id);
-            }else{
-                ids = [(_target as IObject).id];
-            }
-            const transform = e["transform"];
-            const {target} = transform;
-            const delAngle = target.angle - this.angle;
-            this.angle = target.angle;
-            this.rotating(ids,{angle:delAngle,originX:target.originX,originY:target.originY});
+    private onRotated(e:IEvent){
+        this.eBoardCanvas.discardActiveObject();
+        const target:IObject = e.target as IObject;
+        // _target 可能是group可能是单个对象
+        const isGroup = "_objects" in target;
+        const objects = isGroup?target["_objects"]:[target];
+        if(void 0 !== target){
+            // 可能只有一个对象
+            let ids:string[]=[],objectsTransform:any={};
+            objects.map((object:IObject)=>{
+                ids.push(object.id);
+                objectsTransform[object.id]={
+                    flipX:object.flipX,
+                    flipY:object.flipY,
+                    angle:object.angle,
+                    scaleX:object.scaleX,
+                    scaleY:object.scaleY,
+                    left:object.left,
+                    top:object.top
+                };
+            });
+            this.rotating(ids,{
+                objects:objectsTransform
+            });
+        }
+    }
+    private onScaled(e:IEvent){
+        this.eBoardCanvas.discardActiveObject();
+        const target:IObject = e.target as IObject;
+        // _target 可能是group可能是单个对象
+        const isGroup = "_objects" in target;
+        const objects = isGroup?target["_objects"]:[target];
+        if(void 0 !== target){
+            // 可能只有一个对象
+            let ids:string[]=[],objectsTransform:any={};
+            objects.map((object:IObject)=>{
+                ids.push(object.id);
+                objectsTransform[object.id]={
+                    flipX:object.flipX,
+                    flipY:object.flipY,
+                    angle:object.angle,
+                    scaleX:object.scaleX,
+                    scaleY:object.scaleY,
+                    left:object.left,
+                    top:object.top
+                };
+            });
+            this.scaling(ids,{
+                objects:objectsTransform
+            });
         }
     }
     private onSelection(event:IEvent){
         const target = event.target;
-        this.angle = 0;
         if(void 0 !== target){
-            target.on("moving",this.onMoving);
-            target.on("scaling",this.onScaling);
-            target.on("rotating",this.onRotating);
-            const onTransformEnd = ()=>{
-                this.eBoardCanvas.discardActiveObject();
-                target.off("moving",this.onMoving);
-                target.off("scaling",this.onScaling);
-                target.off("rotating",this.onRotating);
-                target.off("moved",onTransformEnd);
+            target.on("scaled",this.onScaled);
+            target.on("moved",this.onMoved);
+            target.on("rotated",this.onRotated);
+            const onTransformEnd = (e:IEvent)=>{
+                target.off("scaled",this.onScaled);
                 target.off("scaled",onTransformEnd);
+                target.off("moved",onTransformEnd);
+                target.off("moved",this.onMoved);
                 target.off("rotated",onTransformEnd);
+                target.off("rotated",this.onRotated);
             };
             target.on("moved",onTransformEnd);
             target.on("scaled",onTransformEnd);
@@ -155,22 +168,24 @@ class Selection extends AbstractPlugin{
     private pipPromise=new Promise((resolve)=>{resolve()});
     // @pipMode
     public onMessage(message:ISelectionMessage){
+        // 初始化的group 都是默认属性，不会保留原有属性
         return this.pipPromise.then(()=>{
             return new Promise((resolve)=>{
-                const {ids,tag,transform} = message;
-                const flipArray = transform.flipArray;
+                const {ids,transform} = message;
+                const objectsTransform = transform.objects;
                 if(void 0 === ids || ids.length===0){
                     resolve();
                 }
-                const objects = this.eBoardCanvas.getObjects().filter((obj:IObject)=>{
+                this.eBoardCanvas.renderOnAddRemove=false;
+                // 移动旋转不需要考虑内部元素
+                this.eBoardCanvas.getObjects().filter((obj:IObject)=>{
                     const index = ids.indexOf(obj.id);
                     if(index>-1){
-                        if(flipArray){
-                            const flipObject = flipArray[index];
+                        // fix 仅一个元素时需要单独设置元素样式
+                        if(objectsTransform){
+                            const _transform=objectsTransform[obj.id];
                             obj.set({
-                                flipX:flipObject.flipX,
-                                flipY:flipObject.flipY,
-                                angle:flipObject.angle||0
+                                ..._transform
                             }).setCoords();
                         }
                         return true;
@@ -178,53 +193,7 @@ class Selection extends AbstractPlugin{
                         return false;
                     }
                 });
-                this.eBoardCanvas.renderAll();
-                this.eBoardCanvas.renderOnAddRemove=false;
-                const copy = objects.map(obj=>{
-                    this.eBoardCanvas.remove(obj);
-                    return fabric.util.object.clone(obj);
-                });
-                const group = new fabric.Group(copy);
-                this.eBoardCanvas.add(group);
-                switch (tag){
-                    case MessageTag.SelectionMove:
-                        // 需要计算增量
-                        group.set({
-                            left:transform.left,
-                            top:transform.top,
-                            originX:transform.originX,
-                            originY:transform.originY
-                        }).setCoords();
-                        group["toActiveSelection"]();// 转成selection
-                        this.eBoardCanvas.discardActiveObject();// 拆分成单独的对象
-                        break;
-                    case MessageTag.SelectionScale:
-                        // 会存在flip的情况
-                        const scaleX = transform.width/group.get("width");
-                        const scaleY = transform.height/group.get("height");
-                        // flip 需要计算取反
-                        group.set({
-                            scaleX:scaleX,
-                            scaleY:scaleY,
-                            left:transform.left,
-                            top:transform.top,
-                            originX:transform.originX,
-                            originY:transform.originY,
-                        }).setCoords();
-                        // 每个元素需要单独设置flipX,flipY
-                        group["toActiveSelection"]();// 转成selection
-                        this.eBoardCanvas.discardActiveObject();// 拆分成单独的对象
-                        break;
-                    case MessageTag.SelectionRotate:
-                        // 计算增量角度
-                        group.rotate(transform.angle);
-                        group["toActiveSelection"]();// 转成selection
-                        this.eBoardCanvas.discardActiveObject();// 拆分成单独的对象
-                        break;
-                    default:
-                        break;
-                }
-                this.eBoardCanvas.renderAll();
+                this.eBoardCanvas.requestRenderAll();
                 this.eBoardCanvas.renderOnAddRemove=true;
                 resolve();
             })
