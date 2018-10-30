@@ -27,7 +27,7 @@ module.exports=function(webpackConfig,options) {
         test: /.pdf$/,
         use: { loader: 'file-loader',options: { name: '[hash].pdf',publicPath:"../"}}
     });
-    webpackConfig.entry=["src/index.dist.ts"];
+    webpackConfig.entry=["src/index.dist.ts","babel-polyfill"];
     webpackConfig.output.path=path.join(cwd, 'dist/');
     return webpackConfig;
 };
