@@ -145,6 +145,20 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
         };
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 样式大小
         this.engine.eBoardCanvas.setDimensions(dimensions,{backstoreOnly:true});// canvas分辨率
+        
+        
+        // 需要更新滚动条位置
+        setTimeout(()=>{
+            const scrollX = this.dom.getAttribute("data-scroll-x");
+            const scrollY = this.dom.getAttribute("data-scroll-y");
+            const {scrollHeight,scrollWidth} = this.dom;
+            if(scrollX){
+                this.dom.scrollLeft = Number(scrollX)*scrollWidth;
+            }
+            if(scrollY){
+                this.dom.scrollTop = Number(scrollY)*scrollHeight;
+            }
+        },0);
     }
     public destroy(){
         super.destroy();

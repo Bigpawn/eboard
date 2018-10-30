@@ -84,6 +84,9 @@
 .eboard-hide {
   visibility: hidden;
 }
+.eboard-hide .eboard-page-show {
+  visibility: hidden!important;
+}
 textarea[data-fabric-hiddentextarea] {
   left: 0!important;
 }

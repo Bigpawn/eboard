@@ -104,19 +104,26 @@ class ScrollBar extends PerfectScrollbar{
         const {scrollTop,scrollLeft,totalHeight,totalWidth} = message;
         if(this.container){
             const {scrollHeight,scrollWidth} = this.container;
+            this.container.setAttribute("data-scroll-x",(scrollLeft/totalWidth).toString());// 记录属性
+            this.container.setAttribute("data-scroll-y",(scrollTop/totalHeight).toString());// 记录属性
             this.scrollTo(scrollTop * scrollHeight/totalHeight,scrollLeft * scrollWidth / totalWidth);
         }
     }
     
     /**
      * 用于恢复，不触发滚动消息
+     * 需要等待页面图片下载完成后才能滚动，如果不能滚动则添加属性，等待页面完成后再次调用属性
      */
     public recovery(message:IScrollBarMessage){
         const {scrollTop,scrollLeft,totalHeight,totalWidth} = message;
         if(this.container){
             const {scrollHeight,scrollWidth} = this.container;
-            this.container.scrollLeft = scrollLeft * scrollWidth / totalWidth;
-            this.container.scrollTop = scrollTop * scrollHeight/totalHeight;
+            const scrollX = scrollLeft * scrollWidth / totalWidth;
+            const scrollY = scrollTop * scrollHeight/totalHeight;
+            this.container.scrollLeft = scrollX;
+            this.container.scrollTop = scrollY;
+            this.container.setAttribute("data-scroll-x",(scrollLeft/totalWidth).toString());// 记录属性
+            this.container.setAttribute("data-scroll-y",(scrollTop/totalHeight).toString());// 记录属性
         }
     }
 }
