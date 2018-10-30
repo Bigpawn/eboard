@@ -72274,50 +72274,24 @@ var MessageMiddleWare = /** @class */function () {
         // this.compress= context.compress;// 如果压缩接收端需要解压
     }
     MessageMiddleWare.prototype.messageFactory = function (message) {
-        var start = message.start,
-            end = message.end,
-            type = message.type,
-            mode = message.mode,
-            fill = message.fill,
-            stroke = message.stroke,
-            tabId = message.tabId,
-            ids = message.ids,
-            objects = message.objects,
-            scrollbar = message.scrollbar,
-            activeKey = message.activeKey,
-            strokeDashArray = message.strokeDashArray,
-            strokeWidth = message.strokeWidth,
-            content = message.content,
-            radius = message.radius,
-            rx = message.rx,
-            ry = message.ry,
-            path = message.path,
-            points = message.points,
-            width = message.width,
-            height = message.height,
-            fontSize = message.fontSize,
-            name = message.name,
-            url = message.url,
-            pageNum = message.pageNum,
-            images = message.images,
-            urlPrefix = message.urlPrefix,
-            messageId = message.messageId,
+        var messageId = message.messageId,
             frameId = message.frameId,
             groupId = message.groupId,
-            center = message.center,
-            size = message.size,
-            text = message.text,
-            totalWidth = message.totalWidth,
-            totalHeight = message.totalHeight,
-            scrollLeft = message.scrollLeft,
-            scrollTop = message.scrollTop,
-            rest = __rest(message, ["start", "end", "type", "mode", "fill", "stroke", "tabId", "ids", "objects", "scrollbar", "activeKey", "strokeDashArray", "strokeWidth", "content", "radius", "rx", "ry", "path", "points", "width", "height", "fontSize", "name", "url", "pageNum", "images", "urlPrefix", "messageId", "frameId", "groupId", "center", "size", "text", "totalWidth", "totalHeight", "scrollLeft", "scrollTop"]);
+            tag = message.tag,
+            ids = message.ids,
+            id = message.id,
+            rest = __rest(message, ["messageId", "frameId", "groupId", "tag", "ids", "id"]);
         // frame group 只传id
         return {
             messageId: messageId,
-            header: __assign({}, rest, { frameId: frameId,
-                groupId: groupId }),
-            body: { start: start, end: end, type: type, mode: mode, fill: fill, stroke: stroke, tabId: tabId, objects: objects, ids: ids, scrollbar: scrollbar, activeKey: activeKey, strokeDashArray: strokeDashArray, radius: radius, strokeWidth: strokeWidth, content: content, rx: rx, ry: ry, path: path, points: points, width: width, height: height, fontSize: fontSize, name: name, url: url, pageNum: pageNum, images: images, urlPrefix: urlPrefix, center: center, size: size, text: text, totalWidth: totalWidth, totalHeight: totalHeight, scrollLeft: scrollLeft, scrollTop: scrollTop }
+            header: {
+                tag: tag,
+                frameId: frameId,
+                groupId: groupId,
+                ids: ids,
+                id: id
+            },
+            body: __assign({}, rest)
         };
     };
     MessageMiddleWare.prototype.messageOutFactory = function (message) {
