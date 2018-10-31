@@ -128,7 +128,7 @@ class PdfFrame implements IPdfFrame{
                     const viewport = page.getViewport(scale);
                     canvas.width=viewport.width;
                     canvas.height=viewport.height;
-                    (pageFrame as CanvasFrame).initLayout();// 需要reLayout
+                    (pageFrame as CanvasFrame).refreshLayout();// 需要reLayout
                     const renderContext = {
                         canvasContext: canvas.getContext("2d"),
                         viewport: viewport
@@ -197,7 +197,7 @@ class PdfFrame implements IPdfFrame{
                     const viewport = page.getViewport(scale);
                     canvas.width=viewport.width;
                     canvas.height=viewport.height;
-                    (nextPageFrame as CanvasFrame).initLayout();// 需要reLayout
+                    (nextPageFrame as CanvasFrame).refreshLayout();// 需要reLayout
                     const renderContext = {
                         canvasContext: canvas.getContext("2d"),
                         viewport: viewport

@@ -12,9 +12,8 @@ import {
 } from '../interface/IFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import {message} from '../utils/decorators';
-import {IPluginConfigOptions} from '../utils/EDux';
 import {MessageTag} from '../enums/MessageTag';
-import {Context, ContextFactory} from '../static/Context';
+import {Context, ContextFactory, IPluginConfigOptions} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
 import {ScrollBar} from '../components/ScrollBar';
 

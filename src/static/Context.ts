@@ -12,7 +12,10 @@ import {CusMap} from './CusMap';
 import {Store} from './Store';
 import {IConfig, IDefaultConfig} from '../interface/IConfig';
 
-
+export declare interface IPluginConfigOptions{
+    background?:boolean;// 是否后台运行
+    enable?:boolean;
+}
 
 class Context extends EventBus{
     constructor(){

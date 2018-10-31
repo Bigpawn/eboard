@@ -24,14 +24,13 @@ import {
     OrthogonalTriangle, Pencil, Pentagon,
     Plugins, Polygon, Rectangle, Square, Star, Triangle, Text, Delete,Selection
 } from './plugins';
-import {IPluginConfigOptions} from './utils/EDux';
 import {Tab, TabEventEnum} from './components/Tab';
 import {Toolbar} from './components/Toolbar';
 import {message} from './utils/decorators';
 import {IConfig} from './interface/IConfig';
 import {MessageTag} from './enums/MessageTag';
 import {Keys} from './enums/Keys';
-import {Context} from './static/Context';
+import {Context, IPluginConfigOptions} from './static/Context';
 
 const config = require("./config.json");
 

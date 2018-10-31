@@ -7,11 +7,7 @@
  */
 import {EventBus} from '../utils/EventBus';
 import {Plugins} from '../plugins';
-
-export declare interface IPluginConfigOptions{
-    background?:boolean;
-    enable?:boolean;
-}
+import {IPluginConfigOptions} from './Context';
 
 class Store extends EventBus{
     public plugins:Map<Plugins,IPluginConfigOptions>=new Map<Plugins, IPluginConfigOptions>();

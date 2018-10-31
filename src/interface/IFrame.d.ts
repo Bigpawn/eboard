@@ -11,7 +11,6 @@ import {ScrollbarType} from '../frames/HtmlFrame';
 import {ScrollBar} from '../components/ScrollBar';
 import {IFrameGroup, IFrameGroupOptions} from './IFrameGroup';
 import {EBoard} from '../EBoard';
-import {IEDux} from '../utils/EDux';
 
 export declare interface IExtraMessage{
     frame?:IFrameOptions;
@@ -29,7 +28,6 @@ export declare interface IFrame{
     parent?:IFrameGroup|EBoard;
     extraMessage?:IExtraMessage;
     extraMessageOrigin?:IExtraMessage;
-    eDux?:IEDux;// 数据接口共享模块
     groupId?:string;
     getPlugin(pluginName:string):AbstractPlugin|undefined;
     destroy(silent?:boolean):void;
@@ -60,7 +58,7 @@ export declare interface IBaseFrame extends IFrame{
 
 export declare interface IHTMLFrameOptions extends IFrameOptions{
     scrollbar?:ScrollbarType;
-    content?:string|HTMLElement;
+    content?:string|HTMLDivElement;
 }
 
 export declare interface IHTMLFrame extends IBaseFrame{

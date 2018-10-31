@@ -11,8 +11,8 @@ class ImageCanvas extends SimpleCanvas {
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
         const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
-        eBoard.on("message",(message)=>{
-            console.log(JSON.parse(message));
+        eBoard.on("message",(e)=>{
+            const message =e.data;
             receiveEBoard.onMessage(message);
         });
         eBoard.addImageFrame({
@@ -24,7 +24,7 @@ class ImageCanvas extends SimpleCanvas {
     public render(): JSX.Element {
         return (
             <Card bordered title="ImageCanvas" style={{ margin: "16px 16px"}}>
-                <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"200%",height:"100%",position:"relative"}}>
+                <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"100%",height:"100%",position:"relative"}}>
                     <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainer"}/>
                     <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainerReceive"}/>
                 </div>
