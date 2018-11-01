@@ -24,7 +24,8 @@ class Circle extends AbstractShapePlugin{
         return this.instance?{
             tag:MessageTag.Shape,
             id:this.instance.id,
-            start:this.start,
+            left:this.start.x,
+            top:this.start.y,
             radius:this.instance.radius,
             type:this.instance.type,
             stroke:this.instance.stroke,
@@ -73,7 +74,7 @@ class Circle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ICircleMessage){
-        const {id,start,radius,stroke,fill,strokeDashArray,strokeWidth} = message;
+        const {id,left,top,radius,stroke,fill,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricCircle;
         this.eBoardCanvas.renderOnAddRemove=false;
         
@@ -83,13 +84,13 @@ class Circle extends AbstractShapePlugin{
         instance=new FabricCircle({
             originX:"center",
             originY:"center",
-            fill:fill,
-            left: start.x,
-            top: start.y,
-            stroke:stroke,
-            ...strokeDashArray?{strokeDashArray}:{},
+            fill,
+            left,
+            top,
+            stroke,
             strokeWidth,
-            radius:radius,
+            radius,
+            ...strokeDashArray?{strokeDashArray}:{},
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

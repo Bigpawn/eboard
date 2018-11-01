@@ -76,10 +76,10 @@ class Pentagon extends AbstractShapePlugin{
             this.eBoardCanvas.remove(instance);
         }
         instance = new FabricPentagon(points,{
-            stroke: stroke,
+            stroke,
             strokeWidth,
+            fill,
             ...strokeDashArray?{strokeDashArray}:{},
-            fill: fill,
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

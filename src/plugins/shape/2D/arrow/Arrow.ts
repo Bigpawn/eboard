@@ -38,14 +38,14 @@ class Arrow extends AbstractShapePlugin{
         return this.instance?{
             id:this.instance.id,
             tag:MessageTag.Shape,
-            start:this.start,
-            end:this.end,
+            left:(this.start.x+this.end.x)/2,
+            top:(this.start.x+this.end.x)/2,
             type:this.instance.type,
-            mode:this.arrowMode,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,
-            strokeDashArray:this.instance.strokeDashArray
+            strokeDashArray:this.instance.strokeDashArray,
+            path:this.instance.path
         }:undefined;
     }
     protected onMouseMove(event:IEvent){
@@ -92,25 +92,20 @@ class Arrow extends AbstractShapePlugin{
      * @param {IArrowMessage} message
      */
     public onMessage(message:IArrowMessage){
-        const {id,start,end,mode,stroke,fill,strokeDashArray,strokeWidth} = message;
+        const {id,left,top,path,stroke,fill,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricArrow;
         this.eBoardCanvas.renderOnAddRemove=false;
-        const {path} = this.calcOptions(start,end,mode);
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
-        const center = {
-            x:(start.x+end.x)/2,
-            y:(start.y+end.y)/2,
-        };
         instance = new FabricArrow(path,{
-            stroke: stroke,
+            stroke,
             strokeWidth,
             fill,
             originX:"center",
             originY:"center",
-            top:center.y,
-            left:center.x,
+            top,
+            left,
             ...strokeDashArray?{strokeDashArray}:{},
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);

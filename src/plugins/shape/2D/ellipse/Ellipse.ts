@@ -83,7 +83,8 @@ class Ellipse extends AbstractShapePlugin{
         return this.instance?{
             id:this.instance.id,
             tag:MessageTag.Shape,
-            start:{x:this.instance.left,y:this.instance.top},
+            left:this.instance.left,
+            top:this.instance.top,
             rx:this.instance.rx,
             ry:this.instance.ry,
             type:this.instance.type,
@@ -172,20 +173,19 @@ class Ellipse extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:IEllipseMessage){
-        const {id,start,rx,ry,fill,stroke,strokeDashArray,strokeWidth} = message;
+        const {id,left,top,rx,ry,fill,stroke,strokeDashArray,strokeWidth} = message;
         let instance = this.getInstanceById(id) as FabricEllipse;
         this.eBoardCanvas.renderOnAddRemove=false;
-    
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
         instance = new FabricEllipse({
-            fill:fill,
-            left: start.x,
-            top: start.y,
-            rx:rx,
-            ry:ry,
-            stroke:stroke,
+            fill,
+            left,
+            top,
+            rx,
+            ry,
+            stroke,
             strokeWidth,
             ...strokeDashArray?{strokeDashArray}:{},
         },this.eBoardCanvas).setId(id);

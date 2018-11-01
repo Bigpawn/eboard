@@ -8,7 +8,6 @@
 
 import {IFrameOptions} from './IFrame';
 import {MessageTag} from '../enums/MessageTag';
-import {ArrowMode} from '../enums/ArrowMode';
 import {CursorType} from '../enums/CursorType';
 import {IObject} from './IObject';
 
@@ -31,9 +30,9 @@ export declare interface ICursorMessage extends IMessage{
 }
 
 export declare interface IArrowMessage extends IMessage{
-    start:{x:number;y:number};
-    end:{x:number;y:number};
-    mode:ArrowMode;
+    left:number;
+    top:number;
+    path:string|any[];
     fill:string;
     stroke:string;
     strokeDashArray:number[];
@@ -41,7 +40,8 @@ export declare interface IArrowMessage extends IMessage{
 }
 
 export declare interface ICircleMessage extends IMessage{
-    start:{x:number;y:number};
+    left:number;
+    top:number;
     radius:number;
     stroke:string;
     fill:string;
@@ -50,7 +50,8 @@ export declare interface ICircleMessage extends IMessage{
 }
 
 export declare interface IEllipseMessage extends IMessage{
-    start:{x:number;y:number};
+    left:number;
+    top:number;
     rx:number;
     ry:number;
     fill:string;
@@ -107,7 +108,8 @@ export declare interface IStarMessage extends IMessage{
 }
 
 export declare interface IRectangleMessage extends IMessage{
-    start:{x:number;y:number};
+    left:number;
+    top:number;
     width:number;
     height:number;
     fill:string;
@@ -117,7 +119,8 @@ export declare interface IRectangleMessage extends IMessage{
 }
 
 export declare interface ISquareMessage extends IMessage{
-    start:{x:number;y:number};
+    left:number;
+    top:number;
     length:number;
     angle:number;
     fill:string;
@@ -128,11 +131,10 @@ export declare interface ISquareMessage extends IMessage{
 
 export declare interface ITextMessage extends IMessage{
     text:string;
-    start:{x:number;y:number};
     fill:string;
     fontSize:number;
-    flipY:boolean;
-    flipX:boolean;
+    left:number;
+    top:number;
 }
 
 export declare interface IEquilateralTriangleMessage extends IMessage{

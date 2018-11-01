@@ -76,8 +76,8 @@ class EquilateralTriangle extends AbstractShapePlugin{
         instance = new FabricEquilateralTriangle(points,{
             stroke,
             strokeWidth,
-            ...strokeDashArray?{strokeDashArray}:{},
             fill,
+            ...strokeDashArray?{strokeDashArray}:{},
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

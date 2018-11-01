@@ -74,8 +74,8 @@ class OrthogonalTriangle extends AbstractShapePlugin{
         instance = new FabricOrthogonalTriangle(points,{
             stroke,
             strokeWidth,
-            ...strokeDashArray?{strokeDashArray}:{},
             fill,
+            ...strokeDashArray?{strokeDashArray}:{},
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();

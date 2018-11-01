@@ -165,10 +165,10 @@ class Polygon extends AbstractShapePlugin{
             this.eBoardCanvas.remove(instance);
         }
         instance = new FabricPolygon(points,{
-            stroke:stroke,
-            ...strokeDashArray?{strokeDashArray}:{},
+            stroke,
             strokeWidth,
-            fill:fill,
+            fill,
+            ...strokeDashArray?{strokeDashArray}:{},
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
