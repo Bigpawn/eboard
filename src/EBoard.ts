@@ -611,6 +611,17 @@ class EBoard{
         }
     }
     
+    
+    
+    /**
+     * 数据恢复  会暂停消息接收，等待回执完成后触发消息接收
+     * @param {string[]} messageList
+     */
+    public recovery(messageList:string[]){
+    
+    }
+    
+    
     /**
      * 消息分发
      * @param {string} message
