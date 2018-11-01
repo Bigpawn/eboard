@@ -9,4 +9,5 @@ import {fabric} from "fabric";
 
 export declare interface IObject extends fabric.Object{
     id:string;
+    sourceId?:string;
 }

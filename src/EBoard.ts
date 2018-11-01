@@ -658,6 +658,12 @@ class EBoard{
                     case MessageTag.SelectionRotate:
                         (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
                         break;
+                    case MessageTag.Paste:
+                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                        break;
+                    case MessageTag.Cut:
+                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
+                        break;
                     default:
                         if(void 0 !== frame){
                             switch (type){

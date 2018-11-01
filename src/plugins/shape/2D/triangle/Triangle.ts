@@ -212,7 +212,8 @@ class Triangle extends AbstractShapePlugin{
         return this.instance?{
             id:this.instance.id,
             tag:MessageTag.Shape,
-            start:{x:this.instance.left as number,y:this.instance.top as number},
+            left:this.instance.left,
+            top:this.instance.top,
             flipX:this.instance.flipX,
             flipY:this.instance.flipY,
             width:this.instance.width,
@@ -230,7 +231,7 @@ class Triangle extends AbstractShapePlugin{
      * @param {ICircleMessage} message
      */
     public onMessage(message:ITriangleMessage){
-        const {id,start,flipX,flipY,width,height,stroke,fill,strokeDashArray,strokeWidth} = message;
+        const {id,flipX,flipY,width,height,stroke,fill,strokeDashArray,strokeWidth,left,top} = message;
         let instance = this.getInstanceById(id) as FabricTriangle;
         this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
@@ -238,8 +239,8 @@ class Triangle extends AbstractShapePlugin{
         }
         instance = new FabricTriangle({
             fill,
-            left: start.x,
-            top: start.y,
+            left,
+            top,
             stroke,
             flipX,
             flipY,

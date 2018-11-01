@@ -10,6 +10,7 @@ import {IFrameOptions} from './IFrame';
 import {MessageTag} from '../enums/MessageTag';
 import {ArrowMode} from '../enums/ArrowMode';
 import {CursorType} from '../enums/CursorType';
+import {IObject} from './IObject';
 
 
 export declare interface IMessage{
@@ -151,7 +152,8 @@ export declare interface IOrthogonalTriangleMessage extends IMessage{
 }
 
 export declare interface ITriangleMessage extends IMessage{
-    start:{x:number;y:number};
+    left:number;
+    top:number;
     width:number;
     height:number;
     flipX:boolean;
@@ -179,7 +181,8 @@ export declare interface ISelectionMessage extends IMessage{
         flipX:boolean;
         flipY:boolean;
         objects:Array<{flipX:boolean;flipY:boolean;angle:number}>;
-    }
+    };
+    objects?:IObject[];
 }
 
 export declare interface IScrollBarMessage extends IMessage{

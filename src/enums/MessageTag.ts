@@ -21,4 +21,6 @@ export enum MessageTag{
     RemoveTab=12,
     Shape=13,
     TurnPage=14,// 翻页
+    Paste=15,
+    Cut=16,
 }
