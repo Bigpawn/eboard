@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Card } from "antd";
-import {FrameType} from '../../src/EBoard';
 import {EBoardInstance} from './EBoardInstance';
-import {fabric} from "fabric";
+import {FrameType} from '../../src/enums/SDKEnum';
 
 class SimpleCanvas extends React.Component<{}, {}> {
     protected canvas:any;

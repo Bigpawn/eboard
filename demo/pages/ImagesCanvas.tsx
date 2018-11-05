@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Card } from "antd";
 import SimpleCanvas from './SimpleCanvas';
-import {FrameType} from '../../src/EBoard';
 import {EBoardInstance} from './EBoardInstance';
+import {FrameType} from '../../src/enums/SDKEnum';
 
 
 

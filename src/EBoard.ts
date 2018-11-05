@@ -31,14 +31,9 @@ import {IConfig} from './interface/IConfig';
 import {MessageTag} from './enums/MessageTag';
 import {Keys} from './enums/Keys';
 import {Context, IPluginConfigOptions} from './static/Context';
+import {FrameType} from './enums/SDKEnum';
 
 const config = require("./config.json");
-
-
-
-export enum FrameType{
-    Empty="empty-frame",Image="image-frame",HTML="html-frame",Canvas="canvas-frame",Pdf="pdf-frame",Images="images-frame"
-}
 
 
 
@@ -76,7 +71,6 @@ class EBoard{
         window.addEventListener("keydown",(e:KeyboardEvent)=>{
             const code = e.keyCode;
             if(code === Keys.Esc){
-                // 退出当前Plugin
                 const {plugins} = this.context.store;
                 plugins.forEach((options:any,plugin:any)=>{
                     plugins.delete(plugin);
@@ -87,7 +81,6 @@ class EBoard{
                         }
                     });
                 });
-                // toolbar 修改
                 if(void 0 !== this.toolbar){
                     this.toolbar.disActive();
                 }

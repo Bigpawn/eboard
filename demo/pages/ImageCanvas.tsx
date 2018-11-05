@@ -1,9 +1,9 @@
 import * as React from "react";
 import SimpleCanvas from './SimpleCanvas';
 import { Card } from "antd";
-import {FrameType} from '../../src/EBoard';
 import {ScrollbarType} from '../../src/frames/HtmlFrame';
 import {EBoardInstance} from './EBoardInstance';
+import {FrameType} from '../../src/enums/SDKEnum';
 
 
 
