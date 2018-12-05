@@ -10,31 +10,31 @@ import {IFrameGroup} from '../interface/IFrameGroup';
 import {EventBus} from '../utils/EventBus';
 import {CusMap} from './CusMap';
 import {Store} from './Store';
-import {IConfig, IDefaultConfig} from '../interface/IConfig';
+import {IConfig,ISDKConfig} from '../interface/IConfig';
+import {Config} from './Config';
 
-export declare interface IPluginConfigOptions{
-    background?:boolean;// 是否后台运行
-    enable?:boolean;
-}
 
 class Context extends EventBus{
-    constructor(){
-        super();
-    }
     private frameMap:CusMap<string,IFrame>=new CusMap<string,IFrame>();
     private groupMap:CusMap<string,IFrameGroup>=new CusMap<string, IFrameGroup>();
     public activeKey:string;// 可能是frame 可能是group
-    public store:Store=new Store();
-    private config:IDefaultConfig;
-    public getConfig(key?:string){
-        return key?this.config[key]:this.config;
+    public config:Config;// 配置管理
+    public store:Store;// 所有数据共享
+    constructor(config?:IConfig){
+        super();
+        this.config = new Config(config||{});
+        this.store = new Store(this.config);
     }
-    public setConfig(config:IDefaultConfig){
-        this.config=config;
+    
+    /////////////////////////////////Config/////////////////////////////////
+    public getConfig(configItem?:keyof ISDKConfig){
+        return configItem?this.config[configItem]:this.config;
     }
-    public updateConfig(config:IConfig){
-        this.config=Object.assign(this.config,config);
+    public setConfig(configItem:keyof ISDKConfig,value:any){
+        this.config.set(configItem,value);
     }
+    
+    ////////////////////////////frame 管理/////////////////////////////////
     public getFrameById(frameId:string){
         return this.frameMap.get(frameId);
     }
@@ -120,8 +120,6 @@ class Context extends EventBus{
     public fontSize:string;
     public pencilColor:string;
     public pencilWidth:number;
-    
-    
     
     public compress:boolean=false;
     public adapter:any;

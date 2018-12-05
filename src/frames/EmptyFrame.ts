@@ -13,9 +13,10 @@ import {
 import {EBoardEngine} from '../EBoardEngine';
 import {message} from '../utils/decorators';
 import {MessageTag} from '../enums/MessageTag';
-import {Context, ContextFactory, IPluginConfigOptions} from '../static/Context';
+import {Context, ContextFactory} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
 import {ScrollBar} from '../components/ScrollBar';
+import {IPluginConfigOptions} from '../enums/SDKEnum';
 
 
 

@@ -1,13 +1,15 @@
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
- * @Date: 2018/8/22 9:55
+ * @Date: 2018/11/5 13:43
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
- * @Last Modified time: 2018/8/22 9:55
- * @disc:IConfig
+ * @Last Modified time: 2018/11/5 13:43
+ * @disc:配置管理
  */
 
+import {IConfig, ISDKConfig} from '../interface/IConfig';
+const defaultConfig = require("../config.json");
 
-export declare interface IDefaultConfig{
+class Config implements ISDKConfig{
     ratio:{w:number;h:number};
     showTab:boolean;
     borderColor:string;
@@ -31,12 +33,14 @@ export declare interface IDefaultConfig{
     showToolbar:boolean;
     ctrlKey:boolean;
     enable:boolean;
+    constructor(initConfig:IConfig){
+        Object.assign(this,defaultConfig,initConfig);
+    }
+    public set(key:keyof IConfig|IConfig,value?:any){
+        typeof key === "string"?Object.assign(this,{
+            key:value
+        }):Object.assign(this,key);
+    }
 }
 
-export declare interface ISDKConfig extends IDefaultConfig{
-
-}
-
-export type IConfig={
-    [K in keyof ISDKConfig]?:any;
-}
+export {Config};

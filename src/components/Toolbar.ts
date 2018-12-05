@@ -10,6 +10,8 @@ import '../style/toolbar.less';
 import "../font/iconfont.css";
 import '../style/drop-down.less';
 import {EBoard} from '../EBoard';
+import {Config} from '../static/Config';
+import {Keys} from '../enums/Keys';
 
 export declare interface IToolbarItem{
     name:string;
@@ -283,12 +285,24 @@ class Toolbar{
     private childInstance:ToolbarChildren;
     private activeKey:string;
     private over:boolean;
-    constructor(container:HTMLElement,eBoard:EBoard,listener?:(item:IToolbarItem)=>void){
+    constructor(container:HTMLElement,config:Config,listener?:(item:IToolbarItem)=>void){
         this.listener=listener;
         this.initWrap();
         this.initNewItems();
         container.innerHTML='';
         container.appendChild(this.dom);
+        // esc support
+        if(config.escKey){
+            this.escKeyListener();
+        }
+    }
+    private escKeyListener(){
+        window.addEventListener("keydown",(e:KeyboardEvent)=>{
+            const code = e.keyCode;
+            if(code === Keys.Esc){
+                this.disActive();
+            }
+        })
     }
     private initWrap(){
         const wrap = document.createElement('div');

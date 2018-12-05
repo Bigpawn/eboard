@@ -14,3 +14,8 @@ export enum FrameType{
     Pdf="pdf-frame",
     Images="images-frame"
 }
+
+export declare interface IPluginConfigOptions{
+    background?:boolean;// 是否后台运行
+    enable?:boolean;
+}

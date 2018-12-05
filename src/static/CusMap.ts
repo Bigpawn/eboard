@@ -15,8 +15,8 @@ class CusMap<K,V> extends EventBus{
     public delete(key: K){
         return this._map.delete(key);
     };
-    public forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any): void{
-        return this._map.forEach(callbackfn,thisArg);
+    public forEach(callbackFn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any): void{
+        return this._map.forEach(callbackFn,thisArg);
     };
     public get(key: K): V | undefined{
         return this._map.get(key);

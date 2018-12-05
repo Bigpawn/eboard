@@ -29,31 +29,25 @@ import {Toolbar} from './components/Toolbar';
 import {message} from './utils/decorators';
 import {IConfig} from './interface/IConfig';
 import {MessageTag} from './enums/MessageTag';
-import {Keys} from './enums/Keys';
-import {Context, IPluginConfigOptions} from './static/Context';
-import {FrameType} from './enums/SDKEnum';
-
-const config = require("./config.json");
-
-
+import {Context} from './static/Context';
+import {FrameType, IPluginConfigOptions} from './enums/SDKEnum';
+import {Config} from './static/Config';
 
 
 class EBoard{
     private body:HTMLDivElement;
-    private container:HTMLDivElement;
+    private readonly container:HTMLDivElement;
     private tab:Tab;
-    private toolbar:Toolbar;
+    public toolbar:Toolbar;
     private calcSize:any;
-    private config?:IConfig;
     private middleWare:MessageMiddleWare;
-    private context:Context;
+    private readonly context:Context;
     constructor(container:HTMLDivElement,config?:IConfig){
-        this.context=new Context();
-        this.config=config;
+        this.context=new Context(config);
         this.container=container;
         this.initLayout();
         this.init();
-        const {showTab,showToolbar,escKey} = this.context.getConfig();
+        const {showTab,showToolbar} = this.context.getConfig() as Config;
         if(showTab){
             this.initTab();
         }
@@ -62,38 +56,12 @@ class EBoard{
         }
         // plugin事件监听
         this.observePlugins();
-        if(escKey){
-            this.escHandler();
-        }
-        this.escHandler();
-    }
-    private escHandler(){
-        window.addEventListener("keydown",(e:KeyboardEvent)=>{
-            const code = e.keyCode;
-            if(code === Keys.Esc){
-                const {plugins} = this.context.store;
-                plugins.forEach((options:any,plugin:any)=>{
-                    plugins.delete(plugin);
-                    this.context.trigger("plugin:disable",{
-                        plugin:plugin,
-                        options:{
-                            enable:false
-                        }
-                    });
-                });
-                if(void 0 !== this.toolbar){
-                    this.toolbar.disActive();
-                }
-            }
-        })
     }
     /**
      * 初始化config 及事件Emitter 消息adapter
      */
     private init(){
-        this.context.setConfig(Object.assign({},config,this.config||{}));
         this.middleWare=new MessageMiddleWare(this.context);
-        
         this.context.adapter = new MessageAdapter(this.middleWare);
         this.calcSize=this.calc();
         // 画布分辨率比例计算
@@ -102,6 +70,8 @@ class EBoard{
         };
         
         window.addEventListener("resize",()=>{
+            
+            
             this.calcSize=this.calc();
             // 画布分辨率比例计算
             this.context.transform=(size:number)=>{
@@ -128,7 +98,7 @@ class EBoard{
         }
     }
     private initTab(){
-        if(!config.showTab){
+        if(!this.context.config.showTab){
             return;
         }
         this.tab=new Tab(this.container);
@@ -152,7 +122,7 @@ class EBoard{
         const wrap = document.createElement("div");
         wrap.className="eboard-toolbar-wrap";
         this.container.appendChild(wrap);
-        this.toolbar = new Toolbar(wrap,this,(item:any)=>{
+        this.toolbar = new Toolbar(wrap,this.context.config,(item:any)=>{
             const {name,color,size} = item;
             switch (item.key){
                 case "line":
@@ -476,12 +446,12 @@ class EBoard{
     private calc(){
         const parentElement = this.body;
         const {offsetWidth:width,offsetHeight:height} = parentElement;
-        let ratio=this.context.getConfig("ratio");
+        let ratio=this.context.config.ratio;
         const _ratioW=ratio.w;
         const _ratioH=ratio.h;
         const ratioNum=_ratioW/_ratioH;
         let calcSize:any;
-        const defaultDimensionW = config.dimensions.width;
+        const defaultDimensionW = this.context.config.dimensions.width;
         let w:number,h:number;
         if(width/height>ratioNum){
             w = height * ratioNum;
@@ -783,9 +753,7 @@ class EBoard{
     public setDisable(){
         const container = this.body;
         container.parentElement&&container.parentElement.classList.add("eboard-disable");
-        this.context.updateConfig({
-            enable:false
-        });
+        this.context.setConfig("enable",false);
         return this;
     }
     
@@ -796,9 +764,7 @@ class EBoard{
     public setEnable(){
         const container = this.body;
         container.parentElement&&container.parentElement.classList.remove("eboard-disable");
-        this.context.updateConfig({
-            enable:true
-        });
+        this.context.setConfig("enable",true);
         return this;
     }
     
