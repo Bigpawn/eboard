@@ -46,10 +46,9 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
         this.initEngine();
         this.initPlugin();
         if(!groupId&&container){
-            container.innerHTML = "";
+            // container.innerHTML = "";
             container.appendChild(this.dom);// 立即显示
         }
-        
         if(!this.groupId||options.messageId){
             this.initializeAction();
         }
