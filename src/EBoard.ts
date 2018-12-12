@@ -70,8 +70,6 @@ class EBoard{
         };
         
         window.addEventListener("resize",()=>{
-            
-            
             this.calcSize=this.calc();
             // 画布分辨率比例计算
             this.context.transform=(size:number)=>{
