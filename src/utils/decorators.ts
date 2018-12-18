@@ -119,7 +119,7 @@ function message(target:any, name:string, descriptor:PropertyDescriptor){
         // 消息内容通过创建传递，adapter通过eventBus传递
         const adapter = this.context.adapter;
         if(void 0 !== adapter){
-            adapter.messageHandle(copyMessage);
+            adapter.sendMessage(copyMessage);
         }
         return message;
     };

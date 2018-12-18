@@ -7,7 +7,7 @@
  */
 import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
-import {message, pipMode, setAnimationName} from '../utils/decorators';
+import {message, setAnimationName} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
 import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {Plugins} from '../plugins';
@@ -28,7 +28,6 @@ class ImagesFrame implements IImagesFrame{
     public options:IImagesFrameOptions;
     public pageFrame:ImageFrame;
     private pagination:Pagination;
-    // private animationCssPrefix:string;
     public images:string[];
     public groupId:string;
     public context:Context;
@@ -37,15 +36,10 @@ class ImagesFrame implements IImagesFrame{
         this.groupId = options.groupId||IDGenerator.getId();
         this.container=options.container as any;
         this.options=options;
-        const {container} = options;
         context.addGroup(this.groupId,this).setActiveKey(this.groupId);
         this.onGo=this.onGo.bind(this);
         this.initLayout();
         this.initialize();
-        if(container){
-            container.innerHTML = "";
-            container.appendChild(this.dom);// 立即显示
-        }
         this.initializeAction();
     }
     @message
@@ -72,6 +66,8 @@ class ImagesFrame implements IImagesFrame{
         pagerContainer.style.width="100%";
         pagerContainer.style.height="100%";
         this.dom=pagerContainer;
+        const {container} = this.options as any;
+        container.appendChild(this.dom);
     };
     private initialize(){
         const options = this.options;
@@ -79,25 +75,16 @@ class ImagesFrame implements IImagesFrame{
         this.images=options.images||[];
         this.setPageNum(options.pageNum||1);// 默认第一页
         this.setTotalPages(this.images.length);// 表示当前未获取到页数
-        if(this.child.size>0){
-            // 清空子项
-            this.child.forEach(frame=>{
-                frame.destroy();
-            });
-            this.child.clear();
-        }
         if(this.images.length>0){
             const pageFrame = new ImageFrame(this.context,{
                 content:this.urlPrefix+this.images[this.pageNum-1],
                 scrollbar:ScrollbarType.vertical,
-                container:this.container,
+                container:this.dom,
                 frameId:this.groupId+"_"+this.pageNum.toString(),
                 groupId:this.groupId,
                 calcSize:this.options.calcSize
             });
             this.pageFrame=pageFrame;
-            this.dom.innerHTML="";
-            this.dom.appendChild(this.pageFrame.dom);
             const pagination = new Pagination(this.pageNum,this.totalPages);// 分页管理器
             pagination.addGoListener(this.onGo);
             this.pagination=pagination;
@@ -105,14 +92,16 @@ class ImagesFrame implements IImagesFrame{
             this.child.set(this.pageNum,pageFrame);
         }
     }
-    private onGo(pageNum:number,forbidMessage?:boolean){
+    private onGo(pageNum:number){
         const pageNumber=Number(pageNum);
         this.switchToFrame(pageNumber);
-        if(!forbidMessage){
-            this.switchFrameAction(pageNumber);
-        }
+        this.switchFrameAction(pageNumber);
     }
     
+    public pageTo(pageNum:number){
+        const pageNumber=Number(pageNum);
+        this.switchToFrame(pageNumber);
+    }
     /**
      * 更新文档页数
      * @param totalPages
@@ -137,21 +126,13 @@ class ImagesFrame implements IImagesFrame{
         }
     }
     
-    
-    /**
-     * 创建子frame
-     * @returns {CanvasFrame | undefined}
-     * @param options
-     */
-    public createFrame(options:{pageNum:number}){
-        const pageNum = Number(options.pageNum);
+    private getFrame(pageNum:number){
         let nextPageFrame = this.child.get(pageNum);
         if(void 0 === nextPageFrame){
-            // 创建
             nextPageFrame = new ImageFrame(this.context,{
                 content:this.urlPrefix+this.images[pageNum-1],
                 scrollbar:ScrollbarType.vertical,
-                container:this.container,
+                container:this.dom,
                 frameId:this.groupId+"_"+pageNum.toString(),
                 groupId:this.groupId,
                 calcSize:this.options.calcSize
@@ -160,50 +141,49 @@ class ImagesFrame implements IImagesFrame{
         }
         return nextPageFrame;
     }
-    
+    private clearClassList(element:HTMLDivElement){
+        element.className = element.className.replace(/eboard-pager-enter-from-left|eboard-pager-enter-from-right|eboard-pager-leave-to-right|eboard-pager-leave-to-left|eboard-pager-page-show|eboard-pager-page-hide/g,"").trim();
+    }
     /**
-     * 切换到指定页 需要加队列控制
+     * 动画切换
      * @param {number} pageNum
      * @returns {any}
      */
-    // @pipMode
-    public switchToFrame(pageNum:number){
+    private switchToFrame(pageNum:number){
         if(this.pageNum === pageNum||void 0 === pageNum){
             return this;
         }
-        let nextPageFrame = this.createFrame({pageNum});
-        return new Promise<this>((resolve)=>{
-            const frameDom = (nextPageFrame as ImageFrame).dom;
-            const currentFrameDom = this.pageFrame.dom;
-            // const enterClassName = `${this.animationCssPrefix}-enter-from-${pageNum>this.pageNum?"right":"left"}`;
-            // const leaveClassName = `${this.animationCssPrefix}-leave-to-${pageNum>this.pageNum?"left":"right"}`;
-            // frameDom.classList.add(enterClassName);
-            // currentFrameDom.classList.add(leaveClassName);
-            
-            
-            
-            
-            // 不能做隐藏，隐藏会造成布局未完成即开始绘制
-            frameDom.classList.remove("eboard-page-hide");
-            frameDom.classList.add("eboard-page-show");
-            if(!frameDom.parentElement){
-                this.dom.insertBefore(frameDom,this.pagination.dom);
-            }
-            currentFrameDom.classList.remove("eboard-page-show");
-            currentFrameDom.classList.add("eboard-page-hide");
-            this.setPageNum(pageNum);
-            // currentFrameDom.parentElement&&currentFrameDom.parentElement.removeChild(currentFrameDom);
-            this.pageFrame=nextPageFrame as ImageFrame;
-            
-       /*     setTimeout(()=>{
-                frameDom.classList.remove(enterClassName);
-                currentFrameDom.classList.remove(leaveClassName);
-                // 删除dom
-                currentFrameDom.parentElement&&currentFrameDom.parentElement.removeChild(currentFrameDom);
-                this.pageFrame=nextPageFrame as ImageFrame;
-                resolve(this);
-            },510);*/
+        let nextPageFrame = this.getFrame(pageNum);
+        const frameDom = nextPageFrame.dom;
+        const currentFrameDom = this.pageFrame.dom;
+        this.clearClassList(frameDom);
+        this.clearClassList(currentFrameDom);
+        frameDom.classList.add(this.pageNum>pageNum?"eboard-pager-enter-from-left":"eboard-pager-enter-from-right");
+        currentFrameDom.classList.add(this.pageNum>pageNum?"eboard-pager-leave-to-right":"eboard-pager-leave-to-left");
+        this.setPageNum(pageNum);
+        this.pageFrame=nextPageFrame;
+        return this;
+    }
+    
+    private recoveryToFrame(pageNum:number){
+        if(this.pageNum === pageNum||void 0 === pageNum){
+            return this;
+        }
+        let nextPageFrame = this.getFrame(pageNum);
+        const frameDom = nextPageFrame.dom;
+        this.child.forEach((imageFrame)=>{
+            const dom = imageFrame.dom;
+            this.clearClassList(dom);
+            dom.classList.add("eboard-pager-page-hide");
         });
+        frameDom.classList.add("eboard-pager-page-show");
+        this.setPageNum(pageNum);
+        this.pageFrame=nextPageFrame;
+        return this;
+    }
+    public recovery(pageNum:number){
+        const pageNumber=Number(pageNum);
+        this.recoveryToFrame(pageNumber);
     }
     public getPlugin(pluginName:Plugins){
         return this.pageFrame?this.pageFrame.getPlugin(pluginName):undefined;

@@ -8,19 +8,20 @@
 import Timer = NodeJS.Timer;
 
 class ImageUtil{
-    public static getSize(img:HTMLImageElement,callback:(size:{width:number;height:number}) => void){
+    public static getSize(img:HTMLImageElement,callback:() => void){
         let interval:Timer;
         const check = function(){
             if(img.width>0 && img.height>0){
                 if(interval) clearInterval(interval);
-                callback({
-                    width:img.width,
-                    height:img.height
-                })
+                callback()
             }
         };
         interval=setInterval(check,40);
         check();
+        img.onerror=function() {
+            clearInterval(interval);
+            callback();
+        }
     }
 }
 

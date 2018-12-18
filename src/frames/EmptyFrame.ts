@@ -32,28 +32,24 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
     protected calcSize:any;
     constructor(context:Context,options:T){
         super(context);
+        this.options=options;
         this.frameId=options.frameId||IDGenerator.getId();
-        const groupId = options.groupId;
-        this.groupId=groupId;
+        this.calcSize=options.calcSize||{};
+        this.groupId=options.groupId;
+        this.initEngine();
+        this.initLayout();
+        this.initPlugin();
+        this.onResize();
         context.addFrame(this.frameId,this);
-        if(!groupId){
+        if(!this.groupId){
             context.setActiveKey(this.frameId);
         }
-        this.container=options.container as any;
-        this.options=options;
-        this.calcSize=options.calcSize||{};
-        const {container} = this.options as any;
-        this.initEngine();
-        this.initPlugin();
-        if(!groupId&&container){
-            container.appendChild(this.dom);// 立即显示
-        }
-        
         if(!this.groupId||options.messageId){
             this.initializeAction();
         }
-        // resize
-        context.on("resize",(e:any)=>{
+    }
+    private onResize(){
+        this.context.on("resize",(e:any)=>{
             this.calcSize=e.data;
             this.initLayout();
             if(this.scrollbar){
@@ -103,11 +99,15 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
         });
     }
     protected initEngine(){
-        const container = document.createElement("div");
-        container.className="eboard-container";
+        const wrap = document.createElement("div");
+        this.dom = wrap;
+        const {container} = this.options as any;
+        container.appendChild(this.dom);// 立即显示
+        
+        wrap.className="eboard-container";
         const placeholder = document.createElement("canvas");
         placeholder.innerHTML="当前浏览器不支持Canvas,请升级浏览器";
-        container.appendChild(placeholder);
+        wrap.appendChild(placeholder);
         this.engine = new EBoardEngine(placeholder,this.context,{
             selection:false,
             skipTargetFind:true,
@@ -115,14 +115,6 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
             frame:this.frameId,
             group:this.groupId
         });
-        const image = document.createElement("img");
-        image.src="";
-        image.onerror=()=>{
-            this.initLayout();// 仅执行一次
-            container.removeChild(image);
-        };
-        container.appendChild(image);
-        this.dom = container;
     }
     protected initLayout(){
         const calcSize = this.calcSize;

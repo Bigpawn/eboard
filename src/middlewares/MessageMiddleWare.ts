@@ -24,7 +24,7 @@ import {Context} from '../static/Context';
 
 class MessageMiddleWare{
     // private compress:boolean=false;
-    private context:Context;
+    private readonly context:Context;
     constructor(context:Context){
         this.context=context;
         // this.compress= context.compress;// 如果压缩接收端需要解压

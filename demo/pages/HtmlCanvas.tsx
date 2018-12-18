@@ -41,7 +41,7 @@ class HtmlCanvas extends SimpleCanvas{
     public render(): JSX.Element {
         return (
             <Card bordered title="HTML Canvas" style={{ margin: "16px 16px"}}>
-                <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"200%",height:"100%",position:"relative"}}>
+                <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"100%",height:"100%",position:"relative"}}>
                     <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainer"}/>
                     <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainerReceive"}/>
                 </div>

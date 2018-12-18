@@ -16,6 +16,7 @@ import {ImageUtil} from '../static/ImageUtil';
 class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageFrame{
     public type="image-frame";
     public src:string;
+    private imageWrap:HTMLDivElement;
     protected getChildren():any{
         const image = document.createElement("img");
         this.src = image.src=this.options.content||"";
@@ -23,27 +24,27 @@ class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageF
         return image;
     }
     protected initEngine(){
-        const container = document.createElement("div");
-        container.className="eboard-container";
-        const htmlContainer = document.createElement("div");
-        htmlContainer.className="eboard-html-container";
-        const htmlWrap = document.createElement("div");
-        htmlWrap.className="eboard-html";
-        this.htmlWrap=htmlWrap;
-        htmlContainer.appendChild(htmlWrap);
-        const img = this.html =this.getChildren();// img标签
-        htmlWrap.appendChild(img);
+        const {container} = this.options as any;
+        const wrap = document.createElement("div");
+        this.dom = wrap;
+        container.appendChild(wrap);
+        
+        wrap.className="eboard-container";
+        const imageContainer = document.createElement("div");
+        imageContainer.className="eboard-html-container";
+        const imageWrap = document.createElement("div");
+        imageWrap.className="eboard-html";
+        this.imageWrap=imageWrap;
+        imageContainer.appendChild(imageWrap);
+        const img = this.getChildren();// img标签
+        imageWrap.appendChild(img);
         ImageUtil.getSize(img,()=>{
             this.initLayout();
         });
-        img.onerror=()=>{
-            this.initLayout();
-        };
-        // 通过image模拟实现监听显示事件
         const placeholder = document.createElement("canvas");
         placeholder.innerHTML="当前浏览器不支持Canvas,请升级浏览器";
-        container.appendChild(htmlContainer);
-        container.appendChild(placeholder);
+        wrap.appendChild(imageContainer);
+        wrap.appendChild(placeholder);
         this.engine = new EBoardEngine(placeholder,this.context,{
             selection:false,
             skipTargetFind:true,
@@ -51,14 +52,13 @@ class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageF
             frame:this.frameId,
             group:this.groupId
         });
-        this.initScrollbar(container);
-        this.dom = container;
+        this.initScrollbar(wrap);
     }
     protected initLayout(){
         let calcSize=this.calcSize;
         this.dom.style.width=calcSize.width+"px";
         this.dom.style.height=calcSize.height+"px";
-        let height = Math.max(this.htmlWrap.offsetHeight,calcSize.height);// css 大小
+        let height = Math.max(this.imageWrap.offsetHeight,calcSize.height);// css 大小
         if(void 0 !==this.scrollbar){
             this.scrollbar.update();
         }
@@ -68,7 +68,6 @@ class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageF
         };
         this.engine.eBoardCanvas.setDimensions({width:calcSize.width,height:height});// 样式大小
         this.engine.eBoardCanvas.setDimensions(dimensions,{backstoreOnly:true});// canvas分辨率
-        // 需要更新滚动条位置
         this.recoveryScrollbar();
     }
 }

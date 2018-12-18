@@ -59,7 +59,7 @@ export declare interface IBaseFrame extends IFrame{
 
 export declare interface IHTMLFrameOptions extends IFrameOptions{
     scrollbar?:ScrollbarType;
-    content?:string|HTMLDivElement;
+    content?:string;
 }
 
 export declare interface IHTMLFrame extends IBaseFrame{

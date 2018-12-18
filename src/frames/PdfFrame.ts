@@ -9,7 +9,7 @@ import {PDFDocumentProxy, PDFJSStatic, PDFPromise, PDFRenderParams} from 'pdfjs-
 import {CanvasFrame} from './CanvasFrame';
 import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
-import {message, pipMode, setAnimationName} from '../utils/decorators';
+import {message} from '../utils/decorators';
 import {
     IPdfFrame,
     IPdfFrameOptions,
@@ -24,12 +24,10 @@ const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
 
 
-@setAnimationName('eboard-pager')
 class PdfFrame implements IPdfFrame{
     public pageFrame:CanvasFrame;
     private pagination:Pagination;
     private pdf:PDFPromise<PDFDocumentProxy>;
-    private animationCssPrefix:string;
     public container:HTMLDivElement;
     public type:string="pdf-frame";
     public dom:HTMLDivElement;
@@ -46,15 +44,10 @@ class PdfFrame implements IPdfFrame{
         this.groupId=options.groupId||IDGenerator.getId();
         this.options=options;
         this.container=options.container as any;
-        const {container} = options;
         context.addGroup(this.groupId,this).setActiveKey(this.groupId);
         this.onGo=this.onGo.bind(this);
         this.initLayout();
         this.initialize();
-        if(container){
-            container.innerHTML = "";
-            container.appendChild(this.dom);// 立即显示
-        }
         this.initializeAction();
     }
     
@@ -82,37 +75,31 @@ class PdfFrame implements IPdfFrame{
         pagerContainer.style.width="100%";
         pagerContainer.style.height="100%";
         this.dom=pagerContainer;
+        const {container} = this.options as any;
+        container.appendChild(this.dom);
     };
-    
+    private clearClassList(element:HTMLDivElement){
+        element.className = element.className.replace(/eboard-pager-enter-from-left|eboard-pager-enter-from-right|eboard-pager-leave-to-right|eboard-pager-leave-to-left|eboard-pager-page-show|eboard-pager-page-hide/g,"").trim();
+    }
     private initialize(){
         const options = this.options;
         this.url=options.url||'';
         this.setPageNum(options.pageNum||1);// 默认第一页
         this.setTotalPages(0);// 表示当前未获取到页数
         this.pdf=undefined as any;
-        if(this.child.size>0){
-            // 清空子项
-            this.child.forEach(frame=>{
-                frame.destroy();
-            });
-            this.child.clear();
-        }
         if(void 0 !== this.url){
             this.pdf = pdfjsLib.getDocument(this.url);
             this.pdf.then(pdf=>{
                 this.setTotalPages(pdf.numPages);
             });
-            // 判断是否有id options.id;// 没有标识操作端
             const pageFrame = new CanvasFrame(this.context,{
                 scrollbar:ScrollbarType.vertical,
                 frameId:this.groupId+"_"+this.pageNum.toString(),
-                container:this.container,
+                container:this.dom,
                 calcSize:this.options.calcSize,
                 groupId:this.groupId
             });// 页码设置为id
             this.pageFrame=pageFrame;
-            this.dom.innerHTML="";
-            this.dom.appendChild(this.pageFrame.dom);
             const pagination = new Pagination(this.pageNum,this.totalPages);// 分页管理器
             pagination.addGoListener(this.onGo);
             this.pagination=pagination;
@@ -138,14 +125,17 @@ class PdfFrame implements IPdfFrame{
             })
         }
     }
-    private onGo(pageNum:number,forbidMessage?:boolean){
+    
+    private onGo(pageNum:number){
         const pageNumber=Number(pageNum);
-        this.switchToFrame(pageNumber);// 消息id，需要先生成消息id然后才能调用api
-        if(!forbidMessage){
-            this.switchFrameAction(pageNumber);
-        }
+        this.switchToFrame(pageNumber);
+        this.switchFrameAction(pageNumber);
     }
-
+    
+    public pageTo(pageNum:number){
+        const pageNumber=Number(pageNum);
+        this.switchToFrame(pageNumber);
+    }
     /**
      * 更新文档页数
      * @param totalPages
@@ -170,25 +160,18 @@ class PdfFrame implements IPdfFrame{
         }
     }
     
-    /**
-     * 创建子frame
-     * @returns {CanvasFrame | undefined}
-     * @param options
-     */
-    public createFrame(options:{pageNum:number}){
-        const pageNum = Number(options.pageNum);
+    
+    private getFrame(pageNum:number){
         let nextPageFrame = this.child.get(pageNum);
         if(void 0 === nextPageFrame){
-            // 创建
             nextPageFrame = new CanvasFrame(this.context,{
                 scrollbar:ScrollbarType.vertical,
-                container:this.container,
+                container:this.dom,
                 frameId:this.groupId+"_"+pageNum.toString(),
                 calcSize:this.options.calcSize,
                 groupId:this.groupId
             });
             this.child.set(pageNum,nextPageFrame);
-            // 需要getPage
             this.pdf.then(pdf=>{
                 pdf.getPage(pageNum).then((page)=>{
                     const canvas = (nextPageFrame as CanvasFrame).canvas;
@@ -208,36 +191,45 @@ class PdfFrame implements IPdfFrame{
         }
         return nextPageFrame;
     }
-    /**
-     * 切换到指定页 需要加队列控制
-     * @param {number} pageNum
-     * @returns {any}
-     */
-    @pipMode
+    
     public switchToFrame(pageNum:number){
         if(this.pageNum === pageNum||void 0 === pageNum){
             return this;
         }
-        let nextPageFrame = this.createFrame({pageNum});
-        return new Promise<this>((resolve)=>{
-            const frameDom = (nextPageFrame as CanvasFrame).dom;
-            const currentFrameDom = this.pageFrame.dom;
-            const enterClassName = `${this.animationCssPrefix}-enter-from-${pageNum>this.pageNum?"right":"left"}`;
-            const leaveClassName = `${this.animationCssPrefix}-leave-to-${pageNum>this.pageNum?"left":"right"}`;
-            frameDom.classList.add(enterClassName);
-            currentFrameDom.classList.add(leaveClassName);
-            this.dom.insertBefore(frameDom,this.pagination.dom);
-            this.setPageNum(pageNum);
-            setTimeout(()=>{
-                frameDom.classList.remove(enterClassName);
-                currentFrameDom.classList.remove(leaveClassName);
-                // 删除dom
-                currentFrameDom.parentElement&&currentFrameDom.parentElement.removeChild(currentFrameDom);
-                this.pageFrame=nextPageFrame as CanvasFrame;
-                resolve(this);
-            },510);
-        });
+        let nextPageFrame = this.getFrame(pageNum);
+        const frameDom = nextPageFrame.dom;
+        const currentFrameDom = this.pageFrame.dom;
+        this.clearClassList(frameDom);
+        this.clearClassList(currentFrameDom);
+        frameDom.classList.add(this.pageNum>pageNum?"eboard-pager-enter-from-left":"eboard-pager-enter-from-right");
+        currentFrameDom.classList.add(this.pageNum>pageNum?"eboard-pager-leave-to-right":"eboard-pager-leave-to-left");
+        this.setPageNum(pageNum);
+        this.pageFrame=nextPageFrame;
+        return this;
     }
+    
+    private recoveryToFrame(pageNum:number){
+        if(this.pageNum === pageNum||void 0 === pageNum){
+            return this;
+        }
+        let nextPageFrame = this.getFrame(pageNum);
+        const frameDom = nextPageFrame.dom;
+        this.child.forEach((imageFrame)=>{
+            const dom = imageFrame.dom;
+            this.clearClassList(dom);
+            dom.classList.add("eboard-pager-page-hide");
+        });
+        frameDom.classList.add("eboard-pager-page-show");
+        this.setPageNum(pageNum);
+        this.pageFrame=nextPageFrame;
+        return this;
+    }
+    public recovery(pageNum:number){
+        const pageNumber=Number(pageNum);
+        this.recoveryToFrame(pageNumber);
+    }
+    
+    
     public getPlugin(pluginName:Plugins){
         return this.pageFrame?this.pageFrame.getPlugin(pluginName):undefined;
     }

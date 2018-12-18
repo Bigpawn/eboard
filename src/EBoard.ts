@@ -17,8 +17,11 @@ import {ImageFrame} from './frames/ImageFrame';
 import {PdfFrame} from "./frames/PdfFrame";
 import {ImagesFrame} from './frames/ImagesFrame';
 import {MessageMiddleWare} from './middlewares/MessageMiddleWare';
-import {MessageAdapter} from './interceptor/MessageAdapter';
-import {IImagesFrameOptions,IPdfFrameOptions} from './interface/IFrameGroup';
+import {
+    IFrameGroup,
+    IImagesFrameOptions,
+    IPdfFrameOptions,
+} from './interface/IFrameGroup';
 import {
     Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
     OrthogonalTriangle, Pencil, Pentagon,
@@ -62,7 +65,7 @@ class EBoard{
      */
     private init(){
         this.middleWare=new MessageMiddleWare(this.context);
-        this.context.adapter = new MessageAdapter(this.middleWare);
+        this.context.adapter = this.middleWare;
         this.calcSize=this.calc();
         // 画布分辨率比例计算
         this.context.transform=(size:number)=>{
@@ -705,8 +708,12 @@ class EBoard{
                     this.addFrameGroup(messageObj);
                     break;
                 case MessageTag.TurnPage:
-                    this.context.getGroup(groupId).then((group:any)=>{
-                        group.onGo(options.pageNum,options.messageId);
+                    this.context.getGroup(groupId).then((group:IFrameGroup)=>{
+                        if(recovery){
+                            group.recovery(options.pageNum);
+                        }else{
+                            group.pageTo(options.pageNum);
+                        }
                     });
                     break;
                 default:

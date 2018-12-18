@@ -39,8 +39,9 @@ export declare interface IFrameGroup{
     parent?:EBoard;
     destroy(silent?:boolean):void;
     getPlugin(pluginName:string):AbstractPlugin|undefined;
-    switchToFrame?(childId:number,messageId:number):this|Promise<this>;// 切换到子frame
     updateOptionsSize?(size:{width:number;height:number;dimensions:{width:number;height:number}}):void;
+    pageTo(pageNum:number):void;
+    recovery(pageNum:number):void;
 }
 
 

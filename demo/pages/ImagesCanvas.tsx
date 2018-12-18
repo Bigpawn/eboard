@@ -22,7 +22,7 @@ class ImagesCanvas extends SimpleCanvas{
         eBoard.addImagesFrame({
             type:FrameType.Images,
             pageNum:1,
-            urlPrefix:"https://res2dev.9itest.com/resource2/1000/document/20181031/2bd22c208908421eb201c584c17ebb36_png/",
+            urlPrefix:"https://res2dev.9itest.com/resource2/1000/document/20181218/22bb6e394f4b474e811ce17a6956f01b_png/",
             images:dataSet,
         });
     }
