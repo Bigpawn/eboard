@@ -43,7 +43,7 @@ class ImagesFrame implements IImagesFrame{
         this.initLayout();
         this.initialize();
         if(container){
-            container.innerHTML = "";
+            // container.innerHTML = "";
             container.appendChild(this.dom);// 立即显示
         }
         this.initializeAction();

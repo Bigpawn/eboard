@@ -518,7 +518,9 @@ class EBoard{
      */
     private addFrameGroup(options:IImagesFrameOptions|IPdfFrameOptions){
         const type = options.type;
-        return type === FrameType.Images?this.addImagesFrame(options as IImagesFrameOptions):this.addPdfFrame(options as IPdfFrameOptions);
+        const frameGroup = type === FrameType.Images?this.addImagesFrame(options as IImagesFrameOptions):this.addPdfFrame(options as IPdfFrameOptions);;
+        this.switchToTab(frameGroup.groupId,true);
+        return frameGroup;
     }
     
     /**
@@ -528,7 +530,9 @@ class EBoard{
      */
     private addFrame(options:IBaseFrameOptions|IImageFrameOptions|IHTMLFrameOptions){
         const type = options.type;
-        return type === FrameType.Image?this.addImageFrame(options as IImageFrameOptions):type === FrameType.HTML?this.addHtmlFrame(options as IHTMLFrameOptions):this.addEmptyFrame(options as IBaseFrameOptions);
+        const frame = type === FrameType.Image?this.addImageFrame(options as IImageFrameOptions):type === FrameType.HTML?this.addHtmlFrame(options as IHTMLFrameOptions):this.addEmptyFrame(options as IBaseFrameOptions);
+        this.switchToTab(frame.frameId,true);
+        return frame;
     }
     
     /**
