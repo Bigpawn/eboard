@@ -6,6 +6,8 @@
  * @disc:装饰器
  */
 import {CursorType} from '../enums/CursorType';
+import {EBoardCanvas} from '../EBoardCanvas';
+import {IDefaultConfig} from '../interface/IConfig';
 
 function mixinPlugin(pluginName:string):ClassDecorator{
     return (target:any)=>{
@@ -124,4 +126,24 @@ function message(target:any, name:string, descriptor:PropertyDescriptor){
     return descriptor;
 }
 
-export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,message};
+function filterParams(options: any, eBoardCanvas: EBoardCanvas) {
+    const context = eBoardCanvas.context;
+    const config=context.getConfig() as IDefaultConfig;
+    if(options.hasOwnProperty("cornerSize")){
+        options.cornerSize=context.transform(options.cornerSize);
+    }
+    if(options.hasOwnProperty("borderScaleFactor")){
+        options.borderScaleFactor=context.transform(options.borderScaleFactor);
+    }
+    return Object.assign({
+        borderColor:config.borderColor,
+        cornerColor:config.cornerColor,
+        cornerStrokeColor:config.cornerStrokeColor,
+        cornerStyle:config.cornerStyle,
+        transparentCorners:config.transparentCorners,
+        cornerSize:context.transform(config.cornerSize),
+        borderScaleFactor:context.transform(config.borderWidth)
+    },options);
+}
+
+export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,message,filterParams};

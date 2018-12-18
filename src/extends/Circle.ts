@@ -8,42 +8,18 @@
 import {fabric} from "fabric";
 import {ICircleOptions} from "~fabric/fabric-impl";
 import {IObject} from '../interface/IObject';
-import {IDefaultConfig} from '../interface/IConfig';
 import {EBoardCanvas} from '../EBoardCanvas';
-import {Context} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
+import {filterParams} from '../utils/decorators';
 
-
-let _config:IDefaultConfig;
-let _context:Context;
 
 class Circle extends fabric.Circle implements IObject{
-    public type:string="circle";
+    public readonly type:string="circle";
     public id:string;
-    
-    /**
-     * 对象生成id
-     * @param {ICircleOptions} options
-     * @param eBoardCanvas
-     */
     constructor(options: ICircleOptions,eBoardCanvas:EBoardCanvas){
-        super((_context=eBoardCanvas.context,_config=_context.getConfig(),Object.assign({
-            borderColor:_config.borderColor,
-            cornerColor:_config.cornerColor,
-            cornerStrokeColor:_config.cornerStrokeColor,
-            cornerStyle:_config.cornerStyle,
-            transparentCorners:_config.transparentCorners,
-            cornerSize:_context.transform(_config.cornerSize),
-            borderScaleFactor:_context.transform(_config.borderWidth)
-        },options)));
+        super(filterParams(options,eBoardCanvas));
         this.id=IDGenerator.getId();
     }
-    
-    /**
-     * 修改id
-     * @param {string} id
-     * @returns {this}
-     */
     public setId(id:string){
         this.id=id;
         return this;

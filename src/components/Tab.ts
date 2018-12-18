@@ -17,6 +17,7 @@ import "../utils/ClassListPolyfill";// polyfill
 export declare interface ITabOptions{
     label:string;
     tabId:string;
+    icon?:string;
 }
 
 export enum TabEventEnum{
@@ -82,7 +83,14 @@ class Tab extends EventBus{
     public addTab(options:ITabOptions){
         const tabItem = document.createElement("div");
         tabItem.className="eboard-tab eboard-tab-active";
-        tabItem.innerText=options.label;
+        // support icon
+        if(options.icon){
+            const icon=document.createElement("i");
+            icon.className=options.icon;
+            tabItem.appendChild(icon);
+        }
+        const content = document.createTextNode(options.label);
+        tabItem.appendChild(content);
         tabItem.setAttribute("data-id",options.tabId);
         const remove = document.createElement("i");
         remove.className="eboard-tab-remove eboard-icon eboard-icon-remove";

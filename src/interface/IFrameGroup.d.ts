@@ -25,6 +25,7 @@ export declare interface IFrameGroupOptions{
     append?:boolean;
     name?:string;
     calcSize?:any;
+    icon?:string;
 }
 
 export declare interface IFrameGroup{

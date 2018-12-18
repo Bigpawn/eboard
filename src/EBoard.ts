@@ -333,7 +333,8 @@ class EBoard{
         if(void 0 !== this.tab){
             this.tab.addTab({
                 tabId:frame.frameId,
-                label:options.name||""
+                label:options.name||"",
+                icon:options.icon
             });
         }
         return frame;
@@ -357,7 +358,8 @@ class EBoard{
         if(void 0 !== this.tab){
             this.tab.addTab({
                 tabId:frame.frameId,
-                label:options.name||""
+                label:options.name||"",
+                icon:options.icon
             });
         }
         return frame;
@@ -381,7 +383,8 @@ class EBoard{
         if(void 0 !== this.tab){
             this.tab.addTab({
                 tabId:frame.frameId,
-                label:options.name||""
+                label:options.name||"",
+                icon:options.icon
             });
         }
         return frame;
@@ -405,7 +408,8 @@ class EBoard{
         if(void 0 !== this.tab){
             this.tab.addTab({
                 tabId:group.groupId,
-                label:options.name||""
+                label:options.name||"",
+                icon:options.icon
             });
         }
         return group;
@@ -429,7 +433,8 @@ class EBoard{
         if(void 0 !== this.tab){
             this.tab.addTab({
                 tabId:group.groupId,
-                label:options.name||""
+                label:options.name||"",
+                icon:options.icon
             });
         }
         return group;

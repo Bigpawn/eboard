@@ -43,6 +43,7 @@ export declare interface IFrameOptions{
     calcSize?:any;
     groupId?:string;
     messageId?:number;
+    icon?:string;
 }
 
 

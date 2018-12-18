@@ -7,7 +7,7 @@
     "borderColor":"#09ca51",
     "cornerColor":"#09ca51",
     "cornerStrokeColor":"#09ca51",
-    "cornerStyle":"rect",
+    "cornerStyle":"circle",
     "transparentCorners":true,
     "cornerSize":13,
     "cursorSize":26,
