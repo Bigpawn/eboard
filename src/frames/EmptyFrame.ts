@@ -100,6 +100,7 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
     }
     protected initEngine(){
         const wrap = document.createElement("div");
+        wrap.setAttribute("x-eboard-id",this.frameId);
         this.dom = wrap;
         const {container} = this.options as any;
         container.appendChild(this.dom);// 立即显示

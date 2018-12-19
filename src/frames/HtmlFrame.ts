@@ -54,6 +54,7 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
     protected initEngine(){
         const {container,content=""} = this.options as any;
         const wrap = document.createElement("div");
+        wrap.setAttribute("x-eboard-id",this.frameId);
         this.dom = wrap;
         wrap.className="eboard-container";
         const htmlContainer = document.createElement("div");

@@ -19,11 +19,11 @@ import {CursorType} from '../../../../enums/CursorType';
 @setCursor(CursorType.SystemCross)
 class Arrow extends AbstractShapePlugin{
     protected instance:FabricArrow;
-    private arrowShape:"default"|"fish"|"hollow";
+    private readonly arrowShape:"default"|"fish"|"hollow";
     protected arrowMode:ArrowMode=ArrowMode.ALL;
     constructor(eBoardEngine:EBoardEngine){
         super(eBoardEngine);
-        this.arrowShape=eBoardEngine.context.getConfig().arrowShape as any;
+        this.arrowShape=this.context.config.arrowShape;
     }
     private calcOptions(start:{x:number;y:number},end:{x:number;y:number},mode:ArrowMode){
         // fix production

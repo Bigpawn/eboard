@@ -22,6 +22,7 @@ class CanvasFrame extends GenericHtmlFrame<ICanvasFrameOptions> implements ICanv
     protected initEngine(){
         const {container} = this.options as any;
         const wrap = document.createElement("div");
+        wrap.setAttribute("x-eboard-id",this.frameId);
         this.dom = wrap;
         wrap.className="eboard-container";
         const canvasContainer = document.createElement("div");

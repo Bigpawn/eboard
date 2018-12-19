@@ -9,7 +9,6 @@
 import '../style/toolbar.less';
 import "../font/iconfont.css";
 import '../style/drop-down.less';
-import {EBoard} from '../EBoard';
 import {Config} from '../static/Config';
 import {Keys} from '../enums/Keys';
 
@@ -136,10 +135,10 @@ const setActive = (item, active:any) =>{
 
 
 class ToolbarChildren{
-    private from:HTMLDivElement;
+    private readonly from:HTMLDivElement;
     private items:IToolbarItem[];
     private dom:HTMLDivElement;
-    private listener?:(item:IToolbarItem)=>void;
+    private readonly listener?:(item:IToolbarItem)=>void;
     constructor(from:HTMLDivElement,items:IToolbarItem[],listener?:(item:IToolbarItem)=>void){
         this.from = from;
         this.items=items;
@@ -281,12 +280,15 @@ class ToolbarChildren{
 
 class Toolbar{
     private dom:HTMLDivElement;
-    private listener?:(item:IToolbarItem)=>void;
+    private readonly listener?:(item:IToolbarItem)=>void;
     private childInstance:ToolbarChildren;
     private activeKey:string;
     private over:boolean;
+    private readonly visible:boolean;
     constructor(container:HTMLElement,config:Config,listener?:(item:IToolbarItem)=>void){
         this.listener=listener;
+        const showTab = config.showTab;
+        this.visible=void 0 === showTab||null ===  showTab?true: showTab;
         this.initWrap();
         this.initNewItems();
         container.innerHTML='';
@@ -306,7 +308,7 @@ class Toolbar{
     }
     private initWrap(){
         const wrap = document.createElement('div');
-        wrap.className='eboard-toolbar';
+        wrap.className=`eboard-toolbar ${this.visible?"":"eboard-none"}`;
         this.dom=wrap;
     }
     private initNewItems(){

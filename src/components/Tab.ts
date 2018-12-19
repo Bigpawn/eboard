@@ -36,8 +36,10 @@ class Tab extends EventBus{
     private scrollbar:ScrollBar;
     private addBtn:HTMLDivElement;
     private tabIdList:string[]=[];
-    constructor(container:HTMLDivElement){
+    private readonly visible?:boolean;
+    constructor(container:HTMLDivElement,visible?:boolean){
         super();
+        this.visible=void 0 === visible||null === visible?true:visible;
         this.initContainer(container);
         this.initAddBtn();
         this.initScrollbar();
@@ -45,7 +47,7 @@ class Tab extends EventBus{
     }
     private initContainer(container:HTMLDivElement){
         const tabContainer = document.createElement("div");
-        tabContainer.className = "eboard-tabs";
+        tabContainer.className = `eboard-tabs ${this.visible===true?"":"eboard-none"}`;
         container.appendChild(tabContainer);
         this.container = tabContainer;
     }

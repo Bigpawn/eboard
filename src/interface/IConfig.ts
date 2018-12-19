@@ -26,12 +26,13 @@ export declare interface IDefaultConfig{
     stroke:string;
     fill:string;
     compress:boolean;
-    arrowShape:string;
+    arrowShape:"default"|"fish"|"hollow";
     escKey:string;
     showToolbar:boolean;
     ctrlKey:boolean;
     enable:boolean;
     strokeLineCap:string;
+    autoTabLabel:string;
 }
 
 export declare interface ISDKConfig extends IDefaultConfig{

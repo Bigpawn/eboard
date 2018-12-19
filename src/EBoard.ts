@@ -10,7 +10,13 @@
  */
 
 import "./style/canvas.less";
-import {IBaseFrameOptions, IFrame, IHTMLFrameOptions, IImageFrameOptions} from './interface/IFrame';
+import {
+    IBaseFrameOptions,
+    IFrame,
+    IFrameOptions,
+    IHTMLFrameOptions,
+    IImageFrameOptions,
+} from './interface/IFrame';
 import {EmptyFrame} from './frames/EmptyFrame';
 import {HtmlFrame} from './frames/HtmlFrame';
 import {ImageFrame} from './frames/ImageFrame';
@@ -18,7 +24,7 @@ import {PdfFrame} from "./frames/PdfFrame";
 import {ImagesFrame} from './frames/ImagesFrame';
 import {MessageMiddleWare} from './middlewares/MessageMiddleWare';
 import {
-    IFrameGroup,
+    IFrameGroup, IFrameGroupOptions,
     IImagesFrameOptions,
     IPdfFrameOptions,
 } from './interface/IFrameGroup';
@@ -34,7 +40,6 @@ import {IConfig} from './interface/IConfig';
 import {MessageTag} from './enums/MessageTag';
 import {Context} from './static/Context';
 import {FrameType, IPluginConfigOptions} from './enums/SDKEnum';
-import {Config} from './static/Config';
 
 
 class EBoard{
@@ -48,30 +53,54 @@ class EBoard{
     constructor(container:HTMLDivElement,config?:IConfig){
         this.context=new Context(config);
         this.container=container;
-        this.initLayout();
         this.init();
-        const {showTab,showToolbar} = this.context.getConfig() as Config;
-        if(showTab){
-            this.initTab();
-        }
-        if(showToolbar){
-            this.initToolbar();
-        }
-        // plugin事件监听
         this.observePlugins();
     }
     /**
-     * 初始化config 及事件Emitter 消息adapter
+     * 计算calc add 时需要调用，传递进去，发送消息时需要使用
+     * @param {number} originWidth
+     * @returns {any}
+     * 接收端仅originWidth和scale受影响，其他不变
      */
+    private calc(){
+        const parentElement = this.body;
+        const {offsetWidth:width,offsetHeight:height} = parentElement;
+        let ratio=this.context.config.ratio;
+        const _ratioW=ratio.w;
+        const _ratioH=ratio.h;
+        const ratioNum=_ratioW/_ratioH;
+        let calcSize:any;
+        const defaultDimensionW = this.context.config.dimensions.width;
+        let w:number,h:number;
+        if(width/height>ratioNum){
+            w = height * ratioNum;
+            h = height;
+        }else{
+            w = width;
+            h = width / ratioNum;
+        }
+        calcSize={
+            width:w,
+            height:h,
+            dimensions:{
+                width:defaultDimensionW,
+                height:defaultDimensionW * h/w,
+            },
+            originWidth:w,
+            scale:1
+        };
+        return calcSize;
+    }
     private init(){
+        this.initLayout();
+        this.initTab();
+        this.initToolbar();
         this.middleWare=new MessageMiddleWare(this.context);
         this.context.adapter = this.middleWare;
         this.calcSize=this.calc();
-        // 画布分辨率比例计算
         this.context.transform=(size:number)=>{
             return size * this.calcSize.dimensions.width / this.calcSize.width;
         };
-        
         window.addEventListener("resize",()=>{
             this.calcSize=this.calc();
             // 画布分辨率比例计算
@@ -83,31 +112,19 @@ class EBoard{
         })
     }
     
-    
     private initLayout(){
         const body = document.createElement("div");
         body.className="eboard-body";
         this.body=body;
         this.container.appendChild(body);
     }
-    
-    @message
-    private switchMessage(id:string){
-        return {
-            activeKey:id,
-            tag:MessageTag.SwitchToFrame
-        }
-    }
     private initTab(){
-        if(!this.context.config.showTab){
-            return;
-        }
-        this.tab=new Tab(this.container);
+        const {showTab,autoTabLabel} = this.context.config;
+        this.tab=new Tab(this.container,showTab);
         this.tab.on(TabEventEnum.Add,()=>{
-           // 创建空白的画布
            this.addEmptyFrame({
                type:FrameType.Empty,
-               name:"空白"
+               name:autoTabLabel
            })
         });
         this.tab.on(TabEventEnum.Switch,(e: any) => {
@@ -117,6 +134,14 @@ class EBoard{
         this.tab.on(TabEventEnum.Remove,(e: any)=>{
             const tabId = e.data;
             this.removeTab(tabId);
+        });
+    }
+    private addTab(tabId:string,options:IFrameOptions|IFrameGroupOptions){
+        this.tab.addTab({
+            tabId:tabId,
+            label:options.name||"",
+            icon:options.icon,
+            canRemove:options.canRemove
         });
     }
     private initToolbar(){
@@ -317,6 +342,22 @@ class EBoard{
         });
     }
     
+    @message
+    private switchMessage(id:string){
+        return {
+            activeKey:id,
+            tag:MessageTag.SwitchToFrame
+        }
+    }
+    
+    private supplyOptions(options:any){
+        options.calcSize = Object.assign({},this.calcSize,options.width?{
+            originWidth:options.width,
+            scale:this.calcSize.width/options.width
+        }:{});
+        options.container = this.body;
+        return options;
+    }
     
     /**
      * 添加空白画布
@@ -324,23 +365,12 @@ class EBoard{
      * @returns {IBaseFrame}
      */
     public addEmptyFrame(options:IBaseFrameOptions){
-        const {frameId} = options;
+        const {frameId} = this.supplyOptions(options);
         let frame = void 0 !== frameId?this.context.getFrameById(frameId):undefined;
         if(void 0 !==frame) return frame;
-        options.calcSize =Object.assign({},this.calcSize,options.width?{
-            originWidth:options.width,
-            scale:this.calcSize.width/options.width
-        }:{});
-        options.container = this.body;
         frame = new EmptyFrame(this.context,options);
-        if(void 0 !== this.tab){
-            this.tab.addTab({
-                tabId:frame.frameId,
-                label:options.name||"",
-                icon:options.icon,
-                canRemove:options.canRemove
-            });
-        }
+        this.addTab(frame.frameId,options);
+        this.switchToTab(frame.frameId,true);
         return frame;
     }
     
@@ -350,23 +380,12 @@ class EBoard{
      * @returns {IHTMLFrame}
      */
     public addHtmlFrame(options:IHTMLFrameOptions){
-        const {frameId} = options;
+        const {frameId} = this.supplyOptions(options);
         let frame=void 0 !== frameId?this.context.getFrameById(frameId):undefined;
         if(void 0 !==frame) return frame;
-        options.calcSize =Object.assign({},this.calcSize,options.width?{
-            originWidth:options.width,
-            scale:this.calcSize.width/options.width
-        }:{});
-        options.container = this.body;
         frame = new HtmlFrame(this.context,options);
-        if(void 0 !== this.tab){
-            this.tab.addTab({
-                tabId:frame.frameId,
-                label:options.name||"",
-                icon:options.icon,
-                canRemove:options.canRemove
-            });
-        }
+        this.addTab(frame.frameId,options);
+        this.switchToTab(frame.frameId,true);
         return frame;
     }
     
@@ -376,23 +395,12 @@ class EBoard{
      * @returns {IImageFrame}
      */
     public addImageFrame(options:IImageFrameOptions){
-        const {frameId} = options;
+        const {frameId} = this.supplyOptions(options);
         let frame=void 0 !== frameId?this.context.getFrameById(frameId):undefined;
         if(void 0 !==frame) return frame;
-        options.calcSize =Object.assign({},this.calcSize,options.width?{
-            originWidth:options.width,
-            scale:this.calcSize.width/options.width
-        }:{});
-        options.container = this.body;
         frame = new ImageFrame(this.context,options);
-        if(void 0 !== this.tab){
-            this.tab.addTab({
-                tabId:frame.frameId,
-                label:options.name||"",
-                icon:options.icon,
-                canRemove:options.canRemove
-            });
-        }
+        this.addTab(frame.frameId,options);
+        this.switchToTab(frame.frameId,true);
         return frame;
     }
     
@@ -402,23 +410,12 @@ class EBoard{
      * @returns {IPdfFrame}
      */
     public addPdfFrame(options:IPdfFrameOptions){
-        const {groupId} = options;
+        const {groupId} = this.supplyOptions(options);
         let group = void 0 !== groupId?this.context.getGroupById(groupId):undefined;
         if(group) return group;
-        options.calcSize =Object.assign({},this.calcSize,options.width?{
-            originWidth:options.width,
-            scale:this.calcSize.width/options.width
-        }:{});
-        options.container = this.body;
         group = new PdfFrame(this.context,options);
-        if(void 0 !== this.tab){
-            this.tab.addTab({
-                tabId:group.groupId,
-                label:options.name||"",
-                icon:options.icon,
-                canRemove:options.canRemove
-            });
-        }
+        this.addTab(group.groupId,options);
+        this.switchToTab(group.groupId,true);
         return group;
     }
     
@@ -428,60 +425,13 @@ class EBoard{
      * @returns {ImagesFrame}
      */
     public addImagesFrame(options:IImagesFrameOptions){
-        const {groupId} = options;
+        const {groupId} = this.supplyOptions(options);
         let group = void 0 !== groupId?this.context.getGroupById(groupId):undefined;
         if(group) return group;
-        options.calcSize =Object.assign({},this.calcSize,options.width?{
-            originWidth:options.width,
-            scale:this.calcSize.width/options.width
-        }:{});
-        options.container = this.body;
         group = new ImagesFrame(this.context,options);
-        if(void 0 !== this.tab){
-            this.tab.addTab({
-                tabId:group.groupId,
-                label:options.name||"",
-                icon:options.icon,
-                canRemove:options.canRemove
-            });
-        }
+        this.addTab(group.groupId,options);
+        this.switchToTab(group.groupId,true);
         return group;
-    }
-    
-    /**
-     * 计算calc add 时需要调用，传递进去，发送消息时需要使用
-     * @param {number} originWidth
-     * @returns {any}
-     * 接收端仅originWidth和scale受影响，其他不变
-     */
-    private calc(){
-        const parentElement = this.body;
-        const {offsetWidth:width,offsetHeight:height} = parentElement;
-        let ratio=this.context.config.ratio;
-        const _ratioW=ratio.w;
-        const _ratioH=ratio.h;
-        const ratioNum=_ratioW/_ratioH;
-        let calcSize:any;
-        const defaultDimensionW = this.context.config.dimensions.width;
-        let w:number,h:number;
-        if(width/height>ratioNum){
-            w = height * ratioNum;
-            h = height;
-        }else{
-            w = width;
-            h = width / ratioNum;
-        }
-        calcSize={
-            width:w,
-            height:h,
-            dimensions:{
-                width:defaultDimensionW,
-                height:defaultDimensionW * h/w,
-            },
-            originWidth:w,
-            scale:1
-        };
-        return calcSize;
     }
     
     /**
@@ -491,7 +441,12 @@ class EBoard{
      */
     private addFrameGroup(options:IImagesFrameOptions|IPdfFrameOptions){
         const type = options.type;
-        return type === FrameType.Images?this.addImagesFrame(options as IImagesFrameOptions):this.addPdfFrame(options as IPdfFrameOptions);
+        switch (type) {
+            case FrameType.Images:
+                return this.addImagesFrame(options as IImagesFrameOptions);
+            default:
+                return this.addPdfFrame(options as IPdfFrameOptions);
+        }
     }
     
     /**
@@ -501,7 +456,14 @@ class EBoard{
      */
     private addFrame(options:IBaseFrameOptions|IImageFrameOptions|IHTMLFrameOptions){
         const type = options.type;
-        return type === FrameType.Image?this.addImageFrame(options as IImageFrameOptions):type === FrameType.HTML?this.addHtmlFrame(options as IHTMLFrameOptions):this.addEmptyFrame(options as IBaseFrameOptions);
+        switch (type) {
+            case FrameType.Image:
+                return this.addImageFrame(options as IImageFrameOptions);
+            case FrameType.HTML:
+                return this.addHtmlFrame(options as IHTMLFrameOptions);
+            default:
+                return this.addEmptyFrame(options as IBaseFrameOptions);
+        }
     }
     
     /**
@@ -510,47 +472,22 @@ class EBoard{
      * @param forbidMessage
      * @returns {undefined | IFrame | IFrameGroup}
      */
-    public switchToTab(id:string,forbidMessage?:boolean){
-        const activeKey = this.context.activeKey;
-        if(id===activeKey) return;
-        const frameInstance = this.context.getFrameById(id);
-        const groupInstance = this.context.getGroupById(id);
-        
-        if(!frameInstance&&!groupInstance){
-            return;
-        }
-        // 显示隐藏，不能进行移除
-        if(activeKey){
-            const oldFrameInstance = this.context.getFrameById(activeKey);
-            const oldGroupInstance = this.context.getGroupById(activeKey);
-            if(oldFrameInstance&&oldFrameInstance.dom&&oldFrameInstance.dom.parentElement){
-                oldFrameInstance.dom.classList.add("eboard-hide");
-                // oldFrameInstance.dom.parentElement.removeChild(oldFrameInstance.dom); // 隐藏
+    private switchToTab(id:string,forbidMessage?:boolean){
+        const targetEl = document.querySelector(`[x-eboard-id="${id}"]`);
+        if(targetEl){
+            const childrens = this.body.childNodes;
+            for (let i = 0;i<childrens.length;i++){
+                const children = childrens[i];
+                if(children.nodeType===1){
+                    (children as HTMLElement).classList.add("eboard-hide");
+                }
             }
-            if(oldGroupInstance&&oldGroupInstance.dom&&oldGroupInstance.dom.parentElement){
-                oldGroupInstance.dom.classList.add("eboard-hide");
-                // oldGroupInstance.dom.parentElement.removeChild(oldGroupInstance.dom); // 隐藏
-            }
-        }
-        if(frameInstance&&frameInstance.dom){
-            if(frameInstance.dom.parentElement){
-                frameInstance.dom.classList.remove("eboard-hide");
-            }else{
-                frameInstance.container.appendChild(frameInstance.dom);
-            }
-        }else if(groupInstance&&groupInstance.dom){
-            if(groupInstance&&groupInstance.dom.parentElement){
-                groupInstance.dom.classList.remove("eboard-hide");
-            }else{
-                groupInstance.container.appendChild(groupInstance.dom);
-            }
-        }
-        this.context.setActiveKey(id);
-        if(void 0 !== this.tab){
+            targetEl.classList.remove("eboard-hide");
+            this.context.setActiveKey(id);
             this.tab.switchTo(id);
-        }
-        if(!forbidMessage){
-            this.switchMessage(id);
+            if(!forbidMessage){
+                this.switchMessage(id);
+            }
         }
     }
     
@@ -567,9 +504,7 @@ class EBoard{
             this.context.deleteGroup(tabId);
             groupInstance.dom.parentElement&&groupInstance.dom.parentElement.removeChild(groupInstance.dom);
         }
-        if(void 0 !== this.tab){
-            this.tab.removeTab(tabId);
-        }
+        this.tab.removeTab(tabId);
         
         // 显示最后一个tab
         const activeKey = this.context.activeKey;
@@ -586,156 +521,226 @@ class EBoard{
     }
     
     
+    private applyMessage(message:any,recovery?:boolean){
+        const {tag,type,frameId,groupId} = message;
+        switch (tag) {
+            case MessageTag.CreateFrame:
+                this.addFrame(message);
+                break;
+            case MessageTag.CreateFrameGroup:
+                this.addFrameGroup(message);
+                break;
+            case MessageTag.TurnPage:
+                this.context.getGroup(groupId).then((group:IFrameGroup)=>{
+                    if(recovery){
+                        group.recovery(message.pageNum);
+                    }else{
+                        group.pageTo(message.pageNum);
+                    }
+                });
+                break;
+            case MessageTag.SwitchToFrame:
+                this.switchToTab(message.activeKey,true);
+                break;
+            case MessageTag.RemoveTab:
+                this.removeTab(message.tabId,true);
+                break;
+            case MessageTag.Clear:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    (frame.getPlugin(Plugins.Clear) as Clear).onMessage();
+                });
+                break;
+            case MessageTag.Delete:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    (frame.getPlugin(Plugins.Delete) as Delete).onMessage(message);
+                });
+                break;
+            case MessageTag.Scroll:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    if(recovery){
+                        frame.scrollbar&&frame.scrollbar.recovery(message);
+                    }else{
+                        frame.scrollbar&&frame.scrollbar.onMessage(message);
+                    }
+                });
+                break;
+            case MessageTag.Cursor:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    frame.engine&&frame.engine.eBoardCanvas.onMessage(message);
+                });
+                break;
+            case MessageTag.SelectionMove:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    (frame.getPlugin(Plugins.Selection) as Selection).onMessage(message);
+                });
+                break;
+            case MessageTag.SelectionScale:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    (frame.getPlugin(Plugins.Selection) as Selection).onMessage(message);
+                });
+                break;
+            case MessageTag.SelectionRotate:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    (frame.getPlugin(Plugins.Selection) as Selection).onMessage(message);
+                });
+                break;
+            case MessageTag.Paste:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    (frame.getPlugin(Plugins.Selection) as Selection).onMessage(message);
+                });
+                break;
+            case MessageTag.Cut:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    (frame.getPlugin(Plugins.Selection) as Selection).onMessage(message);
+                });
+                break;
+            case MessageTag.Shape:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    switch (type){
+                        case "line":
+                            (frame.getPlugin(Plugins.Line) as Line).onMessage(message);
+                            break;
+                        case "arrow":
+                            (frame.getPlugin(Plugins.Arrow) as Arrow).onMessage(message);
+                            break;
+                        case "circle":
+                            (frame.getPlugin(Plugins.Circle) as Circle).onMessage(message);
+                            break;
+                        case "ellipse":
+                            (frame.getPlugin(Plugins.Ellipse) as Ellipse).onMessage(message);
+                            break;
+                        case "hexagon":
+                            (frame.getPlugin(Plugins.Hexagon) as Hexagon).onMessage(message);
+                            break;
+                        case "pentagon":
+                            (frame.getPlugin(Plugins.Pentagon) as Pentagon).onMessage(message);
+                            break;
+                        case "polygon":
+                            (frame.getPlugin(Plugins.Polygon) as Polygon).onMessage(message);
+                            break;
+                        case "star":
+                            (frame.getPlugin(Plugins.Star) as Star).onMessage(message);
+                            break;
+                        case "rectangle":
+                            (frame.getPlugin(Plugins.Rectangle) as Rectangle).onMessage(message);
+                            break;
+                        case "square":
+                            (frame.getPlugin(Plugins.Square) as Square).onMessage(message);
+                            break;
+                        case "equilateral-triangle":
+                            (frame.getPlugin(Plugins.EquilateralTriangle) as EquilateralTriangle).onMessage(message);
+                            break;
+                        case "orthogonal-triangle":
+                            (frame.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle).onMessage(message);
+                            break;
+                        case "triangle":
+                            (frame.getPlugin(Plugins.Triangle) as Triangle).onMessage(message);
+                            break;
+                        case "pencil":
+                            (frame.getPlugin(Plugins.Pencil) as Pencil).onMessage(message);
+                            break;
+                        case "text":
+                            (frame.getPlugin(Plugins.Text) as Text).onMessage(message);
+                            break;
+                        default:
+                            break;
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+    }
+    
+    
+    private recoverySingle(message:any){
+        this.applyMessage(message,true);
+    }
+    
+    private filterMessageList(messageList:string[]){
+        // remove tab 清除之前的所有相关消息
+        // clear 清除之前所有相关消息
+        // delete 清除之前的对象
+        let removeTabs:string[]=[],clearFrames:string[]=[],deleteItems:string[]=[],filterMessages:string[]=[],turnPages:string[]=[],switchControl:boolean=false,scrollIds:string[]=[];
+        messageList.reverse().forEach((messageString)=>{
+            const message = MessageMiddleWare.decompressMessage(messageString);
+            const {tag,tabId,frameId,ids=[],groupId,id} = message;
+            switch (tag) {
+                case MessageTag.RemoveTab:
+                    removeTabs.push(tabId);
+                    break;
+                case MessageTag.Clear:
+                    clearFrames.push(frameId);
+                    break;
+                case MessageTag.Delete:
+                    deleteItems.push(ids);
+                    break;
+                case MessageTag.CreateFrame:
+                    if(removeTabs.indexOf(frameId)===-1){
+                        filterMessages.unshift(messageString);
+                    }
+                    break;
+                case MessageTag.CreateFrameGroup:
+                    if(removeTabs.indexOf(groupId)===-1){
+                        filterMessages.unshift(messageString);
+                    }
+                    break;
+                case MessageTag.TurnPage:
+                    if(removeTabs.indexOf(groupId)===-1&&turnPages.indexOf(groupId)===-1){
+                        turnPages.push(groupId);
+                        filterMessages.unshift(messageString);
+                    }
+                    break;
+                case MessageTag.SwitchToFrame:// TODO 切换的可能已经删除
+                    if(removeTabs.indexOf(groupId)===-1&&removeTabs.indexOf(frameId)===-1&&!switchControl){
+                        switchControl=true;
+                        filterMessages.unshift(messageString);
+                    }
+                    break;
+                case MessageTag.Scroll:
+                    if(removeTabs.indexOf(frameId)===-1&&scrollIds.indexOf(frameId)===-1){
+                        scrollIds.push(frameId);
+                        filterMessages.unshift(messageString);
+                    }
+                    break;
+                case MessageTag.Cursor:
+                    break;
+                case MessageTag.Shape:
+                    if(removeTabs.indexOf(frameId)===-1&&removeTabs.indexOf(groupId)===-1&&clearFrames.indexOf(frameId)===-1&&deleteItems.indexOf(id)===-1){
+                        filterMessages.unshift(messageString);
+                    }
+                    break;
+                default:
+                    filterMessages.unshift(messageString);
+                    break;
+            }
+        });
+        return filterMessages;
+    }
     
     /**
      * 数据恢复  会暂停消息接收，等待回执完成后触发消息接收
      * @param {string[]} messageList
+     * @param filter
      */
-    public recovery(messageList:string[]){
-    
+    public recovery(messageList:string[],filter?:boolean){
+        // 如果filter不做处理，则前端进行处理
+        if(filter){
+            messageList = this.filterMessageList(messageList);
+        }
+        messageList.forEach((messageString:string)=>{
+            const message:any = MessageMiddleWare.decompressMessage(messageString);
+            this.recoverySingle(message);
+        });
     }
-    
-    
     /**
      * 消息分发
-     * @param {string} message
+     * @param {string} messageString
      * 消息内容节能会被压缩，需要解压
-     * @param recovery 是否用于恢复
      */
-    public onMessage(message:string,recovery?:boolean){
-        const messageObj:any = this.middleWare.decompressMessage(message);
-        const {frameId,groupId,...options} = messageObj;
-        let {tag,type} = options;
-        if(tag===MessageTag.CreateFrame){
-            this.addFrame(messageObj);
-            return;
-        }
-        if(tag===MessageTag.CreateFrameGroup){
-            this.addFrameGroup(messageObj);
-            return;
-        }
-        if(frameId){
-            this.context.getFrame(frameId).then((frame:IFrame)=>{
-                switch (tag){
-                    case MessageTag.Clear:
-                        // 清空
-                        (frame.getPlugin(Plugins.Clear) as Clear).onMessage();
-                        break;
-                    case MessageTag.Delete:
-                        (frame.getPlugin(Plugins.Delete) as Delete).onMessage(options);
-                        break;
-                    case MessageTag.Scroll:
-                        if(recovery){
-                            frame.scrollbar&&frame.scrollbar.recovery(options);
-                        }else{
-                            frame.scrollbar&&frame.scrollbar.onMessage(options);
-                        }
-                        break;
-                    case MessageTag.Cursor:
-                        frame.engine&&frame.engine.eBoardCanvas.onMessage(options);
-                        break;
-                    case MessageTag.SelectionMove:
-                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
-                        break;
-                    case MessageTag.SelectionScale:
-                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
-                        break;
-                    case MessageTag.SelectionRotate:
-                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
-                        break;
-                    case MessageTag.Paste:
-                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
-                        break;
-                    case MessageTag.Cut:
-                        (frame.getPlugin(Plugins.Selection) as Selection).onMessage(options);
-                        break;
-                    default:
-                        if(void 0 !== frame){
-                            switch (type){
-                                case "line":
-                                    (frame.getPlugin(Plugins.Line) as Line).onMessage(options);
-                                    break;
-                                case "arrow":
-                                    (frame.getPlugin(Plugins.Arrow) as Arrow).onMessage(options);
-                                    break;
-                                case "circle":
-                                    (frame.getPlugin(Plugins.Circle) as Circle).onMessage(options);
-                                    break;
-                                case "ellipse":
-                                    (frame.getPlugin(Plugins.Ellipse) as Ellipse).onMessage(options);
-                                    break;
-                                case "hexagon":
-                                    (frame.getPlugin(Plugins.Hexagon) as Hexagon).onMessage(options);
-                                    break;
-                                case "pentagon":
-                                    (frame.getPlugin(Plugins.Pentagon) as Pentagon).onMessage(options);
-                                    break;
-                                case "polygon":
-                                    (frame.getPlugin(Plugins.Polygon) as Polygon).onMessage(options);
-                                    break;
-                                case "star":
-                                    (frame.getPlugin(Plugins.Star) as Star).onMessage(options);
-                                    break;
-                                case "rectangle":
-                                    (frame.getPlugin(Plugins.Rectangle) as Rectangle).onMessage(options);
-                                    break;
-                                case "square":
-                                    (frame.getPlugin(Plugins.Square) as Square).onMessage(options);
-                                    break;
-                                case "equilateral-triangle":
-                                    (frame.getPlugin(Plugins.EquilateralTriangle) as EquilateralTriangle).onMessage(options);
-                                    break;
-                                case "orthogonal-triangle":
-                                    (frame.getPlugin(Plugins.OrthogonalTriangle) as OrthogonalTriangle).onMessage(options);
-                                    break;
-                                case "triangle":
-                                    (frame.getPlugin(Plugins.Triangle) as Triangle).onMessage(options);
-                                    break;
-                                case "pencil":
-                                    (frame.getPlugin(Plugins.Pencil) as Pencil).onMessage(options);
-                                    break;
-                                case "text":
-                                    (frame.getPlugin(Plugins.Text) as Text).onMessage(options);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        break;
-                }
-            })
-        }else if(groupId){
-            switch (tag) {
-                case MessageTag.CreateFrame:// 创建frame
-                    this.addFrame(messageObj);
-                    break;
-                case MessageTag.CreateFrameGroup:
-                    this.addFrameGroup(messageObj);
-                    break;
-                case MessageTag.TurnPage:
-                    this.context.getGroup(groupId).then((group:IFrameGroup)=>{
-                        if(recovery){
-                            group.recovery(options.pageNum);
-                        }else{
-                            group.pageTo(options.pageNum);
-                        }
-                    });
-                    break;
-                default:
-                    break;
-            }
-        }else{
-            switch (tag){
-                case MessageTag.SwitchToFrame:
-                    this.switchToTab(options.activeKey,true);
-                    break;
-                case MessageTag.RemoveTab:
-                    this.removeTab(options.tabId,true);
-                    break;
-                default:
-                    break;
-            }
-        }
+    public onMessage(messageString:string){
+        const message:any = MessageMiddleWare.decompressMessage(messageString);// 消息转换
+        this.applyMessage(message);
     }
     
     /**

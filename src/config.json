@@ -22,5 +22,6 @@
     "arrowShape":"fish",
     "escKey":true,
     "ctrlKey":true,
-    "enable":true
+    "enable":true,
+    "autoTabLabel": "画板"
 }

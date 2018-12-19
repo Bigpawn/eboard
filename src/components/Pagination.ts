@@ -179,9 +179,9 @@ class Pagination{
         this.totalPages=totalPages;
         this.span.innerText=totalPages as any;
         if(totalPages>0){
-            this.dom.classList.remove("eboard-pagination-none");
+            this.dom.classList.remove("eboard-none");
         }else{
-            this.dom.classList.add("eboard-pagination-none");
+            this.dom.classList.add("eboard-none");
         }
         this.initPagerAction();
         return this;

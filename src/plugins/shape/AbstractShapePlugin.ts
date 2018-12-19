@@ -36,11 +36,6 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
     protected get strokeWidth(){
         return this.context.transform(this._strokeWidth||this.context.strokeWidth||this.context.getConfig("strokeWidth"));
     }
-    
-    
-    protected get pencilWidth(){
-        return this.context.transform(this._strokeWidth||this.context.pencilWidth||this.context.getConfig("strokeWidth"));
-    }
     /**
      * 设置线条宽度
      * @param {number} strokeWidth
@@ -49,8 +44,12 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
         this._strokeWidth = strokeWidth;
     }
     
+    protected get pencilWidth(){
+        return this.context.transform(this._strokeWidth||this.context.pencilWidth||this.context.getConfig("strokeWidth"));
+    }
+  
     protected get fontColor(){
-        return this._fill||this.context.fontColor||this.context.getConfig("fontColor");
+        return this._fill||this.context.fontColor||this.context.config.fontColor;
     }
     
     /**
@@ -58,7 +57,7 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
      * @returns {string}
      */
     protected get stroke(){
-        return this.dashed?"":(this._stroke||this.color||this.context.getConfig("stroke"));
+        return this.dashed?"":(this._stroke||this.color||this.context.config.stroke);
     }
     
     /**
@@ -74,7 +73,7 @@ abstract class AbstractShapePlugin extends AbstractPlugin{
      * @returns {string}
      */
     protected get fill(){
-        return this.dashed?(this._fill||this.color||this.context.getConfig("fill")||this.context.getConfig("fill")):"";
+        return this.dashed?(this._fill||this.color||this.context.config.fill):"";
     }
     
     /**

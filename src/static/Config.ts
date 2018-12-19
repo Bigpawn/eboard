@@ -29,11 +29,12 @@ class Config implements ISDKConfig{
     stroke:string;
     fill:string;
     compress:boolean;
-    arrowShape:string;
+    arrowShape:"default"|"fish"|"hollow";
     escKey:string;
     showToolbar:boolean;
     ctrlKey:boolean;
     enable:boolean;
+    autoTabLabel:string;
     constructor(initConfig:IConfig){
         Object.assign(this,defaultConfig,initConfig);
     }

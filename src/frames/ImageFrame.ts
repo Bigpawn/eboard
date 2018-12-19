@@ -26,6 +26,7 @@ class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageF
     protected initEngine(){
         const {container} = this.options as any;
         const wrap = document.createElement("div");
+        wrap.setAttribute("x-eboard-id",this.frameId);
         this.dom = wrap;
         wrap.className="eboard-container";
         const imageContainer = document.createElement("div");
@@ -36,9 +37,6 @@ class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageF
         imageContainer.appendChild(imageWrap);
         const img = this.getChildren();// img标签
         imageWrap.appendChild(img);
-        ImageUtil.getSize(img,()=>{
-            this.initLayout();
-        });
         const placeholder = document.createElement("canvas");
         placeholder.innerHTML="当前浏览器不支持Canvas,请升级浏览器";
         wrap.appendChild(imageContainer);
@@ -51,6 +49,9 @@ class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageF
             group:this.groupId
         });
         container.appendChild(wrap); // fix engine not defined
+        ImageUtil.getSize(img,()=>{
+            this.initLayout();
+        });
         this.initScrollbar(wrap);
     }
     protected initLayout(){
