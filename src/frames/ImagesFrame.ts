@@ -7,7 +7,7 @@
  */
 import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
-import {message, setAnimationName} from '../utils/decorators';
+import {message} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
 import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
 import {Plugins} from '../plugins';
@@ -16,7 +16,6 @@ import {Context} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
 
 
-@setAnimationName('eboard-pager')
 class ImagesFrame implements IImagesFrame{
     public type:string="images-frame";
     public container:HTMLDivElement;
@@ -141,8 +140,8 @@ class ImagesFrame implements IImagesFrame{
         }
         return nextPageFrame;
     }
-    private clearClassList(element:HTMLDivElement){
-        element.className = element.className.replace(/eboard-pager-enter-from-left|eboard-pager-enter-from-right|eboard-pager-leave-to-right|eboard-pager-leave-to-left|eboard-pager-page-show|eboard-pager-page-hide/g,"").trim();
+    private static clearClassList(element:HTMLDivElement){
+        element.className = element.className.replace(/eboard-pagination-enter-from-left|eboard-pagination-enter-from-right|eboard-pagination-leave-to-right|eboard-pagination-leave-to-left|eboard-pagination-show|eboard-pagination-hide/g,"").trim();
     }
     /**
      * 动画切换
@@ -156,10 +155,10 @@ class ImagesFrame implements IImagesFrame{
         let nextPageFrame = this.getFrame(pageNum);
         const frameDom = nextPageFrame.dom;
         const currentFrameDom = this.pageFrame.dom;
-        this.clearClassList(frameDom);
-        this.clearClassList(currentFrameDom);
-        frameDom.classList.add(this.pageNum>pageNum?"eboard-pager-enter-from-left":"eboard-pager-enter-from-right");
-        currentFrameDom.classList.add(this.pageNum>pageNum?"eboard-pager-leave-to-right":"eboard-pager-leave-to-left");
+        ImagesFrame.clearClassList(frameDom);
+        ImagesFrame.clearClassList(currentFrameDom);
+        frameDom.classList.add(this.pageNum>pageNum?"eboard-pagination-enter-from-left":"eboard-pagination-enter-from-right");
+        currentFrameDom.classList.add(this.pageNum>pageNum?"eboard-pagination-leave-to-right":"eboard-pagination-leave-to-left");
         this.setPageNum(pageNum);
         this.pageFrame=nextPageFrame;
         return this;
@@ -173,10 +172,10 @@ class ImagesFrame implements IImagesFrame{
         const frameDom = nextPageFrame.dom;
         this.child.forEach((imageFrame)=>{
             const dom = imageFrame.dom;
-            this.clearClassList(dom);
-            dom.classList.add("eboard-pager-page-hide");
+            ImagesFrame.clearClassList(dom);
+            dom.classList.add("eboard-pagination-hide");
         });
-        frameDom.classList.add("eboard-pager-page-show");
+        frameDom.classList.add("eboard-pagination-show");
         this.setPageNum(pageNum);
         this.pageFrame=nextPageFrame;
         return this;

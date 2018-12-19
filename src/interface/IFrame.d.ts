@@ -44,6 +44,7 @@ export declare interface IFrameOptions{
     groupId?:string;
     messageId?:number;
     icon?:string;
+    canRemove?:boolean;
 }
 
 

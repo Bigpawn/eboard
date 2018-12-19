@@ -23,8 +23,6 @@ class CanvasFrame extends GenericHtmlFrame<ICanvasFrameOptions> implements ICanv
         const {container} = this.options as any;
         const wrap = document.createElement("div");
         this.dom = wrap;
-        container.appendChild(this.dom);// 立即显示
-        
         wrap.className="eboard-container";
         const canvasContainer = document.createElement("div");
         canvasContainer.className="eboard-html-container";
@@ -44,6 +42,7 @@ class CanvasFrame extends GenericHtmlFrame<ICanvasFrameOptions> implements ICanv
             frame:this.frameId,
             group:this.groupId
         });
+        container.appendChild(this.dom);// 立即显示
         this.initScrollbar(wrap);
     }
     protected initLayout(){

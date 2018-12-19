@@ -337,7 +337,8 @@ class EBoard{
             this.tab.addTab({
                 tabId:frame.frameId,
                 label:options.name||"",
-                icon:options.icon
+                icon:options.icon,
+                canRemove:options.canRemove
             });
         }
         return frame;
@@ -362,7 +363,8 @@ class EBoard{
             this.tab.addTab({
                 tabId:frame.frameId,
                 label:options.name||"",
-                icon:options.icon
+                icon:options.icon,
+                canRemove:options.canRemove
             });
         }
         return frame;
@@ -387,7 +389,8 @@ class EBoard{
             this.tab.addTab({
                 tabId:frame.frameId,
                 label:options.name||"",
-                icon:options.icon
+                icon:options.icon,
+                canRemove:options.canRemove
             });
         }
         return frame;
@@ -412,7 +415,8 @@ class EBoard{
             this.tab.addTab({
                 tabId:group.groupId,
                 label:options.name||"",
-                icon:options.icon
+                icon:options.icon,
+                canRemove:options.canRemove
             });
         }
         return group;
@@ -437,7 +441,8 @@ class EBoard{
             this.tab.addTab({
                 tabId:group.groupId,
                 label:options.name||"",
-                icon:options.icon
+                icon:options.icon,
+                canRemove:options.canRemove
             });
         }
         return group;

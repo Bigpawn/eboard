@@ -55,8 +55,6 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
         const {container,content=""} = this.options as any;
         const wrap = document.createElement("div");
         this.dom = wrap;
-        container.appendChild(this.dom);// 立即显示
-        
         wrap.className="eboard-container";
         const htmlContainer = document.createElement("div");
         htmlContainer.className="eboard-html-container";
@@ -76,6 +74,7 @@ class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> 
             frame:this.frameId,
             group:this.groupId
         });
+        container.appendChild(this.dom);// 立即显示
         this.initScrollbar(wrap);
     }
     protected recoveryScrollbar(){

@@ -78,8 +78,8 @@ class PdfFrame implements IPdfFrame{
         const {container} = this.options as any;
         container.appendChild(this.dom);
     };
-    private clearClassList(element:HTMLDivElement){
-        element.className = element.className.replace(/eboard-pager-enter-from-left|eboard-pager-enter-from-right|eboard-pager-leave-to-right|eboard-pager-leave-to-left|eboard-pager-page-show|eboard-pager-page-hide/g,"").trim();
+    private static clearClassList(element:HTMLDivElement){
+        element.className = element.className.replace(/eboard-pagination-enter-from-left|eboard-pagination-enter-from-right|eboard-pagination-leave-to-right|eboard-pagination-leave-to-left|eboard-pagination-show|eboard-pagination-hide/g,"").trim();
     }
     private initialize(){
         const options = this.options;
@@ -199,10 +199,10 @@ class PdfFrame implements IPdfFrame{
         let nextPageFrame = this.getFrame(pageNum);
         const frameDom = nextPageFrame.dom;
         const currentFrameDom = this.pageFrame.dom;
-        this.clearClassList(frameDom);
-        this.clearClassList(currentFrameDom);
-        frameDom.classList.add(this.pageNum>pageNum?"eboard-pager-enter-from-left":"eboard-pager-enter-from-right");
-        currentFrameDom.classList.add(this.pageNum>pageNum?"eboard-pager-leave-to-right":"eboard-pager-leave-to-left");
+        PdfFrame.clearClassList(frameDom);
+        PdfFrame.clearClassList(currentFrameDom);
+        frameDom.classList.add(this.pageNum>pageNum?"eboard-pagination-enter-from-left":"eboard-pagination-enter-from-right");
+        currentFrameDom.classList.add(this.pageNum>pageNum?"eboard-pagination-leave-to-right":"eboard-pagination-leave-to-left");
         this.setPageNum(pageNum);
         this.pageFrame=nextPageFrame;
         return this;
@@ -216,10 +216,10 @@ class PdfFrame implements IPdfFrame{
         const frameDom = nextPageFrame.dom;
         this.child.forEach((imageFrame)=>{
             const dom = imageFrame.dom;
-            this.clearClassList(dom);
-            dom.classList.add("eboard-pager-page-hide");
+            PdfFrame.clearClassList(dom);
+            dom.classList.add("eboard-pagination-hide");
         });
-        frameDom.classList.add("eboard-pager-page-show");
+        frameDom.classList.add("eboard-pagination-show");
         this.setPageNum(pageNum);
         this.pageFrame=nextPageFrame;
         return this;

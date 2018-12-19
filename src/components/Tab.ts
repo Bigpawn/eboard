@@ -13,11 +13,15 @@ import "../font/iconfont.css";
 import {EventBus} from '../utils/EventBus';
 import {ScrollBar} from './ScrollBar';
 import "../utils/ClassListPolyfill";// polyfill
+// @ts-ignore
+import Hammer from "hammerjs";
+
 
 export declare interface ITabOptions{
     label:string;
     tabId:string;
     icon?:string;
+    canRemove?:boolean;
 }
 
 export enum TabEventEnum{
@@ -59,7 +63,8 @@ class Tab extends EventBus{
         });
     }
     private initEvent(){
-        this.container.addEventListener("click",(e:any)=>{
+        const hammer = new Hammer(this.container);
+        hammer.on("tap",(e:any)=>{
             const target = e.target||e.srcElement;
             const classList = target.classList;
             if(classList.contains("eboard-tab")){
@@ -81,6 +86,7 @@ class Tab extends EventBus{
      * @param {ITabOptions} options
      */
     public addTab(options:ITabOptions){
+        const {canRemove=true} = options;
         const tabItem = document.createElement("div");
         tabItem.className="eboard-tab eboard-tab-active";
         // support icon
@@ -92,9 +98,11 @@ class Tab extends EventBus{
         const content = document.createTextNode(options.label);
         tabItem.appendChild(content);
         tabItem.setAttribute("data-id",options.tabId);
-        const remove = document.createElement("i");
-        remove.className="eboard-tab-remove eboard-icon eboard-icon-remove";
-        tabItem.appendChild(remove);
+        if(canRemove){
+            const remove = document.createElement("i");
+            remove.className="eboard-tab-remove eboard-icon eboard-icon-remove";
+            tabItem.appendChild(remove);
+        }
         const active = this.container.querySelector(".eboard-tab-active");
         if(void 0 !== active && null !== active){
             active.classList.remove("eboard-tab-active");

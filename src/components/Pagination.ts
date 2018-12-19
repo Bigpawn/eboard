@@ -12,6 +12,8 @@
  */
 import "../style/pagination.less";
 import "../font/iconfont.css";
+// @ts-ignore
+import Hammer from "hammerjs";
 
 class Pagination{
     public dom:HTMLDivElement;
@@ -23,6 +25,9 @@ class Pagination{
     private input:HTMLInputElement;
     private inputLabel:HTMLSpanElement;
     private onGoListener:(pageNum:number,messageId:number)=>void;
+    private goHammer:Hammer;
+    private prevHammer:Hammer;
+    private nextHammer:Hammer;
     constructor(pageNum:number,totalPages:number){
         this.pageNum=pageNum;
         this.totalPages=totalPages;
@@ -36,13 +41,11 @@ class Pagination{
     }
     private onPrev(){
         if(this.onGoListener){
-            // TODO 需要调用Api生成消息Id
             this.onGoListener.call(this,this.pageNum-1);
         }
     }
     private onNext(){
         if(this.onGoListener){
-            // TODO 需要调用Api生成消息Id
             this.onGoListener.call(this,this.pageNum+1);
         }
     }
@@ -52,20 +55,14 @@ class Pagination{
         this.inputLabel.innerText=label;
     }
     private initLayout(){
-        // const wrap = document.createElement("div");
+        const container = document.createElement("div");
+        container.className="eboard-pagination";
         const prev = document.createElement("div");
         prev.className="eboard-pagination-left";
         prev.innerHTML='<i class="eboard-icon eboard-icon-prev"/>';
         this.prev=prev;
-        const next = document.createElement("div");
-        next.className="eboard-pagination-right";
-        next.innerHTML='<i class="eboard-icon eboard-icon-next"/>';
-        this.next=next;
-        const bottom = document.createElement("div");
-        bottom.className="eboard-pagination-bottom";
         const input = document.createElement("input");
         input.type="number";
-     
         input.className="eboard-pagination-input";
         input.addEventListener("keydown",this.onKeyEnter);
         const inputSpan = this.inputLabel = document.createElement("span");
@@ -87,26 +84,32 @@ class Pagination{
                 input.value = "1";
             }
         };
-        
+    
         this.input=input;
+        
+        const next = document.createElement("div");
+        next.className="eboard-pagination-right";
+        next.innerHTML='<i class="eboard-icon eboard-icon-next"/>';
+        this.next=next;
+      
         const span = document.createElement("span");
         span.className="eboard-pagination-total";
         this.span=span;
-        const bottomGo = document.createElement("div");
-        bottomGo.innerText = "GO";
-        bottomGo.className="eboard-pagination-bottomGo";
-        bottomGo.addEventListener("click",this.onGo);
-        
-        bottom.appendChild(this.prev);
-        bottom.appendChild(input);
-        bottom.appendChild(inputSpan);
-        bottom.appendChild(span);
-        bottom.appendChild(this.next);
-        bottom.appendChild(bottomGo);
-        // wrap.appendChild(prev);
-        // wrap.appendChild(next);
-        // wrap.appendChild(bottom);
-        this.dom=bottom;
+        const go = document.createElement("div");
+        go.className="eboard-pagination-go";
+        go.innerText = "GO";
+        container.appendChild(this.prev);
+        container.appendChild(input);
+        container.appendChild(inputSpan);
+        container.appendChild(span);
+        container.appendChild(this.next);
+        container.appendChild(go);
+        this.dom=container;
+    
+        this.goHammer = new Hammer(go);
+        this.goHammer.on('tap', this.onGo);
+        this.prevHammer = new Hammer(prev);
+        this.nextHammer = new Hammer(next);
     }
     private todoChange(){
         const value = this.input.value;
@@ -116,21 +119,18 @@ class Pagination{
         }else{
             this.pageNum = number;
             if(this.onGoListener){
-                // TODO 需要调用Api生成消息Id
                 this.onGoListener.call(this,number);
             }
         }
     }
 
     private onGo(){
-        // 翻页
         this.todoChange();
         this.input.blur();// 自动失去焦点
     }
     
     private onKeyEnter(event:any){
         if(event.keyCode === 13){
-            // 回车
             this.todoChange();
             this.input.blur();// 自动失去焦点
         }
@@ -141,19 +141,19 @@ class Pagination{
      * @returns {Pagination}
      */
     private initPagerAction(){
+        this.prevHammer.off("tap",this.onPrev);
+        this.nextHammer.off("tap",this.onNext);
         if(this.pageNum<=1){
             this.prev.classList.add("disabled");
-            this.prev.removeEventListener("click",this.onPrev);
         }else{
             this.prev.classList.remove("disabled");
-            this.prev.addEventListener("click",this.onPrev);
+            this.prevHammer.on("tap",this.onPrev);
         }
         if(this.pageNum>=this.totalPages){
             this.next.classList.add("disabled");
-            this.next.removeEventListener("click",this.onNext);
         }else{
             this.next.classList.remove("disabled");
-            this.next.addEventListener("click",this.onNext);
+            this.nextHammer.on("tap",this.onNext);
         }
         return this;
     }
@@ -179,9 +179,9 @@ class Pagination{
         this.totalPages=totalPages;
         this.span.innerText=totalPages as any;
         if(totalPages>0){
-            this.dom.style.display="block";
+            this.dom.classList.remove("eboard-pagination-none");
         }else{
-            this.dom.style.display="none";
+            this.dom.classList.add("eboard-pagination-none");
         }
         this.initPagerAction();
         return this;

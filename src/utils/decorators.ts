@@ -141,6 +141,7 @@ function filterParams(options: any, eBoardCanvas: EBoardCanvas) {
         cornerStrokeColor:config.cornerStrokeColor,
         cornerStyle:config.cornerStyle,
         transparentCorners:config.transparentCorners,
+        strokeLineCap:config.strokeLineCap,
         cornerSize:context.transform(config.cornerSize),
         borderScaleFactor:context.transform(config.borderWidth)
     },options);

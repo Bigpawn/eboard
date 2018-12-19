@@ -27,8 +27,6 @@ class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageF
         const {container} = this.options as any;
         const wrap = document.createElement("div");
         this.dom = wrap;
-        container.appendChild(wrap);
-        
         wrap.className="eboard-container";
         const imageContainer = document.createElement("div");
         imageContainer.className="eboard-html-container";
@@ -52,6 +50,7 @@ class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageF
             frame:this.frameId,
             group:this.groupId
         });
+        container.appendChild(wrap); // fix engine not defined
         this.initScrollbar(wrap);
     }
     protected initLayout(){

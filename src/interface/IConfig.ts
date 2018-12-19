@@ -31,6 +31,7 @@ export declare interface IDefaultConfig{
     showToolbar:boolean;
     ctrlKey:boolean;
     enable:boolean;
+    strokeLineCap:string;
 }
 
 export declare interface ISDKConfig extends IDefaultConfig{

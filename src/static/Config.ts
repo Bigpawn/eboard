@@ -16,6 +16,7 @@ class Config implements ISDKConfig{
     cornerColor:string;
     cornerStrokeColor:string;
     cornerStyle:string;
+    strokeLineCap:string;
     transparentCorners:boolean;
     cornerSize:number;
     fontSize:number;

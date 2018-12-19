@@ -8,6 +8,7 @@
     "cornerColor":"#09ca51",
     "cornerStrokeColor":"#09ca51",
     "cornerStyle":"circle",
+    "strokeLineCap": "round",
     "transparentCorners":true,
     "cornerSize":13,
     "cursorSize":26,
