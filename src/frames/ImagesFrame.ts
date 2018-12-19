@@ -5,7 +5,6 @@
  * * @Last Modified time: 2018/7/23 13:53
  * @disc:图片轮播Frame
  */
-import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
 import {message} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
@@ -14,6 +13,7 @@ import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
+import {ScrollbarType} from '../enums/SDKEnum';
 
 
 class ImagesFrame implements IImagesFrame{

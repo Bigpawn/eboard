@@ -116,11 +116,17 @@ input::-webkit-inner-spin-button {
             transform: translate(-150% ,-50%);
             opacity: 0;
             animation: page-leave-to-left ease 500ms;
+            canvas{
+                cursor: default!important;
+            }
         }
         &-leave-to-right{
             transform: translate(50% ,-50%);
             opacity: 0;
             animation: page-leave-to-right ease 500ms;
+            canvas{
+                cursor: default!important;
+            }
         }
         &-hide{
             opacity: 0;

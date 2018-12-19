@@ -12,13 +12,7 @@ import {IFrame,IHTMLFrame, IHTMLFrameOptions} from '../interface/IFrame';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import "../style/scrollbar.less";
 import {ScrollBar} from '../components/ScrollBar';
-
-export enum ScrollbarType{
-    horizontal,
-    vertical,
-    both,
-    none
-}
+import {ScrollbarType} from '../enums/SDKEnum';
 
 class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> implements IFrame{
     private htmlWrap:HTMLDivElement;

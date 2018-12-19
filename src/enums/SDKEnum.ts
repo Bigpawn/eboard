@@ -19,3 +19,10 @@ export declare interface IPluginConfigOptions{
     background?:boolean;// 是否后台运行
     enable?:boolean;
 }
+
+export enum ScrollbarType{
+    horizontal,
+    vertical,
+    both,
+    none
+}

@@ -7,7 +7,6 @@
  */
 import {PDFDocumentProxy, PDFJSStatic, PDFPromise, PDFRenderParams} from 'pdfjs-dist';
 import {CanvasFrame} from './CanvasFrame';
-import {ScrollbarType} from "./HtmlFrame";
 import {Pagination} from "../components/Pagination";
 import {message} from '../utils/decorators';
 import {
@@ -19,6 +18,7 @@ import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
+import {ScrollbarType} from '../enums/SDKEnum';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();

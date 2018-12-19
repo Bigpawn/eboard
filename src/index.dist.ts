@@ -5,12 +5,13 @@
  * @Last Modified time: 2018/10/23 13:51
  * @disc:
  */
-import {EBoard,FrameType} from "./EBoard";
+import {FrameType,ScrollbarType} from "./enums/SDKEnum";
+import {EBoard} from "./EBoard";
 
 declare const window:any;
 
 window.EBoard = EBoard;
 window.FrameType = FrameType;
+window.ScrollbarType=ScrollbarType;
 
-
-export {EBoard,FrameType};
+export {EBoard,FrameType,ScrollbarType};

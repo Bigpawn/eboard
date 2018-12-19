@@ -5,5 +5,5 @@
  * @Last Modified time: 2018/10/23 13:53
  * @disc:
  */
-
-export {FrameType,EBoard} from './EBoard';
+export {FrameType,ScrollbarType} from "./enums/SDKEnum";
+export {EBoard} from './EBoard';
