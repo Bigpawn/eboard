@@ -27,6 +27,8 @@ export declare interface IFrameGroupOptions{
     calcSize?:any;
     icon?:string;
     canRemove?:boolean;
+    extraHtmlFragment?:string;// html字符串
+    fragmentPublish?:boolean;// 是否发送extraHtmlFragment
 }
 
 export declare interface IFrameGroup{

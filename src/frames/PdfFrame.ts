@@ -70,13 +70,20 @@ class PdfFrame implements IPdfFrame{
         });
     }
     protected initLayout(){
+        const {container,extraHtmlFragment} = this.options as any;
         const pagerContainer=document.createElement("div");
         pagerContainer.className="eboard-pager";
         pagerContainer.style.width="100%";
         pagerContainer.style.height="100%";
         pagerContainer.setAttribute("x-eboard-id",this.groupId);
         this.dom=pagerContainer;
-        const {container} = this.options as any;
+        if(extraHtmlFragment){
+            const fragment = document.createElement("div");
+            fragment.innerHTML=extraHtmlFragment;
+            if(fragment.firstChild){
+                pagerContainer.appendChild(fragment.firstChild);
+            }
+        }
         container.appendChild(this.dom);
     };
     private static clearClassList(element:HTMLDivElement){

@@ -24,6 +24,7 @@ class ImagesCanvas extends SimpleCanvas{
             pageNum:1,
             urlPrefix:"https://res2dev.9itest.com/resource2/1000/document/20181218/22bb6e394f4b474e811ce17a6956f01b_png/",
             images:dataSet,
+            extraHtmlFragment:"<div>按钮</div>"
         });
     }
     public render(): JSX.Element {

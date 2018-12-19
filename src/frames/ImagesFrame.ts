@@ -60,13 +60,20 @@ class ImagesFrame implements IImagesFrame{
         });
     }
     protected initLayout(){
+        const {container,extraHtmlFragment} = this.options as any;
         const pagerContainer=document.createElement("div");
         pagerContainer.className="eboard-pager";
         pagerContainer.style.width="100%";
         pagerContainer.style.height="100%";
         pagerContainer.setAttribute("x-eboard-id",this.groupId);
+        if(extraHtmlFragment){
+            const fragment = document.createElement("div");
+            fragment.innerHTML=extraHtmlFragment;
+            if(fragment.firstChild){
+                pagerContainer.appendChild(fragment.firstChild);
+            }
+        }
         this.dom=pagerContainer;
-        const {container} = this.options as any;
         container.appendChild(this.dom);
     };
     private initialize(){
