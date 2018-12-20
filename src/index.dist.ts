@@ -7,11 +7,13 @@
  */
 import {FrameType,ScrollbarType} from "./enums/SDKEnum";
 import {EBoard} from "./EBoard";
+import {MessageTag} from "./enums/MessageTag";
 
 declare const window:any;
 
 window.EBoard = EBoard;
 window.FrameType = FrameType;
 window.ScrollbarType=ScrollbarType;
+window.MessageTag=MessageTag;
 
-export {EBoard,FrameType,ScrollbarType};
+export {EBoard,FrameType,ScrollbarType,MessageTag};

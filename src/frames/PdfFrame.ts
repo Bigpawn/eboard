@@ -77,7 +77,7 @@ class PdfFrame implements IPdfFrame{
         pagerContainer.style.height="100%";
         pagerContainer.setAttribute("x-eboard-id",this.groupId);
         this.dom=pagerContainer;
-        if(extraHtmlFragment){
+        if(extraHtmlFragment&&false===this.context.config.disableHtmlFragment){
             const fragment = document.createElement("div");
             fragment.innerHTML=extraHtmlFragment;
             if(fragment.firstChild){

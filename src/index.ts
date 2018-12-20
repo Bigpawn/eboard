@@ -6,4 +6,5 @@
  * @disc:
  */
 export {FrameType,ScrollbarType} from "./enums/SDKEnum";
+export {MessageTag} from "./enums/MessageTag";
 export {EBoard} from './EBoard';
