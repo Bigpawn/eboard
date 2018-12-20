@@ -13,7 +13,7 @@ import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
-import {ScrollbarType} from '../enums/SDKEnum';
+import {ScrollbarType} from '..';
 
 
 class ImagesFrame implements IImagesFrame{
@@ -66,7 +66,7 @@ class ImagesFrame implements IImagesFrame{
         pagerContainer.style.width="100%";
         pagerContainer.style.height="100%";
         pagerContainer.setAttribute("x-eboard-id",this.groupId);
-        if(extraHtmlFragment){
+        if(extraHtmlFragment&&false===this.context.config.disableHtmlFragment){
             const fragment = document.createElement("div");
             fragment.innerHTML=extraHtmlFragment;
             if(fragment.firstChild){

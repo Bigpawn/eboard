@@ -33,6 +33,7 @@ export declare interface IDefaultConfig{
     enable:boolean;
     strokeLineCap:string;
     autoTabLabel:string;
+    disableHtmlFragment:boolean;
 }
 
 export declare interface ISDKConfig extends IDefaultConfig{

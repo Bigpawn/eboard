@@ -58,7 +58,6 @@ class EBoard{
     }
     /**
      * 计算calc add 时需要调用，传递进去，发送消息时需要使用
-     * @param {number} originWidth
      * @returns {any}
      * 接收端仅originWidth和scale受影响，其他不变
      */

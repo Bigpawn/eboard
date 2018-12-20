@@ -30,7 +30,7 @@ class MessageMiddleWare{
         this.context=context;
     }
     private static messageFactory(message:any){
-        const {messageId,frameId,groupId,tag,extraHtmlFragment,fragmentPublish,ids,id,...rest} = message;
+        const {messageId,frameId,groupId,tag,ids,id,...rest} = message;
         return {
             messageId,
             header:{
@@ -41,8 +41,7 @@ class MessageMiddleWare{
                 id
             },
             body:{
-                ...rest,
-                ...fragmentPublish?{extraHtmlFragment}:{}
+                ...rest
             }
         }
     }

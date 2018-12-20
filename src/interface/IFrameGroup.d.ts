@@ -8,8 +8,8 @@
 
 import {AbstractPlugin} from '../plugins/AbstractPlugin';
 import {IFrame, IFrameOptions} from './IFrame';
-import {ScrollbarType} from '../frames/HtmlFrame';
 import {EBoard} from '../EBoard';
+import {ScrollbarType} from '..';
 
 
 export declare interface IFrameGroupOptions{
@@ -28,7 +28,6 @@ export declare interface IFrameGroupOptions{
     icon?:string;
     canRemove?:boolean;
     extraHtmlFragment?:string;// html字符串
-    fragmentPublish?:boolean;// 是否发送extraHtmlFragment
 }
 
 export declare interface IFrameGroup{

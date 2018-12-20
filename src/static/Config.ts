@@ -35,6 +35,7 @@ class Config implements ISDKConfig{
     ctrlKey:boolean;
     enable:boolean;
     autoTabLabel:string;
+    disableHtmlFragment:boolean;
     constructor(initConfig:IConfig){
         Object.assign(this,defaultConfig,initConfig);
     }
