@@ -5,17 +5,17 @@
  * @Last Modified time: 2018/8/3 11:08
  * @disc:ScrollBar
  */
-
-import PerfectScrollbar from 'perfect-scrollbar';
+import PerfectScrollbar,{IPerfectScrollbarOptions} from 'kxt-web/es/perfectscrollbar';
+import "kxt-web/es/perfectscrollbar/css/perfect-scrollbar.css";
 import {IFrame} from '../interface/IFrame';
 import Timer = NodeJS.Timer;
 import {message} from '../utils/decorators';
 import {IScrollBarMessage} from '../interface/IMessage';
-import {MessageTag} from '../enums/MessageTag';
+import {MessageTag} from '..';
 import {Context} from '../static/Context';
 
 
-declare interface IScrollBarOptions extends PerfectScrollbar.Options{
+declare interface IScrollBarOptions extends IPerfectScrollbarOptions{
     frameId?:string;
 }
 
