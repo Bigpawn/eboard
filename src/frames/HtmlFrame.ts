@@ -9,7 +9,6 @@
 import {GenericBaseFrame} from './EmptyFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import {IFrame,IHTMLFrame, IHTMLFrameOptions} from '../interface/IFrame';
-import "perfect-scrollbar/css/perfect-scrollbar.css";
 import "../style/scrollbar.less";
 import {ScrollBar} from '../components/ScrollBar';
 import {ScrollbarType} from '../enums/SDKEnum';

@@ -1,6 +1,6 @@
 {
     "name": "eboard",
-    "version": "0.8.1",
+    "version": "0.8.2",
     "author": "Heng Li",
     "description": "eboard lib",
     "license": "MIT",
@@ -52,8 +52,9 @@
         "port": 8002,
         "entry":"./src/index.dist.ts"
     },
-    "main": "./lib/index",
-    "module": "./es/index",
+    "main": "lib/index.js",
+    "module": "es/index.js",
+    "typings": "lib/index.d.ts",
     "devDependencies": {
         "@types/hammerjs": "^2.0.36",
         "@types/lodash": "^4.14.110",
