@@ -5,29 +5,27 @@
  * @Last Modified time: 2018/8/3 11:08
  * @disc:ScrollBar
  */
-import PerfectScrollbar,{IPerfectScrollbarOptions} from 'kxt-web/es/perfectscrollbar';
-import "kxt-web/es/perfectscrollbar/css/perfect-scrollbar.css";
+import {PerfectScrollbarFactory,IScrollFactoryOptions} from 'kxt-web/es/perfectscrollbar';
 import {IFrame} from '../interface/IFrame';
-import Timer = NodeJS.Timer;
 import {message} from '../utils/decorators';
 import {IScrollBarMessage} from '../interface/IMessage';
 import {MessageTag} from '..';
 import {Context} from '../static/Context';
 
 
-declare interface IScrollBarOptions extends IPerfectScrollbarOptions{
+declare interface IScrollBarOptions extends IScrollFactoryOptions{
     frameId?:string;
 }
 
-class ScrollBar extends PerfectScrollbar{
+class ScrollBar extends PerfectScrollbarFactory{
     public parent:IFrame;
-    private container:HTMLElement;
-    private delPixel:number=10;
-    private scrollInterval:Timer;
-    private frameId?:string;
+    private readonly container:HTMLElement;
+    private readonly frameId?:string;
     public context?:Context;
     constructor(element: string | HTMLElement,options: IScrollBarOptions,context?:Context){
-        super(element,options);
+        super(element,Object.assign({
+            handlers:['click-rail', 'drag-thumb', 'keyboard','wheel'],
+        },options));
         this.context=context;
         this.frameId=options.frameId;
         this.container = typeof element === 'string'?document.querySelector(element) as HTMLElement:element;
@@ -36,24 +34,8 @@ class ScrollBar extends PerfectScrollbar{
         }
     }
     private initScrollEndEvent(){
-        let scrollTimer:Timer,_self = this;
-        this.container.addEventListener("ps-scroll-x",function() {
-            if(void 0 !== scrollTimer){
-                clearTimeout(scrollTimer);
-                scrollTimer = undefined as any;
-            }
-            scrollTimer = setTimeout(function () {
-                _self.scrollAction();
-            }, 500)
-        });
-        this.container.addEventListener("ps-scroll-y",function() {
-            if(void 0 !== scrollTimer){
-                clearTimeout(scrollTimer);
-                scrollTimer = undefined as any;
-            }
-            scrollTimer = setTimeout(function () {
-                _self.scrollAction();
-            }, 500)
+        this.container.addEventListener("ps-scroll-end",()=>{
+            this.scrollAction();
         });
     }
     
@@ -63,22 +45,8 @@ class ScrollBar extends PerfectScrollbar{
      * @param {number} scrollLeft
      */
     public scrollTo(scrollTop:number,scrollLeft:number){
-        if(void 0 !== this.scrollInterval){
-            // 如果当前在滚动过程中先暂停
-            clearInterval(this.scrollInterval);
-            this.scrollInterval=undefined as any;
-        }
-        this.scrollInterval=setInterval(()=>{
-            const {scrollTop:top,scrollLeft:left} = this.container;
-            const targetScrollTop = scrollTop>top?Math.min(top+this.delPixel,scrollTop):Math.max(top-this.delPixel,scrollTop);
-            const targetScrollLeft = scrollLeft>left?Math.min(left+this.delPixel,scrollLeft):Math.max(left-this.delPixel,scrollLeft);
-            this.container.scrollLeft = targetScrollLeft;
-            this.container.scrollTop = targetScrollTop;
-            if(targetScrollTop === scrollTop && targetScrollLeft === scrollLeft){
-                clearInterval(this.scrollInterval);
-                this.scrollInterval=undefined as any;
-            }
-        },10);
+        this.scrollTop(scrollTop,true);
+        this.scrollLeft(scrollLeft,true);
     }
     private get messageEnable(){
         return this.context&&this.context.getConfig("enable");
