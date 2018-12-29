@@ -1,15 +1,15 @@
-import * as React from "react";
-import { Card } from "antd";
+import * as React from 'react';
+import {Card} from 'antd';
 import {EBoardInstance} from './EBoardInstance';
-import {FrameType} from '../../src/enums/SDKEnum';
+import {Authority, FrameType} from '../../src/enums/SDKEnum';
 
 class SimpleCanvas extends React.Component<{}, {}> {
     protected canvas:any;
     protected container:any;
     componentDidMount(){
         setTimeout(()=>{
-            const eBoard = EBoardInstance.getInstance();
-            const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
+            const eBoard = EBoardInstance.getInstance().setAuthority(Authority.Viewer);
+            const receiveEBoard = EBoardInstance.getReceiveInstance();
             eBoard.on("message",(e:any)=>{
                 const message=e.data;
                 console.log(message);

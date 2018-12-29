@@ -8,7 +8,7 @@
  */
 
 import {AbstractPlugin} from '../../AbstractPlugin';
-import {message, setCursor} from '../../../utils/decorators';
+import {authorityAssist, message, setCursor} from '../../../utils/decorators';
 import {IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
 import {EBoardEngine} from '../../../EBoardEngine';
@@ -53,6 +53,7 @@ class Delete extends AbstractPlugin{
     }
     
     @message
+    @authorityAssist
     private deleteItems(ids:string[]){
         return {
             ids:ids,

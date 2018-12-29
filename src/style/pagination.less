@@ -5,6 +5,8 @@
  * * @Last Modified time: 2018/7/11 19:38
  * @disc:Pagination style
  */
+@import "variable";
+
 @iconSize: 26px;
 @inputWidth:40px;
 @fontSize:18px;
@@ -137,7 +139,7 @@ input::-webkit-inner-spin-button {
     }
 }
 
-.eboard-disable{
+[eboard-authority="@{authorityAssist}"],[eboard-authority="@{authorityViewer}"]{
     .eboard-pagination{
         &-left,&-right{
             display: none;

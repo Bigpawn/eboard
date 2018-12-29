@@ -3,6 +3,13 @@
   * @author:yanxinaliang
   * @time：2018/7/4 17:44
   */
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/12/29 9:43
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * @Last Modified time: 2018/12/29 9:43
+ * @disc:$DESC$
+ */
 .eboard-body {
   position: absolute;
   left: 0;
@@ -90,6 +97,9 @@
 .eboard-none {
   display: none;
 }
+[eboard-authority="viewer"] canvas {
+  cursor: default!important;
+}
 textarea[data-fabric-hiddentextarea] {
   left: 0!important;
 }
@@ -100,13 +110,13 @@ textarea[data-fabric-hiddentextarea] {
  * * @Last Modified time: 2018/7/20 16:18
  * @disc:滚动条样式自定义
  */
-.ps__rail-y {
-  right: 0!important;
-  left: auto!important;
-}
-.eboard-disable .ps {
-  pointer-events: none;
-}
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/12/29 9:43
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * @Last Modified time: 2018/12/29 9:43
+ * @disc:$DESC$
+ */
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
  * @Date: 2018/12/28 11:38
@@ -125,6 +135,12 @@ textarea[data-fabric-hiddentextarea] {
 }
 .ps__rail-y {
   z-index: 98765;
+}
+.ps-scroll-disable .ps__rail-x {
+  visibility: hidden;
+}
+.ps-scroll-disable .ps__rail-y {
+  visibility: hidden;
 }
 /*
  * Container style
@@ -248,6 +264,13 @@ textarea[data-fabric-hiddentextarea] {
  * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
  * * @Last Modified time: 2018/7/11 19:38
  * @disc:Pagination style
+ */
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/12/29 9:43
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * @Last Modified time: 2018/12/29 9:43
+ * @disc:$DESC$
  */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -376,21 +399,27 @@ input::-webkit-inner-spin-button {
 .eboard-pagination-show {
   opacity: 1;
 }
-.eboard-disable .eboard-pagination-left,
-.eboard-disable .eboard-pagination-right {
+[eboard-authority="assist"] .eboard-pagination-left,
+[eboard-authority="viewer"] .eboard-pagination-left,
+[eboard-authority="assist"] .eboard-pagination-right,
+[eboard-authority="viewer"] .eboard-pagination-right {
   display: none;
 }
-.eboard-disable .eboard-pagination-bottom {
+[eboard-authority="assist"] .eboard-pagination-bottom,
+[eboard-authority="viewer"] .eboard-pagination-bottom {
   pointer-events: none;
   padding-right: 22px;
 }
-.eboard-disable .eboard-pagination-input {
+[eboard-authority="assist"] .eboard-pagination-input,
+[eboard-authority="viewer"] .eboard-pagination-input {
   display: none;
 }
-.eboard-disable .eboard-pagination-input-label {
+[eboard-authority="assist"] .eboard-pagination-input-label,
+[eboard-authority="viewer"] .eboard-pagination-input-label {
   display: inline;
 }
-.eboard-disable .eboard-pagination-bottomGo {
+[eboard-authority="assist"] .eboard-pagination-bottomGo,
+[eboard-authority="viewer"] .eboard-pagination-bottomGo {
   display: none;
 }
 @keyframes page-enter-from-right {
@@ -499,6 +528,17 @@ input::-webkit-inner-spin-button {
  * * @Last Modified time: 2018/8/14 17:11
  * @disc:$DESC$
  */
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/12/29 9:43
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * @Last Modified time: 2018/12/29 9:43
+ * @disc:$DESC$
+ */
+[eboard-authority="assist"] .eboard-tabs,
+[eboard-authority="viewer"] .eboard-tabs {
+  visibility: hidden;
+}
 .eboard-disable .eboard-tabs {
   visibility: hidden;
 }
@@ -573,7 +613,14 @@ input::-webkit-inner-spin-button {
  * @Last Modified time: 2018/8/3 13:48
  * @disc:Toolbar
  */
-.eboard-disable .eboard-toolbar-wrap {
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/12/29 9:43
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * @Last Modified time: 2018/12/29 9:43
+ * @disc:$DESC$
+ */
+[eboard-authority="viewer"] .eboard-toolbar-wrap {
   display: none;
 }
 .eboard-toolbar {

@@ -109,7 +109,7 @@ const colors = [
     "#ff7c81"
     ];
 
-const defaultActive=JSON.parse(localStorage.getItem("defaultActive"))||{
+const defaultActive=JSON.parse(localStorage.getItem("defaultActive")||"{}")||{
     activeH: {
         size: "8",
         color: "#f66c00",
@@ -127,8 +127,8 @@ const defaultActive=JSON.parse(localStorage.getItem("defaultActive"))||{
     }
 };
 localStorage.setItem("defaultActive", JSON.stringify(defaultActive));
-const setActive = (item, active:any) =>{
-    const localActive=JSON.parse(localStorage.getItem("defaultActive"));
+const setActive = (item:any, active:any) =>{
+    const localActive=JSON.parse(localStorage.getItem("defaultActive")||"{}");
     localActive[item] = {...localActive[item], ...active};
     localStorage.setItem("defaultActive", JSON.stringify(localActive));
 };

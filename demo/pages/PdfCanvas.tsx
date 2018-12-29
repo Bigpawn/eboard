@@ -9,7 +9,7 @@ import {FrameType} from '../../src/enums/SDKEnum';
 class MaterialUIPage extends SimpleCanvas{
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
-        const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
+        const receiveEBoard = EBoardInstance.getReceiveInstance();
         eBoard.on("message",(e:any)=>{
             const message = e.data;
             receiveEBoard.onMessage(message);

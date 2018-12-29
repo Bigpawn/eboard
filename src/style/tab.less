@@ -5,12 +5,20 @@
  * * @Last Modified time: 2018/8/14 17:11
  * @disc:$DESC$
  */
+@import "variable";
+
 @height:32px;
 @width:140px;
 @radius:10px;
 @padding:6px;
 @spacing:5px;
 @removeIcon:20px;
+
+[eboard-authority="@{authorityAssist}"],[eboard-authority="@{authorityViewer}"]{
+    .eboard-tabs{
+        visibility: hidden;
+    }
+}
 
 .eboard{
     &-disable{

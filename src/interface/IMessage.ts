@@ -189,7 +189,6 @@ export declare interface ISelectionMessage extends IMessage{
 
 export declare interface IScrollBarMessage extends IMessage{
     scrollTop:number;
-    scrollLeft:number;
     totalHeight:number;
     totalWidth:number;
 }

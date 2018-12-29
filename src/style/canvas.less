@@ -3,6 +3,8 @@
   * @author:yanxinaliang
   * @time：2018/7/4 17:44
   */
+@import "variable";
+
 .eboard{
     @center:{
         position: absolute;
@@ -94,6 +96,11 @@
     }
 }
 
+[eboard-authority="@{authorityViewer}"]{
+    canvas{
+        cursor: default!important;
+    }
+}
 
 textarea[data-fabric-hiddentextarea]{
     left: 0!important;// fix input cause right margin

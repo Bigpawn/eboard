@@ -11,7 +11,11 @@
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Ellipse as FabricEllipse} from "../../../../extends/Ellipse";
-import {message, setCursor} from '../../../../utils/decorators';
+import {
+    authorityAssist,
+    message,
+    setCursor,
+} from '../../../../utils/decorators';
 import {IEllipseMessage} from '../../../../interface/IMessage';
 import {Keys} from '../../../../enums/Keys';
 import {MessageTag} from '../../../../enums/MessageTag';
@@ -119,7 +123,7 @@ class Ellipse extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }
-    
+    @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 ===this.start){
             return;
@@ -131,10 +135,12 @@ class Ellipse extends AbstractShapePlugin{
         const startPoint = this.ctrlKey?this.getCtrlStartPoint(radius):this.getStartPoint();
         this.update(startPoint,radius,rx,ry);
     };
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);
     }
+    @authorityAssist
     protected ctrlKeyDownHandler(e:KeyboardEvent){
         // 判断是否处于绘制模式
         const keyCode = e.keyCode;
@@ -153,6 +159,7 @@ class Ellipse extends AbstractShapePlugin{
             this.update(startPoint,radius,rx,ry);
         }
     }
+    @authorityAssist
     protected ctrlKeyUpHandler(e:KeyboardEvent){
         const keyCode = e.keyCode;
         if(Keys.Ctrl===keyCode){

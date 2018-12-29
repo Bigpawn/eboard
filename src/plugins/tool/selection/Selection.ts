@@ -13,7 +13,7 @@
 import {AbstractPlugin} from '../../AbstractPlugin';
 import {ActiveSelection, IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
-import {message} from '../../../utils/decorators';
+import {authorityAssist, message} from '../../../utils/decorators';
 import {EBoardEngine} from '../../../EBoardEngine';
 import {ISelectionMessage} from '../../../interface/IMessage';
 import {MessageTag} from '../../../enums/MessageTag';
@@ -172,6 +172,7 @@ class Selection extends AbstractPlugin{
         }
     }
     @message
+    @authorityAssist
     private transform(ids:string[],transform:any,tag:MessageTag){
         return {
             tag,
@@ -181,6 +182,7 @@ class Selection extends AbstractPlugin{
     }
     
     @message
+    @authorityAssist
     private paste(objects:IObject[]){
         return {
             tag:MessageTag.Paste,
@@ -189,6 +191,7 @@ class Selection extends AbstractPlugin{
     }
     
     @message
+    @authorityAssist
     private cut(ids:string[]){
         return {
             tag:MessageTag.Cut,

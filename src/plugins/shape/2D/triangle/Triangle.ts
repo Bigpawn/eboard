@@ -8,7 +8,11 @@
 
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
-import {message, setCursor} from '../../../../utils/decorators';
+import {
+    authorityAssist,
+    message,
+    setCursor,
+} from '../../../../utils/decorators';
 import {Triangle as FabricTriangle} from "../../../../extends/Triangle";
 import {ITriangleMessage} from '../../../../interface/IMessage';
 import {Keys} from '../../../../enums/Keys';
@@ -76,6 +80,7 @@ class Triangle extends AbstractShapePlugin{
                 };
         }
     };
+    @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
@@ -87,7 +92,7 @@ class Triangle extends AbstractShapePlugin{
         const offsetY = pos.y-this.start.y;
         const width=Math.abs(offsetX);
         const height=Math.abs(offsetY);
-        const calcSize = this.calcEquilate(width,height);
+        const calcSize = Triangle.calcEmulate(width,height);
         const startPoint = this.ctrlKey?this.getCtrlStartPoint(calcSize):this.getStartPoint();
     
         this.eBoardCanvas.renderOnAddRemove=false;
@@ -115,7 +120,7 @@ class Triangle extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     };
-    private calcEquilate(width:number,height:number){
+    private static calcEmulate(width:number, height:number){
         // 根据宽度计算高度  根据高度计算宽度，同时取小值
         const calcHeight = width * Math.sqrt(3)/2;
         const calcWidth = height * 2 / Math.sqrt(3);
@@ -124,6 +129,7 @@ class Triangle extends AbstractShapePlugin{
             height:Math.min(calcHeight,height)
         }
     };
+    @authorityAssist
     protected ctrlKeyDownHandler(e:KeyboardEvent){
         // 判断是否处于绘制模式
         const keyCode = e.keyCode;
@@ -134,7 +140,7 @@ class Triangle extends AbstractShapePlugin{
                 const offsetY = this.end.y-this.start.y;
                 const width=Math.abs(offsetX);
                 const height=Math.abs(offsetY);
-                const calcSize = this.calcEquilate(width,height);
+                const calcSize = Triangle.calcEmulate(width,height);
                 const startPoint = this.getCtrlStartPoint(calcSize);
     
                 this.eBoardCanvas.renderOnAddRemove=false;
@@ -164,6 +170,7 @@ class Triangle extends AbstractShapePlugin{
             }
         }
     }
+    @authorityAssist
     protected ctrlKeyUpHandler(e:KeyboardEvent){
         const keyCode = e.keyCode;
         if(Keys.Ctrl===keyCode){
@@ -202,7 +209,7 @@ class Triangle extends AbstractShapePlugin{
             }
         }
     }
-    
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);

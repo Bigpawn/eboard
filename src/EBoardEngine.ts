@@ -37,7 +37,7 @@ class EBoardEngine extends ContextFactory{
     }
     private initPlugin(){
         // plugins 实例化
-        const {plugins=[]} = this.context.getConfig();
+        const {plugins=[]} = this.context.config;
         plugins.forEach((pluginName:string)=>{
             this.pluginInstanceMap.set(pluginName,new (require(`./plugins`)[pluginName] as any)(this));
         });

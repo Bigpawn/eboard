@@ -9,7 +9,11 @@
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Square as FabricSquare} from "../../../../extends/Square";
-import {message, setCursor} from '../../../../utils/decorators';
+import {
+    authorityAssist,
+    message,
+    setCursor,
+} from '../../../../utils/decorators';
 import {ISquareMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
@@ -36,6 +40,7 @@ class Square extends AbstractShapePlugin{
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
+    @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
@@ -72,6 +77,7 @@ class Square extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     };
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);

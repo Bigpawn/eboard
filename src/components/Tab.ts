@@ -113,7 +113,7 @@ class Tab extends EventBus{
         this.scrollbar.update();
         const scrollWidth = this.container.scrollWidth;
         const scrollLeft = Math.max(0,scrollWidth - this.container.offsetWidth);
-        this.scrollbar.scrollTo(0,scrollLeft);
+        this.scrollbar.scrollToLeft(scrollLeft);
         this.tabIdList.push(options.tabId);
     }
     

@@ -17,7 +17,7 @@ class MixCanvas extends SimpleCanvas{
     private eBoard:any;
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
-        const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
+        const receiveEBoard = EBoardInstance.getReceiveInstance();
         eBoard.on("message",(e)=>{
             console.log(e.data);
             receiveEBoard.onMessage(e.data);

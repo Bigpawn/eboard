@@ -5,7 +5,7 @@
  * @Last Modified time: 2018/8/22 9:55
  * @disc:IConfig
  */
-
+import {Authority} from '..';
 
 export declare interface IDefaultConfig{
     ratio:{w:number;h:number};
@@ -30,10 +30,10 @@ export declare interface IDefaultConfig{
     escKey:string;
     showToolbar:boolean;
     ctrlKey:boolean;
-    enable:boolean;
     strokeLineCap:string;
     autoTabLabel:string;
     disableHtmlFragment:boolean;
+    authority:Authority;
 }
 
 export declare interface ISDKConfig extends IDefaultConfig{

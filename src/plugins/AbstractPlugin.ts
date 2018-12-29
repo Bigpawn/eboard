@@ -40,7 +40,7 @@ abstract class AbstractPlugin {
         this.context=eBoardEngine.context;
         this.frameId = eBoardEngine.frameId;
         this.groupId = eBoardEngine.groupId;
-        const {ctrlKey} = this.context.getConfig();
+        const {ctrlKey} = this.context.config;
         if(void 0 !== this.onMouseDown){
             this.onMouseDown=this.onMouseDown.bind(this);
         }

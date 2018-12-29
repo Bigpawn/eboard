@@ -13,7 +13,7 @@ import {
     ICanvasOptions,
 } from '~fabric/fabric-impl';
 import {ICursor} from './interface/ICursor';
-import {message} from './utils/decorators';
+import {authorityMaster, message} from './utils/decorators';
 import {Plugins} from './plugins';
 import {EBoardEngine} from './EBoardEngine';
 import {ICursorMessage} from './interface/IMessage';
@@ -146,6 +146,7 @@ class EBoardCanvas extends fabric.Canvas{
     }
     
     @message
+    @authorityMaster
     private cursorMessage(center?:{x:number;y:number}){
         return {
             tag:MessageTag.Cursor,
@@ -202,6 +203,22 @@ class EBoardCanvas extends fabric.Canvas{
     }
     public getContainer(){
         return this.getElement().parentElement as HTMLDivElement;
+    }
+    
+    public getPointer(event: Event, ignoreZoom?: boolean, upperCanvasEl?: CanvasRenderingContext2D){
+        if(event){
+            const isTouch =  event.type==="touchstart"|| event.type==="touchmove" || event.type==="touchend" || event.type==="touchcancel";
+            if(isTouch){
+                return super.getPointer(event,ignoreZoom,upperCanvasEl);
+            }else{
+                const touchProp = event.type === 'touchend' ? 'changedTouches' : 'touches';
+                const eventTouchProp = event[touchProp];
+                const touch = eventTouchProp[0];
+                return super.getPointer(touch,ignoreZoom,upperCanvasEl);
+            }
+        }else{
+            return super.getPointer(event,ignoreZoom,upperCanvasEl);
+        }
     }
  
     public onMessage(message:ICursorMessage){

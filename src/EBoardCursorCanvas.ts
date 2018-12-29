@@ -10,10 +10,10 @@ import {ICanvasDimensions, ICanvasDimensionsOptions} from '~fabric/fabric-impl';
 
 class EBoardCursorCanvas{
     private canvas:HTMLCanvasElement;
-    private context:CanvasRenderingContext2D;
+    // private context:CanvasRenderingContext2D;
     constructor(container:HTMLDivElement){
         this.canvas=document.createElement("canvas");
-        this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+        // this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
         container.appendChild(this.canvas);
     }
     public setDimensions(dimensions: ICanvasDimensions, options?: ICanvasDimensionsOptions){

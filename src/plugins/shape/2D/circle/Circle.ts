@@ -7,7 +7,11 @@
  *      instanceId: type
  */
 
-import {message, setCursor} from '../../../../utils/decorators';
+import {
+    authorityAssist,
+    message,
+    setCursor,
+} from '../../../../utils/decorators';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from "~fabric/fabric-impl";
 import {Circle as FabricCircle} from "../../../../extends/Circle";
@@ -34,6 +38,7 @@ class Circle extends AbstractShapePlugin{
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
+    @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 ===this.start){
             return;
@@ -64,6 +69,7 @@ class Circle extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     };
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);

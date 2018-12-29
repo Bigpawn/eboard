@@ -8,6 +8,7 @@
 import {CursorType} from '../enums/CursorType';
 import {EBoardCanvas} from '../EBoardCanvas';
 import {IDefaultConfig} from '../interface/IConfig';
+import {Authority} from '..';
 
 function mixinPlugin(pluginName:string):ClassDecorator{
     return (target:any)=>{
@@ -147,4 +148,23 @@ function filterParams(options: any, eBoardCanvas: EBoardCanvas) {
     },options);
 }
 
-export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,message,filterParams};
+
+function authorityMaster(target:any, name:string, descriptor:PropertyDescriptor){
+    const oldValue = descriptor.value;
+    descriptor.value =function(){
+        const authority = this.context?this.context.config.authority:undefined;
+        return authority===Authority.Master?oldValue.apply(this,arguments):undefined;
+    };
+    return descriptor;
+}
+
+function authorityAssist(target:any, name:string, descriptor:PropertyDescriptor) {
+    const oldValue = descriptor.value;
+    descriptor.value =function(){
+        const authority = this.context?this.context.config.authority:undefined;
+        return (authority===Authority.Master||authority===Authority.Assist)?oldValue.apply(this,arguments):undefined;
+    };
+    return descriptor;
+}
+
+export {mixinPlugin,mixinPlugins,defaultValue,setCursor,setAnimationName,pipMode,message,filterParams,authorityMaster,authorityAssist};

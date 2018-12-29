@@ -5,7 +5,11 @@
  * @Last Modified time: 2018/7/25 10:51
  * @disc:箭头
  */
-import {message, setCursor} from '../../../../utils/decorators';
+import {
+    authorityAssist,
+    message,
+    setCursor,
+} from '../../../../utils/decorators';
 import {IEvent} from '~fabric/fabric-impl';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import DefaultFactory from './factory/default';
@@ -48,6 +52,8 @@ class Arrow extends AbstractShapePlugin{
             path:this.instance.path
         }:undefined;
     }
+    
+    @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
@@ -81,7 +87,7 @@ class Arrow extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }
-    
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);

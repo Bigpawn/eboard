@@ -9,6 +9,7 @@
  */
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {CursorType} from '../../../../enums/CursorType';
+import {authorityAssist} from '../../../../utils/decorators';
 class Ferule extends AbstractShapePlugin{
     public cursorType = CursorType.Default;// default Value
     /**
@@ -27,6 +28,7 @@ class Ferule extends AbstractShapePlugin{
      * @param {boolean} backend
      * @returns {this}
      */
+    @authorityAssist
     public setEnable(enable:boolean,backend?:boolean){
         if(this.enable === enable){
             return;

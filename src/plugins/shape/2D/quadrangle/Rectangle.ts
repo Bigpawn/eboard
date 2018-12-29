@@ -6,7 +6,11 @@
  * @disc:矩形Plugin  还可以使用Path实现   flipX flipY 不起作用，使用动态计算left top实现四象限
  */
 
-import {message, setCursor} from '../../../../utils/decorators';
+import {
+    authorityAssist,
+    message,
+    setCursor,
+} from '../../../../utils/decorators';
 import {AbstractShapePlugin, Quadrant} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Rectangle as FabricRectangle} from "../../../../extends/Rectangle";
@@ -115,6 +119,7 @@ class Rectangle extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }
+    @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 ===this.start){
             return;
@@ -127,6 +132,7 @@ class Rectangle extends AbstractShapePlugin{
         const startPoint = this.ctrlKey?this.getCtrlStartPoint(length):this.getStartPoint();
         this.update(startPoint,length,width,height);
     };
+    @authorityAssist
     protected ctrlKeyDownHandler(e:KeyboardEvent){
         // 判断是否处于绘制模式
         const keyCode = e.keyCode;
@@ -142,6 +148,7 @@ class Rectangle extends AbstractShapePlugin{
             this.update(startPoint,length,width,height);
         }
     }
+    @authorityAssist
     protected ctrlKeyUpHandler(e:KeyboardEvent){
         const keyCode = e.keyCode;
         if(Keys.Ctrl===keyCode){
@@ -157,6 +164,7 @@ class Rectangle extends AbstractShapePlugin{
             this.update(startPoint,length,width,height);
         }
     }
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);

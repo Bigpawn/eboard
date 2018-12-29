@@ -5,6 +5,8 @@
  * @Last Modified time: 2018/8/3 13:48
  * @disc:Toolbar
  */
+@import "variable";
+
 @itemWidth:40px;
 @itemHeight:40px;
 @iconSize:20px;
@@ -12,12 +14,14 @@
 @toolbarPadding:10px;
 
 
-.eboard{
-    &-disable{
-        .eboard-toolbar-wrap{
-            display: none;
-        }
+[eboard-authority="@{authorityViewer}"]{
+    .eboard-toolbar-wrap{
+        display: none;
     }
+}
+
+
+.eboard{
     &-toolbar{
         &-pencil{
             &-dot0{

@@ -8,7 +8,11 @@
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Hexagon as FabricHexagon} from "../../../../extends/Hexagon";
-import {message, setCursor} from '../../../../utils/decorators';
+import {
+    authorityAssist,
+    message,
+    setCursor,
+} from '../../../../utils/decorators';
 import {IHexagonMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
@@ -30,6 +34,7 @@ class Hexagon extends AbstractShapePlugin{
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
+    @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
@@ -57,7 +62,7 @@ class Hexagon extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     };
-    
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);

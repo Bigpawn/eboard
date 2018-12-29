@@ -5,32 +5,39 @@
  * @Last Modified time: 2018/8/3 11:08
  * @disc:ScrollBar
  */
-import {PerfectScrollbarFactory,IScrollFactoryOptions} from 'kxt-web/es/perfectscrollbar';
+import {
+    IScrollFactoryOptions,
+    PerfectScrollbarFactory,
+} from 'kxt-web/es/perfectscrollbar';
 import {IFrame} from '../interface/IFrame';
-import {message} from '../utils/decorators';
+import {authorityMaster, message} from '../utils/decorators';
 import {IScrollBarMessage} from '../interface/IMessage';
-import {MessageTag} from '..';
+import {Authority, MessageTag} from '..';
 import {Context} from '../static/Context';
-
 
 declare interface IScrollBarOptions extends IScrollFactoryOptions{
     frameId?:string;
 }
 
-class ScrollBar extends PerfectScrollbarFactory{
+class ScrollBar{
     public parent:IFrame;
     private readonly container:HTMLElement;
     private readonly frameId?:string;
     public context?:Context;
+    private scrollbar:PerfectScrollbarFactory;
+    public static scrollbarList:PerfectScrollbarFactory[]=[];
     constructor(element: string | HTMLElement,options: IScrollBarOptions,context?:Context){
-        super(element,Object.assign({
+        const disabled = context&&context.config.authority!==Authority.Master;
+        this.scrollbar=new PerfectScrollbarFactory(element,Object.assign({
             handlers:['click-rail', 'drag-thumb', 'keyboard','wheel'],
+            disabled
         },options));
         this.context=context;
         this.frameId=options.frameId;
         this.container = typeof element === 'string'?document.querySelector(element) as HTMLElement:element;
-        if(void 0 !== this.container){
-            this.initScrollEndEvent();
+        this.initScrollEndEvent();
+        if(context){
+            ScrollBar.scrollbarList.push(this.scrollbar);
         }
     }
     private initScrollEndEvent(){
@@ -38,30 +45,28 @@ class ScrollBar extends PerfectScrollbarFactory{
             this.scrollAction();
         });
     }
+    public update(){
+        this.scrollbar.update();
+    }
     
-    /**
-     * 滚动支持，添加动画
-     * @param {number} scrollTop
-     * @param {number} scrollLeft
-     */
-    public scrollTo(scrollTop:number,scrollLeft:number){
-        this.scrollTop(scrollTop,true);
-        this.scrollLeft(scrollLeft,true);
+    public scrollToTop(scrollTop:number){
+        this.scrollbar.scrollTop(scrollTop,true);
     }
-    private get messageEnable(){
-        return this.context&&this.context.getConfig("enable");
+    
+    public scrollToLeft(scrollLeft:number){
+        this.scrollbar.scrollLeft(scrollLeft,true);
     }
+    
     @message
+    @authorityMaster
     private scrollAction(){
-        // 滚动消息，需要根据enable判断
-        return this.messageEnable?{
+        return {
             tag:MessageTag.Scroll,
             scrollTop:this.container.scrollTop,
-            scrollLeft:this.container.scrollLeft,
             totalHeight:this.container.scrollHeight,
             totalWidth:this.container.scrollWidth,
             frameId:this.frameId
-        }:undefined
+        }
     }
     
     /**
@@ -69,12 +74,11 @@ class ScrollBar extends PerfectScrollbarFactory{
      * @param {IScrollBarMessage} message
      */
     public onMessage(message:IScrollBarMessage){
-        const {scrollTop,scrollLeft,totalHeight,totalWidth} = message;
+        const {scrollTop,totalHeight} = message;
         if(this.container){
-            const {scrollHeight,scrollWidth} = this.container;
-            this.container.setAttribute("data-scroll-x",(scrollLeft/totalWidth).toString());// 记录属性
+            const {scrollHeight} = this.container;
             this.container.setAttribute("data-scroll-y",(scrollTop/totalHeight).toString());// 记录属性
-            this.scrollTo(scrollTop * scrollHeight/totalHeight,scrollLeft * scrollWidth / totalWidth);
+            this.scrollToTop(scrollTop * scrollHeight/totalHeight);
         }
     }
     
@@ -83,14 +87,11 @@ class ScrollBar extends PerfectScrollbarFactory{
      * 需要等待页面图片下载完成后才能滚动，如果不能滚动则添加属性，等待页面完成后再次调用属性
      */
     public recovery(message:IScrollBarMessage){
-        const {scrollTop,scrollLeft,totalHeight,totalWidth} = message;
+        const {scrollTop,totalHeight} = message;
         if(this.container){
-            const {scrollHeight,scrollWidth} = this.container;
-            const scrollX = scrollLeft * scrollWidth / totalWidth;
+            const {scrollHeight} = this.container;
             const scrollY = scrollTop * scrollHeight/totalHeight;
-            this.container.scrollLeft = scrollX;
             this.container.scrollTop = scrollY;
-            this.container.setAttribute("data-scroll-x",(scrollLeft/totalWidth).toString());// 记录属性
             this.container.setAttribute("data-scroll-y",(scrollTop/totalHeight).toString());// 记录属性
         }
     }

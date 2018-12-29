@@ -9,7 +9,7 @@
  *      支持多实例模式,EDux初始化时共享，不需要进行层级传递（ClassFactory类维护）
  */
 
-import "./style/canvas.less";
+import './style/canvas.less';
 import {
     IBaseFrameOptions,
     IFrame,
@@ -20,18 +20,35 @@ import {
 import {EmptyFrame} from './frames/EmptyFrame';
 import {HtmlFrame} from './frames/HtmlFrame';
 import {ImageFrame} from './frames/ImageFrame';
-import {PdfFrame} from "./frames/PdfFrame";
+import {PdfFrame} from './frames/PdfFrame';
 import {ImagesFrame} from './frames/ImagesFrame';
 import {MessageMiddleWare} from './middlewares/MessageMiddleWare';
 import {
-    IFrameGroup, IFrameGroupOptions,
+    IFrameGroup,
+    IFrameGroupOptions,
     IImagesFrameOptions,
     IPdfFrameOptions,
 } from './interface/IFrameGroup';
 import {
-    Arrow, Circle, Clear, Ellipse, EquilateralTriangle, Hexagon, Line,
-    OrthogonalTriangle, Pencil, Pentagon,
-    Plugins, Polygon, Rectangle, Square, Star, Triangle, Text, Delete,Selection
+    Arrow,
+    Circle,
+    Clear,
+    Delete,
+    Ellipse,
+    EquilateralTriangle,
+    Hexagon,
+    Line,
+    OrthogonalTriangle,
+    Pencil,
+    Pentagon,
+    Plugins,
+    Polygon,
+    Rectangle,
+    Selection,
+    Square,
+    Star,
+    Text,
+    Triangle,
 } from './plugins';
 import {Tab, TabEventEnum} from './components/Tab';
 import {Toolbar} from './components/Toolbar';
@@ -39,8 +56,8 @@ import {message} from './utils/decorators';
 import {IConfig} from './interface/IConfig';
 import {MessageTag} from './enums/MessageTag';
 import {Context} from './static/Context';
-import {FrameType, IPluginConfigOptions} from './enums/SDKEnum';
-
+import {Authority, FrameType, IPluginConfigOptions} from './enums/SDKEnum';
+import {ScrollBar} from './components/ScrollBar';
 
 class EBoard{
     private body:HTMLDivElement;
@@ -55,6 +72,7 @@ class EBoard{
         this.container=container;
         this.init();
         this.observePlugins();
+        this.setAuthority(config?config.authority:undefined);
     }
     /**
      * 计算calc add 时需要调用，传递进去，发送消息时需要使用
@@ -765,25 +783,15 @@ class EBoard{
         });
     }
     
-    /**
-     * 设置不可用
-     * @returns {this}
-     */
-    public setDisable(){
+    public setAuthority(authority:Authority=Authority.Master){
         const container = this.body;
-        container.parentElement&&container.parentElement.classList.add("eboard-disable");
-        this.context.setConfig("enable",false);
-        return this;
-    }
-    
-    /**
-     * 设置可用
-     * @returns {this}
-     */
-    public setEnable(){
-        const container = this.body;
-        container.parentElement&&container.parentElement.classList.remove("eboard-disable");
-        this.context.setConfig("enable",true);
+        container.parentElement&&container.parentElement.setAttribute(`eboard-authority`,authority);
+        this.context.config.authority=authority;
+        ScrollBar.scrollbarList.forEach((scrollbar)=>{
+            if(scrollbar){
+                scrollbar.disabled=authority!==Authority.Master
+            }
+        });
         return this;
     }
     

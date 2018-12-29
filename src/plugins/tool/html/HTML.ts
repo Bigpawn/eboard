@@ -6,17 +6,19 @@
  * @disc:HTML 操作，禁用画板所有操作，启用html操作，仅HTMLCanvas 有效
  */
 import {AbstractPlugin} from '../../AbstractPlugin';
-import {message} from '../../../utils/decorators';
+import {authorityAssist, message} from '../../../utils/decorators';
 import {MessageTag} from '../../../enums/MessageTag';
 
 class HTML extends AbstractPlugin{
     @message
+    @authorityAssist
     private allowHTMLAction(){
         return {
             tag:MessageTag.AllowHtmlAction,
         }
     }
     @message
+    @authorityAssist
     private disAllowHTMLAction(){
         return {
             tag:MessageTag.DisAllowHtmlAction,

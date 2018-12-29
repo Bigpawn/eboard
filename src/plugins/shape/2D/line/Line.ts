@@ -5,7 +5,11 @@
  * @Last Modified time: 2018/7/25 9:26
  * @disc:单存线条，与Arrow分开
  */
-import {message, setCursor} from '../../../../utils/decorators';
+import {
+    authorityAssist,
+    message,
+    setCursor,
+} from '../../../../utils/decorators';
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from '~fabric/fabric-impl';
 import {Line as FabricLine} from "../../../../extends/Line";
@@ -29,6 +33,7 @@ class Line extends AbstractShapePlugin{
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
+    @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
@@ -53,7 +58,7 @@ class Line extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     }
-    
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);

@@ -8,7 +8,11 @@
 import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {IEvent} from "~fabric/fabric-impl";
 import {Star as FabricStar} from "../../../../extends/Star";
-import {message, setCursor} from '../../../../utils/decorators';
+import {
+    authorityAssist,
+    message,
+    setCursor,
+} from '../../../../utils/decorators';
 import {IStarMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
@@ -30,6 +34,7 @@ class Star extends AbstractShapePlugin{
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
+    @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
@@ -57,6 +62,7 @@ class Star extends AbstractShapePlugin{
         this.eBoardCanvas.renderAll();
         this.eBoardCanvas.renderOnAddRemove=true;
     };
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);

@@ -1,7 +1,7 @@
 import * as React from "react";
 import SimpleCanvas from './SimpleCanvas';
 import { Card } from "antd";
-import {ScrollbarType} from '../../src/frames/HtmlFrame';
+import {ScrollbarType} from '../../src/index';
 import {EBoardInstance} from './EBoardInstance';
 import {FrameType} from '../../src/enums/SDKEnum';
 
@@ -10,9 +10,10 @@ import {FrameType} from '../../src/enums/SDKEnum';
 class ImageCanvas extends SimpleCanvas {
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
-        const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
+        const receiveEBoard = EBoardInstance.getReceiveInstance();
         eBoard.on("message",(e)=>{
             const message =e.data;
+            console.log(message);
             receiveEBoard.onMessage(message);
         });
         eBoard.addImageFrame({

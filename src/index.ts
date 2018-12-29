@@ -5,6 +5,6 @@
  * @Last Modified time: 2018/10/23 13:53
  * @disc:
  */
-export {FrameType,ScrollbarType} from "./enums/SDKEnum";
+export {FrameType,ScrollbarType,Authority} from "./enums/SDKEnum";
 export {MessageTag} from "./enums/MessageTag";
 export {EBoard} from './EBoard';

@@ -11,7 +11,11 @@ import {AbstractShapePlugin} from '../../AbstractShapePlugin';
 import {fabric} from "fabric";
 import {IEvent} from '~fabric/fabric-impl';
 import {Polygon as FabricPolygon} from "../../../../extends/Polygon";
-import {message, setCursor} from '../../../../utils/decorators';
+import {
+    authorityAssist,
+    message,
+    setCursor,
+} from '../../../../utils/decorators';
 import {IPolygonMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
@@ -68,6 +72,7 @@ class Polygon extends AbstractShapePlugin{
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
+    @authorityAssist
     protected onMouseDown(event:IEvent){
         const point = this.eBoardCanvas.getPointer(event.e);
         point.x=Math.round(point.x);
@@ -130,6 +135,7 @@ class Polygon extends AbstractShapePlugin{
             this.eBoardCanvas.add(this.circle);
         }
     }
+    @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 ===this.start){
             return;
@@ -146,6 +152,7 @@ class Polygon extends AbstractShapePlugin{
      * 清楚默认操作
      * @param {"~fabric/fabric-impl".IEvent} event
      */
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         // 不进行实例消除
         // this.instance=undefined as any;

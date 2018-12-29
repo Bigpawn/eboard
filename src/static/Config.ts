@@ -7,6 +7,8 @@
  */
 
 import {IConfig, ISDKConfig} from '../interface/IConfig';
+import {Authority} from '..';
+
 const defaultConfig = require("../config.json");
 
 class Config implements ISDKConfig{
@@ -33,9 +35,9 @@ class Config implements ISDKConfig{
     escKey:string;
     showToolbar:boolean;
     ctrlKey:boolean;
-    enable:boolean;
     autoTabLabel:string;
     disableHtmlFragment:boolean;
+    authority:Authority=Authority.Master;
     constructor(initConfig:IConfig){
         Object.assign(this,defaultConfig,initConfig);
     }

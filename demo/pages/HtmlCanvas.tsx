@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Card } from "antd";
 import SimpleCanvas from './SimpleCanvas';
-import {ScrollbarType} from '../../src/frames/HtmlFrame';
+import {ScrollbarType} from '../../src/index';
 import {EBoardInstance} from './EBoardInstance';
 import {FrameType} from '../../src/enums/SDKEnum';
 
@@ -10,7 +10,7 @@ import {FrameType} from '../../src/enums/SDKEnum';
 class HtmlCanvas extends SimpleCanvas{
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
-        const receiveEBoard = EBoardInstance.getReceiveInstance().setDisable();
+        const receiveEBoard = EBoardInstance.getReceiveInstance();
         eBoard.on("message",(message)=>{
             console.log(JSON.parse(message));
             receiveEBoard.onMessage(message);

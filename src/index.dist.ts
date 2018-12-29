@@ -5,7 +5,7 @@
  * @Last Modified time: 2018/10/23 13:51
  * @disc:
  */
-import {FrameType,ScrollbarType} from "./enums/SDKEnum";
+import {FrameType,ScrollbarType,Authority} from "./enums/SDKEnum";
 import {EBoard} from "./EBoard";
 import {MessageTag} from "./enums/MessageTag";
 
@@ -15,5 +15,6 @@ window.EBoard = EBoard;
 window.FrameType = FrameType;
 window.ScrollbarType=ScrollbarType;
 window.MessageTag=MessageTag;
+window.Authority=Authority;
 
-export {EBoard,FrameType,ScrollbarType,MessageTag};
+export {EBoard,FrameType,ScrollbarType,MessageTag,Authority};
