@@ -205,22 +205,6 @@ class EBoardCanvas extends fabric.Canvas{
         return this.getElement().parentElement as HTMLDivElement;
     }
     
-    public getPointer(event: Event, ignoreZoom?: boolean, upperCanvasEl?: CanvasRenderingContext2D){
-        if(event){
-            const isTouch =  event.type==="touchstart"|| event.type==="touchmove" || event.type==="touchend" || event.type==="touchcancel";
-            if(isTouch){
-                return super.getPointer(event,ignoreZoom,upperCanvasEl);
-            }else{
-                const touchProp = event.type === 'touchend' ? 'changedTouches' : 'touches';
-                const eventTouchProp = event[touchProp];
-                const touch = eventTouchProp[0];
-                return super.getPointer(touch,ignoreZoom,upperCanvasEl);
-            }
-        }else{
-            return super.getPointer(event,ignoreZoom,upperCanvasEl);
-        }
-    }
- 
     public onMessage(message:ICursorMessage){
         const {size,type,center} = message;
         let instance = this.getCursorInstance();
