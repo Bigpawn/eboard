@@ -109,26 +109,53 @@ const colors = [
     "#ff7c81"
     ];
 
-const defaultActive=JSON.parse(localStorage.getItem("defaultActive")||"{}")||{
-    activeH: {
-        size: "8",
-        color: "#f66c00",
-    },
-    activeW: {
-        size: "18",
-        color: "#f66c00",
-    },
-    activeT: {
-        index: "10",
-        color: "#f66c00",
-    },
-    activeKey: {
-        key: ""
+const cacheJson = localStorage.getItem("defaultActive");
+let defaultActive:any;
+if(cacheJson){
+    try {
+        defaultActive=JSON.parse(cacheJson);
+    }catch (e) {
+        defaultActive={
+            activeH: {
+                size: "8",
+                color: "#f66c00",
+            },
+            activeW: {
+                size: "18",
+                color: "#f66c00",
+            },
+            activeT: {
+                index: "10",
+                color: "#f66c00",
+            },
+            activeKey: {
+                key: ""
+            }
+        }
     }
-};
+}else{
+    defaultActive={
+        activeH: {
+            size: "8",
+            color: "#f66c00",
+        },
+        activeW: {
+            size: "18",
+            color: "#f66c00",
+        },
+        activeT: {
+            index: "10",
+            color: "#f66c00",
+        },
+        activeKey: {
+            key: ""
+        }
+    }
+}
+
 localStorage.setItem("defaultActive", JSON.stringify(defaultActive));
 const setActive = (item:any, active:any) =>{
-    const localActive=JSON.parse(localStorage.getItem("defaultActive")||"{}");
+    const localActive=JSON.parse(localStorage.getItem("defaultActive"));
     localActive[item] = {...localActive[item], ...active};
     localStorage.setItem("defaultActive", JSON.stringify(localActive));
 };
