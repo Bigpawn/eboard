@@ -1,0 +1,207 @@
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/7/11 19:38
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * * @Last Modified time: 2018/7/11 19:38
+ * @disc:Pagination style
+ */
+@import "variable";
+
+@iconSize: 26px;
+@inputWidth:40px;
+@fontSize:18px;
+@bottomGoSize:35px;
+@height:44px;
+@bottom:38px;
+@currentColor:#333;
+@totalColor:#fff;
+@splitMargin:5px;
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.eboard{
+    &-pagination{
+        position: fixed;
+        height: @height;
+        bottom: @bottom;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: @fontSize;
+        background-color: rgba(0,0,0,0.3);
+        border-radius: 999px;
+        padding: 0 0 0 @height/2;
+        line-height: @height;
+        z-index: 10;
+        @icon:{
+            font-size: @iconSize*0.8;
+            color: #ffffff;
+            line-height: @iconSize;
+        };
+        @action:{
+            display: inline-block;
+            width: @iconSize;
+            height: @iconSize;
+            line-height: @iconSize;
+            text-align: center;
+            cursor: pointer;
+            vertical-align: middle;
+            position: relative;
+            top: -2px;
+            &.disabled{
+                pointer-events: none;
+                opacity:0.3;
+                cursor: not-allowed;
+            }
+        };
+        &-left{
+            @action();
+            & >.eboard-icon{
+                @icon();
+            }
+        }
+        &-right{
+            @action();
+            & >.eboard-icon{
+                @icon();
+            }
+        }
+        &-input{
+            width: @inputWidth!important;
+            height: @iconSize!important;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background: #dddddd;
+            text-align: center;
+            border-radius: 5px;
+            border: none;
+            position: relative;
+            top: -2px;
+            &-label{
+                display: none;
+            }
+        }
+        &-total{
+            color: @totalColor;
+            &:before{
+                content: '/';
+                margin: 0 @splitMargin;
+                color: @currentColor;
+            }
+        }
+        &-go{
+        display: inline-block;
+        margin: 0 5px 0 0;
+        background-color: #666666;
+        color: #ffffff;
+        border-radius: 100%;
+        text-align: center;
+        width: @bottomGoSize;
+        height: @bottomGoSize;
+        line-height: @bottomGoSize;
+        cursor: pointer;
+        }
+        &-enter-from-right{
+            transform: translate(-50% ,-50%);
+            opacity: 1;
+            animation: page-enter-from-right ease 500ms;
+        }
+        &-enter-from-left{
+            transform: translate(-50% ,-50%);
+            opacity: 1;
+            animation: page-enter-from-left ease 500ms;
+        }
+        &-leave-to-left{
+            transform: translate(-150% ,-50%);
+            opacity: 0;
+            animation: page-leave-to-left ease 500ms;
+            canvas{
+                cursor: default!important;
+            }
+        }
+        &-leave-to-right{
+            transform: translate(50% ,-50%);
+            opacity: 0;
+            animation: page-leave-to-right ease 500ms;
+            canvas{
+                cursor: default!important;
+            }
+        }
+        &-hide{
+            opacity: 0;
+        }
+        &-show{
+            opacity: 1;
+        }
+    }
+}
+
+[eboard-authority="@{authorityAssist}"],[eboard-authority="@{authorityViewer}"]{
+    .eboard-pagination{
+        &-left,&-right{
+            display: none;
+        }
+        &-bottom{
+            pointer-events: none;
+            padding-right:@height/2;
+        }
+        &-input{
+            display: none;
+            &-label{
+                display: inline;
+            }
+        }
+        &-bottomGo{
+            display: none;
+        }
+    }
+}
+
+
+
+
+@keyframes page-enter-from-right {
+    from{
+        transform: translate(50% ,-50%);
+        opacity: 1;
+    }
+    to{
+        transform: translate(-50% ,-50%);
+        opacity: 1;
+    }
+}
+@keyframes page-enter-from-left {
+    from{
+        transform: translate(-150% ,-50%);
+        opacity: 1;
+    }
+    to{
+        transform: translate(-50% ,-50%);
+        opacity: 1;
+    }
+}
+
+@keyframes page-leave-to-left {
+    from{
+        opacity: 1;
+        transform: translate(-50% ,-50%);
+    }
+    to{
+        opacity: 0;
+        transform: translate(-150% ,-50%);
+    }
+}
+
+@keyframes page-leave-to-right {
+    from{
+        opacity: 1;
+        transform: translate(-50% ,-50%);
+    }
+    to{
+        opacity: 0;
+        transform: translate(50% ,-50%);
+    }
+}

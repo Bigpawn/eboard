@@ -1,0 +1,255 @@
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/8/3 13:48
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * @Last Modified time: 2018/8/3 13:48
+ * @disc:Toolbar
+ */
+@import "variable";
+
+@itemWidth:40px;
+@itemHeight:40px;
+@iconSize:20px;
+@expendSize:8px;
+@toolbarPadding:10px;
+
+
+[eboard-authority="@{authorityViewer}"]{
+    .eboard-toolbar-wrap{
+        display: none;
+    }
+}
+
+
+.eboard{
+    &-toolbar{
+        &-pencil{
+            &-dot0{
+                width: 5px;
+                height: 5px;
+                background-color: black;
+                border-radius: 999px;
+            }
+            &-dot1{
+                width: 5px;
+                height: 5px;
+                background-color: black;
+                border-radius: 999px;
+            }
+            &-dot2{
+                width: 5px;
+                height: 5px;
+                background-color: black;
+                border-radius: 999px;
+            }
+        }
+        &-wrap{
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 2;
+            height: 100%;
+            width: @itemWidth;
+            margin-left: @toolbarPadding;
+        }
+        position: relative;
+        &-item{
+            margin: 5px 0;
+            position: relative;
+            width: @itemWidth;
+            height: @itemHeight;
+            display: inline-block;
+            line-height: @itemHeight;
+            text-align: center;
+            font-size: @iconSize;
+            color: #000;
+            cursor: pointer;
+            vertical-align: middle;
+            box-sizing: border-box;
+            border: 1px solid transparent;
+            border-radius: 1000px;
+            &:hover{
+                border: 1px solid silver;
+                background: #eeeeee;
+            }
+            &.active{
+                border: 1px solid transparent;
+                //box-shadow: inset 0 0 2px 2px #eeeeee;
+                //background: rgba(0,0,0,0.3);
+                background: #eeeeee;
+            }
+        }
+        &-item1{
+            margin: 5px 3px 5px 4px;
+            position: relative;
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            text-align: center;
+            font-size: 16px;
+            color: #000;
+            cursor: pointer;
+            &:hover{
+                color: #ffffff;
+            }
+            &.active{
+                color: #ffffff;
+            }
+        }
+        &-expend{
+            & > .eboard-icon-expend{
+                position: absolute;
+                right: 6px;
+                bottom: 6px;
+                font-size: @expendSize;
+                width: @expendSize;
+                height: @expendSize;
+                line-height: @expendSize;
+                border-radius: 100%;
+            }
+            & > .eboard-icon-line{
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 5px;
+                margin: 0 auto;
+                width: 20px;
+                height: 2px;
+            }
+        }
+        &-huabi{
+            margin-right: -5px;
+            .eboard-toolbar-item1{
+                cursor: pointer;
+                display: inline-block;
+                vertical-align: middle;
+                background-color: #000000;
+                border-radius: 10px;
+                margin: 10px;
+                &:hover{
+                    background-color: #ffffff;
+                }
+                &.active{
+                    background-color: #ffffff;
+                }
+            }
+        }
+        &-wenzi{
+            .eboard-toolbar-item1{
+                cursor: pointer;
+                display: inline-block;
+                margin: 10px 6px;
+                color: #000000;
+                font-weight: bolder;
+                font-size: 16px;
+                &:hover{
+                    color: #ffffff;
+                }
+                &.active{
+                    color: #ffffff;
+                }
+            }
+        }
+        &-category{
+            position: absolute;
+            z-index: 20;
+            background: #cccccc;
+            padding: 15px 15px 120px;
+            border-radius: 10px;
+            left: 100%;
+            top: 0;
+            margin: -30px 0 0 45px;
+            width: 148px;
+            &-line{
+                position: absolute;
+                bottom: 110px;
+                left: 15px;
+                right: 15px;
+                height: 1px;
+                background-color: #555555;
+            }
+            &-color{
+                position: absolute;
+                bottom: 10px;
+                left: 13px;
+                right: 13px;
+                &-item{
+                    cursor: pointer;
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20px;
+                    margin: 5px 5px 0;
+                    padding: 2px;
+                    background-clip: content-box;
+                    &:hover{
+                        border: 1px solid #666e7b;
+                    }
+                    &.active{
+                        border: 1px solid #666e7b;
+                    }
+                }
+            }
+        }
+        &-picker{
+            position: relative;
+            border: 1px solid silver;
+            margin-left: 10px;
+            input{
+                visibility: hidden;
+                position: absolute;
+                width: 100%!important;
+                height: 100%!important;
+                left: 0!important;
+                top: 0!important;
+                overflow: hidden;
+            }
+        }
+        &-color{
+            &-item{
+                width: @itemWidth;
+                height: @itemWidth;
+                position: relative;
+                display: inline-block;
+                &-inner{
+                    position: absolute;
+                    width: 60%;
+                    height: 60%;
+                    border-radius: 999px;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%,-50%);
+                }
+                &.active{
+                    &:after{
+                        position: absolute;
+                        content: "";
+                        width: 80%;
+                        height: 80%;
+                        border-radius: 999px;
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%,-50%);
+                        border: 1px solid silver;
+                    }
+                }
+            }
+        }
+        &-container{
+            white-space: nowrap;
+            .eboard-toolbar-item{
+                display: inline-block;
+            }
+            border-bottom: 1px solid silver;
+        }
+        &-select{
+            position: relative;
+            border: 1px solid silver;
+            margin-left: 10px;
+            width: 100px;
+            select{
+                display: none;
+            }
+        }
+    }
+}

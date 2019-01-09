@@ -1,0 +1,96 @@
+/**
+ * @Author: yanxinaliang (rainyxlxl@163.com)
+ * @Date: 2018/8/14 17:11
+ * @Last Modified by: yanxinaliang (rainyxlxl@163.com)
+ * * @Last Modified time: 2018/8/14 17:11
+ * @disc:$DESC$
+ */
+@import "variable";
+
+@height:32px;
+@width:140px;
+@radius:10px;
+@padding:6px;
+@spacing:5px;
+@removeIcon:20px;
+
+[eboard-authority="@{authorityAssist}"],[eboard-authority="@{authorityViewer}"]{
+    .eboard-tabs{
+        visibility: hidden;
+    }
+}
+
+.eboard{
+    &-disable{
+        .eboard-tabs{
+            visibility: hidden;
+        }
+    }
+    &-tabs{
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        height: @height;
+        z-index: 10;
+        white-space: nowrap;
+    }
+    &-tab{
+        width: @width;
+        height: @height;
+        display: inline-block;
+        vertical-align: middle;
+        border-top-left-radius: @radius;
+        border-top-right-radius: @radius;
+        background: #a1bed1;
+        text-align: center;
+        line-height: @height - @padding *2;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: @padding;
+        box-sizing: border-box;
+        color: white;
+        cursor: pointer;
+        position: relative;
+        &.eboard-tab-active{
+            background: #4c84ff;
+        }
+        ~ .eboard-tab{
+            margin-left: @spacing;
+        }
+        &-remove{
+            font-size: @removeIcon;
+            position: absolute;
+            line-height: @removeIcon;
+            right: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ec272a;
+            opacity: 0;
+            cursor: pointer;
+            &:hover{
+                opacity: 1!important;
+            }
+        }
+        &:hover{
+            .eboard-tab-remove{
+                opacity: 0.6;
+            }
+        }
+        &-add{
+            height: @height;
+            width: @height;
+            //display: inline-block;
+            vertical-align: middle;
+            margin-left: @spacing;
+            background: #3384FE;
+            color: #ffffff;
+            font-size: @height * 0.8;
+            text-align: center;
+            line-height: @height;
+            cursor: pointer;
+            display: none;
+        }
+    }
+}
