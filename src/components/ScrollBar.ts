@@ -7,7 +7,7 @@
  */
 import {
     PerfectScrollbarFactory,IScrollFactoryOptions
-} from 'kxt-web/es/perfectscrollbar/perfectscrollbarfactory';
+} from './perfectscrollbar/perfectscrollbarfactory';
 import {IFrame} from '../interface/IFrame';
 import {authorityMaster, message} from '../utils/decorators';
 import {IScrollBarMessage} from '../interface/IMessage';
@@ -28,10 +28,10 @@ class ScrollBar{
     constructor(element: string | HTMLElement,options: IScrollBarOptions,context?:Context){
         const disabled = context&&context.config.authority!==Authority.Master;
         this.container = typeof element === 'string'?document.querySelector(element) as HTMLElement:element;
-/*        this.scrollbar=new PerfectScrollbarFactory(this.container,Object.assign({
+        this.scrollbar=new PerfectScrollbarFactory(this.container,Object.assign({
             handlers:['click-rail', 'drag-thumb', 'keyboard','wheel'],
             disabled
-        },options));*/
+        },options));
         this.context=context;
         this.frameId=options.frameId;
         this.initScrollEndEvent();

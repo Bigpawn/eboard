@@ -418,8 +418,8 @@ input::-webkit-inner-spin-button {
 [eboard-authority="viewer"] .eboard-pagination-input-label {
   display: inline;
 }
-[eboard-authority="assist"] .eboard-pagination-bottomGo,
-[eboard-authority="viewer"] .eboard-pagination-bottomGo {
+[eboard-authority="assist"] .eboard-pagination-go,
+[eboard-authority="viewer"] .eboard-pagination-go {
   display: none;
 }
 @keyframes page-enter-from-right {

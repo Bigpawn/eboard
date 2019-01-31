@@ -9,13 +9,21 @@ class SimpleCanvas extends React.Component<{}, {}> {
     componentDidMount(){
         setTimeout(()=>{
             const eBoard = EBoardInstance.getInstance().setAuthority(Authority.Master);
-        /*    const receiveEBoard = EBoardInstance.getReceiveInstance();
+            const receiveEBoard = EBoardInstance.getReceiveInstance().setAuthority(Authority.Viewer);
             eBoard.on("message",(e:any)=>{
                 const message=e.data;
                 console.log(message);
                 receiveEBoard.onMessage(message);
-            });*/
+            });
             const frame=eBoard.addEmptyFrame({
+                frameId:"default",
+                type:FrameType.Empty,
+                name:"白板",
+                icon:"icon-test",
+                canRemove:false
+            });
+            receiveEBoard.addEmptyFrame({
+                frameId:"default",
                 type:FrameType.Empty,
                 name:"白板",
                 icon:"icon-test",

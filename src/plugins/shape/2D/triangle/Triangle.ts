@@ -240,7 +240,7 @@ class Triangle extends AbstractShapePlugin{
     public onMessage(message:ITriangleMessage){
         const {id,flipX,flipY,width,height,stroke,fill,strokeDashArray,strokeWidth,left,top} = message;
         let instance = this.getInstanceById(id) as FabricTriangle;
-        this.eBoardCanvas.renderOnAddRemove=false;
+        // this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
@@ -258,7 +258,8 @@ class Triangle extends AbstractShapePlugin{
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
-        this.eBoardCanvas.renderOnAddRemove=true;
+        // this.eBoardCanvas.renderOnAddRemove=true;
+        console.log(this.eBoardCanvas.getObjects());
     }
 }
 
