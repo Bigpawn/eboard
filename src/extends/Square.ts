@@ -14,7 +14,7 @@ import {filterParams} from '../utils/decorators';
 
 
 class Square extends fabric.Rect implements IObject{
-    public type:string="square";
+  
     public id:string;
     constructor(options: IRectOptions,eBoardCanvas:EBoardCanvas){
         super(filterParams(options,eBoardCanvas));

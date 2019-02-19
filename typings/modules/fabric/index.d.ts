@@ -1264,7 +1264,7 @@ export class StaticCanvas {
 	 * Returns JSON representation of canvas
 	 * @param [propertiesToInclude] Any properties that you might want to additionally include in the output
 	 */
-	static toJSON(propertiesToInclude?: string[]): string;
+	toJSON(propertiesToInclude?: string[]): string;
 }
 
 interface ICanvasOptions extends IStaticCanvasOptions {

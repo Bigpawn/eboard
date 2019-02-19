@@ -23,6 +23,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class Square extends AbstractShapePlugin{
+    public type:string="square";
     protected instance:FabricSquare;
     @message
     private throw(){
@@ -33,7 +34,7 @@ class Square extends AbstractShapePlugin{
             top:this.start.y,
             length:this.instance.width,
             angle:this.instance.angle,
-            type:this.instance.type,
+            type:this.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,
@@ -81,6 +82,8 @@ class Square extends AbstractShapePlugin{
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added");
     }
     
     /**

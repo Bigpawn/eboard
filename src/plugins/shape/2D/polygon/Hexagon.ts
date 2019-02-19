@@ -20,6 +20,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class Hexagon extends AbstractShapePlugin{
+    public readonly type:string="hexagon";
     protected instance:FabricHexagon;
     @message
     private throw(){
@@ -27,7 +28,7 @@ class Hexagon extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTag.Shape,
             points:this.instance.points,
-            type:this.instance.type,
+            type:this.type,
             stroke:this.instance.stroke,
             fill:this.instance.fill,
             strokeWidth:this.instance.strokeWidth,
@@ -66,6 +67,8 @@ class Hexagon extends AbstractShapePlugin{
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added");
     }
     
     /**

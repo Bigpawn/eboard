@@ -261,6 +261,12 @@ class EBoard{
                     break;
                 case "stroke":
                     break;
+                case "undo":
+                    window.undoRedo.undo();
+                    break;
+                case "redo":
+                    window.undoRedo.redo();
+                    break;
                 case "fill":
                     break;
                 case "color":

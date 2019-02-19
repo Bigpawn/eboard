@@ -14,7 +14,7 @@ import {filterParams} from '../utils/decorators';
 
 
 class Text extends fabric.IText implements IObject{
-    public type:string="text";
+
     public id:string;
     constructor(text: string, options: IITextOptions,eBoardCanvas:EBoardCanvas){
         super(text,filterParams(options,eBoardCanvas));

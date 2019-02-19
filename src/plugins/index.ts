@@ -29,12 +29,13 @@ import {ArrowPrev} from './shape/2D/arrow/ArrowPrev';
 import {Delete} from './tool/del/Delete';
 import {Ferule} from './shape/2D/ferule/Ferule';
 import {DotLine} from './shape/2D/line/DotLine';
+import {UndoRedo} from './tool/undoredo/UndoRedo';
 
-export {Line,DotLine,Text,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon,Star,Pentagon,Hexagon,Clear,Arrow,ArrowNext,ArrowPrev,Delete,Ferule};
-export type IPlugins =Line| DotLine|Text | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon | Star | Pentagon | Hexagon | Clear | Arrow | ArrowNext | ArrowPrev | Delete | Ferule;
+export {Line,DotLine,Text,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,Triangle,EquilateralTriangle,OrthogonalTriangle,Polygon,Star,Pentagon,Hexagon,Clear,Arrow,ArrowNext,ArrowPrev,Delete,Ferule,UndoRedo};
+export type IPlugins =Line| DotLine|Text | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon | Star | Pentagon | Hexagon | Clear | Arrow | ArrowNext | ArrowPrev | Delete | Ferule | UndoRedo;
 export enum Plugins{
     Line='Line', // 直线
-    DotLine="DotLine",
+    DotLine='DotLine',
     Text='Text',// 文字输入
     Selection='Selection',// 选择
     HTML='HTML', // HTML操作插件

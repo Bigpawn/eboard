@@ -19,6 +19,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class Line extends AbstractShapePlugin{
+    public readonly type:string="line";
     protected instance:FabricLine;
     @message
     private throw(){
@@ -27,7 +28,7 @@ class Line extends AbstractShapePlugin{
             tag:MessageTag.Shape,
             start:this.start,
             end:this.end,
-            type:this.instance.type,
+            type:this.type,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,
             strokeDashArray:this.instance.strokeDashArray
@@ -62,6 +63,8 @@ class Line extends AbstractShapePlugin{
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added");
     }
     
     /**

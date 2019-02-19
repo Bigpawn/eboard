@@ -50,6 +50,8 @@ class Delete extends AbstractPlugin{
             this.eBoardCanvas.renderOnAddRemove=true;
             this.deleteItems(ids);
         }
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added");
     }
     
     @message

@@ -20,6 +20,7 @@ import {ICursorMessage} from './interface/IMessage';
 import {MessageTag} from './enums/MessageTag';
 import {CursorType} from './enums/CursorType';
 import {Context} from './static/Context';
+import {EventBus} from './utils/EventBus';
 
 
 class EBoardCanvas extends fabric.Canvas{
@@ -32,8 +33,9 @@ class EBoardCanvas extends fabric.Canvas{
     private cursor:ICursor;
     private cursorType:CursorType;
     public context:Context;
-    private frameId:string;
-    private groupId?:string;
+    private readonly frameId:string;
+    private readonly groupId?:string;
+    public eventBus=new EventBus();
     constructor(element: HTMLCanvasElement,options: ICanvasOptions,eBoardEngine:EBoardEngine){
         super(element,options);
         this.enableRetinaScaling=false;// 不自动根据分辨率缩放  否则ios 会自动*3

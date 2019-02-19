@@ -15,7 +15,7 @@ import {filterParams} from '../utils/decorators';
 
 
 class Hexagon extends fabric.Polygon implements IObject{
-    public readonly type:string="hexagon";
+   
     public id:string;
     constructor(points: Array<{ x: number; y: number }>, options: IObjectOptions,eBoardCanvas:EBoardCanvas){
         super(points,filterParams(options,eBoardCanvas));

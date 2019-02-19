@@ -22,6 +22,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class Triangle extends AbstractShapePlugin{
+    public type="triangle";
     protected instance:FabricTriangle;
     protected ctrlKey:boolean=false;
     private getStartPoint():{x:number;y:number}{
@@ -213,6 +214,8 @@ class Triangle extends AbstractShapePlugin{
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added");
     }
     @message
     private throw(){
@@ -225,7 +228,7 @@ class Triangle extends AbstractShapePlugin{
             flipY:this.instance.flipY,
             width:this.instance.width,
             height:this.instance.height,
-            type:this.instance.type,
+            type:this.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,

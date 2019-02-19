@@ -23,6 +23,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class Polygon extends AbstractShapePlugin{
+    public readonly type:string="polygon";
     protected instance:FabricPolygon;
     private points:fabric.Point[]=[];
     private circle:fabric.Circle;// 起始点磁贴效果
@@ -65,7 +66,7 @@ class Polygon extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTag.Shape,
             points:this.instance.points,
-            type:this.instance.type,
+            type:this.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,
@@ -95,6 +96,8 @@ class Polygon extends AbstractShapePlugin{
             },this.eBoardCanvas);
             this.eBoardCanvas.add(this.instance);
             this.throw();
+            // save state
+            this.eBoardCanvas.eventBus.trigger("object:added");
         }else{
             this.replace(true);
         }

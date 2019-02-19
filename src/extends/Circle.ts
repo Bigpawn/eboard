@@ -14,7 +14,6 @@ import {filterParams} from '../utils/decorators';
 
 
 class Circle extends fabric.Circle implements IObject{
-    public readonly type:string="circle";
     public id:string;
     constructor(options: ICircleOptions,eBoardCanvas:EBoardCanvas){
         super(filterParams(options,eBoardCanvas));

@@ -14,7 +14,7 @@ import {filterParams} from '../utils/decorators';
 
 
 class Rectangle extends fabric.Rect implements IObject{
-    public type:string="rectangle";
+  
     public id:string;
     constructor(options: IRectOptions,eBoardCanvas:EBoardCanvas){
         super(filterParams(options,eBoardCanvas));

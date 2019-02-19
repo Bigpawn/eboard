@@ -14,9 +14,7 @@ import {filterParams} from '../utils/decorators';
 
 
 class Line extends fabric.Line implements IObject{
-    public readonly type:string="line";
     public id:string;
-    
     constructor(points: number[], options: IObjectOptions,eBoardCanvas:EBoardCanvas){
         super(points,filterParams(options,eBoardCanvas));
         this.id=IDGenerator.getId();

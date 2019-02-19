@@ -29,6 +29,8 @@ class Clear extends AbstractPlugin{
      */
     public clear(){
         this.clearBoard();
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added");
         return this;
     }
     public onMessage(){

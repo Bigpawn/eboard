@@ -91,6 +91,18 @@ const newItems:IToolbarItem[][]=[
         name:'教鞭',
         icon:'jiaobian',
         key:'ferule',
+    }],
+    [{
+        name:'撤销',
+        icon:'qingkong',
+        key:'undo',
+        active:false,
+    }],
+    [{
+        name:'反撤销',
+        icon:'qingkong',
+        key:'redo',
+        active:false,
     }]
 ];
 

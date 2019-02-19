@@ -20,6 +20,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class OrthogonalTriangle extends AbstractShapePlugin{
+    public readonly type:string="orthogonal-triangle";
     protected instance:FabricOrthogonalTriangle;
     @authorityAssist
     protected onMouseMove(event:IEvent){
@@ -51,6 +52,8 @@ class OrthogonalTriangle extends AbstractShapePlugin{
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added");
     }
     @message
     private throw(){
@@ -58,7 +61,7 @@ class OrthogonalTriangle extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTag.Shape,
             points:this.instance.points,
-            type:this.instance.type,
+            type:this.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,

@@ -22,6 +22,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class Arrow extends AbstractShapePlugin{
+    public readonly type:string="arrow";
     protected instance:FabricArrow;
     private readonly arrowShape:"default"|"fish"|"hollow";
     protected arrowMode:ArrowMode=ArrowMode.ALL;
@@ -44,7 +45,7 @@ class Arrow extends AbstractShapePlugin{
             tag:MessageTag.Shape,
             left:(this.start.x+this.end.x)/2,
             top:(this.start.x+this.end.x)/2,
-            type:this.instance.type,
+            type:this.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,
@@ -52,7 +53,6 @@ class Arrow extends AbstractShapePlugin{
             path:this.instance.path
         }:undefined;
     }
-    
     @authorityAssist
     protected onMouseMove(event:IEvent){
         if(void 0 === this.start){
@@ -91,6 +91,8 @@ class Arrow extends AbstractShapePlugin{
     protected onMouseUp(event:IEvent){
         this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added");
     }
     
     /**

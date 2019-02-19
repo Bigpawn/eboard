@@ -14,7 +14,7 @@ import {filterParams} from '../utils/decorators';
 
 
 class Pencil extends fabric.Path implements IObject{
-    public readonly type:string="pencil";
+    // public readonly type:string="pencil";
     public id:string;
     constructor(path: string | any[], options: IPathOptions,eBoardCanvas:EBoardCanvas){
         super(path,filterParams(options,eBoardCanvas));
