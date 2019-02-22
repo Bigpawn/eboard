@@ -95,9 +95,9 @@ class Polygon extends AbstractShapePlugin{
                 fill:this.fill,
             },this.eBoardCanvas);
             this.eBoardCanvas.add(this.instance);
-            this.throw();
+            const data = this.throw();
             // save state
-            this.eBoardCanvas.eventBus.trigger("object:added");
+            this.eBoardCanvas.eventBus.trigger("object:added",data);
         }else{
             this.replace(true);
         }

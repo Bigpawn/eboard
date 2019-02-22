@@ -42,16 +42,18 @@ class Delete extends AbstractPlugin{
             this.eBoardCanvas.renderOnAddRemove=false;
             let ids:string[]=[];
             objects.forEach((object:any)=>{
-                this.eBoardCanvas.remove(object);
+                object.visible=false;
+                // this.eBoardCanvas.remove(object);
                 ids.push(object.id);
             });
             this.eBoardCanvas.discardActiveObject();
             this.eBoardCanvas.renderAll();
             this.eBoardCanvas.renderOnAddRemove=true;
-            this.deleteItems(ids);
+            const action = this.deleteItems(ids);
+            if(action){
+                this.eBoardCanvas.eventBus.trigger("object:modified",action);
+            }
         }
-        // save state
-        this.eBoardCanvas.eventBus.trigger("object:added");
     }
     
     @message
@@ -67,8 +69,13 @@ class Delete extends AbstractPlugin{
     private onClick(e:IEvent){
         const target = e.target as IObject;
         if(void 0 !== target && null !== target){
-            this.eBoardCanvas.remove(target);
-            this.deleteItems([target.id]);
+            target.visible=false;
+            this.eBoardCanvas.requestRenderAll();
+            // this.eBoardCanvas.remove(target);
+            const action = this.deleteItems([target.id]);
+            if(action){
+                this.eBoardCanvas.eventBus.trigger("object:modified",action);
+            }
         }
     }
     private onSelected(e:IEvent){
@@ -116,7 +123,11 @@ class Delete extends AbstractPlugin{
         const {ids} = message;
         ids.forEach(id=>{
             const instance = this.getInstanceById(id);
-            instance&&this.eBoardCanvas.remove(instance);
+            if(instance){
+                instance.visible=false;
+                this.eBoardCanvas.requestRenderAll();
+            }
+            // instance&&this.eBoardCanvas.remove(instance);
         });
     }
 }

@@ -23,4 +23,5 @@ export enum MessageTag{
     TurnPage=14,// 翻页
     Paste=15,
     Cut=16,
+    UndoRedo=17,
 }

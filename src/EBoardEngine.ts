@@ -10,7 +10,7 @@
 import {EBoardCanvas} from './EBoardCanvas';
 import {ICanvasOptions} from '~fabric/fabric-impl';
 import {AbstractPlugin} from './plugins/AbstractPlugin';
-import {IPlugins, UndoRedo} from './plugins';
+import {IPlugins} from './plugins';
 import {Context, ContextFactory} from './static/Context';
 
 
@@ -34,7 +34,6 @@ class EBoardEngine extends ContextFactory{
         this.groupId = options.group;
         this.eBoardCanvas = new EBoardCanvas(element,options,this);
         this.initPlugin();
-        window.undoRedo = new UndoRedo(this.eBoardCanvas);
     }
     private initPlugin(){
         // plugins 实例化

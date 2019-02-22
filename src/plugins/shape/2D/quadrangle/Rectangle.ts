@@ -167,10 +167,10 @@ class Rectangle extends AbstractShapePlugin{
     }
     @authorityAssist
     protected onMouseUp(event:IEvent){
-        this.throw();
+        const data = this.throw();
         super.onMouseUp(event);
         // save state
-        this.eBoardCanvas.eventBus.trigger("object:added");
+        this.eBoardCanvas.eventBus.trigger("object:added",data);
     }
     /**
      * 接收消息处理

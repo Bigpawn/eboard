@@ -262,10 +262,18 @@ class EBoard{
                 case "stroke":
                     break;
                 case "undo":
-                    window.undoRedo.undo();
+                    this.context.getFrame(this.context.activeKey).then((frame:IFrame)=>{
+                        if(frame.engine){
+                            frame.engine.eBoardCanvas.undoRedoEngine.undo();
+                        }
+                    });
                     break;
                 case "redo":
-                    window.undoRedo.redo();
+                    this.context.getFrame(this.context.activeKey).then((frame:IFrame)=>{
+                        if(frame.engine){
+                            frame.engine.eBoardCanvas.undoRedoEngine.redo();
+                        }
+                    });
                     break;
                 case "fill":
                     break;
@@ -545,7 +553,7 @@ class EBoard{
     
     
     private applyMessage(message:any,recovery?:boolean){
-        const {tag,type,frameId,groupId} = message;
+        const {tag,type,frameId,groupId,data} = message;
         switch (tag) {
             case MessageTag.CreateFrame:
                 this.addFrame(message);
@@ -615,6 +623,13 @@ class EBoard{
             case MessageTag.Cut:
                 this.context.getFrame(frameId).then((frame:IFrame)=>{
                     (frame.getPlugin(Plugins.Selection) as Selection).onMessage(message);
+                });
+                break;
+            case MessageTag.UndoRedo:
+                this.context.getFrame(frameId).then((frame:IFrame)=>{
+                    if(frame.engine){
+                        frame.engine.eBoardCanvas.undoRedoEngine.onMessage(type,data);
+                    }
                 });
                 break;
             case MessageTag.Shape:

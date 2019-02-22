@@ -21,6 +21,7 @@ import {MessageTag} from './enums/MessageTag';
 import {CursorType} from './enums/CursorType';
 import {Context} from './static/Context';
 import {EventBus} from './utils/EventBus';
+import {UndoRedo} from './engine/UndoRedo';
 
 
 class EBoardCanvas extends fabric.Canvas{
@@ -36,6 +37,7 @@ class EBoardCanvas extends fabric.Canvas{
     private readonly frameId:string;
     private readonly groupId?:string;
     public eventBus=new EventBus();
+    public undoRedoEngine:UndoRedo;
     constructor(element: HTMLCanvasElement,options: ICanvasOptions,eBoardEngine:EBoardEngine){
         super(element,options);
         this.enableRetinaScaling=false;// 不自动根据分辨率缩放  否则ios 会自动*3
@@ -52,6 +54,7 @@ class EBoardCanvas extends fabric.Canvas{
         this.fixTouchDevice();
         this.onMouseMove=this.onMouseMove.bind(this);
         this.onMouseOut=this.onMouseOut.bind(this);
+        this.undoRedoEngine=new UndoRedo({canvas:this,frameId:this.frameId,groupId:this.groupId,context:this.context});
     }
     
     /**
