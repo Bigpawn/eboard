@@ -83,6 +83,10 @@ const newItems:IToolbarItem[][]=[
         icon:'kongxinfangxing',
         key:'rectangle',
     }],[{
+        name:'橡皮檫',
+        icon:'rubber',
+        key:'del',
+    }],[{
         name:'清空',
         icon:'qingkong',
         key:'clear',
@@ -94,13 +98,13 @@ const newItems:IToolbarItem[][]=[
     }],
     [{
         name:'撤销',
-        icon:'qingkong',
+        icon:'revoke',
         key:'undo',
         active:false,
     }],
     [{
         name:'反撤销',
-        icon:'qingkong',
+        icon:'redo',
         key:'redo',
         active:false,
     }]
