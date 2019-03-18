@@ -13,11 +13,11 @@ import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
-import {ScrollbarType} from '..';
+import {FrameType, ScrollbarType} from '..';
 
 
 class ImagesFrame implements IImagesFrame{
-    public type:string="images-frame";
+    public type:string=FrameType.Images;
     public container:HTMLDivElement;
     public dom:HTMLDivElement;
     public urlPrefix:string;

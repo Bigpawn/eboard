@@ -18,7 +18,7 @@ import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
-import {ScrollbarType} from '../enums/SDKEnum';
+import {FrameType, ScrollbarType} from '../enums/SDKEnum';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
@@ -29,7 +29,7 @@ class PdfFrame implements IPdfFrame{
     private pagination:Pagination;
     private pdf:PDFPromise<PDFDocumentProxy>;
     public container:HTMLDivElement;
-    public type:string="pdf-frame";
+    public type:string=FrameType.Pdf;
     public dom:HTMLDivElement;
     public url:string;
     public pageNum:number=1;
@@ -97,8 +97,11 @@ class PdfFrame implements IPdfFrame{
         this.pdf=undefined as any;
         if(void 0 !== this.url){
             this.pdf = pdfjsLib.getDocument(this.url);
+            console.error("load pdf");
             this.pdf.then(pdf=>{
                 this.setTotalPages(pdf.numPages);
+            },()=>{
+                console.error("pdf load error");
             });
             const pageFrame = new CanvasFrame(this.context,{
                 scrollbar:ScrollbarType.vertical,

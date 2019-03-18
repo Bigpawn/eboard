@@ -7,12 +7,12 @@
  */
 
 export enum FrameType{
-    Empty="empty-frame",
-    Image="image-frame",
-    HTML="html-frame",
-    Canvas="canvas-frame",
-    Pdf="pdf-frame",
-    Images="images-frame"
+    Empty="empty",
+    Image="image",
+    HTML="html",
+    Canvas="canvas",
+    Pdf="pdf",
+    Images="images"
 }
 
 export declare interface IPluginConfigOptions{
@@ -21,10 +21,10 @@ export declare interface IPluginConfigOptions{
 }
 
 export enum ScrollbarType{
-    horizontal,
-    vertical,
-    both,
-    none
+    horizontal="horizon",
+    vertical="vertical",
+    both="both",
+    none="none"
 }
 
 export enum Authority{

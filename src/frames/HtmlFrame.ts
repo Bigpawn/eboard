@@ -11,11 +11,11 @@ import {EBoardEngine} from '../EBoardEngine';
 import {IFrame,IHTMLFrame, IHTMLFrameOptions} from '../interface/IFrame';
 import "../style/scrollbar.less";
 import {ScrollBar} from '../components/ScrollBar';
-import {ScrollbarType} from '../enums/SDKEnum';
+import {FrameType, ScrollbarType} from '../enums/SDKEnum';
 
 class GenericHtmlFrame<T extends IHTMLFrameOptions> extends GenericBaseFrame<T> implements IFrame{
     private htmlWrap:HTMLDivElement;
-    public type="html-frame";
+    public type=FrameType.HTML;
     protected html?:string|HTMLDivElement;
     protected initScrollbar(container:HTMLDivElement){
         switch (this.options.scrollbar){

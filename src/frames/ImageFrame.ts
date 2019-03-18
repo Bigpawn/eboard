@@ -12,9 +12,10 @@ import {GenericHtmlFrame} from './HtmlFrame';
 import {IImageFrame, IImageFrameOptions} from '../interface/IFrame';
 import {EBoardEngine} from '../EBoardEngine';
 import {ImageUtil} from '../static/ImageUtil';
+import {FrameType} from '..';
 
 class ImageFrame extends GenericHtmlFrame<IImageFrameOptions> implements IImageFrame{
-    public type="image-frame";
+    public type=FrameType.Image;
     public src:string;
     private imageWrap:HTMLDivElement;
     protected getChildren():any{

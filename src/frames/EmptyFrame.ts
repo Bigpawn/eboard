@@ -16,7 +16,7 @@ import {MessageTag} from '../enums/MessageTag';
 import {Context, ContextFactory} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
 import {ScrollBar} from '../components/ScrollBar';
-import {IPluginConfigOptions} from '../enums/SDKEnum';
+import {FrameType, IPluginConfigOptions} from '../enums/SDKEnum';
 
 
 
@@ -137,7 +137,7 @@ export {GenericBaseFrame};
 
 
 class EmptyFrame extends GenericBaseFrame<IBaseFrameOptions> implements IBaseFrame{
-    public type:string="empty-frame";
+    public type:string=FrameType.Empty;
 }
 
 export {EmptyFrame};

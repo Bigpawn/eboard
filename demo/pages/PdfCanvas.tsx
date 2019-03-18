@@ -9,14 +9,14 @@ import {FrameType} from '../../src/enums/SDKEnum';
 class MaterialUIPage extends SimpleCanvas{
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
-        const receiveEBoard = EBoardInstance.getReceiveInstance();
+        // const receiveEBoard = EBoardInstance.getReceiveInstance();
         eBoard.on("message",(e:any)=>{
             const message = e.data;
-            receiveEBoard.onMessage(message);
+            // receiveEBoard.onMessage(message);
         });
         eBoard.addPdfFrame({
             type:FrameType.Pdf,
-            url:require("./4.pdf"),
+            url:"https://res2dev.9itest.com/resource2/1000/document/20190318/8d5769b0de4f4fa0889dda002e6cd642_pdf/8d5769b0de4f4fa0889dda002e6cd642.pdf",
             pageNum:1,
         });
     }
