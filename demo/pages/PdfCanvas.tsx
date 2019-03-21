@@ -2,13 +2,12 @@ import * as React from 'react';
 import Card from 'antd/es/card';
 import SimpleCanvas from './SimpleCanvas';
 import {EBoardInstance} from './EBoardInstance';
-import {FrameType} from '../../src/enums/SDKEnum';
-
-
+import {Authority, FrameType} from '../../src/enums/SDKEnum';
 
 class MaterialUIPage extends SimpleCanvas{
     componentDidMount(){
         const eBoard =EBoardInstance.getInstance();
+        window.eBoard=eBoard;
         // const receiveEBoard = EBoardInstance.getReceiveInstance();
         eBoard.on("message",(e:any)=>{
             const message = e.data;
@@ -20,9 +19,13 @@ class MaterialUIPage extends SimpleCanvas{
             pageNum:1,
         });
     }
+    private operation(){
+        window.eBoard.setAuthority(Authority.Operator);
+    }
     public render() {
         return (
             <Card bordered title="PdfCanvas" style={{ margin: "16px 16px"}}>
+                <button onClick={this.operation}>点击</button>
                 <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"100%",height:"100%",position:"relative"}}>
                     <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainer"}/>
                     <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainerReceive"}/>

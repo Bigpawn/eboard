@@ -30,5 +30,6 @@ export enum ScrollbarType{
 export enum Authority{
     Master="master",
     Assist="assist",
-    Viewer="viewer"
+    Viewer="viewer",
+    Operator="operator",
 }

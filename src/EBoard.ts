@@ -810,7 +810,7 @@ class EBoard{
         this.context.config.authority=authority;
         ScrollBar.scrollbarList.forEach((scrollbar)=>{
             if(scrollbar){
-                scrollbar.disabled=authority!==Authority.Master
+                scrollbar.disabled=authority!==Authority.Master&&authority!==Authority.Operator;
             }
         });
         return this;
@@ -821,6 +821,20 @@ class EBoard{
     }
     public getFrame(frameId:string){
         return this.context.getFrameById(frameId);
+    }
+    
+    /**
+     * 允许滚动切换等，不允许画图
+     */
+    public allowOperation(){
+        this.setAuthority(Authority.Operator);
+    }
+    
+    /**
+     * 不允许无权限用户操作
+     */
+    public unAllowOperation(){
+        this.setAuthority(Authority.Viewer);
     }
 }
 

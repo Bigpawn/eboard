@@ -1,4 +1,5 @@
 import {EBoard} from '../../src/EBoard';
+import {Authority} from '../../src';
 
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
@@ -11,7 +12,9 @@ class EBoardInstance{
     private static instance:EBoard;
     public static getInstance(){
         const container = document.getElementById("eboardContainer") as HTMLDivElement;
-        this.instance=new EBoard(container);
+        this.instance=new EBoard(container,{
+            authority:Authority.Viewer
+        });
         return this.instance;
     }
     
