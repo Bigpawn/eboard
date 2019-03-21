@@ -30,7 +30,7 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
     public groupId:string|undefined;
     public scrollbar:ScrollBar;
     protected calcSize:any;
-    constructor(context:Context,options:T){
+    constructor(context:Context,options:T,silence?:boolean){
         super(context);
         this.options=options;
         this.frameId=options.frameId||IDGenerator.getId();
@@ -44,7 +44,7 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
         if(!this.groupId){
             context.setActiveKey(this.frameId);
         }
-        if(!this.groupId||options.messageId){
+        if((!this.groupId||options.messageId)&&!silence){
             this.initializeAction();
         }
     }

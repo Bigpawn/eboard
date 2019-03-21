@@ -39,7 +39,7 @@ class PdfFrame implements IPdfFrame{
     public parent?:EBoard;
     public groupId:string;
     public context:Context;
-    constructor(context:Context,options:IPdfFrameOptions){
+    constructor(context:Context,options:IPdfFrameOptions,silence?:boolean){
         this.context=context;
         this.groupId=options.groupId||IDGenerator.getId();
         this.options=options;
@@ -48,7 +48,7 @@ class PdfFrame implements IPdfFrame{
         this.onGo=this.onGo.bind(this);
         this.initLayout();
         this.initialize();
-        this.initializeAction();
+        !silence&&this.initializeAction();
     }
     
     @message

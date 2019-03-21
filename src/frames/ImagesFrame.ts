@@ -30,7 +30,7 @@ class ImagesFrame implements IImagesFrame{
     public images:string[];
     public groupId:string;
     public context:Context;
-    constructor(context:Context,options:IImagesFrameOptions){
+    constructor(context:Context,options:IImagesFrameOptions,silence?:boolean){
         this.context=context;
         this.groupId = options.groupId||IDGenerator.getId();
         this.container=options.container as any;
@@ -39,7 +39,7 @@ class ImagesFrame implements IImagesFrame{
         this.onGo=this.onGo.bind(this);
         this.initLayout();
         this.initialize();
-        this.initializeAction();
+        !silence&&this.initializeAction();
     }
     @message
     public initializeAction(){

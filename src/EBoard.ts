@@ -393,13 +393,14 @@ class EBoard{
     /**
      * 添加空白画布
      * @param {IBaseFrameOptions} options
+     * @param silence
      * @returns {IBaseFrame}
      */
-    public addEmptyFrame(options:IBaseFrameOptions){
+    public addEmptyFrame(options:IBaseFrameOptions,silence?:boolean){
         const {frameId} = this.supplyOptions(options);
         let frame = void 0 !== frameId?this.context.getFrameById(frameId):undefined;
         if(void 0 !==frame) return frame;
-        frame = new EmptyFrame(this.context,options);
+        frame = new EmptyFrame(this.context,options,silence);
         this.addTab(frame.frameId,options);
         this.switchToTab(frame.frameId,true);
         return frame;
@@ -408,13 +409,14 @@ class EBoard{
     /**
      * 添加HtmlFrame
      * @param {IHTMLFrameOptions} options
+     * @param silence
      * @returns {IHTMLFrame}
      */
-    public addHtmlFrame(options:IHTMLFrameOptions){
+    public addHtmlFrame(options:IHTMLFrameOptions,silence?:boolean){
         const {frameId} = this.supplyOptions(options);
         let frame=void 0 !== frameId?this.context.getFrameById(frameId):undefined;
         if(void 0 !==frame) return frame;
-        frame = new HtmlFrame(this.context,options);
+        frame = new HtmlFrame(this.context,options,silence);
         this.addTab(frame.frameId,options);
         this.switchToTab(frame.frameId,true);
         return frame;
@@ -423,13 +425,14 @@ class EBoard{
     /**
      * 添加ImageFrame
      * @param {IImageFrameOptions} options
+     * @param silence
      * @returns {IImageFrame}
      */
-    public addImageFrame(options:IImageFrameOptions){
+    public addImageFrame(options:IImageFrameOptions,silence?:boolean){
         const {frameId} = this.supplyOptions(options);
         let frame=void 0 !== frameId?this.context.getFrameById(frameId):undefined;
         if(void 0 !==frame) return frame;
-        frame = new ImageFrame(this.context,options);
+        frame = new ImageFrame(this.context,options,silence);
         this.addTab(frame.frameId,options);
         this.switchToTab(frame.frameId,true);
         return frame;
@@ -438,13 +441,14 @@ class EBoard{
     /**
      * 添加PdfFrame
      * @param {IPdfFrameOptions} options
+     * @param silence
      * @returns {IPdfFrame}
      */
-    public addPdfFrame(options:IPdfFrameOptions){
+    public addPdfFrame(options:IPdfFrameOptions,silence?:boolean){
         const {groupId} = this.supplyOptions(options);
         let group = void 0 !== groupId?this.context.getGroupById(groupId):undefined;
         if(group) return group;
-        group = new PdfFrame(this.context,options);
+        group = new PdfFrame(this.context,options,silence);
         this.addTab(group.groupId,options);
         this.switchToTab(group.groupId,true);
         return group;
@@ -453,13 +457,14 @@ class EBoard{
     /**
      * 添加ImagesFrame
      * @param {IImagesFrameOptions} options
+     * @param silence
      * @returns {ImagesFrame}
      */
-    public addImagesFrame(options:IImagesFrameOptions){
+    public addImagesFrame(options:IImagesFrameOptions,silence?:boolean){
         const {groupId} = this.supplyOptions(options);
         let group = void 0 !== groupId?this.context.getGroupById(groupId):undefined;
         if(group) return group;
-        group = new ImagesFrame(this.context,options);
+        group = new ImagesFrame(this.context,options,silence);
         this.addTab(group.groupId,options);
         this.switchToTab(group.groupId,true);
         return group;
@@ -468,32 +473,34 @@ class EBoard{
     /**
      * 添加FrameGroup
      * @param {IImagesFrameOptions | IPdfFrameOptions} options
+     * @param silence
      * @returns {(ImagesFrame | ImagesFrame) | (PdfFrame | PdfFrame)}
      */
-    private addFrameGroup(options:IImagesFrameOptions|IPdfFrameOptions){
+    private addFrameGroup(options:IImagesFrameOptions|IPdfFrameOptions,silence?:boolean){
         const type = options.type;
         switch (type) {
             case FrameType.Images:
-                return this.addImagesFrame(options as IImagesFrameOptions);
+                return this.addImagesFrame(options as IImagesFrameOptions,silence);
             default:
-                return this.addPdfFrame(options as IPdfFrameOptions);
+                return this.addPdfFrame(options as IPdfFrameOptions,silence);
         }
     }
     
     /**
      * 添加 Frame
      * @param {IBaseFrameOptions | IImageFrameOptions | IHTMLFrameOptions} options
+     * @param recovery
      * @returns {(ImageFrame | ImageFrame) | (HtmlFrame | HtmlFrame) | (BaseFrame | BaseFrame)}
      */
-    private addFrame(options:IBaseFrameOptions|IImageFrameOptions|IHTMLFrameOptions){
+    private addFrame(options:IBaseFrameOptions|IImageFrameOptions|IHTMLFrameOptions,silence?:boolean){
         const type = options.type;
         switch (type) {
             case FrameType.Image:
-                return this.addImageFrame(options as IImageFrameOptions);
+                return this.addImageFrame(options as IImageFrameOptions,silence);
             case FrameType.HTML:
-                return this.addHtmlFrame(options as IHTMLFrameOptions);
+                return this.addHtmlFrame(options as IHTMLFrameOptions,silence);
             default:
-                return this.addEmptyFrame(options as IBaseFrameOptions);
+                return this.addEmptyFrame(options as IBaseFrameOptions,silence);
         }
     }
     
@@ -556,10 +563,10 @@ class EBoard{
         const {tag,type,frameId,groupId,data} = message;
         switch (tag) {
             case MessageTag.CreateFrame:
-                this.addFrame(message);
+                this.addFrame(message,recovery);
                 break;
             case MessageTag.CreateFrameGroup:
-                this.addFrameGroup(message);
+                this.addFrameGroup(message,recovery);
                 break;
             case MessageTag.TurnPage:
                 this.context.getGroup(groupId).then((group:IFrameGroup)=>{

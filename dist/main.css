@@ -594,7 +594,8 @@ input::-webkit-inner-spin-button {
  * @disc:$DESC$
  */
 [eboard-authority="assist"] .eboard-tabs,
-[eboard-authority="viewer"] .eboard-tabs {
+[eboard-authority="viewer"] .eboard-tabs,
+[eboard-authority="operator"] .eboard-tabs {
   visibility: hidden;
 }
 .eboard-disable .eboard-tabs {
@@ -678,7 +679,8 @@ input::-webkit-inner-spin-button {
  * @Last Modified time: 2018/12/29 9:43
  * @disc:$DESC$
  */
-[eboard-authority="viewer"] .eboard-toolbar-wrap {
+[eboard-authority="viewer"] .eboard-toolbar-wrap,
+[eboard-authority="operator"] .eboard-toolbar-wrap {
   display: none;
 }
 .eboard-toolbar {
