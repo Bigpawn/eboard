@@ -1,0 +1,87 @@
+/*
+ * @Author: Liheng (liheeng@gmail.com)
+ * @Date: 2018-05-28 20:02:11
+ * @Last Modified by: Liheng (liheeng@gmail.com)
+ * @Last Modified time: 2018-05-29 10:20:55
+ */
+.tab{
+    &-container{
+        position: relative;
+    }
+    &-item{
+        display: inline-block;
+        vertical-align: middle;
+        width:58px;
+        height: 28px;
+        font-size: 14px;
+        line-height: 28px;
+        text-align: center;
+        color: #666;
+        border:1px solid #999;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+    &-active{
+        color: #ffffff;
+        background: #4c84ff;
+        border:1px solid #4c84ff;
+    }
+    &-add{
+        display: inline-block;
+        vertical-align: middle;
+        width:28px;
+        height: 28px;
+        font-size: 14px;
+        line-height: 28px;
+        text-align: center;
+        border:1px solid #999;
+        box-sizing: border-box;
+    }
+    &-scroll{
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        max-width: calc(~"100% - 28px");
+        padding-right:0;
+        transition: max-width 240ms ease;
+        white-space: nowrap;
+        overflow: hidden;
+        &-pager{
+            max-width:calc(~"100% - 84px");
+        }
+        &-bar{
+            position: relative;
+            transform: translateX(0);
+            transition: transform 240ms ease;
+        }
+    }
+    &-prev,&-next{
+        display: inline-block;
+        width:28px;
+        line-height: 28px;
+        border:1px solid #999;
+        font-size: 14px;
+        color: #666;
+        text-align: center;
+        vertical-align: middle;
+        position: absolute;
+        right:28px;
+        top:0;
+        box-sizing: border-box;
+        height: 28px;
+        background: white;
+        cursor: pointer;
+    }
+    &-prev{
+        right:56px;
+    }
+    &-next ~ &-add{
+        position: absolute;
+        right:0;
+        top:0;
+    }
+    &-active{
+        background: #4c84ff;
+        color: #ffffff;
+    }
+}

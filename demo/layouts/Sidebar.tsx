@@ -58,6 +58,12 @@ class Sidebar extends React.Component<{}, ISidebarState> {
                             <span className="nav-text">MixCanvas</span>
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="7">
+                        <Link to="/tab">
+                            <Icon type="edit" />
+                            <span className="nav-text">Tab</span>
+                        </Link>
+                    </Menu.Item>
                 </Menu>
                 <div className="sider-trigger">
                     <Icon

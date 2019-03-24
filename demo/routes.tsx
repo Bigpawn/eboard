@@ -8,6 +8,7 @@ import PdfCanvas from "./pages/PdfCanvas";
 import PageLayout from "./layouts/PageLayout";
 import HtmlCanvas from './pages/HtmlCanvas';
 import MixCanvas from './pages/MixCanvas';
+import Tab from "./pages/Tab";
 
 export const routes: RouteConfig[] = [
     {
@@ -44,6 +45,11 @@ export const routes: RouteConfig[] = [
         path:"/mix",
         exact:true,
         component:()=><MixCanvas/>
+    },
+    {
+        path:"/tab",
+        exact:true,
+        component:()=><Tab/>
     }
 ];
 
