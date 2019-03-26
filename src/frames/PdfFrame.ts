@@ -121,7 +121,7 @@ class PdfFrame implements IPdfFrame{
             this.pdf.then(pdf=>{
                 pdf.getPage(this.pageNum).then(page=>{
                     const canvas = pageFrame.canvas;
-                    const defaultViewport = page.getViewport(1);
+                    const defaultViewport = page.getViewport(1/window.devicePixelRatio);
                     const scale = canvas.offsetWidth/defaultViewport.width;
                     const viewport = page.getViewport(scale);
                     canvas.width=viewport.width;
@@ -186,7 +186,7 @@ class PdfFrame implements IPdfFrame{
             this.pdf.then(pdf=>{
                 pdf.getPage(pageNum).then((page)=>{
                     const canvas = (nextPageFrame as CanvasFrame).canvas;
-                    const defaultViewport = page.getViewport(1);
+                    const defaultViewport = page.getViewport(1/window.devicePixelRatio);
                     const scale = canvas.offsetWidth/defaultViewport.width;
                     const viewport = page.getViewport(scale);
                     canvas.width=viewport.width;
