@@ -11,7 +11,6 @@
 import "../style/tab.less";
 import "../font/iconfont.css";
 import {EventBus} from '../utils/EventBus';
-import {ScrollBar} from './ScrollBar';
 import "../utils/ClassListPolyfill";// polyfill
 // @ts-ignore
 import Hammer from "hammerjs";
@@ -33,7 +32,6 @@ export enum TabEventEnum{
 
 class Tab extends EventBus{
     private container:HTMLDivElement;
-    private scrollbar:ScrollBar;
     private addBtn:HTMLDivElement;
     private tabIdList:string[]=[];
     private readonly visible?:boolean;
@@ -42,7 +40,6 @@ class Tab extends EventBus{
         this.visible=void 0 === visible||null === visible?true:visible;
         this.initContainer(container);
         this.initAddBtn();
-        this.initScrollbar();
         this.initEvent();
     }
     private initContainer(container:HTMLDivElement){
@@ -57,12 +54,6 @@ class Tab extends EventBus{
         addBtn.className="eboard-tab-add eboard-icon eboard-icon-add";
         this.container.appendChild(addBtn);
         this.addBtn=addBtn;
-    }
-    private initScrollbar(){
-        this.scrollbar= new ScrollBar(this.container,{
-            wheelSpeed: 2,
-            suppressScrollY:true,
-        });
     }
     private initEvent(){
         const hammer = new Hammer(this.container);
@@ -110,10 +101,8 @@ class Tab extends EventBus{
             active.classList.remove("eboard-tab-active");
         }
         this.container.insertBefore(tabItem,this.addBtn);
-        this.scrollbar.update();
         const scrollWidth = this.container.scrollWidth;
         const scrollLeft = Math.max(0,scrollWidth - this.container.offsetWidth);
-        this.scrollbar.scrollToLeft(scrollLeft);
         this.tabIdList.push(options.tabId);
     }
     

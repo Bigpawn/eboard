@@ -1,3 +1,5 @@
+import Tab from './pages/Tab';
+
 import * as React from "react";
 import { RouteConfig } from "react-router-config";
 import { Route, Switch } from "react-router-dom";
@@ -44,6 +46,11 @@ export const routes: RouteConfig[] = [
         path:"/mix",
         exact:true,
         component:()=><MixCanvas/>
+    },
+    {
+        path:"/tab",
+        exact:true,
+        component:()=><Tab/>
     }
 ];
 
