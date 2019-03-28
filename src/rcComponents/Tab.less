@@ -45,7 +45,6 @@
             left: 0;
         }
         height: @tabHeight;
-        z-index: 5000;
     }
     &-item{
         display: inline-block;
@@ -114,13 +113,13 @@
         position: relative;
         display: inline-block;
         vertical-align: middle;
-        max-width: calc(~"100% - @{tabHeight}");
+        max-width: calc(~"100% - @{tabItemAddWidth}");
         padding-right:0;
         transition: max-width 240ms ease;
         white-space: nowrap;
         overflow: hidden;
         &-pager{
-            @right:@tabHeight+@tabControlWidth;
+            @right:@tabItemAddWidth+@tabControlWidth;
             max-width:calc(~"100% - @{right}");
         }
         &-bar{
@@ -151,7 +150,7 @@
         }
     }
     &-prev{
-        right:@tabHeight + @tabControlWidth/2;
+        right:@tabItemAddWidth + @tabControlWidth/2;
         &:after{
             content: "";
             height: @tabControlLineHeight;
@@ -160,6 +159,7 @@
             background-color: @tabControlLineColor;
             right: -0.5px;
             top: (@tabHeight - @tabControlLineHeight)/2;
+            z-index: 1;
         }
     }
     &-next ~ &-add{
