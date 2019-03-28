@@ -1,6 +1,6 @@
 {
     "name": "eboard",
-    "version": "0.9.13",
+    "version": "0.9.14",
     "author": "Heng Li",
     "description": "eboard lib",
     "license": "MIT",
@@ -20,7 +20,10 @@
         "lz-string":"^1.4.4",
         "easydropdown":"^4.0.3",
         "hammerjs": "^2.0.8",
-        "kxt-web": "^1.4.2"
+        "kxt-web": "^1.4.2",
+        "core-decorators": "^0.20.0",
+        "react": "^16.8.5",
+        "react-dom": "^16.8.5"
     },
     "repository": {
         "type": "git",
@@ -83,8 +86,6 @@
         "jest": "^23.2.0",
         "open": "^0.0.5",
         "yanxlg-rc-tools":"^8.2.1",
-        "react": "^16.4.0",
-        "react-dom": "^16.4.0",
         "react-redux": "^5.0.7",
         "react-router-config": "^1.0.0-beta.4",
         "react-router-dom": "^4.3.1",

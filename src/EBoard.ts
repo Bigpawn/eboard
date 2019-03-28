@@ -109,8 +109,8 @@ class EBoard{
         return calcSize;
     }
     private init(){
-        this.initLayout();
         this.initTab();
+        this.initLayout();
         this.initToolbar();
         this.middleWare=new MessageMiddleWare(this.context);
         this.context.adapter = this.middleWare;
@@ -156,7 +156,7 @@ class EBoard{
     private addTab(tabId:string,options:IFrameOptions|IFrameGroupOptions){
         this.tab.addTab({
             tabId:tabId,
-            label:options.name||"",
+            name:options.name||"",
             icon:options.icon,
             canRemove:options.canRemove
         });
@@ -402,7 +402,7 @@ class EBoard{
         if(void 0 !==frame) return frame;
         frame = new EmptyFrame(this.context,options,silence);
         this.addTab(frame.frameId,options);
-        this.switchToTab(frame.frameId,true);
+        this.switchToTab(frame.frameId,true,false);
         return frame;
     }
     
@@ -418,7 +418,7 @@ class EBoard{
         if(void 0 !==frame) return frame;
         frame = new HtmlFrame(this.context,options,silence);
         this.addTab(frame.frameId,options);
-        this.switchToTab(frame.frameId,true);
+        this.switchToTab(frame.frameId,true,false);
         return frame;
     }
     
@@ -434,7 +434,7 @@ class EBoard{
         if(void 0 !==frame) return frame;
         frame = new ImageFrame(this.context,options,silence);
         this.addTab(frame.frameId,options);
-        this.switchToTab(frame.frameId,true);
+        this.switchToTab(frame.frameId,true,false);
         return frame;
     }
     
@@ -450,7 +450,7 @@ class EBoard{
         if(group) return group;
         group = new PdfFrame(this.context,options,silence);
         this.addTab(group.groupId,options);
-        this.switchToTab(group.groupId,true);
+        this.switchToTab(group.groupId,true,false);
         return group;
     }
     
@@ -466,7 +466,7 @@ class EBoard{
         if(group) return group;
         group = new ImagesFrame(this.context,options,silence);
         this.addTab(group.groupId,options);
-        this.switchToTab(group.groupId,true);
+        this.switchToTab(group.groupId,true,false);
         return group;
     }
     
@@ -508,9 +508,10 @@ class EBoard{
      * 显示指定的Frame
      * @param {string | IFrame | IFrameGroup} id
      * @param forbidMessage
+     * @param tabSwitch tab是否需要切换
      * @returns {undefined | IFrame | IFrameGroup}
      */
-    private switchToTab(id:string,forbidMessage?:boolean){
+    private switchToTab(id:string,forbidMessage?:boolean,tabSwitch?:boolean){
         const targetEl = document.querySelector(`[x-eboard-id="${id}"]`);
         if(targetEl){
             const childrens = this.body.childNodes;
@@ -522,7 +523,9 @@ class EBoard{
             }
             targetEl.classList.remove("eboard-hide");
             this.context.setActiveKey(id);
-            this.tab.switchTo(id);
+            if(tabSwitch!==false){
+                this.tab.switchTo(id);
+            }
             if(!forbidMessage){
                 this.switchMessage(id);
             }
