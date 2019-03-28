@@ -136,8 +136,8 @@ class EBoard{
         this.container.appendChild(body);
     }
     private initTab(){
-        const {showTab,autoTabLabel} = this.context.config;
-        this.tab=new Tab(this.container,showTab);
+        const {showTab,autoTabLabel,authority} = this.context.config;
+        this.tab=new Tab(this.container,showTab&&authority===Authority.Master);
         this.tab.on(TabEventEnum.Add,()=>{
            this.addEmptyFrame({
                type:FrameType.Empty,

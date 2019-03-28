@@ -605,7 +605,6 @@ input::-webkit-inner-spin-button {
   position: absolute;
   width: 100%;
   height: 30px;
-  z-index: 5000;
 }
 .tab-container:after {
   position: absolute;
@@ -680,14 +679,14 @@ input::-webkit-inner-spin-button {
   position: relative;
   display: inline-block;
   vertical-align: middle;
-  max-width: calc(100% - 30px);
+  max-width: calc(100% - 40px);
   padding-right: 0;
   transition: max-width 240ms ease;
   white-space: nowrap;
   overflow: hidden;
 }
 .tab-scroll-pager {
-  max-width: calc(100% - 84px);
+  max-width: calc(100% - 94px);
 }
 .tab-scroll-bar {
   position: relative;
@@ -718,7 +717,7 @@ input::-webkit-inner-spin-button {
   color: #bbbbbb !important;
 }
 .tab-prev {
-  right: 57px;
+  right: 67px;
 }
 .tab-prev:after {
   content: "";
@@ -728,6 +727,7 @@ input::-webkit-inner-spin-button {
   background-color: #bbbbbb;
   right: -0.5px;
   top: 5px;
+  z-index: 1;
 }
 .tab-next ~ .tab-add {
   position: absolute;
