@@ -67,6 +67,8 @@ class Selection extends AbstractPlugin{
                     this.eBoardCanvas.eventBus.trigger("object:modified",{...data,prevState:this._cacheObjectsTransforms});
                     break;
                 case "scale":
+                case "scaleX":
+                case "scaleY":
                     data = this.transform(ids,objectsTransform,MessageTag.SelectionScale);
                     this.eBoardCanvas.eventBus.trigger("object:modified",{...data,prevState:this._cacheObjectsTransforms});
                     break;

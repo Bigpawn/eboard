@@ -132,10 +132,11 @@ class EBoardCanvas extends fabric.Canvas{
         this.instance = this.cursor.render(point,this.context.transform(this.context.getConfig("cursorSize")));
         this.instance.name=this.cursorType; // 比较类型是否变化
         this.instance.type="cursor";// 设置type，扩展的Canvas可能会做其他操作
+        // this.instance.bringToFront();
         this.add(this.instance);
         this.renderAll();
         this.renderOnAddRemove=true;
-        if(this.cursorMessageEnable === true){
+        if(this.cursorMessageEnable){
             this.cursorMessage(point);
         }
     }

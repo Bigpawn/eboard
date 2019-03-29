@@ -13,7 +13,7 @@ class EBoardInstance{
     public static getInstance(){
         const container = document.getElementById("eboardContainer") as HTMLDivElement;
         this.instance=new EBoard(container,{
-            authority:Authority.Viewer
+            authority:Authority.Master
         });
         return this.instance;
     }

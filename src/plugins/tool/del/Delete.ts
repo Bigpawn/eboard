@@ -8,16 +8,15 @@
  */
 
 import {AbstractPlugin} from '../../AbstractPlugin';
-import {authorityAssist, message, setCursor} from '../../../utils/decorators';
+import {authorityAssist, message} from '../../../utils/decorators';
 import {IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
 import {EBoardEngine} from '../../../EBoardEngine';
 import {Keys} from '../../../enums/Keys';
 import {IDeleteMessage} from '../../../interface/IMessage';
-import {MessageTag} from '../../../enums/MessageTag';
-import {CursorType} from '../../../enums/CursorType';
+import {MessageTag} from '../../..';
 
-@setCursor(CursorType.Rubber)
+
 class Delete extends AbstractPlugin{
     constructor(eBoardEngine:EBoardEngine){
         super(eBoardEngine);
@@ -70,6 +69,7 @@ class Delete extends AbstractPlugin{
         const target = e.target as IObject;
         if(void 0 !== target && null !== target){
             target.visible=false;
+            this.eBoardCanvas.discardActiveObject();
             this.eBoardCanvas.requestRenderAll();
             // this.eBoardCanvas.remove(target);
             const action = this.deleteItems([target.id]);
@@ -108,13 +108,22 @@ class Delete extends AbstractPlugin{
             this.eBoardCanvas.on("mouse:out",this.onUnSelected);
             this.eBoardCanvas.on("mouse:down",this.onClick);
             this.eBoardCanvas.skipTargetFind = false;
-            this.eBoardCanvas.hoverCursor="none";
+            const container = this.eBoardEngine.context.container;
+            if(container){
+                container.classList.add("canvas-erase");
+            }
+            // this.eBoardCanvas.hoverCursor=`url(${erasePng})`;
+            // this.eBoardCanvas.hoverCursor="none";
         }else{
             this.eBoardCanvas.off("mouse:over",this.onSelected);
             this.eBoardCanvas.off("mouse:out",this.onUnSelected);
             this.eBoardCanvas.off("mouse:down",this.onClick);
             this.eBoardCanvas.skipTargetFind = true;
-            this.eBoardCanvas.hoverCursor="move";
+            const container = this.eBoardEngine.context.container;
+            if(container){
+                container.classList.remove("canvas-erase");
+            }
+            // this.eBoardCanvas.hoverCursor="move";
         }
         return this;
     }

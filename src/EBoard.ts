@@ -68,7 +68,7 @@ class EBoard{
     private middleWare:MessageMiddleWare;
     private readonly context:Context;
     constructor(container:HTMLDivElement,config?:IConfig){
-        this.context=new Context(config);
+        this.context=new Context(config,container);
         this.container=container;
         this.init();
         this.observePlugins();

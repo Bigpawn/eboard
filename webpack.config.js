@@ -25,5 +25,9 @@ module.exports=function(webpackConfig) {
         test: /.pdf$/,
         use: { loader: 'file-loader',options: { name: 'examples/[hash].pdf',publicPath:"../"}}
     });
+    webpackConfig.module.rules.push({
+        test: /.cur$/,
+        use: { loader: 'file-loader',options: { name: 'examples/[hash].cur',publicPath:"../"}}
+    });
     return webpackConfig;
 };
