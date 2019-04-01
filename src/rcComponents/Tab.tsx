@@ -140,7 +140,7 @@ class EBoardTab extends React.Component<IEBoardTabProps, ITabInterface>{
         // offset 80%
         const {scrollOffset} = this.state;
         let scrollWidth = (this.scrollRef.current as HTMLDivElement).offsetWidth;
-        const nextOffset = Math.max(scrollOffset-scrollWidth*0.8,0);
+        const nextOffset = Math.max(scrollOffset-scrollWidth*0.4,0);
         this.setState({
             scrollOffset:nextOffset,
             prevDisable:nextOffset<=0,
@@ -151,7 +151,7 @@ class EBoardTab extends React.Component<IEBoardTabProps, ITabInterface>{
     private onNextClick(){
         const {scrollOffset} = this.state;
         const {offsetWidth,scrollWidth} = (this.scrollRef.current as HTMLDivElement);
-        const nextOffset = Math.min(Math.max(scrollOffset+offsetWidth*0.8,0),scrollWidth-offsetWidth);
+        const nextOffset = Math.min(Math.max(scrollOffset+offsetWidth*0.4,0),scrollWidth-offsetWidth);
         this.setState({
             scrollOffset:nextOffset,
             prevDisable:false,

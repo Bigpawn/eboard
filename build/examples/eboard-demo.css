@@ -103,6 +103,9 @@
 textarea[data-fabric-hiddentextarea] {
   left: 0!important;
 }
+.canvas-erase canvas.upper-canvas {
+  cursor: url(../examples/bcfa9552dc2cee8b83ae671ffc3ae258.cur), default !important;
+}
 /**
  * @Author: yanxinaliang (rainyxlxl@163.com)
  * @Date: 2018/7/20 16:18
