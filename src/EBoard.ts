@@ -262,18 +262,46 @@ class EBoard{
                 case "stroke":
                     break;
                 case "undo":
-                    this.context.getFrame(this.context.activeKey).then((frame:IFrame)=>{
-                        if(frame.engine){
-                            frame.engine.eBoardCanvas.undoRedoEngine.undo();
+                    // 判断是frame还是frameGroup
+                    const group1 = this.context.getGroupById(this.context.activeKey);
+                    if(group1){
+                        // group
+                        const frame = group1.pageFrame;
+                        if(void 0 !== frame){
+                            if(frame.engine){
+                                frame.engine.eBoardCanvas.undoRedoEngine.undo();
+                            }
                         }
-                    });
+                    }else{
+                        // frame
+                        const frame = this.context.getFrameById(this.context.activeKey);
+                        if(void 0 !== frame){
+                            if(frame.engine){
+                                frame.engine.eBoardCanvas.undoRedoEngine.undo();
+                            }
+                        }
+                    }
                     break;
                 case "redo":
-                    this.context.getFrame(this.context.activeKey).then((frame:IFrame)=>{
-                        if(frame.engine){
-                            frame.engine.eBoardCanvas.undoRedoEngine.redo();
+                    // 判断是frame还是frameGroup
+                    const group2 = this.context.getGroupById(this.context.activeKey);
+                    if(group2){
+                        // group
+                        const frame = group2.pageFrame;
+                        if(void 0 !== frame){
+                            if(frame.engine){
+                                frame.engine.eBoardCanvas.undoRedoEngine.redo();
+                            }
                         }
-                    });
+                    }else{
+                        // frame
+                        const frame = this.context.getFrameById(this.context.activeKey);
+                        if(void 0 !== frame){
+                            if(frame.engine){
+                                frame.engine.eBoardCanvas.undoRedoEngine.redo();
+                            }
+                        }
+                    }
                     break;
                 case "fill":
                     break;
