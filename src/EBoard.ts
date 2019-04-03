@@ -120,15 +120,17 @@ class EBoard{
         this.context.transform=(size:number)=>{
             return size * this.calcSize.dimensions.width / this.calcSize.width;
         };
-        window.addEventListener("resize",()=>{
-            this.calcSize=this.calc();
-            // 画布分辨率比例计算
-            this.context.transform=(size:number)=>{
-                return size * this.calcSize.dimensions.width / this.calcSize.width;
-            };
-            // 触发所有frame 的重新layout
-            this.context.trigger("resize",this.calcSize);
-        })
+        if(!this.context.config.disableResize){
+            window.addEventListener("resize",()=>{
+                this.calcSize=this.calc();
+                // 画布分辨率比例计算
+                this.context.transform=(size:number)=>{
+                    return size * this.calcSize.dimensions.width / this.calcSize.width;
+                };
+                // 触发所有frame 的重新layout
+                this.context.trigger("resize",this.calcSize);
+            })
+        }
     }
     
     private initLayout(){
