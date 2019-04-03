@@ -58,6 +58,8 @@ import {MessageTag} from './enums/MessageTag';
 import {Context} from './static/Context';
 import {Authority, FrameType, IPluginConfigOptions} from './enums/SDKEnum';
 import {ScrollBar} from './components/ScrollBar';
+import {autobind} from 'core-decorators';
+import {returnAtIndex} from 'lodash-decorators/utils';
 
 class EBoard{
     private body:HTMLDivElement;
@@ -873,6 +875,23 @@ class EBoard{
      */
     public unAllowOperation(){
         this.setAuthority(Authority.Viewer);
+    }
+    
+    /**
+     * 当前白板截图
+     */
+    @autobind
+    public getCapture(){
+        const activeTabId = this.context.activeKey;
+        const group = this.context.getGroupById(activeTabId);
+        if(!group){
+            const canvas = this.container.querySelector(`[x-eboard-id="${activeTabId}"] canvas.lower-canvas`) as HTMLCanvasElement;
+            return canvas.toDataURL("image/png");
+        }else{
+            const frame:IFrame = group.pageFrame;
+            const canvas = this.container.querySelector(`[x-eboard-id="${ frame.frameId}"] canvas.lower-canvas`) as HTMLCanvasElement;
+            return canvas.toDataURL("image/png");
+        }
     }
 }
 

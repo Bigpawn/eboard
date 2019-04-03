@@ -69,6 +69,12 @@ class EBoardTab extends React.Component<IEBoardTabProps, ITabInterface>{
             this.nextBtnWidth=nextBtn.offsetWidth;
         }
     }
+    private getElementTotalWidth(element:HTMLDivElement){
+        const style = document.defaultView.getComputedStyle(element,null);
+        const marginLeft = parseInt(style["margin-left"],10);
+        const marginRight = parseInt(style["margin-right"],10);
+        return element.offsetWidth+marginLeft+marginRight;
+    }
     private calcItemWidth(tabName:string,canRemove:boolean){
         if(!this.calcItem){
             const tabItem = document.createElement("div");
@@ -187,6 +193,16 @@ class EBoardTab extends React.Component<IEBoardTabProps, ITabInterface>{
             });
         }
     };
+    private getScrollWidth(){
+        const scroll = this.scrollRef.current as HTMLDivElement;
+        const {offsetWidth} = scroll;
+        const items:any= scroll.querySelectorAll(".tab-item:not(.tab-item-calc)");
+        let itemsWidth=0;
+        for (let item of items) {
+            itemsWidth+=this.getElementTotalWidth(item);
+        }
+        return Math.max(offsetWidth,itemsWidth);
+    }
     public remove(tabId:string){
         const {tabs,activeId} = this.state;
         const items = (this.containerRef.current as HTMLDivElement).querySelectorAll(".tab-item");
@@ -202,7 +218,7 @@ class EBoardTab extends React.Component<IEBoardTabProps, ITabInterface>{
         }else{
             const allWidth = (this.containerRef.current as HTMLDivElement).getBoundingClientRect().width;
             const itemWidth = (items[index] as HTMLDivElement).getBoundingClientRect().width;
-            const scrollWidth = (this.scrollRef.current as HTMLDivElement).scrollWidth;
+            const scrollWidth = this.getScrollWidth();
             const addWidth = (this.addRef.current as HTMLDivElement).getBoundingClientRect().width;
             const nextActiveId = activeId === tabId ? tabs[tabs.length - 1].tabId : activeId as string;
             const nextShowPager = addWidth + scrollWidth - itemWidth > allWidth;

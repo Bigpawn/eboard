@@ -49,7 +49,9 @@ class UndoRedo {
     }
     @Bind
     private onObjectModified(ev:any){
+        console.log("modified");
         const data = ev.data;
+        console.log(data);
         this.undoStack.push(data);
         this.redoStack=[];
     }
@@ -95,6 +97,7 @@ class UndoRedo {
                 this._canvas.requestRenderAll();
                 break;
             case MessageTag.Clear:
+            case MessageTag.Delete:
                 const {ids:idList} = lastAction as any;
                 this._canvas.getObjects().map((object:any)=>{
                     if(idList.indexOf(object.id)>-1){
@@ -149,6 +152,7 @@ class UndoRedo {
                 this._canvas.requestRenderAll();
                 break;
             case MessageTag.Clear:
+            case MessageTag.Delete:
                 const {ids:idList} = firstAction as any;
                 this._canvas.getObjects().map((object:any)=>{
                     if(idList.indexOf(object.id)>-1){
