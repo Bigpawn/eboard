@@ -23,6 +23,14 @@ const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
 
+console.log(pdfjsLib.disableRange);
+const ua = navigator.userAgent;
+const isIOS = /iPad|iPhone/.test(ua);
+
+if(isIOS){
+    pdfjsLib.disableRange=true;
+    pdfjsLib.disableStream=true;
+}
 
 class PdfFrame implements IPdfFrame{
     public pageFrame:CanvasFrame;

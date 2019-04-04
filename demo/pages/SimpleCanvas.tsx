@@ -3,8 +3,6 @@ import {Card} from 'antd';
 import {EBoardInstance} from './EBoardInstance';
 import {Authority, FrameType} from '../../src/enums/SDKEnum';
 import {MessageTag} from '../../src';
-import {number} from 'prop-types';
-import {Message} from '@material-ui/icons';
 
 class SimpleCanvas extends React.Component<{}, {}> {
     protected canvas:any;
@@ -13,9 +11,6 @@ class SimpleCanvas extends React.Component<{}, {}> {
         setTimeout(()=>{
             const eBoard = EBoardInstance.getInstance().setAuthority(Authority.Master);
             // const receiveEBoard = EBoardInstance.getReceiveInstance().setAuthority(Authority.Viewer);
-            setTimeout(()=>{
-                console.log(eBoard.getCapture());
-            },10000);
             eBoard.on("message",(e:any)=>{
                 const message=JSON.parse(e.data);
                 console.log(message);
