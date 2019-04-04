@@ -247,7 +247,7 @@ class EBoardTab extends React.Component<IEBoardTabProps, ITabInterface>{
                     <div className="tab-scroll-bar" style={{transform:`translateX(-${scrollOffset}px)`}}>
                         {
                             tabs.map(tab=>(
-                                <div className={`tab-item ${activeId===tab.tabId?"tab-active":""}`} key={tab.tabId} data-id={tab.tabId} onClick={this.onItemClick}>
+                                <div title={tab.name} className={`tab-item ${activeId===tab.tabId?"tab-active":""}`} key={tab.tabId} data-id={tab.tabId} onClick={this.onItemClick}>
                                     {
                                         tab.canRemove!==false?(
                                             <i className="tab-remove eboard-icon eboard-icon-remove" onClick={this.removeItem}/>

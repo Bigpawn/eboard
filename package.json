@@ -1,6 +1,6 @@
 {
     "name": "eboard",
-    "version": "0.9.24",
+    "version": "0.9.25",
     "author": "Heng Li",
     "description": "eboard lib",
     "license": "MIT",
@@ -10,7 +10,7 @@
     "dependencies": {
         "fabric": "^2.6.0",
         "lodash": "^4.17.10",
-        "pdfjs-dist": "^2.0.489",
+        "pdfjs-dist": "^2.0.943",
         "rc-react": "^1.1.1",
         "react-color": "^2.14.1",
         "react-custom-scrollbars": "^4.2.1",

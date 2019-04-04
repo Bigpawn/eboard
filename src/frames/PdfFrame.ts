@@ -23,7 +23,6 @@ const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
 
-console.log(pdfjsLib.disableRange);
 const ua = navigator.userAgent;
 const isIOS = /iPad|iPhone/.test(ua);
 
@@ -105,7 +104,6 @@ class PdfFrame implements IPdfFrame{
         this.pdf=undefined as any;
         if(void 0 !== this.url){
             this.pdf = pdfjsLib.getDocument(this.url);
-            console.error("load pdf");
             this.pdf.then(pdf=>{
                 this.setTotalPages(pdf.numPages);
             },()=>{
