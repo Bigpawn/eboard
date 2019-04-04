@@ -59,7 +59,6 @@ import {Context} from './static/Context';
 import {Authority, FrameType, IPluginConfigOptions} from './enums/SDKEnum';
 import {ScrollBar} from './components/ScrollBar';
 import {autobind} from 'core-decorators';
-import {returnAtIndex} from 'lodash-decorators/utils';
 
 class EBoard{
     private body:HTMLDivElement;
@@ -894,6 +893,16 @@ class EBoard{
             const canvas = this.container.querySelector(`[x-eboard-id="${ frame.frameId}"] canvas.lower-canvas`) as HTMLCanvasElement;
             return canvas.toDataURL("image/png");
         }
+    }
+    @autobind
+    public resize(){
+        this.calcSize=this.calc();
+        // 画布分辨率比例计算
+        this.context.transform=(size:number)=>{
+            return size * this.calcSize.dimensions.width / this.calcSize.width;
+        };
+        // 触发所有frame 的重新layout
+        this.context.trigger("resize",this.calcSize);
     }
 }
 
