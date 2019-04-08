@@ -26,7 +26,7 @@ class ScrollBar{
     private scrollbar:PerfectScrollbarFactory;
     public static scrollbarList:PerfectScrollbarFactory[]=[];
     constructor(element: string | HTMLElement,options: IScrollBarOptions,context?:Context){
-        const disabled = context&&context.config.authority!==Authority.Master;
+        const disabled = context&&context.config.authority!==Authority.Master&&context.config.authority!==Authority.Operator;
         this.container = typeof element === 'string'?document.querySelector(element) as HTMLElement:element;
         this.scrollbar=new PerfectScrollbarFactory(this.container,Object.assign({
             handlers:['click-rail', 'drag-thumb', 'keyboard','wheel'],

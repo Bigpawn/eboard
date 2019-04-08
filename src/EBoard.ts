@@ -60,6 +60,11 @@ import {Authority, FrameType, IPluginConfigOptions} from './enums/SDKEnum';
 import {ScrollBar} from './components/ScrollBar';
 import {autobind} from 'core-decorators';
 
+
+document.addEventListener("contextmenu", (event)=>{
+    event.preventDefault();
+});
+
 class EBoard{
     private body:HTMLDivElement;
     private readonly container:HTMLDivElement;

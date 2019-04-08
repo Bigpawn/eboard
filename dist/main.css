@@ -371,17 +371,17 @@ input::-webkit-inner-spin-button {
   cursor: pointer;
 }
 .eboard-pagination-enter-from-right {
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) !important;
   opacity: 1;
   animation: page-enter-from-right ease 500ms;
 }
 .eboard-pagination-enter-from-left {
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) !important;
   opacity: 1;
   animation: page-enter-from-left ease 500ms;
 }
 .eboard-pagination-leave-to-left {
-  transform: translate(-150%, -50%);
+  transform: translate(-150%, -50%) !important;
   opacity: 0;
   animation: page-leave-to-left ease 500ms;
 }
@@ -389,7 +389,7 @@ input::-webkit-inner-spin-button {
   cursor: default!important;
 }
 .eboard-pagination-leave-to-right {
-  transform: translate(50%, -50%);
+  transform: translate(50%, -50%) !important;
   opacity: 0;
   animation: page-leave-to-right ease 500ms;
 }
