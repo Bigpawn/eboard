@@ -16,6 +16,7 @@ import {Line as FabricLine} from "../../../../extends/Line";
 import {ILineMessage} from '../../../../interface/IMessage';
 import {MessageTag} from '../../../../enums/MessageTag';
 import {CursorType} from '../../../../enums/CursorType';
+import {autobind} from 'core-decorators';
 
 @setCursor(CursorType.SystemCross)
 class Line extends AbstractShapePlugin{
@@ -34,8 +35,20 @@ class Line extends AbstractShapePlugin{
             strokeDashArray:this.instance.strokeDashArray
         }:undefined
     }
-    @authorityAssist
-    protected onMouseMove(event:IEvent){
+    protected onMouseDown(event:IEvent){
+        super.onMouseDown(event);
+        // 需要添加pointer fix 延迟
+        document.removeEventListener("pointermove",this.pointerEvent);
+        document.addEventListener("pointermove",this.pointerEvent);
+    }
+    @autobind
+    private pointerEvent(e:any){
+        // !this.allowTouchScrolling && e.preventDefault && e.preventDefault();
+        this._onMouseMove(e);
+        // 执行一次
+    }
+    @autobind
+    private _onMouseMove(event:IEvent){
         if(void 0 === this.start){
             return;
         }
@@ -60,11 +73,17 @@ class Line extends AbstractShapePlugin{
         this.eBoardCanvas.renderOnAddRemove=true;
     }
     @authorityAssist
+    protected onMouseMove(event:IEvent){
+        this._onMouseMove(event);
+        document.removeEventListener("pointermove",this.pointerEvent);
+    }
+    @authorityAssist
     protected onMouseUp(event:IEvent){
         const data = this.throw();
         super.onMouseUp(event);
         // save state
         this.eBoardCanvas.eventBus.trigger("object:added",data);
+        document.removeEventListener("pointermove",this.pointerEvent);
     }
     
     /**
