@@ -17,7 +17,7 @@ class MaterialUIPage extends SimpleCanvas{
         return (
             <Card bordered title="PdfCanvas" style={{ margin: "16px 16px"}}>
                 <div style={{width:/(m|M)obile/.test(navigator.userAgent)?"100%":"100%",height:"100%",position:"relative"}}>
-                    <div className={/(m|M)obile/.test(navigator.userAgent)?"eboard-mobile":"eboard-pc"} id={"eboardContainer"}/>
+                    <div className={"eboard-pc"} id={"eboardContainer"}/>
                 </div>
             </Card>
         );

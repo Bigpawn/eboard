@@ -56,6 +56,9 @@ class PdfFrame implements IPdfFrame{
         this.initLayout();
         this.initialize();
         !silence&&this.initializeAction();
+        this.context.on("resize",(e:any)=>{
+            this.options.calcSize=e.data;
+        })
     }
     
     @message

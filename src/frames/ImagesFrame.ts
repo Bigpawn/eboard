@@ -5,7 +5,7 @@
  * * @Last Modified time: 2018/7/23 13:53
  * @disc:图片轮播Frame
  */
-import {Pagination} from "../components/Pagination";
+import {Pagination} from '../components/Pagination';
 import {message} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
 import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
@@ -14,7 +14,6 @@ import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
 import {FrameType, ScrollbarType} from '..';
-
 
 class ImagesFrame implements IImagesFrame{
     public type:string=FrameType.Images;
@@ -40,6 +39,10 @@ class ImagesFrame implements IImagesFrame{
         this.initLayout();
         this.initialize();
         !silence&&this.initializeAction();
+    
+        this.context.on("resize",(e:any)=>{
+            this.options.calcSize=e.data;
+        })
     }
     @message
     public initializeAction(){
