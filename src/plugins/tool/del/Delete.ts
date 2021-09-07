@@ -8,16 +8,15 @@
  */
 
 import {AbstractPlugin} from '../../AbstractPlugin';
-import {authorityAssist, message, setCursor} from '../../../utils/decorators';
+import {authorityAssist, message} from '../../../utils/decorators';
 import {IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
 import {EBoardEngine} from '../../../EBoardEngine';
 import {Keys} from '../../../enums/Keys';
 import {IDeleteMessage} from '../../../interface/IMessage';
-import {MessageTag} from '../../../enums/MessageTag';
-import {CursorType} from '../../../enums/CursorType';
+import {MessageTag} from '../../..';
 
-@setCursor(CursorType.Rubber)
+
 class Delete extends AbstractPlugin{
     constructor(eBoardEngine:EBoardEngine){
         super(eBoardEngine);
@@ -42,13 +41,17 @@ class Delete extends AbstractPlugin{
             this.eBoardCanvas.renderOnAddRemove=false;
             let ids:string[]=[];
             objects.forEach((object:any)=>{
-                this.eBoardCanvas.remove(object);
+                object.visible=false;
+                // this.eBoardCanvas.remove(object);
                 ids.push(object.id);
             });
             this.eBoardCanvas.discardActiveObject();
             this.eBoardCanvas.renderAll();
             this.eBoardCanvas.renderOnAddRemove=true;
-            this.deleteItems(ids);
+            const action = this.deleteItems(ids);
+            if(action){
+                this.eBoardCanvas.eventBus.trigger("object:modified",action);
+            }
         }
     }
     
@@ -65,8 +68,14 @@ class Delete extends AbstractPlugin{
     private onClick(e:IEvent){
         const target = e.target as IObject;
         if(void 0 !== target && null !== target){
-            this.eBoardCanvas.remove(target);
-            this.deleteItems([target.id]);
+            target.visible=false;
+            this.eBoardCanvas.discardActiveObject();
+            this.eBoardCanvas.requestRenderAll();
+            // this.eBoardCanvas.remove(target);
+            const action = this.deleteItems([target.id]);
+            if(action){
+                this.eBoardCanvas.eventBus.trigger("object:modified",action);
+            }
         }
     }
     private onSelected(e:IEvent){
@@ -99,13 +108,22 @@ class Delete extends AbstractPlugin{
             this.eBoardCanvas.on("mouse:out",this.onUnSelected);
             this.eBoardCanvas.on("mouse:down",this.onClick);
             this.eBoardCanvas.skipTargetFind = false;
-            this.eBoardCanvas.hoverCursor="none";
+            const container = this.eBoardEngine.context.container;
+            if(container){
+                container.classList.add("canvas-erase");
+            }
+            // this.eBoardCanvas.hoverCursor=`url(${erasePng})`;
+            // this.eBoardCanvas.hoverCursor="none";
         }else{
             this.eBoardCanvas.off("mouse:over",this.onSelected);
             this.eBoardCanvas.off("mouse:out",this.onUnSelected);
             this.eBoardCanvas.off("mouse:down",this.onClick);
             this.eBoardCanvas.skipTargetFind = true;
-            this.eBoardCanvas.hoverCursor="move";
+            const container = this.eBoardEngine.context.container;
+            if(container){
+                container.classList.remove("canvas-erase");
+            }
+            // this.eBoardCanvas.hoverCursor="move";
         }
         return this;
     }
@@ -114,7 +132,11 @@ class Delete extends AbstractPlugin{
         const {ids} = message;
         ids.forEach(id=>{
             const instance = this.getInstanceById(id);
-            instance&&this.eBoardCanvas.remove(instance);
+            if(instance){
+                instance.visible=false;
+                this.eBoardCanvas.requestRenderAll();
+            }
+            // instance&&this.eBoardCanvas.remove(instance);
         });
     }
 }

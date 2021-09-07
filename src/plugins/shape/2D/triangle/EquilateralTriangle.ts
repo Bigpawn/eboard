@@ -21,6 +21,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class EquilateralTriangle extends AbstractShapePlugin{
+    public readonly type:string="equilateral-triangle";
     protected instance:FabricEquilateralTriangle;
     @message
     private throw(){
@@ -28,7 +29,7 @@ class EquilateralTriangle extends AbstractShapePlugin{
             id:this.instance.id,
             tag:MessageTag.Shape,
             points:this.instance.points,
-            type:this.instance.type,
+            type:this.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,
@@ -65,8 +66,10 @@ class EquilateralTriangle extends AbstractShapePlugin{
     };
     @authorityAssist
     protected onMouseUp(event:IEvent){
-        this.throw();
+        const data = this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added",data);
     }
     /**
      * 接收消息处理

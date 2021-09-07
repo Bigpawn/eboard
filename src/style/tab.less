@@ -14,19 +14,20 @@
 @spacing:5px;
 @removeIcon:20px;
 
-[eboard-authority="@{authorityAssist}"],[eboard-authority="@{authorityViewer}"]{
+[eboard-authority="@{authorityAssist}"],[eboard-authority="@{authorityViewer}"],[eboard-authority="@{authorityOperator}"]{
     .eboard-tabs{
         visibility: hidden;
     }
 }
 
-.eboard{
-    &-disable{
-        .eboard-tabs{
+.eboard {
+    &-disable {
+        .eboard-tabs {
             visibility: hidden;
         }
     }
-    &-tabs{
+    
+    &-tabs {
         position: absolute;
         width: 100%;
         bottom: 0;
@@ -35,7 +36,8 @@
         z-index: 10;
         white-space: nowrap;
     }
-    &-tab{
+    
+    &-tab {
         width: @width;
         height: @height;
         display: inline-block;
@@ -53,13 +55,16 @@
         color: white;
         cursor: pointer;
         position: relative;
-        &.eboard-tab-active{
+        
+        &.eboard-tab-active {
             background: #4c84ff;
         }
-        ~ .eboard-tab{
+        
+        ~ .eboard-tab {
             margin-left: @spacing;
         }
-        &-remove{
+        
+        &-remove {
             font-size: @removeIcon;
             position: absolute;
             line-height: @removeIcon;
@@ -69,19 +74,22 @@
             color: #ec272a;
             opacity: 0;
             cursor: pointer;
-            &:hover{
-                opacity: 1!important;
+            
+            &:hover {
+                opacity: 1 !important;
             }
         }
-        &:hover{
-            .eboard-tab-remove{
+        
+        &:hover {
+            .eboard-tab-remove {
                 opacity: 0.6;
             }
         }
-        &-add{
+        
+        &-add {
             height: @height;
             width: @height;
-            display: inline-block;
+            //display: inline-block;
             vertical-align: middle;
             margin-left: @spacing;
             background: #3384FE;
@@ -90,7 +98,7 @@
             text-align: center;
             line-height: @height;
             cursor: pointer;
+            display: none;
         }
     }
-
 }

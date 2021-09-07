@@ -13,7 +13,7 @@ import {IDGenerator} from '../utils/IDGenerator';
 import {filterParams} from '../utils/decorators';
 
 class Star extends fabric.Polygon implements IObject{
-    public type:string="star";
+
     public id:string;
     constructor(points: Array<{ x: number; y: number }>, options: IObjectOptions, eBoardCanvas:EBoardCanvas){
         super(points,filterParams(options,eBoardCanvas));

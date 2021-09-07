@@ -20,6 +20,8 @@ import {ICursorMessage} from './interface/IMessage';
 import {MessageTag} from './enums/MessageTag';
 import {CursorType} from './enums/CursorType';
 import {Context} from './static/Context';
+import {EventBus} from './utils/EventBus';
+import {UndoRedo} from './engine/UndoRedo';
 
 
 class EBoardCanvas extends fabric.Canvas{
@@ -32,8 +34,10 @@ class EBoardCanvas extends fabric.Canvas{
     private cursor:ICursor;
     private cursorType:CursorType;
     public context:Context;
-    private frameId:string;
-    private groupId?:string;
+    private readonly frameId:string;
+    private readonly groupId?:string;
+    public eventBus=new EventBus();
+    public undoRedoEngine:UndoRedo;
     constructor(element: HTMLCanvasElement,options: ICanvasOptions,eBoardEngine:EBoardEngine){
         super(element,options);
         this.enableRetinaScaling=false;// 不自动根据分辨率缩放  否则ios 会自动*3
@@ -50,6 +54,7 @@ class EBoardCanvas extends fabric.Canvas{
         this.fixTouchDevice();
         this.onMouseMove=this.onMouseMove.bind(this);
         this.onMouseOut=this.onMouseOut.bind(this);
+        this.undoRedoEngine=new UndoRedo({canvas:this,frameId:this.frameId,groupId:this.groupId,context:this.context});
     }
     
     /**
@@ -127,10 +132,11 @@ class EBoardCanvas extends fabric.Canvas{
         this.instance = this.cursor.render(point,this.context.transform(this.context.getConfig("cursorSize")));
         this.instance.name=this.cursorType; // 比较类型是否变化
         this.instance.type="cursor";// 设置type，扩展的Canvas可能会做其他操作
+        // this.instance.bringToFront();
         this.add(this.instance);
         this.renderAll();
         this.renderOnAddRemove=true;
-        if(this.cursorMessageEnable === true){
+        if(this.cursorMessageEnable){
             this.cursorMessage(point);
         }
     }

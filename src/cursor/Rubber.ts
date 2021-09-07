@@ -27,7 +27,12 @@ class RubberCursor implements ICursor{
             originX:"center",
             originY:"center",
             scaleX:scale,
-            scaleY:scale
+            scaleY:scale,
+            hasBorders:false,
+            hasControls:false,
+            hasRotatingPoint:false,
+            hoverCursor:"none",
+            evented:false,
         });
     }
 }

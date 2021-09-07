@@ -14,7 +14,7 @@ import {filterParams} from '../utils/decorators';
 
 
 class Triangle extends fabric.Triangle implements IObject{
-    public type="triangle";
+  
     public id:string;
     constructor(options: ITriangleOptions,eBoardCanvas:EBoardCanvas){
         super(filterParams(options,eBoardCanvas));

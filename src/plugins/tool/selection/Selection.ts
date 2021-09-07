@@ -11,7 +11,7 @@
  * 支持群组删除
  */
 import {AbstractPlugin} from '../../AbstractPlugin';
-import {ActiveSelection, IEvent} from '~fabric/fabric-impl';
+import {ActiveSelection, Group, IEvent} from '~fabric/fabric-impl';
 import {IObject} from '../../../interface/IObject';
 import {authorityAssist, message} from '../../../utils/decorators';
 import {EBoardEngine} from '../../../EBoardEngine';
@@ -24,6 +24,7 @@ class Selection extends AbstractPlugin{
     private clipBoard = new Clipboard();
     private _position?:{x:number;y:number};
     private containsProperties=["borderColor","cornerColor","cornerStrokeColor","cornerStyle","transparentCorners","cornerSize","borderScaleFactor","selectable","id","sourceId"];
+    private _cacheObjectsTransforms:any={};
     constructor(eBoardEngine:EBoardEngine){
         super(eBoardEngine);
         this.onSelection = this.onSelection.bind(this);
@@ -38,8 +39,8 @@ class Selection extends AbstractPlugin{
     private onTransform(e:IEvent){
         this.eBoardCanvas.discardActiveObject();
         const target:IObject|ActiveSelection = e.target as IObject|ActiveSelection;
-        const objects = target.type==="activeSelection"?(target as ActiveSelection).getObjects():[target];
         if(void 0 !== target){
+            const objects = target.type==="activeSelection"?(target as ActiveSelection).getObjects():[target];
             // 可能只有一个对象
             let ids:string[]=[],objectsTransform:any={};
             objects.map((object:IObject)=>{
@@ -55,15 +56,21 @@ class Selection extends AbstractPlugin{
                 };
             });
             const action = e["transform"].action;
+            let data;
             switch (action){
                 case "drag":
-                    this.transform(ids,objectsTransform,MessageTag.SelectionMove);
+                    data = this.transform(ids,objectsTransform,MessageTag.SelectionMove);
+                    this.eBoardCanvas.eventBus.trigger("object:modified",{...data,prevState:this._cacheObjectsTransforms});
                     break;
                 case "rotate":
-                    this.transform(ids,objectsTransform,MessageTag.SelectionRotate);
+                    data = this.transform(ids,objectsTransform,MessageTag.SelectionRotate);
+                    this.eBoardCanvas.eventBus.trigger("object:modified",{...data,prevState:this._cacheObjectsTransforms});
                     break;
                 case "scale":
-                    this.transform(ids,objectsTransform,MessageTag.SelectionScale);
+                case "scaleX":
+                case "scaleY":
+                    data = this.transform(ids,objectsTransform,MessageTag.SelectionScale);
+                    this.eBoardCanvas.eventBus.trigger("object:modified",{...data,prevState:this._cacheObjectsTransforms});
                     break;
                 default:
                     break;
@@ -169,6 +176,42 @@ class Selection extends AbstractPlugin{
             target.on("moved",onTransformEnd);
             target.on("scaled",onTransformEnd);
             target.on("rotated",onTransformEnd);
+            // 保存选中元素的初始化transform属性，undoRedo需要当前属性及前置属性
+            let objectsTransform:any={};
+            if(target.type==="activeSelection"){
+                (target as ActiveSelection).clone((group:Group)=>{
+                    const objects = group.getObjects();
+                    group.destroy();
+                    objects.map((object:IObject)=>{
+                        objectsTransform[object.id]={
+                            flipX:object.flipX,
+                            flipY:object.flipY,
+                            angle:object.angle,
+                            scaleX:object.scaleX,
+                            scaleY:object.scaleY,
+                            left:object.left,
+                            top:object.top
+                        };
+                    });
+                },["id"]);
+            }else{
+                const object:IObject=target as IObject;
+                objectsTransform[object.id]={
+                    flipX:object.flipX,
+                    flipY:object.flipY,
+                    angle:object.angle,
+                    scaleX:object.scaleX,
+                    scaleY:object.scaleY,
+                    left:object.left,
+                    top:object.top
+                };
+            }
+            
+            console.log(objectsTransform);
+            
+            // console.log(objects);
+            // console.log(objectsTransform);
+            this._cacheObjectsTransforms=objectsTransform;
         }
     }
     @message
@@ -223,6 +266,7 @@ class Selection extends AbstractPlugin{
             this.eBoardCanvas.selection=true;
             this.eBoardCanvas.skipTargetFind=false;
             this.eBoardCanvas.on("selection:created",this.onSelection);
+            this.eBoardCanvas.on("selection:updated",this.onSelection);
             window.addEventListener("keydown",this.onKeyDown);
             this.eBoardCanvas.on('mouse:move', this.onMouseMove);
             this.eBoardCanvas.on('mouse:out', this.onMouseOut);
@@ -230,6 +274,7 @@ class Selection extends AbstractPlugin{
             this.eBoardCanvas.selection=false;
             this.eBoardCanvas.skipTargetFind=true;
             this.eBoardCanvas.off("selection:created",this.onSelection);
+            this.eBoardCanvas.off("selection:updated",this.onSelection);
             window.removeEventListener("keydown",this.onKeyDown);
             this.eBoardCanvas.off('mouse:move', this.onMouseMove);
             this.eBoardCanvas.off('mouse:out', this.onMouseOut);

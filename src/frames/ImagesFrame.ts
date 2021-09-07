@@ -5,7 +5,7 @@
  * * @Last Modified time: 2018/7/23 13:53
  * @disc:图片轮播Frame
  */
-import {Pagination} from "../components/Pagination";
+import {Pagination} from '../components/Pagination';
 import {message} from '../utils/decorators';
 import {ImageFrame} from './ImageFrame';
 import {IImagesFrame, IImagesFrameOptions} from '../interface/IFrameGroup';
@@ -13,11 +13,10 @@ import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
-import {ScrollbarType} from '..';
-
+import {FrameType, ScrollbarType} from '..';
 
 class ImagesFrame implements IImagesFrame{
-    public type:string="images-frame";
+    public type:string=FrameType.Images;
     public container:HTMLDivElement;
     public dom:HTMLDivElement;
     public urlPrefix:string;
@@ -30,7 +29,7 @@ class ImagesFrame implements IImagesFrame{
     public images:string[];
     public groupId:string;
     public context:Context;
-    constructor(context:Context,options:IImagesFrameOptions){
+    constructor(context:Context,options:IImagesFrameOptions,silence?:boolean){
         this.context=context;
         this.groupId = options.groupId||IDGenerator.getId();
         this.container=options.container as any;
@@ -39,7 +38,11 @@ class ImagesFrame implements IImagesFrame{
         this.onGo=this.onGo.bind(this);
         this.initLayout();
         this.initialize();
-        this.initializeAction();
+        !silence&&this.initializeAction();
+    
+        this.context.on("resize",(e:any)=>{
+            this.options.calcSize=e.data;
+        })
     }
     @message
     public initializeAction(){

@@ -34,7 +34,7 @@ export {Line,DotLine,Text,HTML,Selection,Pencil,Circle,Ellipse,Rectangle,Square,
 export type IPlugins =Line| DotLine|Text | HTML | Selection | Pencil | Circle | Ellipse | Rectangle | Square | Triangle | EquilateralTriangle | OrthogonalTriangle | Polygon | Star | Pentagon | Hexagon | Clear | Arrow | ArrowNext | ArrowPrev | Delete | Ferule;
 export enum Plugins{
     Line='Line', // 直线
-    DotLine="DotLine",
+    DotLine='DotLine',
     Text='Text',// 文字输入
     Selection='Selection',// 选择
     HTML='HTML', // HTML操作插件

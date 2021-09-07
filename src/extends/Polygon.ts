@@ -13,7 +13,7 @@ import {IDGenerator} from '../utils/IDGenerator';
 import {filterParams} from '../utils/decorators';
 
 class Polygon extends fabric.Polyline implements IObject{
-    public readonly type:string="polygon";
+
     public id:string;
     constructor(points: Array<{ x: number; y: number }>, options: IPolylineOptions,eBoardCanvas:EBoardCanvas){
         super(points,filterParams(options,eBoardCanvas));

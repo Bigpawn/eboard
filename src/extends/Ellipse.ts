@@ -14,7 +14,6 @@ import {filterParams} from '../utils/decorators';
 
 
 class Ellipse extends fabric.Ellipse implements IObject{
-    public readonly type:string="ellipse";
     public id:string;
     constructor(options: IEllipseOptions,eBoardCanvas:EBoardCanvas){
         super(filterParams(options,eBoardCanvas));

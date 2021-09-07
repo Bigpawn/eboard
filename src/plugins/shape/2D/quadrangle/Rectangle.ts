@@ -21,6 +21,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class Rectangle extends AbstractShapePlugin{
+    public type:string="rectangle";
     protected instance:FabricRectangle;
     protected ctrlKey:boolean=false;
     private getStartPoint():{x:number;y:number}{
@@ -88,7 +89,7 @@ class Rectangle extends AbstractShapePlugin{
             top:this.instance.top,
             width:this.instance.width,
             height:this.instance.height,
-            type:this.instance.type,
+            type:this.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,
@@ -166,8 +167,10 @@ class Rectangle extends AbstractShapePlugin{
     }
     @authorityAssist
     protected onMouseUp(event:IEvent){
-        this.throw();
+        const data = this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added",data);
     }
     /**
      * 接收消息处理

@@ -16,7 +16,7 @@ import {MessageTag} from '../enums/MessageTag';
 import {Context, ContextFactory} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
 import {ScrollBar} from '../components/ScrollBar';
-import {IPluginConfigOptions} from '../enums/SDKEnum';
+import {FrameType, IPluginConfigOptions} from '../enums/SDKEnum';
 
 
 
@@ -30,7 +30,7 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
     public groupId:string|undefined;
     public scrollbar:ScrollBar;
     protected calcSize:any;
-    constructor(context:Context,options:T){
+    constructor(context:Context,options:T,silence?:boolean){
         super(context);
         this.options=options;
         this.frameId=options.frameId||IDGenerator.getId();
@@ -44,7 +44,7 @@ class GenericBaseFrame<T extends IFrameOptions> extends ContextFactory implement
         if(!this.groupId){
             context.setActiveKey(this.frameId);
         }
-        if(!this.groupId||options.messageId){
+        if((!this.groupId||options.messageId)&&!silence){
             this.initializeAction();
         }
     }
@@ -137,7 +137,7 @@ export {GenericBaseFrame};
 
 
 class EmptyFrame extends GenericBaseFrame<IBaseFrameOptions> implements IBaseFrame{
-    public type:string="empty-frame";
+    public type:string=FrameType.Empty;
 }
 
 export {EmptyFrame};

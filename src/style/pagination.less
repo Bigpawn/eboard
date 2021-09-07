@@ -105,17 +105,17 @@ input::-webkit-inner-spin-button {
         cursor: pointer;
         }
         &-enter-from-right{
-            transform: translate(-50% ,-50%);
+            transform: translate(-50% ,-50%)!important;
             opacity: 1;
             animation: page-enter-from-right ease 500ms;
         }
         &-enter-from-left{
-            transform: translate(-50% ,-50%);
+            transform: translate(-50% ,-50%)!important;
             opacity: 1;
             animation: page-enter-from-left ease 500ms;
         }
         &-leave-to-left{
-            transform: translate(-150% ,-50%);
+            transform: translate(-150% ,-50%)!important;
             opacity: 0;
             animation: page-leave-to-left ease 500ms;
             canvas{
@@ -123,7 +123,7 @@ input::-webkit-inner-spin-button {
             }
         }
         &-leave-to-right{
-            transform: translate(50% ,-50%);
+            transform: translate(50% ,-50%)!important;
             opacity: 0;
             animation: page-leave-to-right ease 500ms;
             canvas{
@@ -141,6 +141,7 @@ input::-webkit-inner-spin-button {
 
 [eboard-authority="@{authorityAssist}"],[eboard-authority="@{authorityViewer}"]{
     .eboard-pagination{
+        padding-right: @height/2!important;
         &-left,&-right{
             display: none;
         }
@@ -154,7 +155,7 @@ input::-webkit-inner-spin-button {
                 display: inline;
             }
         }
-        &-bottomGo{
+        &-go{
             display: none;
         }
     }

@@ -6,9 +6,8 @@
  * @disc:ScrollBar
  */
 import {
-    IScrollFactoryOptions,
-    PerfectScrollbarFactory,
-} from 'kxt-web/es/perfectscrollbar';
+    PerfectScrollbarFactory,IScrollFactoryOptions
+} from './perfectscrollbar/perfectscrollbarfactory';
 import {IFrame} from '../interface/IFrame';
 import {authorityMaster, message} from '../utils/decorators';
 import {IScrollBarMessage} from '../interface/IMessage';
@@ -27,14 +26,14 @@ class ScrollBar{
     private scrollbar:PerfectScrollbarFactory;
     public static scrollbarList:PerfectScrollbarFactory[]=[];
     constructor(element: string | HTMLElement,options: IScrollBarOptions,context?:Context){
-        const disabled = context&&context.config.authority!==Authority.Master;
-        this.scrollbar=new PerfectScrollbarFactory(element,Object.assign({
+        const disabled = context&&context.config.authority!==Authority.Master&&context.config.authority!==Authority.Operator;
+        this.container = typeof element === 'string'?document.querySelector(element) as HTMLElement:element;
+        this.scrollbar=new PerfectScrollbarFactory(this.container,Object.assign({
             handlers:['click-rail', 'drag-thumb', 'keyboard','wheel'],
             disabled
         },options));
         this.context=context;
         this.frameId=options.frameId;
-        this.container = typeof element === 'string'?document.querySelector(element) as HTMLElement:element;
         this.initScrollEndEvent();
         if(context){
             ScrollBar.scrollbarList.push(this.scrollbar);

@@ -13,7 +13,6 @@ import {IDGenerator} from '../utils/IDGenerator';
 import {filterParams} from '../utils/decorators';
 
 class Arrow extends fabric.Path implements IObject{
-    public readonly type:string="arrow";
     public id:string;
     constructor(path: string | any[], options: IPathOptions,eBoardCanvas:EBoardCanvas){
         super(path,filterParams(options,eBoardCanvas));

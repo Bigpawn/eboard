@@ -4,6 +4,12 @@
  * @Last Modified by: Liheng (liheeng@gmail.com)
  * @Last Modified time: 2018-05-29 10:20:55
  */
+
+@nextWidth:28px;
+@tabHeight:28px;
+@itemSpacing:10px;
+
+
 .tab{
     &-container{
         position: relative;
@@ -11,8 +17,8 @@
     &-item{
         display: inline-block;
         vertical-align: middle;
-        width:58px;
-        height: 28px;
+        padding: 0 10px;
+        height: @tabHeight;
         font-size: 14px;
         line-height: 28px;
         text-align: center;
@@ -20,6 +26,12 @@
         border:1px solid #999;
         box-sizing: border-box;
         cursor: pointer;
+        margin-right: @itemSpacing;
+        &-calc{
+            position: absolute;
+            z-index: -1;
+            opacity: 0;
+        }
     }
     &-active{
         color: #ffffff;
@@ -29,10 +41,10 @@
     &-add{
         display: inline-block;
         vertical-align: middle;
-        width:28px;
-        height: 28px;
+        width:@tabHeight;
+        height: @tabHeight;
         font-size: 14px;
-        line-height: 28px;
+        line-height: @tabHeight;
         text-align: center;
         border:1px solid #999;
         box-sizing: border-box;
@@ -41,13 +53,14 @@
         position: relative;
         display: inline-block;
         vertical-align: middle;
-        max-width: calc(~"100% - 28px");
+        max-width: calc(~"100% - @{tabHeight}");
         padding-right:0;
         transition: max-width 240ms ease;
         white-space: nowrap;
         overflow: hidden;
         &-pager{
-            max-width:calc(~"100% - 84px");
+            @right:@tabHeight+@nextWidth*2;
+            max-width:calc(~"100% - @{right}");
         }
         &-bar{
             position: relative;
@@ -57,8 +70,8 @@
     }
     &-prev,&-next{
         display: inline-block;
-        width:28px;
-        line-height: 28px;
+        width:@nextWidth;
+        line-height: @tabHeight;
         border:1px solid #999;
         font-size: 14px;
         color: #666;
@@ -68,12 +81,12 @@
         right:28px;
         top:0;
         box-sizing: border-box;
-        height: 28px;
+        height: @tabHeight;
         background: white;
         cursor: pointer;
     }
     &-prev{
-        right:56px;
+        right:@tabHeight + @nextWidth;
     }
     &-next ~ &-add{
         position: absolute;

@@ -18,18 +18,25 @@ import {Plugins} from '../plugins';
 import {MessageTag} from '../enums/MessageTag';
 import {Context} from '../static/Context';
 import {IDGenerator} from '../utils/IDGenerator';
-import {ScrollbarType} from '../enums/SDKEnum';
+import {FrameType, ScrollbarType} from '../enums/SDKEnum';
 const pdfjsLib:PDFJSStatic  = require('pdfjs-dist/build/pdf.js');
 const PdfjsWorker = require('pdfjs-dist/build/pdf.worker.js');
 (pdfjsLib as any).GlobalWorkerOptions.workerPort = new PdfjsWorker();
 
+const ua = navigator.userAgent;
+const isIOS = /iPad|iPhone/.test(ua);
+
+if(isIOS){
+    pdfjsLib.disableRange=true;
+    pdfjsLib.disableStream=true;
+}
 
 class PdfFrame implements IPdfFrame{
     public pageFrame:CanvasFrame;
     private pagination:Pagination;
     private pdf:PDFPromise<PDFDocumentProxy>;
     public container:HTMLDivElement;
-    public type:string="pdf-frame";
+    public type:string=FrameType.Pdf;
     public dom:HTMLDivElement;
     public url:string;
     public pageNum:number=1;
@@ -39,7 +46,7 @@ class PdfFrame implements IPdfFrame{
     public parent?:EBoard;
     public groupId:string;
     public context:Context;
-    constructor(context:Context,options:IPdfFrameOptions){
+    constructor(context:Context,options:IPdfFrameOptions,silence?:boolean){
         this.context=context;
         this.groupId=options.groupId||IDGenerator.getId();
         this.options=options;
@@ -48,7 +55,10 @@ class PdfFrame implements IPdfFrame{
         this.onGo=this.onGo.bind(this);
         this.initLayout();
         this.initialize();
-        this.initializeAction();
+        !silence&&this.initializeAction();
+        this.context.on("resize",(e:any)=>{
+            this.options.calcSize=e.data;
+        })
     }
     
     @message
@@ -99,6 +109,8 @@ class PdfFrame implements IPdfFrame{
             this.pdf = pdfjsLib.getDocument(this.url);
             this.pdf.then(pdf=>{
                 this.setTotalPages(pdf.numPages);
+            },()=>{
+                console.error("pdf load error");
             });
             const pageFrame = new CanvasFrame(this.context,{
                 scrollbar:ScrollbarType.vertical,
@@ -118,7 +130,7 @@ class PdfFrame implements IPdfFrame{
             this.pdf.then(pdf=>{
                 pdf.getPage(this.pageNum).then(page=>{
                     const canvas = pageFrame.canvas;
-                    const defaultViewport = page.getViewport(1);
+                    const defaultViewport = page.getViewport(1/window.devicePixelRatio);
                     const scale = canvas.offsetWidth/defaultViewport.width;
                     const viewport = page.getViewport(scale);
                     canvas.width=viewport.width;
@@ -183,7 +195,7 @@ class PdfFrame implements IPdfFrame{
             this.pdf.then(pdf=>{
                 pdf.getPage(pageNum).then((page)=>{
                     const canvas = (nextPageFrame as CanvasFrame).canvas;
-                    const defaultViewport = page.getViewport(1);
+                    const defaultViewport = page.getViewport(1/window.devicePixelRatio);
                     const scale = canvas.offsetWidth/defaultViewport.width;
                     const viewport = page.getViewport(scale);
                     canvas.width=viewport.width;

@@ -20,10 +20,12 @@ class Context extends EventBus{
     public activeKey:string;// 可能是frame 可能是group
     public config:Config;// 配置管理
     public store:Store;// 所有数据共享
-    constructor(config?:IConfig){
+    public container?:HTMLDivElement;
+    constructor(config?:IConfig,container?:HTMLDivElement){
         super();
         this.config = new Config(config||{});
         this.store = new Store(this.config);
+        this.container=container;
     }
     
     /////////////////////////////////Config/////////////////////////////////

@@ -38,6 +38,7 @@ class Config implements ISDKConfig{
     autoTabLabel:string;
     disableHtmlFragment:boolean;
     authority:Authority=Authority.Master;
+    disableResize:boolean;
     constructor(initConfig:IConfig){
         Object.assign(this,defaultConfig,initConfig);
     }

@@ -14,7 +14,7 @@ import {filterParams} from '../utils/decorators';
 
 
 class OrthogonalTriangle extends fabric.Polygon implements IObject{
-    public readonly type:string="orthogonal-triangle";
+
     public id:string;
     constructor(points: Array<{ x: number; y: number }>, options: IObjectOptions,eBoardCanvas:EBoardCanvas){
         super(points,filterParams(options,eBoardCanvas));

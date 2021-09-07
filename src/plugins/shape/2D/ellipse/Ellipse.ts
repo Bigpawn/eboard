@@ -23,6 +23,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class Ellipse extends AbstractShapePlugin{
+    public readonly type:string="ellipse";
     private ctrlKey:boolean=false;
     protected instance:FabricEllipse;
     private getStartPoint():{x:number;y:number}{
@@ -91,7 +92,7 @@ class Ellipse extends AbstractShapePlugin{
             top:this.instance.top,
             rx:this.instance.rx,
             ry:this.instance.ry,
-            type:this.instance.type,
+            type:this.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,
@@ -137,8 +138,10 @@ class Ellipse extends AbstractShapePlugin{
     };
     @authorityAssist
     protected onMouseUp(event:IEvent){
-        this.throw();
+        const data = this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added",data);
     }
     @authorityAssist
     protected ctrlKeyDownHandler(e:KeyboardEvent){

@@ -22,6 +22,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class Circle extends AbstractShapePlugin{
+    public readonly type:string="circle";
     protected instance:FabricCircle;
     @message
     private throw(){
@@ -31,7 +32,7 @@ class Circle extends AbstractShapePlugin{
             left:this.start.x,
             top:this.start.y,
             radius:this.instance.radius,
-            type:this.instance.type,
+            type:this.type,
             stroke:this.instance.stroke,
             fill:this.instance.fill,
             strokeWidth:this.instance.strokeWidth,
@@ -71,8 +72,10 @@ class Circle extends AbstractShapePlugin{
     };
     @authorityAssist
     protected onMouseUp(event:IEvent){
-        this.throw();
+        const data = this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added",data);
     }
     
     /**

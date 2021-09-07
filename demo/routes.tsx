@@ -1,3 +1,5 @@
+import Tab from './pages/Tab';
+
 import * as React from "react";
 import { RouteConfig } from "react-router-config";
 import { Route, Switch } from "react-router-dom";
@@ -8,7 +10,6 @@ import PdfCanvas from "./pages/PdfCanvas";
 import PageLayout from "./layouts/PageLayout";
 import HtmlCanvas from './pages/HtmlCanvas';
 import MixCanvas from './pages/MixCanvas';
-import Tab from "./pages/Tab";
 
 export const routes: RouteConfig[] = [
     {

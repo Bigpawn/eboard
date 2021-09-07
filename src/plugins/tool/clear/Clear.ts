@@ -13,7 +13,18 @@ class Clear extends AbstractPlugin{
     @message
     @authorityAssist
     private clearBoard(){
-        this.eBoardCanvas.clear();
+        // save state
+        const objects = this.eBoardCanvas.getObjects();
+        const ids = objects.map((object:any)=>{
+            object.visible=false;
+            return object.id;
+        });
+        this.eBoardCanvas.requestRenderAll();
+        // this.eBoardCanvas.clear();
+        this.eBoardCanvas.eventBus.trigger("object:modified",{
+            tag:MessageTag.Clear,
+            ids:ids
+        });
         return {
             tag:MessageTag.Clear,
         }
@@ -32,7 +43,12 @@ class Clear extends AbstractPlugin{
         return this;
     }
     public onMessage(){
-        this.eBoardCanvas.clear();
+        const objects = this.eBoardCanvas.getObjects();
+        objects.map((object:any)=>{
+            object.visible=false;
+            return object.id;
+        });
+        this.eBoardCanvas.requestRenderAll();
     }
 }
 export {Clear}

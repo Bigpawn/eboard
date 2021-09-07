@@ -22,6 +22,7 @@ import {CursorType} from '../../../../enums/CursorType';
 
 @setCursor(CursorType.SystemCross)
 class Triangle extends AbstractShapePlugin{
+    public type="triangle";
     protected instance:FabricTriangle;
     protected ctrlKey:boolean=false;
     private getStartPoint():{x:number;y:number}{
@@ -211,8 +212,10 @@ class Triangle extends AbstractShapePlugin{
     }
     @authorityAssist
     protected onMouseUp(event:IEvent){
-        this.throw();
+        const data = this.throw();
         super.onMouseUp(event);
+        // save state
+        this.eBoardCanvas.eventBus.trigger("object:added",data);
     }
     @message
     private throw(){
@@ -225,7 +228,7 @@ class Triangle extends AbstractShapePlugin{
             flipY:this.instance.flipY,
             width:this.instance.width,
             height:this.instance.height,
-            type:this.instance.type,
+            type:this.type,
             fill:this.instance.fill,
             stroke:this.instance.stroke,
             strokeWidth:this.instance.strokeWidth,
@@ -240,7 +243,7 @@ class Triangle extends AbstractShapePlugin{
     public onMessage(message:ITriangleMessage){
         const {id,flipX,flipY,width,height,stroke,fill,strokeDashArray,strokeWidth,left,top} = message;
         let instance = this.getInstanceById(id) as FabricTriangle;
-        this.eBoardCanvas.renderOnAddRemove=false;
+        // this.eBoardCanvas.renderOnAddRemove=false;
         if(void 0 !== instance){
             this.eBoardCanvas.remove(instance);
         }
@@ -258,7 +261,8 @@ class Triangle extends AbstractShapePlugin{
         },this.eBoardCanvas).setId(id);
         this.eBoardCanvas.add(instance);
         this.eBoardCanvas.requestRenderAll();
-        this.eBoardCanvas.renderOnAddRemove=true;
+        // this.eBoardCanvas.renderOnAddRemove=true;
+        console.log(this.eBoardCanvas.getObjects());
     }
 }
 

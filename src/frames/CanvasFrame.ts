@@ -9,8 +9,9 @@
 import {GenericHtmlFrame} from './HtmlFrame';
 import {ICanvasFrame, ICanvasFrameOptions} from '../interface/IFrame';
 import {EBoardEngine} from '../EBoardEngine';
+import {FrameType} from '..';
 class CanvasFrame extends GenericHtmlFrame<ICanvasFrameOptions> implements ICanvasFrame{
-    public type:string="canvas-frame";
+    public type=FrameType.Canvas;
     public canvas:HTMLCanvasElement;
     private canvasWrap:HTMLDivElement;
     protected getChildren():any{

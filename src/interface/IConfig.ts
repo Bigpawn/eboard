@@ -34,6 +34,7 @@ export declare interface IDefaultConfig{
     autoTabLabel:string;
     disableHtmlFragment:boolean;
     authority:Authority;
+    disableResize:boolean;
 }
 
 export declare interface ISDKConfig extends IDefaultConfig{
